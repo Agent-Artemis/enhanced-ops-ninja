@@ -1,6 +1,5 @@
 {
-  "public": true,
-  "buildCommand": "echo 'Static HTML deployment'",
-  "outputDirectory": ".",
-  "framework": "html"
+  "framework": null,
+  "buildCommand": null,
+  "outputDirectory": "."
 }
