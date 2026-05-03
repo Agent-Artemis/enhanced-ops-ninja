@@ -128,19 +128,39 @@
  .hero {
  background: var(--black);
  border-bottom: 1px solid var(--border);
- padding: 4rem 1.5rem 3rem;
+ padding: 2rem 1.5rem 3rem;
  }
+ 
+ .hero-logo {
+ display: inline-block;
+ }
+ 
+ .hero-tagline {
+ font-family: 'Bebas Neue', sans-serif;
+ font-size: 32px;
+ letter-spacing: 0.04em;
+ text-transform: uppercase;
+ color: var(--white);
+ line-height: 1.2;
+ margin-bottom: 3rem;
+ }
+ 
+ .hero-tagline .blue { color: var(--blue); }
  
  .hero-inner {
  max-width: 1200px;
  margin: 0 auto;
  display: grid;
  grid-template-columns: 1fr 1fr;
- gap: 3rem;
- align-items: center;
+ gap: 4rem;
+ align-items: flex-start;
  }
  
  .hero-left {
+ z-index: 2;
+ }
+ 
+ .hero-right {
  z-index: 2;
  }
  
@@ -153,19 +173,19 @@
  margin-bottom: 1rem;
  }
  
- .hero h1 {
+ .hero-right h1 {
  font-family: 'Bebas Neue', sans-serif;
- font-size: 64px;
- line-height: 1;
- margin-bottom: 1.5rem;
+ font-size: 52px;
+ line-height: 1.1;
+ margin-bottom: 2rem;
  letter-spacing: 0.02em;
  text-transform: uppercase;
  }
  
- .hero h1 .blue { color: var(--blue); }
+ .hero-right h1 .blue { color: var(--blue); }
  
  .hero-subtitle {
- font-size: 17px;
+ font-size: 15px;
  color: var(--muted);
  margin-bottom: 2rem;
  line-height: 1.7;
@@ -177,7 +197,7 @@
  border-radius: 10px;
  padding: 2rem;
  text-align: center;
- margin-bottom: 2.5rem;
+ margin-bottom: 0;
  }
  
  .video-placeholder-icon {
@@ -194,7 +214,7 @@
  .hero-buttons {
  display: flex;
  gap: 1rem;
- margin-bottom: 2rem;
+ margin-bottom: 1.5rem;
  }
  
  .btn {
@@ -887,17 +907,17 @@
 
 <!-- HERO -->
 <section class="hero">
+ <div style="text-align: center; margin-bottom: 3rem; max-width: 1200px; margin-left: auto; margin-right: auto;">
+ <a href="/" class="hero-logo">
+ <img src="/public/ninja-logo.jpg" alt="Enhanced Ops × Ninja" style="max-width: 400px; height: auto; margin-bottom: 1rem;">
+ </a>
+ <p class="hero-tagline">Cut Chaos. Get Results.<br><span class="blue">Like a Ninja.</span></p>
+ </div>
+ 
  <div class="hero-inner">
  <div class="hero-left">
  <p class="hero-label">AI AUTOMATION & CONSULTING</p>
- <h1>STOP DOING IT<br><span class="blue">THE HARD WAY</span></h1>
  <p class="hero-subtitle">Whether you run a medical practice or a growing business — we deploy AI automation that eliminates manual work, recovers lost revenue, and scales your operations without hiring more staff.</p>
- 
- <div class="video-placeholder">
- <div class="video-placeholder-icon">▶</div>
- <p>Watch: How Enhanced Ops Works (3 min)</p>
- <p style="font-size: 11px; margin-top: 8px; color: var(--muted-light);">[VSL VIDEO PLACEHOLDER — to be replaced]</p>
- </div>
  
  <div class="hero-buttons">
  <button class="btn btn-primary" onclick="openAssessment()">Get My Free Assessment →</button>
@@ -907,8 +927,14 @@
  <p class="hero-trust">🔒 HIPAA-compliant infrastructure | No obligation | Results in 24 hours</p>
  </div>
  
- <div class="hero-ninja">
- <img src="/public/ninja-character.jpg" alt="Enhanced Ops Ninja" style="width: 100%; height: auto; max-width: 350px;">
+ <div class="hero-right">
+ <h1>STOP DOING IT<br><span class="blue">THE HARD WAY</span></h1>
+ 
+ <div class="video-placeholder">
+ <div class="video-placeholder-icon">▶</div>
+ <p>Watch: How Enhanced Ops Works (3 min)</p>
+ <p style="font-size: 11px; margin-top: 8px; color: var(--muted-light);">[VSL VIDEO PLACEHOLDER — to be replaced]</p>
+ </div>
  </div>
  </div>
 </section>
