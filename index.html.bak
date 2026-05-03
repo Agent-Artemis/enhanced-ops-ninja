@@ -930,13 +930,12 @@
 </section>
 
 <!-- PROBLEMS -->
-<section class="problems" id="problems" style="position: relative;">
+<section class="problems" id="problems">
  <div class="section-header">
  <h2>THE PROBLEMS <span class="blue">WE SOLVE</span></h2>
  <p>Whether you're in healthcare or business, these pain points drain revenue and kill your team's morale</p>
  </div>
  
- <img src="/public/ninja-character.jpg" alt="Ninja watching" style="position: absolute; bottom: 2rem; right: 2rem; width: 100px; height: auto; opacity: 0.6;">
  <div class="problems-grid">
  <!-- HEALTHCARE -->
  <div class="problems-col">
@@ -1001,7 +1000,7 @@
  <div class="step">
  <div class="step-num">01</div>
  <div>
- <img src="/public/ninja-character.jpg" alt="Ninja leaping" style="width: 60px; height: auto; margin-bottom: 0.5rem;">
+ <div class="step-icon">🎯</div>
  <h3>WE ASSESS YOUR OPERATION</h3>
  <p>Take our free 60-second assessment. Tell us where your biggest pain points are. We personally review every submission — no bots, no auto-responses. Your results are customized to your industry.</p>
  </div>
@@ -1019,7 +1018,7 @@
  <div class="step">
  <div class="step-num">03</div>
  <div>
- <img src="/public/ninja-character.jpg" alt="Ninja pointing" style="width: 60px; height: auto; margin-bottom: 0.5rem;">
+ <div class="step-icon">⚙️</div>
  <h3>WE DEPLOY THE TOOLS</h3>
  <p>From HIPAA-compliant voice AI for healthcare to accounts receivable automation for business — we implement solutions that go live in days, not months. No IT team required.</p>
  </div>
@@ -1245,7 +1244,6 @@
 
 <!-- FINAL CTA -->
 <section class="final-cta">
- <img src="/public/ninja-character.jpg" alt="Ninja confident" style="width: 140px; height: auto; margin-bottom: 1.5rem; opacity: 0.85;">
  <h2>YOUR COMPETITION IS<br>ALREADY AUTOMATING.</h2>
  <p>Get your free assessment and find out exactly where you're losing time and money — before it costs you more.</p>
  <div class="final-cta-buttons">
