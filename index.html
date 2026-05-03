@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="description" content="Enhanced Ops Ninja — AI-powered operations assessment for healthcare and business. Cut chaos. Gain clarity.">
+ <title>Enhanced Ops Ninja — Cut Chaos. Gain Clarity.</title>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+ <style>
+ * { box-sizing: border-box; margin: 0; padding: 0; }
+
+ :root {
+ --blue: #1A6ECC;
+ --blue-dark: #0f4e99;
+ --black: #0e0e0e;
+ --off-black: #111111;
+ --white: #ffffff;
+ --gray: #888;
+ --light-gray: #f4f4f4;
+ --border: rgba(255,255,255,0.1);
+ }
+
+ html { scroll-behavior: smooth; }
+
+ body {
+ font-family: 'Inter', sans-serif;
+ background: var(--off-black);
+ color: var(--white);
+ line-height: 1.6;
+ }
+
+ .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+ /* HEADER */
+ header {
+ background: var(--off-black);
+ border-bottom: 1px solid rgba(255,255,255,0.08);
+ padding: 1.2rem 1.5rem;
+ position: sticky;
+ top: 0;
+ z-index: 100;
+ }
+
+ .header-inner {
+ max-width: 1200px;
+ margin: 0 auto;
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ }
+
+ .logo {
+ display: flex;
+ align-items: center;
+ gap: 10px;
+ font-family: 'Bebas Neue', sans-serif;
+ font-size: 20px;
+ letter-spacing: 0.08em;
+ text-decoration: none;
+ color: var(--white);
+ }
+
+ .logo-icon {
+ width: 32px;
+ height: 32px;
+ background: var(--blue);
+ border-radius: 6px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 16px;
+ }
+
+ .logo span { color: var(--blue); }
+
+ nav a {
+ color: rgba(255,255,255,0.6);
+ text-decoration: none;
+ font-size: 13px;
+ margin-left: 2rem;
+ transition: color 0.2s;
+ }
+
+ nav a:hover { color: var(--white); }
+
+ /* HERO */
+ .hero {
+ background: var(--off-black);
+ border-bottom: 1px solid rgba(26,110,204,0.2);
+ padding: 4rem 1.5rem 3rem;
+ position: relative;
+ overflow: hidden;
+ }
+
+ .hero::before {
+ content: '';
+ position: absolute;
+ top: -100px;
+ left: 50%;
+ transform: translateX(-50%);
+ width: 600px;
+ height: 600px;
+ background: radial-gradient(circle, rgba(26,110,204,0.15) 0%, transparent 70%);
+ pointer-events: none;
+ }
+
+ .hero-content {
+ position: relative;
+ z-index: 1;
+ text-align: center;
+ max-width: 700px;
+ margin: 0 auto;
+ }
+
+ .hero-mascot {
+ width: 120px;
+ height: 120px;
+ background: linear-gradient(135deg, #1A6ECC 0%, #0f4e99 100%);
+ border-radius: 50%;
+ margin: 0 auto 2rem;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 60px;
+ border: 3px solid rgba(26,110,204,0.5);
+ box-shadow: 0 0 40px rgba(26,110,204,0.2);
+ }
+
+ .hero h1 {
+ font-family: 'Bebas Neue', sans-serif;
+ font-size: 56px;
+ line-height: 1.1;
+ margin-bottom: 1rem;
+ letter-spacing: 0.03em;
+ }
+
+ .hero h1 span { color: var(--blue); }
+
+ .hero-subtitle {
+ font-size: 16px;
+ color: rgba(255,255,255,0.65);
+ margin-bottom: 2.5rem;
+ line-height: 1.7;
+ }
+
+ .hero-cta {
+ display: inline-block;
+ background: var(--blue);
+ color: white;
+ padding: 16px 40px;
+ border-radius: 8px;
+ text-decoration: none;
+ font-weight: 500;
+ transition: background 0.2s;
+ border: none;
+ cursor: pointer;
+ font-size: 15px;
+ }
+
+ .hero-cta:hover {
+ background: #1562b8;
+ }
+
+ /* PAIN SECTION */
+ .pain-section {
+ background: #0a0a0a;
+ padding: 4rem 1.5rem;
+ border-top: 1px solid rgba(26,110,204,0.15);
+ }
+
+ .section-header {
+ text-align: center;
+ margin-bottom: 3rem;
+ }
+
+ .section-header h2 {
+ font-family: 'Bebas Neue', sans-serif;
+ font-size: 42px;
+ letter-spacing: 0.04em;
+ margin-bottom: 0.5rem;
+ }
+
+ .section-header h2 span { color: var(--blue); }
+
+ .section-header p {
+ color: rgba(255,255,255,0.5);
+ font-size: 15px;
+ }
+
+ .pain-cols {
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 3rem;
+ max-width: 1000px;
+ margin: 0 auto;
+ }
+
+ .pain-col h3 {
+ font-family: 'Bebas Neue', sans-serif;
+ font-size: 24px;
+ letter-spacing: 0.04em;
+ margin-bottom: 1.5rem;
+ }
+
+ .pain-col h3 span { color: var(--blue); }
+
+ .pain-card {
+ background: #1a1a1a;
+ border: 1px solid rgba(255,255,255,0.08);
+ border-radius: 10px;
+ padding: 1.2rem;
+ margin-bottom: 1rem;
+ }
+
+ .pain-card-icon {
+ font-size: 24px;
+ margin-bottom: 8px;
+ }
+
+ .pain-card h4 {
+ font-size: 14px;
+ font-weight: 600;
+ margin-bottom: 4px;
+ }
+
+ .pain-card p {
+ font-size: 13px;
+ color: rgba(255,255,255,0.5);
+ }
+
+ @media (max-width: 768px) {
+ .pain-cols { grid-template-columns: 1fr; gap: 2rem; }
+ }
+
+ /* ASSESSMENT SECTION */
+ .assessment-section {
+ background: var(--off-black);
+ padding: 4rem 1.5rem;
+ border-top: 1px solid rgba(26,110,204,0.15);
+ }
+
+ .assessment-container {
+ max-width: 700px;
+ margin: 0 auto;
+ }
+
+ .quiz-q {
+ margin-bottom: 2rem;
+ }
+
+ .quiz-q label {
+ display: block;
+ font-size: 14px;
+ font-weight: 500;
+ margin-bottom: 1rem;
+ }
+
+ .quiz-options {
+ display: flex;
+ flex-direction: column;
+ gap: 10px;
+ }
+
+ .quiz-option {
+ display: flex;
+ align-items: center;
+ gap: 12px;
+ background: #1a1a1a;
+ border: 1px solid rgba(255,255,255,0.12);
+ border-radius: 8px;
+ padding: 12px 14px;
+ cursor: pointer;
+ transition: all 0.2s;
+ }
+
+ .quiz-option:hover {
+ border-color: rgba(26,110,204,0.4);
+ background: rgba(26,110,204,0.08);
+ }
+
+ .quiz-option input[type="radio"] {
+ cursor: pointer;
+ }
+
+ .quiz-option-label {
+ flex: 1;
+ font-size: 14px;
+ cursor: pointer;
+ }
+
+ .form-section {
+ background: #1a1a1a;
+ border: 1px solid rgba(26,110,204,0.3);
+ border-radius: 12px;
+ padding: 2rem;
+ margin-top: 2.5rem;
+ }
+
+ .form-section h3 {
+ font-family: 'Bebas Neue', sans-serif;
+ font-size: 26px;
+ letter-spacing: 0.04em;
+ margin-bottom: 0.5rem;
+ }
+
+ .form-section p {
+ color: rgba(255,255,255,0.5);
+ font-size: 13px;
+ margin-bottom: 1.5rem;
+ }
+
+ .form-field {
+ margin-bottom: 1.2rem;
+ }
+
+ .form-field label {
+ display: block;
+ font-size: 12px;
+ color: rgba(255,255,255,0.5);
+ margin-bottom: 6px;
+ text-transform: uppercase;
+ letter-spacing: 0.05em;
+ font-weight: 500;
+ }
+
+ .form-field input {
+ width: 100%;
+ background: #111;
+ border: 1px solid rgba(255,255,255,0.12);
+ border-radius: 8px;
+ color: white;
+ padding: 11px 14px;
+ font-size: 14px;
+ font-family: 'Inter', sans-serif;
+ transition: border-color 0.2s;
+ }
+
+ .form-field input:focus {
+ outline: none;
+ border-color: var(--blue);
+ box-shadow: 0 0 0 3px rgba(26,110,204,0.1);
+ }
+
+ .consent-check {
+ display: flex;
+ align-items: flex-start;
+ gap: 10px;
+ margin-bottom: 1.5rem;
+ cursor: pointer;
+ }
+
+ .consent-box {
+ width: 20px;
+ height: 20px;
+ border: 1.5px solid rgba(255,255,255,0.3);
+ border-radius: 4px;
+ flex-shrink: 0;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ transition: all 0.2s;
+ margin-top: 2px;
+ }
+
+ .consent-check input:checked ~ .consent-box {
+ background: var(--blue);
+ border-color: var(--blue);
+ }
+
+ .consent-check input {
+ display: none;
+ }
+
+ .consent-text {
+ font-size: 13px;
+ color: rgba(255,255,255,0.6);
+ line-height: 1.5;
+ }
+
+ .submit-btn {
+ width: 100%;
+ background: var(--blue);
+ color: white;
+ border: none;
+ border-radius: 8px;
+ padding: 14px;
+ font-size: 15px;
+ font-weight: 500;
+ font-family: 'Inter', sans-serif;
+ cursor: pointer;
+ transition: background 0.2s;
+ }
+
+ .submit-btn:hover {
+ background: #1562b8;
+ }
+
+ .submit-btn:disabled {
+ opacity: 0.5;
+ cursor: not-allowed;
+ }
+
+ /* HOW WE HELP */
+ .how-section {
+ background: #0a0a0a;
+ padding: 4rem 1.5rem;
+ border-top: 1px solid rgba(26,110,204,0.15);
+ }
+
+ .help-grid {
+ display: grid;
+ grid-template-columns: repeat(2, 1fr);
+ gap: 2rem;
+ max-width: 1000px;
+ margin: 0 auto;
+ }
+
+ .help-card {
+ background: #1a1a1a;
+ border: 1px solid rgba(255,255,255,0.08);
+ border-radius: 10px;
+ padding: 1.8rem;
+ }
+
+ .help-card-icon {
+ font-size: 32px;
+ margin-bottom: 12px;
+ }
+
+ .help-card h4 {
+ font-family: 'Bebas Neue', sans-serif;
+ font-size: 18px;
+ letter-spacing: 0.03em;
+ margin-bottom: 8px;
+ }
+
+ .help-card p {
+ font-size: 13px;
+ color: rgba(255,255,255,0.5);
+ line-height: 1.6;
+ }
+
+ @media (max-width: 768px) {
+ .help-grid { grid-template-columns: 1fr; }
+ }
+
+ /* BOOKING SECTION */
+ .booking-section {
+ background: var(--blue);
+ padding: 4rem 1.5rem;
+ text-align: center;
+ }
+
+ .booking-content {
+ max-width: 600px;
+ margin: 0 auto;
+ }
+
+ .booking-section h2 {
+ font-family: 'Bebas Neue', sans-serif;
+ font-size: 44px;
+ letter-spacing: 0.04em;
+ margin-bottom: 1rem;
+ }
+
+ .booking-section p {
+ font-size: 15px;
+ opacity: 0.9;
+ margin-bottom: 2rem;
+ line-height: 1.7;
+ }
+
+ .pricing-boxes {
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 1.5rem;
+ margin-bottom: 2rem;
+ }
+
+ .price-box {
+ background: rgba(255,255,255,0.1);
+ border: 1px solid rgba(255,255,255,0.2);
+ border-radius: 10px;
+ padding: 1.5rem;
+ }
+
+ .price-box h3 {
+ font-family: 'Bebas Neue', sans-serif;
+ font-size: 26px;
+ letter-spacing: 0.03em;
+ margin-bottom: 0.3rem;
+ }
+
+ .price-box .price {
+ font-family: 'Bebas Neue', sans-serif;
+ font-size: 36px;
+ letter-spacing: 0.02em;
+ margin-bottom: 0.5rem;
+ }
+
+ .price-box p {
+ font-size: 12px;
+ opacity: 0.8;
+ }
+
+ .booking-btn {
+ display: inline-block;
+ background: white;
+ color: var(--blue);
+ border: none;
+ padding: 15px 40px;
+ border-radius: 8px;
+ font-family: 'Inter', sans-serif;
+ font-size: 15px;
+ font-weight: 600;
+ cursor: pointer;
+ transition: opacity 0.2s;
+ }
+
+ .booking-btn:hover {
+ opacity: 0.9;
+ }
+
+ .booking-note {
+ font-size: 12px;
+ opacity: 0.7;
+ margin-top: 1.5rem;
+ }
+
+ @media (max-width: 768px) {
+ .pricing-boxes { grid-template-columns: 1fr; }
+ }
+
+ /* FOOTER */
+ footer {
+ background: #060606;
+ border-top: 1px solid rgba(255,255,255,0.06);
+ padding: 2.5rem 1.5rem;
+ }
+
+ .footer-content {
+ max-width: 1200px;
+ margin: 0 auto;
+ }
+
+ .footer-top {
+ display: grid;
+ grid-template-columns: auto 1fr;
+ gap: 3rem;
+ margin-bottom: 2rem;
+ }
+
+ .footer-brand {
+ display: flex;
+ align-items: center;
+ gap: 10px;
+ }
+
+ .footer-brand h3 {
+ font-family: 'Bebas Neue', sans-serif;
+ font-size: 18px;
+ letter-spacing: 0.08em;
+ color: rgba(255,255,255,0.6);
+ }
+
+ .footer-links {
+ display: flex;
+ gap: 2rem;
+ }
+
+ .footer-links a {
+ color: rgba(255,255,255,0.4);
+ text-decoration: none;
+ font-size: 13px;
+ transition: color 0.2s;
+ }
+
+ .footer-links a:hover {
+ color: var(--blue);
+ }
+
+ .footer-bottom {
+ border-top: 1px solid rgba(255,255,255,0.08);
+ padding-top: 1.5rem;
+ text-align: center;
+ }
+
+ .footer-bottom p {
+ font-size: 12px;
+ color: rgba(255,255,255,0.25);
+ line-height: 1.8;
+ }
+
+ .social-links {
+ display: flex;
+ justify-content: center;
+ gap: 1rem;
+ margin-bottom: 1rem;
+ }
+
+ .social-links a {
+ width: 32px;
+ height: 32px;
+ background: rgba(26,110,204,0.15);
+ border: 1px solid rgba(26,110,204,0.3);
+ border-radius: 6px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ color: var(--blue);
+ text-decoration: none;
+ font-size: 14px;
+ transition: all 0.2s;
+ }
+
+ .social-links a:hover {
+ background: var(--blue);
+ color: white;
+ }
+
+ .success-state {
+ display: none;
+ text-align: center;
+ padding: 3rem 1.5rem;
+ }
+
+ .success-state.show {
+ display: block;
+ }
+
+ .success-state h2 {
+ font-family: 'Bebas Neue', sans-serif;
+ font-size: 48px;
+ letter-spacing: 0.04em;
+ margin-bottom: 1rem;
+ }
+
+ .success-state p {
+ font-size: 15px;
+ color: rgba(255,255,255,0.7);
+ max-width: 500px;
+ margin: 0 auto 2rem;
+ line-height: 1.7;
+ }
+
+ .error-msg {
+ background: rgba(255, 59, 48, 0.1);
+ border: 1px solid rgba(255, 59, 48, 0.3);
+ color: #ff6b6b;
+ padding: 10px 12px;
+ border-radius: 6px;
+ font-size: 12px;
+ margin-bottom: 1rem;
+ display: none;
+ }
+
+ .error-msg.show { display: block; }
+ </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+ <div class="header-inner">
+ <a href="#" class="logo">
+ <div class="logo-icon">⚔</div>
+ <span>ENHANCED <span>OPS</span></span>
+ </a>
+ <nav>
+ <a href="#how">How it works</a>
+ <a href="#booking">Pricing</a>
+ </nav>
+ </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+ <div class="hero-content">
+ <div class="hero-mascot">🥷</div>
+ <h1>Cut Chaos.<br>Gain <span>Clarity</span>.<br><span>Like a Ninja.</span></h1>
+ <p class="hero-subtitle">Stop wrestling with manual operations. Get AI automation, strategic clarity, and proven results — backed by experts who know your business inside and out.</p>
+ <button class="hero-cta" onclick="document.getElementById('assessment-section').scrollIntoView({ behavior: 'smooth' })">Start free assessment</button>
+ </div>
+</section>
+
+<!-- PAIN SECTION -->
+<section class="pain-section">
+ <div class="section-header">
+ <h2>THE PROBLEMS <span>WE SOLVE</span></h2>
+ <p>Whether you're in healthcare or business, these pain points drain revenue and kill your team's morale</p>
+ </div>
+
+ <div class="pain-cols">
+ <!-- Healthcare -->
+ <div class="pain-col">
+ <h3>🏥 <span>HEALTHCARE</span></h3>
+ <div class="pain-card">
+ <div class="pain-card-icon">📋</div>
+ <h4>Drowning in paperwork</h4>
+ <p>Front desk buried in manual scheduling, intake, insurance verification — revenue lost while staff spends 4+ hours/day on data entry</p>
+ </div>
+ <div class="pain-card">
+ <div class="pain-card-icon">📞</div>
+ <h4>Missed calls & no-shows</h4>
+ <p>Patients can't reach you. They don't get reminders. Cancellations cost you 15%+ of potential revenue every month</p>
+ </div>
+ <div class="pain-card">
+ <div class="pain-card-icon">💰</div>
+ <h4>AR bleeding money</h4>
+ <p>Insurance claims sit for weeks. Patient balances never get followed up. You're leaving $50K–$200K on the table annually</p>
+ </div>
+ <div class="pain-card">
+ <div class="pain-card-icon">🔍</div>
+ <h4>Zero visibility into your practice</h4>
+ <p>You don't know which services are profitable, who your best patients are, or where to invest next</p>
+ </div>
+ </div>
+
+ <!-- Business -->
+ <div class="pain-col">
+ <h3>🏢 <span>BUSINESS</span></h3>
+ <div class="pain-card">
+ <div class="pain-card-icon">📋</div>
+ <h4>Drowning in repetitive work</h4>
+ <p>Your team spends 20+ hours per week on data entry, follow-ups, and manual workflows that could be automated</p>
+ </div>
+ <div class="pain-card">
+ <div class="pain-card-icon">📞</div>
+ <h4>Missed revenue opportunities</h4>
+ <p>Leads don't get contacted fast enough. Follow-ups fall through cracks. Renewals get missed. Customers churn preventably</p>
+ </div>
+ <div class="pain-card">
+ <div class="pain-card-icon">💰</div>
+ <h4>Cash flow problems</h4>
+ <p>Invoices never get followed up on. Customers aren't reminded. Collections are reactive, not proactive. Cash sits in AR</p>
+ </div>
+ <div class="pain-card">
+ <div class="pain-card-icon">🔍</div>
+ <h4>You're flying blind</h4>
+ <p>No real-time dashboard. You can't see revenue pipeline, customer health, or team productivity without pulling reports manually</p>
+ </div>
+ </div>
+ </div>
+</section>
+
+<!-- ASSESSMENT SECTION -->
+<section class="assessment-section" id="assessment-section">
+ <div class="section-header">
+ <h2>TAKE THE <span>QUIZ</span></h2>
+ <p>60 seconds. Zero fluff. See exactly where your biggest automation wins are hiding.</p>
+ </div>
+
+ <div class="assessment-container">
+ <form id="assessment-form" onsubmit="handleSubmit(event)">
+ <div class="quiz-q">
+ <label>What industry are you in?</label>
+ <div class="quiz-options">
+ <label class="quiz-option">
+ <input type="radio" name="industry" value="healthcare" required>
+ <span class="quiz-option-label">Healthcare (clinic, practice, provider)</span>
+ </label>
+ <label class="quiz-option">
+ <input type="radio" name="industry" value="business" required>
+ <span class="quiz-option-label">General business (SMB, SaaS, services)</span>
+ </label>
+ </div>
+ </div>
+
+ <div class="quiz-q">
+ <label>What's your biggest operational headache right now?</label>
+ <div class="quiz-options">
+ <label class="quiz-option">
+ <input type="radio" name="headache" value="manual" required>
+ <span class="quiz-option-label">Manual data entry & repetitive tasks</span>
+ </label>
+ <label class="quiz-option">
+ <input type="radio" name="headache" value="followup" required>
+ <span class="quiz-option-label">Missed follow-ups & lost revenue</span>
+ </label>
+ <label class="quiz-option">
+ <input type="radio" name="headache" value="visibility" required>
+ <span class="quiz-option-label">No visibility into what's actually happening</span>
+ </label>
+ <label class="quiz-option">
+ <input type="radio" name="headache" value="customer" required>
+ <span class="quiz-option-label">Customer/patient experience falling apart</span>
+ </label>
+ </div>
+ </div>
+
+ <div class="quiz-q">
+ <label>How many people are wasting time on work that could be automated?</label>
+ <div class="quiz-options">
+ <label class="quiz-option">
+ <input type="radio" name="team_size" value="1-3" required>
+ <span class="quiz-option-label">1–3 people</span>
+ </label>
+ <label class="quiz-option">
+ <input type="radio" name="team_size" value="4-10" required>
+ <span class="quiz-option-label">4–10 people</span>
+ </label>
+ <label class="quiz-option">
+ <input type="radio" name="team_size" value="10plus" required>
+ <span class="quiz-option-label">10+ people</span>
+ </label>
+ </div>
+ </div>
+
+ <!-- FORM -->
+ <div class="form-section">
+ <h3>Get your free assessment</h3>
+ <p>We'll analyze your operation and send a custom roadmap within 24 hours.</p>
+
+ <div class="error-msg" id="error-msg"></div>
+
+ <div class="form-field">
+ <label>Full name</label>
+ <input type="text" id="name" name="name" placeholder="Jane Smith" required>
+ </div>
+
+ <div class="form-field">
+ <label>Work email</label>
+ <input type="email" id="email" name="email" placeholder="jane@company.com" required>
+ </div>
+
+ <div class="form-field">
+ <label>Organization name</label>
+ <input type="text" id="org" name="org" placeholder="Smith Family Medicine" required>
+ </div>
+
+ <div class="form-field">
+ <label>Phone (optional)</label>
+ <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000">
+ </div>
+
+ <label class="consent-check">
+ <input type="checkbox" id="consent" name="consent">
+ <div class="consent-box"></div>
+ <span class="consent-text">I'd like Enhanced Ops to reach out about my assessment and schedule a strategy call</span>
+ </label>
+
+ <button type="submit" class="submit-btn" id="submit-btn">Get my free assessment →</button>
+ <p style="font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 12px; text-align: center;">No spam. No pressure. Your info stays private.</p>
+ </div>
+ </form>
+
+ <div class="success-state" id="success-state">
+ <div style="font-size: 64px; margin-bottom: 1rem;">⚔️</div>
+ <h2>YOU'RE IN THE SYSTEM</h2>
+ <p>Our team is reviewing your assessment right now. You'll get a custom automation roadmap within 24 hours — plus a link to book your strategy call below.</p>
+ <button class="hero-cta" onclick="document.getElementById('booking-section').scrollIntoView({ behavior: 'smooth' })">See pricing & book now →</button>
+ </div>
+</section>
+
+<!-- HOW WE HELP -->
+<section class="how-section" id="how">
+ <div class="section-header">
+ <h2>HOW THE <span>NINJA</span> WORKS</h2>
+ <p>We deploy four core capabilities — all backed by AI, all proven to cut overhead and unlock revenue</p>
+ </div>
+
+ <div class="help-grid">
+ <div class="help-card">
+ <div class="help-card-icon">📞</div>
+ <h4>AI Phone Agents</h4>
+ <p>HIPAA-compliant agentic voice handling patient intake, appointment reminders, insurance verification, and AR follow-ups 24/7. No more missed calls. No more manual dialers.</p>
+ </div>
+ <div class="help-card">
+ <div class="help-card-icon">⚙️</div>
+ <h4>Workflow Automation</h4>
+ <p>Kill the manual data entry. Forms, follow-ups, document routing, and integrations between your systems — all happening in the background while your team focuses on what matters.</p>
+ </div>
+ <div class="help-card">
+ <div class="help-card-icon">📊</div>
+ <h4>Real-Time Dashboards</h4>
+ <p>See your business at a glance. Revenue pipeline, patient/customer health, team productivity, AR aging, conversion rates — all live, all actionable, zero manual reporting.</p>
+ </div>
+ <div class="help-card">
+ <div class="help-card-icon">💰</div>
+ <h4>AR & Collections</h4>
+ <p>AI agents calling to collect on overdue balances, negotiate payment plans, and remind patients/customers of outstanding invoices. Turns your AR from a cash drain into a revenue engine.</p>
+ </div>
+ </div>
+</section>
+
+<!-- BOOKING SECTION -->
+<section class="booking-section" id="booking">
+ <div class="section-header">
+ <h2 style="color: white;">LOCK IN YOUR<br><span style="color: rgba(255,255,255,0.9);">ASSESSMENT</span></h2>
+ <p style="color: rgba(255,255,255,0.85);">Assessment validates exactly what you need. Then we build your roadmap together.</p>
+ </div>
+
+ <div class="booking-content">
+ <div class="pricing-boxes">
+ <div class="price-box">
+ <h3>Free Assessment</h3>
+ <div class="price">$0</div>
+ <p>Quiz + free custom analysis emailed within 24 hours</p>
+ </div>
+ <div class="price-box">
+ <h3>Full Roadmap</h3>
+ <div class="price">$250</div>
+ <p>Detailed implementation strategy + strategy call with founder<br>(Credited toward any contract)</p>
+ </div>
+ </div>
+
+ <button class="booking-btn" onclick="window.open('https://cal.com/jeff@enhancedops.ninja/30-minutes-with-jeff-oldroyd', '_blank')">Book my strategy call →</button>
+ <div class="booking-note">Available Mon–Fri, 9am–5pm MST. Questions? Reply to your assessment email.</div>
+ </section>
+
+<!-- FOOTER -->
+<footer>
+ <div class="footer-content">
+ <div class="footer-top">
+ <div class="footer-brand">
+ <div class="logo-icon" style="width: 28px; height: 28px; font-size: 14px;">⚔</div>
+ <h3>ENHANCED OPS × NINJA</h3>
+ </div>
+ <div class="footer-links">
+ <a href="#how">How it works</a>
+ <a href="#booking">Pricing</a>
+ <a href="#">Privacy Policy</a>
+ <a href="#">Terms of Service</a>
+ </div>
+ </div>
+
+ <div class="footer-bottom">
+ <div class="social-links">
+ <a href="https://x.com" target="_blank" title="X">𝕏</a>
+ <a href="https://linkedin.com" target="_blank" title="LinkedIn">in</a>
+ <a href="https://youtube.com" target="_blank" title="YouTube">▶</a>
+ <a href="https://instagram.com" target="_blank" title="Instagram">📷</a>
+ </div>
+ <p>© 2025 Enhanced Ops. All rights reserved.<br>
+ <a href="#" style="color: rgba(26,110,204,0.6);">Privacy Policy</a> · <a href="#" style="color: rgba(26,110,204,0.6);">Terms of Service</a><br>
+ <span style="font-size: 11px; display: block; margin-top: 8px;">Healthcare services delivered under HIPAA-compliant infrastructure. Your data is encrypted and never sold.</span></p>
+ </div>
+ </div>
+</footer>
+
+<script>
+const consentBox = document.getElementById('consent');
+const checkMark = document.querySelector('.consent-box');
+
+document.querySelector('.consent-check').addEventListener('click', (e) => {
+ if (e.target !== consentBox) {
+ consentBox.checked = !consentBox.checked;
+ checkMark.textContent = consentBox.checked ? '✓' : '';
+ }
+});
+
+consentBox.addEventListener('change', () => {
+ checkMark.textContent = consentBox.checked ? '✓' : '';
+});
+
+async function handleSubmit(event) {
+ event.preventDefault();
+
+ const form = document.getElementById('assessment-form');
+ const errorMsg = document.getElementById('error-msg');
+ const submitBtn = document.getElementById('submit-btn');
+
+ if (!form.checkValidity()) {
+ errorMsg.textContent = 'Please fill in all required fields.';
+ errorMsg.classList.add('show');
+ return;
+ }
+
+ // Collect form data
+ const formData = {
+ industry: document.querySelector('input[name="industry"]:checked').value,
+ headache: document.querySelector('input[name="headache"]:checked').value,
+ team_size: document.querySelector('input[name="team_size"]:checked').value,
+ name: document.getElementById('name').value.trim(),
+ email: document.getElementById('email').value.trim(),
+ org: document.getElementById('org').value.trim(),
+ phone: document.getElementById('phone').value.trim() || 'Not provided',
+ consent: consentBox.checked,
+ timestamp: new Date().toISOString(),
+ };
+
+ // Disable button and show loading state
+ submitBtn.disabled = true;
+ submitBtn.textContent = 'Submitting...';
+
+ try {
+ // Send to backend
+ const response = await fetch('/api/submissions', {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify(formData)
+ });
+
+ if (!response.ok) throw new Error('Submission failed');
+
+ const result = await response.json();
+
+ // Show success state
+ form.style.display = 'none';
+ document.getElementById('success-state').classList.add('show');
+
+ // Scroll to success
+ setTimeout(() => {
+ document.getElementById('success-state').scrollIntoView({ behavior: 'smooth', block: 'center' });
+ }, 100);
+ } catch (err) {
+ errorMsg.textContent = 'Submission failed. Please try again or contact us directly.';
+ errorMsg.classList.add('show');
+ submitBtn.disabled = false;
+ submitBtn.textContent = 'Get my free assessment →';
+ }
+}
+</script>
+
+</body>
+</html>
