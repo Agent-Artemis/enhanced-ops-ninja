@@ -152,7 +152,7 @@
  margin: 0 auto;
  display: grid;
  grid-template-columns: 1fr 1fr;
- gap: 4rem;
+ gap: 3rem;
  align-items: flex-start;
  }
  
@@ -175,20 +175,21 @@
  
  .hero-right h1 {
  font-family: 'Bebas Neue', sans-serif;
- font-size: 52px;
- line-height: 1.1;
+ font-size: 42px;
+ line-height: 1.2;
  margin-bottom: 2rem;
  letter-spacing: 0.02em;
  text-transform: uppercase;
+ white-space: nowrap;
  }
  
  .hero-right h1 .blue { color: var(--blue); }
  
  .hero-subtitle {
- font-size: 15px;
+ font-size: 14px;
  color: var(--muted);
- margin-bottom: 2rem;
- line-height: 1.7;
+ margin-bottom: 1.5rem;
+ line-height: 1.6;
  }
  
  .video-placeholder {
@@ -213,8 +214,9 @@
  
  .hero-buttons {
  display: flex;
- gap: 1rem;
- margin-bottom: 1.5rem;
+ gap: 0.75rem;
+ margin-bottom: 1rem;
+ flex-wrap: wrap;
  }
  
  .btn {
@@ -907,10 +909,7 @@
 
 <!-- HERO -->
 <section class="hero">
- <div style="text-align: center; margin-bottom: 3rem; max-width: 1200px; margin-left: auto; margin-right: auto;">
- <a href="/" class="hero-logo">
- <img src="/public/ninja-logo.jpg" alt="Enhanced Ops × Ninja" style="max-width: 400px; height: auto; margin-bottom: 1rem;">
- </a>
+ <div style="text-align: center; margin-bottom: 2.5rem; max-width: 1200px; margin-left: auto; margin-right: auto;">
  <p class="hero-tagline">Cut Chaos. Get Results.<br><span class="blue">Like a Ninja.</span></p>
  </div>
  
@@ -928,7 +927,7 @@
  </div>
  
  <div class="hero-right">
- <h1>STOP DOING IT<br><span class="blue">THE HARD WAY</span></h1>
+ <h1><span class="blue">STOP DOING IT THE HARD WAY</span></h1>
  
  <div class="video-placeholder">
  <div class="video-placeholder-icon">▶</div>
