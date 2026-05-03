@@ -165,23 +165,24 @@
  }
  
  .hero-label {
- font-size: 11px;
- color: var(--blue);
+ font-size: 18px;
+ color: var(--muted);
  text-transform: uppercase;
  letter-spacing: 0.15em;
  font-weight: 600;
- margin-bottom: 1rem;
+ margin-bottom: 1.5rem;
  }
  
  .hero-right h1 {
  font-family: 'Bebas Neue', sans-serif;
- font-size: 42px;
- line-height: 1.2;
+ font-size: 48px;
+ line-height: 1.15;
  margin-bottom: 2rem;
  letter-spacing: 0.02em;
  text-transform: uppercase;
- white-space: nowrap;
  }
+
+ .white { color: var(--white); }
  
  .hero-right h1 .blue { color: var(--blue); }
  
@@ -888,17 +889,28 @@
 </head>
 <body>
 
+<!-- NAV -->
+<header>
+ <div class="header-inner">
+ <a href="/" class="logo">
+ <span class="logo-icon">⚔</span>
+ <span>ENHANCED <span class="blue">OPS</span> × <span class="blue">NINJA</span></span>
+ </a>
+ <div class="nav-buttons">
+ <button class="nav-btn-outline" onclick="openAssessment()">Take Free Assessment</button>
+ <button class="nav-btn-fill" onclick="alert('[CALENDLY/CAL.COM LINK]')">Book Strategy Call</button>
+ </div>
+ </div>
+</header>
+
 
 
 <!-- HERO -->
 <section class="hero">
- <div style="text-align: center; margin-bottom: 2.5rem; max-width: 1200px; margin-left: auto; margin-right: auto;">
- <p class="hero-tagline">Cut Chaos. Get Results.<br><span class="blue">Like a Ninja.</span></p>
- </div>
- 
  <div class="hero-inner">
  <div class="hero-left">
- <p class="hero-label">AI AUTOMATION & CONSULTING</p>
+ <img src="/public/ninja-logo.jpg" alt="Enhanced Ops × Ninja" style="max-width: 280px; height: auto; margin-bottom: 2rem;">
+ <p class="hero-label">ENHANCED OPERATIONS AND ASSESSMENTS</p>
  <p class="hero-subtitle">Whether you run a medical practice or a growing business — we deploy AI automation that eliminates manual work, recovers lost revenue, and scales your operations without hiring more staff.</p>
  
  <div class="hero-buttons">
@@ -910,7 +922,8 @@
  </div>
  
  <div class="hero-right">
- <h1><span class="blue">STOP DOING IT THE HARD WAY</span></h1>
+ <p class="hero-tagline">Cut Chaos. Get Results.<br><span class="blue">Like a Ninja.</span></p>
+ <h1><span class="white">STOP DOING IT</span><br><span class="blue">DOING IT THE</span><br><span class="white">HARD WAY</span></h1>
  
  <div class="video-placeholder">
  <div class="video-placeholder-icon">▶</div>
