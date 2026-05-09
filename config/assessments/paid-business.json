@@ -1,0 +1,1143 @@
+{
+  "schemaVersion": 1,
+  "tier": "paid",
+  "track": "business",
+  "domains": [
+    {
+      "id": "customer_experience",
+      "name": "Customer experience & demand",
+      "weight": 1
+    },
+    {
+      "id": "revenue_cash",
+      "name": "Revenue, billing & cash conversion",
+      "weight": 1
+    },
+    {
+      "id": "operations_delivery",
+      "name": "Operations & service delivery",
+      "weight": 1
+    },
+    {
+      "id": "technology_data",
+      "name": "Technology, data & integrations",
+      "weight": 1
+    },
+    {
+      "id": "risk_governance",
+      "name": "Risk, governance & vendor management",
+      "weight": 1
+    },
+    {
+      "id": "workforce_process",
+      "name": "Workforce, process & change readiness",
+      "weight": 1
+    }
+  ],
+  "questions": [
+    {
+      "id": "gb_p_001",
+      "domainId": "customer_experience",
+      "prompt": "Rate your operational maturity for: Lead source attribution and funnel hygiene.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_002",
+      "domainId": "customer_experience",
+      "prompt": "Rate your operational maturity for: Speed-to-lead and after-hours coverage.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_003",
+      "domainId": "customer_experience",
+      "prompt": "Rate your operational maturity for: Customer journey mapping and moment-of-truth metrics.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_004",
+      "domainId": "customer_experience",
+      "prompt": "Rate your operational maturity for: Voice-of-customer program and closed-loop fixes.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_005",
+      "domainId": "customer_experience",
+      "prompt": "Rate your operational maturity for: CX QA for sales and support conversations.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_006",
+      "domainId": "customer_experience",
+      "prompt": "Rate your operational maturity for: Self-service deflection strategy and content governance.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_007",
+      "domainId": "customer_experience",
+      "prompt": "Rate your operational maturity for: Partner/channel conflict rules and deal registration hygiene.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_008",
+      "domainId": "customer_experience",
+      "prompt": "Rate your operational maturity for: NPS/CSAT tied to account-level action plans.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_009",
+      "domainId": "revenue_cash",
+      "prompt": "Rate your operational maturity for: Contract template governance and legal turnaround SLAs.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_010",
+      "domainId": "revenue_cash",
+      "prompt": "Rate your operational maturity for: Billing accuracy and usage metering where applicable.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_011",
+      "domainId": "revenue_cash",
+      "prompt": "Rate your operational maturity for: Sales commission alignment to cash collections.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_012",
+      "domainId": "revenue_cash",
+      "prompt": "Rate your operational maturity for: Sales tax/VAT determination and audit readiness.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_013",
+      "domainId": "revenue_cash",
+      "prompt": "Rate your operational maturity for: Revenue recognition policy adherence and evidence packs.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_014",
+      "domainId": "revenue_cash",
+      "prompt": "Rate your operational maturity for: A/R aging reviews and executive escalation thresholds.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_015",
+      "domainId": "revenue_cash",
+      "prompt": "Rate your operational maturity for: Payment failures and retry logic for subscriptions.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_016",
+      "domainId": "revenue_cash",
+      "prompt": "Rate your operational maturity for: Working capital reporting and 13-week cash views.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_017",
+      "domainId": "operations_delivery",
+      "prompt": "Rate your operational maturity for: SLA definitions by segment and enforcement.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_018",
+      "domainId": "operations_delivery",
+      "prompt": "Rate your operational maturity for: Backlog grooming tied to capacity planning.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_019",
+      "domainId": "operations_delivery",
+      "prompt": "Rate your operational maturity for: Incident management and postmortem quality.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_020",
+      "domainId": "operations_delivery",
+      "prompt": "Rate your operational maturity for: Change advisory for production releases.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_021",
+      "domainId": "operations_delivery",
+      "prompt": "Rate your operational maturity for: Inventory and COGS accuracy (if physical goods).",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_022",
+      "domainId": "operations_delivery",
+      "prompt": "Rate your operational maturity for: Warranty/returns processing and root-cause analytics.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_023",
+      "domainId": "operations_delivery",
+      "prompt": "Rate your operational maturity for: Field service dispatch optimization (if applicable).",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_024",
+      "domainId": "operations_delivery",
+      "prompt": "Rate your operational maturity for: OKR alignment from leadership to team execution.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_025",
+      "domainId": "technology_data",
+      "prompt": "Rate your operational maturity for: CRM as source-of-truth rules and dedupe governance.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_026",
+      "domainId": "technology_data",
+      "prompt": "Rate your operational maturity for: Integration catalog ownership and deprecation policy.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_027",
+      "domainId": "technology_data",
+      "prompt": "Rate your operational maturity for: Data retention and minimization for customer records.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_028",
+      "domainId": "technology_data",
+      "prompt": "Rate your operational maturity for: Secrets management and key rotation practices.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_029",
+      "domainId": "technology_data",
+      "prompt": "Rate your operational maturity for: Observability (logs/metrics/traces) for critical services.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_030",
+      "domainId": "technology_data",
+      "prompt": "Rate your operational maturity for: Access reviews for SaaS admin roles.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_031",
+      "domainId": "technology_data",
+      "prompt": "Rate your operational maturity for: MDM/device compliance for distributed teams.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_032",
+      "domainId": "technology_data",
+      "prompt": "Rate your operational maturity for: BI semantic layer and metric ownership.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_033",
+      "domainId": "risk_governance",
+      "prompt": "Rate your operational maturity for: Policy lifecycle management and annual attestation.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_034",
+      "domainId": "risk_governance",
+      "prompt": "Rate your operational maturity for: Third-party risk assessments by criticality tier.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_035",
+      "domainId": "risk_governance",
+      "prompt": "Rate your operational maturity for: Insurance coverage reviews and claims readiness.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_036",
+      "domainId": "risk_governance",
+      "prompt": "Rate your operational maturity for: Regulatory change management process.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_037",
+      "domainId": "risk_governance",
+      "prompt": "Rate your operational maturity for: Ethics and whistleblower intake handling.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_038",
+      "domainId": "risk_governance",
+      "prompt": "Rate your operational maturity for: Board reporting quality for operational risk.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_039",
+      "domainId": "risk_governance",
+      "prompt": "Rate your operational maturity for: Business continuity tabletop exercises.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_040",
+      "domainId": "risk_governance",
+      "prompt": "Rate your operational maturity for: Records management and legal hold procedures.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_041",
+      "domainId": "workforce_process",
+      "prompt": "Rate your operational maturity for: Role clarity (RACI) for cross-functional workflows.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_042",
+      "domainId": "workforce_process",
+      "prompt": "Rate your operational maturity for: Hiring funnel metrics and interviewer calibration.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_043",
+      "domainId": "workforce_process",
+      "prompt": "Rate your operational maturity for: Onboarding checklists with system access SLAs.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_044",
+      "domainId": "workforce_process",
+      "prompt": "Rate your operational maturity for: Performance improvement plans and documentation rigor.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_045",
+      "domainId": "workforce_process",
+      "prompt": "Rate your operational maturity for: Knowledge base freshness and ownership.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_046",
+      "domainId": "workforce_process",
+      "prompt": "Rate your operational maturity for: Internal comms cadence during operational incidents.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_047",
+      "domainId": "workforce_process",
+      "prompt": "Rate your operational maturity for: Skills matrices for critical teams.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_p_048",
+      "domainId": "workforce_process",
+      "prompt": "Rate your operational maturity for: Succession depth for key leaders.",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    }
+  ]
+}

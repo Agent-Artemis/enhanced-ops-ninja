@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme {
+  --color-eon-blue: #1a6ecc;
+  --color-eon-black: #111111;
+  --color-eon-off-black: #0a0a0a;
+  --color-eon-card: #1a1a1a;
+  --color-eon-dark: #1d1d1d;
+  --color-eon-white: #ffffff;
+  --color-eon-muted: rgb(255 255 255 / 0.55);
+  --color-eon-muted-light: rgb(255 255 255 / 0.4);
+  --color-eon-border: rgb(26 110 204 / 0.3);
+  --font-bebas: var(--font-bebas-neue), system-ui, sans-serif;
+  --font-dm: var(--font-dm-sans), system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-dm);
+  background: var(--color-eon-black);
+  color: var(--color-eon-white);
+}

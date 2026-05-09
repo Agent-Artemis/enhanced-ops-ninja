@@ -1,0 +1,384 @@
+{
+  "schemaVersion": 1,
+  "tier": "free",
+  "track": "healthcare",
+  "domains": [
+    {
+      "id": "patient_access",
+      "name": "Patient experience & access",
+      "weight": 1
+    },
+    {
+      "id": "revenue_cycle",
+      "name": "Revenue cycle & financial operations",
+      "weight": 1
+    },
+    {
+      "id": "clinical_ops",
+      "name": "Clinical & care delivery operations",
+      "weight": 1
+    },
+    {
+      "id": "technology_data",
+      "name": "Technology, data & interoperability",
+      "weight": 1
+    },
+    {
+      "id": "compliance_risk",
+      "name": "Compliance, privacy & risk",
+      "weight": 1
+    },
+    {
+      "id": "workforce_ops",
+      "name": "Workforce, scheduling & workflow",
+      "weight": 1
+    }
+  ],
+  "questions": [
+    {
+      "id": "hc_f_01",
+      "domainId": "patient_access",
+      "prompt": "How mature are your patient scheduling, reminders, and same-day access workflows (including no-show mitigation)?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — scheduling and access: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — scheduling and access: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — scheduling and access: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — scheduling and access: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "hc_f_02",
+      "domainId": "patient_access",
+      "prompt": "How strong are your intake, eligibility, and pre-visit information capture processes before the clinician sees the patient?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — intake and information capture: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — intake and information capture: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — intake and information capture: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — intake and information capture: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "hc_f_03",
+      "domainId": "revenue_cycle",
+      "prompt": "How disciplined is your claims submission, denial management, and root-cause remediation cycle?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — claims and denials: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — claims and denials: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — claims and denials: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — claims and denials: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "hc_f_04",
+      "domainId": "revenue_cycle",
+      "prompt": "How effective are patient responsibility estimates, payment plans, and proactive balance follow-up?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — patient collections: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — patient collections: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — patient collections: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — patient collections: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "hc_f_05",
+      "domainId": "clinical_ops",
+      "prompt": "How standardized are clinical pathways, order sets, and documentation expectations across providers?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — care pathways: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — care pathways: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — care pathways: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — care pathways: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "hc_f_06",
+      "domainId": "clinical_ops",
+      "prompt": "How reliably do referrals, care transitions, and closed-loop communications execute without manual chasing?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — care coordination: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — care coordination: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — care coordination: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — care coordination: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "hc_f_07",
+      "domainId": "technology_data",
+      "prompt": "How trustworthy is your core clinical/billing data (duplicates, interfaces, and source-of-truth discipline)?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — systems and data quality: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — systems and data quality: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — systems and data quality: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — systems and data quality: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "hc_f_08",
+      "domainId": "technology_data",
+      "prompt": "How automated are high-volume workflows between EHR, PM, labs, imaging, and patient communications?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — automation and integrations: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — automation and integrations: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — automation and integrations: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — automation and integrations: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "hc_f_09",
+      "domainId": "compliance_risk",
+      "prompt": "How mature are HIPAA safeguards, access controls, audit readiness, and workforce security training?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — HIPAA and security: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — HIPAA and security: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — HIPAA and security: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — HIPAA and security: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "hc_f_10",
+      "domainId": "compliance_risk",
+      "prompt": "How current are policies/procedures, BAAs, incident response drills, and privacy monitoring?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — policy and monitoring: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — policy and monitoring: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — policy and monitoring: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — policy and monitoring: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "hc_f_11",
+      "domainId": "workforce_ops",
+      "prompt": "How predictable are staffing, coverage, and float plans relative to demand and acuity?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — staffing and coverage: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — staffing and coverage: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — staffing and coverage: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — staffing and coverage: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "hc_f_12",
+      "domainId": "workforce_ops",
+      "prompt": "How strong are role-based training, competency checks, and productivity metrics for front/back office teams?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — training and productivity: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — training and productivity: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — training and productivity: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — training and productivity: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "hc_f_13",
+      "domainId": "revenue_cycle",
+      "prompt": "How tight are AR aging workflows, payer follow-ups, and cash posting timeliness?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — AR and cash acceleration: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — AR and cash acceleration: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — AR and cash acceleration: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — AR and cash acceleration: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "hc_f_14",
+      "domainId": "patient_access",
+      "prompt": "How consistent are outbound patient communications (appointments, instructions, surveys) across channels?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — communication and engagement: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — communication and engagement: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — communication and engagement: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — communication and engagement: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "hc_f_15",
+      "domainId": "technology_data",
+      "prompt": "How actionable are operational dashboards for leaders (access, revenue, quality, risk) without manual spreadsheet work?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — reporting and visibility: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — reporting and visibility: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — reporting and visibility: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — reporting and visibility: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    }
+  ]
+}

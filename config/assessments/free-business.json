@@ -1,0 +1,384 @@
+{
+  "schemaVersion": 1,
+  "tier": "free",
+  "track": "business",
+  "domains": [
+    {
+      "id": "customer_experience",
+      "name": "Customer experience & demand",
+      "weight": 1
+    },
+    {
+      "id": "revenue_cash",
+      "name": "Revenue, billing & cash conversion",
+      "weight": 1
+    },
+    {
+      "id": "operations_delivery",
+      "name": "Operations & service delivery",
+      "weight": 1
+    },
+    {
+      "id": "technology_data",
+      "name": "Technology, data & integrations",
+      "weight": 1
+    },
+    {
+      "id": "risk_governance",
+      "name": "Risk, governance & vendor management",
+      "weight": 1
+    },
+    {
+      "id": "workforce_process",
+      "name": "Workforce, process & change readiness",
+      "weight": 1
+    }
+  ],
+  "questions": [
+    {
+      "id": "gb_f_01",
+      "domainId": "customer_experience",
+      "prompt": "How fast and consistent is lead capture, qualification, and routing to the right owner?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — lead response and routing: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — lead response and routing: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — lead response and routing: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — lead response and routing: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_f_02",
+      "domainId": "customer_experience",
+      "prompt": "How standardized are onboarding, success checkpoints, and renewal/expansion motions?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — onboarding and retention: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — onboarding and retention: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — onboarding and retention: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — onboarding and retention: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_f_03",
+      "domainId": "revenue_cash",
+      "prompt": "How reliable is quote-to-cash (pricing approvals, contracts, invoicing, and revenue recognition handoffs)?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — quote-to-cash: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — quote-to-cash: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — quote-to-cash: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — quote-to-cash: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_f_04",
+      "domainId": "revenue_cash",
+      "prompt": "How proactive are collections, dunning, and dispute resolution before cash stalls?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — collections: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — collections: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — collections: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — collections: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_f_05",
+      "domainId": "operations_delivery",
+      "prompt": "How predictable is service delivery against SLAs, capacity plans, and backlog management?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — delivery and SLAs: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — delivery and SLAs: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — delivery and SLAs: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — delivery and SLAs: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_f_06",
+      "domainId": "operations_delivery",
+      "prompt": "How resilient are procurement, vendor performance management, and fulfillment exception handling?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — supplier and fulfillment: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — supplier and fulfillment: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — supplier and fulfillment: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — supplier and fulfillment: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_f_07",
+      "domainId": "technology_data",
+      "prompt": "How trustworthy is operational/customer data across CRM, billing, and product systems?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — data quality: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — data quality: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — data quality: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — data quality: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_f_08",
+      "domainId": "technology_data",
+      "prompt": "How automated are cross-system workflows (billing, support, marketing, finance) versus manual swivel-chair work?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — integrations and automation: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — integrations and automation: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — integrations and automation: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — integrations and automation: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_f_09",
+      "domainId": "risk_governance",
+      "prompt": "How mature are internal controls, access reviews, and audit evidence collection?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — controls and audits: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — controls and audits: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — controls and audits: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — controls and audits: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_f_10",
+      "domainId": "risk_governance",
+      "prompt": "How prepared are you for security incidents, backups, DR testing, and vendor concentration risk?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — security and resilience: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — security and resilience: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — security and resilience: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — security and resilience: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_f_11",
+      "domainId": "workforce_process",
+      "prompt": "How current are SOPs, playbooks, and decision rights for critical operational processes?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — process documentation: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — process documentation: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — process documentation: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — process documentation: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_f_12",
+      "domainId": "workforce_process",
+      "prompt": "How effective is training, change management, and adoption measurement when new tools or processes launch?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — change and training: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — change and training: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — change and training: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — change and training: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_f_13",
+      "domainId": "customer_experience",
+      "prompt": "How disciplined are support tiers, QA sampling, and feedback loops into product/ops improvements?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — support and quality: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — support and quality: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — support and quality: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — support and quality: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_f_14",
+      "domainId": "revenue_cash",
+      "prompt": "How credible is forecasting (pipeline hygiene, forecast governance, and variance reviews)?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — forecasting: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — forecasting: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — forecasting: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — forecasting: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    },
+    {
+      "id": "gb_f_15",
+      "domainId": "operations_delivery",
+      "prompt": "How institutionalized are retrospectives, KPI reviews, and improvement backlogs tied to owners and dates?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Strong — continuous improvement: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
+        },
+        {
+          "key": "B",
+          "label": "Capable — continuous improvement: works most of the time; gaps are known but not always prioritized."
+        },
+        {
+          "key": "C",
+          "label": "Emerging — continuous improvement: inconsistent execution; limited measurement; frequent rework."
+        },
+        {
+          "key": "D",
+          "label": "At risk — continuous improvement: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
+        }
+      ]
+    }
+  ]
+}
