@@ -451,13 +451,16 @@ export function AssessmentWizard() {
         </div>
 
         <div className="mt-10 rounded-xl border border-[rgb(26_110_204/0.25)] bg-eon-card p-6 md:p-8">
-          <p className="text-sm leading-relaxed text-[rgb(255_255_255/0.85)] md:text-base">
+          <p className="text-sm leading-relaxed text-white md:text-base">
             Your free report identified gaps across {results.domainScores.length} domains. The
             In-Depth Assessment goes 6x deeper — covering your financials, billing, labor costs,
-            automation readiness, and team structure.{" "}
-            <span className="text-[rgb(255_255_255/0.45)] line-through">$2,500</span>{" "}
-            <span className="font-semibold text-eon-blue">$1,500</span>. Includes a full RevScan AI
-            digital presence analysis.
+            automation readiness, and team structure.
+          </p>
+          <p className="mt-4 text-sm leading-relaxed text-white md:text-base">
+            A $2,500 value, discounted to <span className="text-eon-blue">$1,500</span> — all payments
+            will go towards project implementation. The Deep-Dive Assessment will also include a
+            market specific assessment to help increase patient/client flow. Let&apos;s make your
+            business run the best it&apos;s ever run.
           </p>
         </div>
 
