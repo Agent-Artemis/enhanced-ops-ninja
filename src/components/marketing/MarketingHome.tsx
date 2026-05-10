@@ -1,8 +1,5 @@
 "use client";
 
-import { useCallback, useState } from "react";
-
-import { AssessmentModal } from "@/components/marketing/AssessmentModal";
 import { MarketingAssessmentCards } from "@/components/marketing/MarketingAssessmentCards";
 import { MarketingFaq } from "@/components/marketing/MarketingFaq";
 import { MarketingFinalCta } from "@/components/marketing/MarketingFinalCta";
@@ -23,29 +20,20 @@ function placeholderStripe() {
 }
 
 export function MarketingHome() {
-  const [assessmentOpen, setAssessmentOpen] = useState(false);
-
-  const openAssessment = useCallback(() => setAssessmentOpen(true), []);
-  const closeAssessment = useCallback(() => setAssessmentOpen(false), []);
-
   return (
     <>
-      <MarketingHeader onOpenAssessment={openAssessment} onBookCall={placeholderCalendly} />
+      <MarketingHeader onBookCall={placeholderCalendly} />
       <main>
-        <MarketingHero onOpenAssessment={openAssessment} onBookCall={placeholderCalendly} />
+        <MarketingHero onBookCall={placeholderCalendly} />
         <MarketingStats />
         <MarketingProblems />
         <MarketingWorks />
         <MarketingServices />
-        <MarketingAssessmentCards
-          onOpenAssessment={openAssessment}
-          onBookDeepDive={placeholderStripe}
-        />
+        <MarketingAssessmentCards onBookDeepDive={placeholderStripe} />
         <MarketingFaq />
-        <MarketingFinalCta onOpenAssessment={openAssessment} onBookCall={placeholderCalendly} />
+        <MarketingFinalCta onBookCall={placeholderCalendly} />
       </main>
       <MarketingFooter />
-      <AssessmentModal open={assessmentOpen} onClose={closeAssessment} />
     </>
   );
 }

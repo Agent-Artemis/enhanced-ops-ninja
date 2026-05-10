@@ -1,9 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
 
-export function MarketingFinalCta(props: {
-  onOpenAssessment: () => void;
-  onBookCall: () => void;
-}) {
+export function MarketingFinalCta(props: { onBookCall: () => void }) {
   return (
     <section className="bg-eon-blue px-6 py-16 text-center">
       <Image
@@ -23,13 +21,12 @@ export function MarketingFinalCta(props: {
         before it costs you more.
       </p>
       <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
-        <button
-          type="button"
-          className="cursor-pointer rounded-lg border-none bg-white px-7 py-3.5 text-[15px] font-medium text-eon-blue transition hover:opacity-90"
-          onClick={props.onOpenAssessment}
+        <Link
+          href="/assessment"
+          className="inline-flex cursor-pointer items-center justify-center rounded-lg border-none bg-white px-7 py-3.5 text-[15px] font-medium text-eon-blue no-underline transition hover:opacity-90"
         >
           Get My Free Assessment →
-        </button>
+        </Link>
         <button
           type="button"
           className="cursor-pointer rounded-lg border border-white bg-transparent px-7 py-3.5 text-[15px] font-medium text-white transition hover:bg-[rgb(255_255_255/0.1)]"

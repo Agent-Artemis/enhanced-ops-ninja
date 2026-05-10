@@ -1,7 +1,6 @@
-export function MarketingHero(props: {
-  onOpenAssessment: () => void;
-  onBookCall: () => void;
-}) {
+import Link from "next/link";
+
+export function MarketingHero(props: { onBookCall: () => void }) {
   return (
     <section className="border-b border-[rgb(26_110_204/0.3)] bg-eon-black px-6 pb-12 pt-8">
       <div className="mx-auto grid max-w-[1200px] items-start gap-12 md:grid-cols-2">
@@ -15,13 +14,12 @@ export function MarketingHero(props: {
             more staff.
           </p>
           <div className="mb-4 flex flex-wrap gap-3">
-            <button
-              type="button"
-              className="cursor-pointer rounded-lg border-none bg-eon-blue px-7 py-3.5 text-[15px] font-medium text-white transition hover:bg-[#1562b8]"
-              onClick={props.onOpenAssessment}
+            <Link
+              href="/assessment"
+              className="inline-flex cursor-pointer items-center justify-center rounded-lg border-none bg-eon-blue px-7 py-3.5 text-[15px] font-medium text-white no-underline transition hover:bg-[#1562b8]"
             >
               Get My Free Assessment →
-            </button>
+            </Link>
             <button
               type="button"
               className="cursor-pointer rounded-lg border border-eon-blue bg-transparent px-7 py-3.5 text-[15px] font-medium text-eon-blue transition hover:bg-[rgb(26_110_204/0.1)]"
@@ -57,13 +55,12 @@ export function MarketingHero(props: {
         </div>
       </div>
       <div className="mx-auto mt-10 flex max-w-[1200px] justify-center md:hidden">
-        <button
-          type="button"
-          className="cursor-pointer rounded-md border border-eon-blue bg-transparent px-5 py-2.5 text-[13px] font-medium text-eon-blue"
-          onClick={props.onOpenAssessment}
+        <Link
+          href="/assessment"
+          className="inline-flex cursor-pointer items-center justify-center rounded-md border border-eon-blue bg-transparent px-5 py-2.5 text-[13px] font-medium text-eon-blue no-underline"
         >
           Take Free Assessment
-        </button>
+        </Link>
       </div>
     </section>
   );

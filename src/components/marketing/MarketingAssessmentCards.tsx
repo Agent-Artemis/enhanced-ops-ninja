@@ -1,7 +1,6 @@
-export function MarketingAssessmentCards(props: {
-  onOpenAssessment: () => void;
-  onBookDeepDive: () => void;
-}) {
+import Link from "next/link";
+
+export function MarketingAssessmentCards(props: { onBookDeepDive: () => void }) {
   return (
     <section className="bg-eon-off-black px-6 py-16" id="assessment">
       <div className="mx-auto mb-12 max-w-[1000px] text-center">
@@ -42,13 +41,12 @@ export function MarketingAssessmentCards(props: {
               No credit card. No commitment.
             </li>
           </ul>
-          <button
-            type="button"
-            className="mt-auto w-full cursor-pointer rounded-lg border-none bg-eon-blue px-7 py-3.5 text-center text-[15px] font-medium text-white transition hover:bg-[#1562b8]"
-            onClick={props.onOpenAssessment}
+          <Link
+            href="/assessment"
+            className="mt-auto flex w-full cursor-pointer items-center justify-center rounded-lg border-none bg-eon-blue px-7 py-3.5 text-center text-[15px] font-medium text-white no-underline transition hover:bg-[#1562b8]"
           >
             Take the Free Assessment →
-          </button>
+          </Link>
         </div>
 
         <div className="flex flex-col rounded-xl border border-[rgb(26_110_204/0.3)] bg-eon-card p-8">
