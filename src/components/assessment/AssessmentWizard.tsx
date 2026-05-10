@@ -82,6 +82,7 @@ export function AssessmentWizard() {
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [results, setResults] = useState<ResultsPayload | null>(null);
+  const [pdfComingSoonVisible, setPdfComingSoonVisible] = useState(false);
 
   const hydrate = useCallback(async () => {
     setPhase("loading");
@@ -445,24 +446,47 @@ export function AssessmentWizard() {
           ))}
         </div>
 
-        <div className="mt-10 flex flex-wrap gap-4">
+        <div className="mt-10 rounded-xl border border-[rgb(26_110_204/0.25)] bg-eon-card p-6 md:p-8">
+          <p className="text-sm leading-relaxed text-[rgb(255_255_255/0.85)] md:text-base">
+            Your free report identified gaps across {results.domainScores.length} domains. The
+            In-Depth Assessment goes 6x deeper — covering your financials, billing, labor costs,
+            automation readiness, and team structure. $2,500. Includes a full RevScan AI digital
+            presence analysis.
+          </p>
+        </div>
+
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
           <Link
             href="/"
-            className="rounded-lg bg-eon-blue px-6 py-3 text-sm font-semibold text-white hover:bg-[#1562b8]"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-eon-blue px-6 py-3 text-center text-sm font-semibold text-white hover:bg-[#1562b8] sm:flex-1 sm:min-w-[min(100%,12rem)]"
           >
             Return to Enhanced Ops
           </Link>
           <button
             type="button"
-            className="rounded-lg border border-[rgb(255_255_255/0.15)] px-6 py-3 text-sm text-white hover:bg-white/5"
-            onClick={async () => {
-              await fetch("/api/assessment/session", { method: "DELETE" });
-              window.location.assign("/assessment");
+            className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-[rgb(255_255_255/0.15)] px-6 py-3 text-center text-sm font-medium text-white hover:bg-white/5 sm:flex-1 sm:min-w-[min(100%,12rem)]"
+            onClick={() => {
+              setPdfComingSoonVisible(true);
+              window.setTimeout(() => setPdfComingSoonVisible(false), 4000);
             }}
           >
-            Start a new assessment
+            Download PDF
           </button>
+          <Link
+            href="/assessment/deep-dive"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-eon-blue bg-[rgb(26_110_204/0.12)] px-6 py-3 text-center text-sm font-semibold text-white hover:bg-[rgb(26_110_204/0.2)] sm:flex-1 sm:min-w-[min(100%,12rem)]"
+          >
+            Go to Deep-Dive Assessment
+          </Link>
         </div>
+        {pdfComingSoonVisible ? (
+          <p
+            className="mt-4 rounded-lg border border-[rgb(255_255_255/0.12)] bg-[rgb(26_110_204/0.12)] px-4 py-3 text-center text-sm text-white"
+            role="status"
+          >
+            PDF download is coming soon.
+          </p>
+        ) : null}
       </div>
     );
   }
