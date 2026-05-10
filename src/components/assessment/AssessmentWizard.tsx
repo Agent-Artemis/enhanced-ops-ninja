@@ -44,6 +44,10 @@ function barClassForScore(score: number) {
   return "bg-red-400";
 }
 
+/** Primary actions on the assessment results screen (full width mobile, equal columns sm+). */
+const RESULTS_PRIMARY_CTA_CLASS =
+  "inline-flex w-full min-h-[44px] items-center justify-center rounded-lg bg-eon-blue px-6 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#1562b8] sm:flex-1 sm:basis-0";
+
 function bandStyles(band: ResultsPayload["band"]) {
   switch (band) {
     case "green":
@@ -450,21 +454,20 @@ export function AssessmentWizard() {
           <p className="text-sm leading-relaxed text-[rgb(255_255_255/0.85)] md:text-base">
             Your free report identified gaps across {results.domainScores.length} domains. The
             In-Depth Assessment goes 6x deeper — covering your financials, billing, labor costs,
-            automation readiness, and team structure. $2,500. Includes a full RevScan AI digital
-            presence analysis.
+            automation readiness, and team structure.{" "}
+            <span className="text-[rgb(255_255_255/0.45)] line-through">$2,500</span>{" "}
+            <span className="font-semibold text-eon-blue">$1,500</span>. Includes a full RevScan AI
+            digital presence analysis.
           </p>
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-          <Link
-            href="/"
-            className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-eon-blue px-6 py-3 text-center text-sm font-semibold text-white hover:bg-[#1562b8] sm:flex-1 sm:min-w-[min(100%,12rem)]"
-          >
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-4">
+          <Link href="/" className={RESULTS_PRIMARY_CTA_CLASS}>
             Return to Enhanced Ops
           </Link>
           <button
             type="button"
-            className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-[rgb(255_255_255/0.15)] px-6 py-3 text-center text-sm font-medium text-white hover:bg-white/5 sm:flex-1 sm:min-w-[min(100%,12rem)]"
+            className={RESULTS_PRIMARY_CTA_CLASS}
             onClick={() => {
               setPdfComingSoonVisible(true);
               window.setTimeout(() => setPdfComingSoonVisible(false), 4000);
@@ -472,10 +475,7 @@ export function AssessmentWizard() {
           >
             Download PDF
           </button>
-          <Link
-            href="/assessment/deep-dive"
-            className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-eon-blue bg-[rgb(26_110_204/0.12)] px-6 py-3 text-center text-sm font-semibold text-white hover:bg-[rgb(26_110_204/0.2)] sm:flex-1 sm:min-w-[min(100%,12rem)]"
-          >
+          <Link href="/assessment/deep-dive" className={RESULTS_PRIMARY_CTA_CLASS}>
             Go to Deep-Dive Assessment
           </Link>
         </div>

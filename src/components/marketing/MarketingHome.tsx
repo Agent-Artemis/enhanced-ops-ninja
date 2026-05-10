@@ -16,7 +16,9 @@ function placeholderCalendly() {
 }
 
 function placeholderStripe() {
-  window.alert("Stripe Checkout for the $2,500 in-depth assessment will open from this button.");
+  window.alert(
+    "Stripe Checkout for the in-depth assessment ($1,500 promotional pricing; list $2,500) will open from this button.",
+  );
 }
 
 export function MarketingHome() {

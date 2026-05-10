@@ -56,8 +56,9 @@ export function MarketingAssessmentCards(props: { onBookDeepDive: () => void }) 
           <h3 className="mb-2 font-[family-name:var(--font-bebas)] text-2xl uppercase tracking-[0.03em]">
             In-Depth Operational Assessment
           </h3>
-          <div className="mb-2 font-[family-name:var(--font-bebas)] text-[42px] leading-none text-eon-blue">
-            $2,500
+          <div className="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-1 font-[family-name:var(--font-bebas)] text-[42px] leading-none">
+            <span className="text-[rgb(255_255_255/0.45)] line-through">$2,500</span>
+            <span className="text-eon-blue">$1,500</span>
           </div>
           <p className="mb-6 text-[13px] leading-relaxed text-[rgb(255_255_255/0.55)]">
             A comprehensive 48-question operational assessment gated behind Stripe checkout. You get
