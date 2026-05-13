@@ -58,6 +58,9 @@ export function MarketingAssessmentCards(props: { onBookDeepDive: () => void }) 
           </h3>
           <div className="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-1 font-[family-name:var(--font-bebas)] text-[42px] leading-none">
             <span className="text-[rgb(255_255_255/0.45)] line-through">$2,500</span>
+            <span className="font-sans text-base font-normal normal-case text-[rgb(255_255_255/0.55)]">
+              value
+            </span>
             <span className="text-eon-blue">$1,500</span>
           </div>
           <p className="mb-6 text-[13px] leading-relaxed text-[rgb(255_255_255/0.55)]">
