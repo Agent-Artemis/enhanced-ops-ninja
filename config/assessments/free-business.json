@@ -3,381 +3,176 @@
   "tier": "free",
   "track": "business",
   "domains": [
-    {
-      "id": "customer_experience",
-      "name": "Customer experience & demand",
-      "weight": 1
-    },
-    {
-      "id": "revenue_cash",
-      "name": "Revenue, billing & cash conversion",
-      "weight": 1
-    },
-    {
-      "id": "operations_delivery",
-      "name": "Operations & service delivery",
-      "weight": 1
-    },
-    {
-      "id": "technology_data",
-      "name": "Technology, data & integrations",
-      "weight": 1
-    },
-    {
-      "id": "risk_governance",
-      "name": "Risk, governance & vendor management",
-      "weight": 1
-    },
-    {
-      "id": "workforce_process",
-      "name": "Workforce, process & change readiness",
-      "weight": 1
-    }
+    { "id": "financial_health", "name": "Financial Health", "weight": 1 },
+    { "id": "staffing_labor", "name": "Staffing & Labor", "weight": 1 },
+    { "id": "operations_tech", "name": "Operations & Technology", "weight": 1 },
+    { "id": "revenue_growth", "name": "Revenue & Growth", "weight": 1 },
+    { "id": "scalability", "name": "Scalability & Systems", "weight": 1 }
   ],
   "questions": [
     {
-      "id": "gb_f_01",
-      "domainId": "customer_experience",
-      "prompt": "How fast and consistent is lead capture, qualification, and routing to the right owner?",
+      "id": "biz_f_01",
+      "domainId": "financial_health",
+      "prompt": "Do you know what your margin actually is — broken down by product or service?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — lead response and routing: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — lead response and routing: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — lead response and routing: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — lead response and routing: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — reviewed every month" },
+        { "key": "B", "label": "Roughly — not broken out by line" },
+        { "key": "C", "label": "We track overall revenue, but not margins" },
+        { "key": "D", "label": "No financial visibility at that level" }
       ]
     },
     {
-      "id": "gb_f_02",
-      "domainId": "customer_experience",
-      "prompt": "How standardized are onboarding, success checkpoints, and renewal/expansion motions?",
+      "id": "biz_f_02",
+      "domainId": "financial_health",
+      "prompt": "Once you finish the work, how long before the money actually shows up?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — onboarding and retention: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — onboarding and retention: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — onboarding and retention: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — onboarding and retention: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Within 7 days typically" },
+        { "key": "B", "label": "8–30 days" },
+        { "key": "C", "label": "30–60 days" },
+        { "key": "D", "label": "60+ days — or it varies so much we can't predict it" }
       ]
     },
     {
-      "id": "gb_f_03",
-      "domainId": "revenue_cash",
-      "prompt": "How reliable is quote-to-cash (pricing approvals, contracts, invoicing, and revenue recognition handoffs)?",
+      "id": "biz_f_03",
+      "domainId": "financial_health",
+      "prompt": "Do you know your break-even number — what you need to bring in every month just to keep the lights on?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — quote-to-cash: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — quote-to-cash: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — quote-to-cash: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — quote-to-cash: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — we know it precisely" },
+        { "key": "B", "label": "We have a rough estimate" },
+        { "key": "C", "label": "We calculated it once, a while ago" },
+        { "key": "D", "label": "No — we've never nailed that number down" }
       ]
     },
     {
-      "id": "gb_f_04",
-      "domainId": "revenue_cash",
-      "prompt": "How proactive are collections, dunning, and dispute resolution before cash stalls?",
+      "id": "biz_f_04",
+      "domainId": "staffing_labor",
+      "prompt": "Is your team sized right for the work you're actually doing?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — collections: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — collections: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — collections: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — collections: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — team and workload are well matched" },
+        { "key": "B", "label": "Slightly stretched but still performing" },
+        { "key": "C", "label": "Consistently overloaded — quality is starting to slip" },
+        { "key": "D", "label": "We're understaffed and it's hurting delivery" }
       ]
     },
     {
-      "id": "gb_f_05",
-      "domainId": "operations_delivery",
-      "prompt": "How predictable is service delivery against SLAs, capacity plans, and backlog management?",
+      "id": "biz_f_05",
+      "domainId": "staffing_labor",
+      "prompt": "If someone calls in sick, does your operation have a plan — or does everyone scramble?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — delivery and SLAs: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — delivery and SLAs: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — delivery and SLAs: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — delivery and SLAs: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — full SOPs exist and are followed" },
+        { "key": "B", "label": "Some roles have docs, others don't" },
+        { "key": "C", "label": "Mostly tribal knowledge — it lives in people's heads" },
+        { "key": "D", "label": "No documented processes at all" }
       ]
     },
     {
-      "id": "gb_f_06",
-      "domainId": "operations_delivery",
-      "prompt": "How resilient are procurement, vendor performance management, and fulfillment exception handling?",
+      "id": "biz_f_06",
+      "domainId": "staffing_labor",
+      "prompt": "What does your week actually look like — leading the business or putting out fires?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — supplier and fulfillment: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — supplier and fulfillment: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — supplier and fulfillment: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — supplier and fulfillment: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Mostly strategic — fires are rare" },
+        { "key": "B", "label": "About 50/50" },
+        { "key": "C", "label": "Mostly fires — strategy keeps getting pushed" },
+        { "key": "D", "label": "Almost all fires — I barely lead, I just react" }
       ]
     },
     {
-      "id": "gb_f_07",
-      "domainId": "technology_data",
-      "prompt": "How trustworthy is operational/customer data across CRM, billing, and product systems?",
+      "id": "biz_f_07",
+      "domainId": "operations_tech",
+      "prompt": "How much of what your team does every day could realistically be automated?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — data quality: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — data quality: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — data quality: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — data quality: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Very little — we've already automated most of the repetitive stuff" },
+        { "key": "B", "label": "Some — maybe 20–30% could be" },
+        { "key": "C", "label": "A lot — most admin work is still manual" },
+        { "key": "D", "label": "Nearly everything is still done by hand" }
       ]
     },
     {
-      "id": "gb_f_08",
-      "domainId": "technology_data",
-      "prompt": "How automated are cross-system workflows (billing, support, marketing, finance) versus manual swivel-chair work?",
+      "id": "biz_f_08",
+      "domainId": "operations_tech",
+      "prompt": "Does your team have one place where they track tasks, projects, and progress — and actually use it?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — integrations and automation: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — integrations and automation: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — integrations and automation: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — integrations and automation: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — used consistently across the team" },
+        { "key": "B", "label": "We have tools, but adoption is hit or miss" },
+        { "key": "C", "label": "Mostly email and text messages" },
+        { "key": "D", "label": "No system — everyone manages themselves" }
       ]
     },
     {
-      "id": "gb_f_09",
-      "domainId": "risk_governance",
-      "prompt": "How mature are internal controls, access reviews, and audit evidence collection?",
+      "id": "biz_f_09",
+      "domainId": "operations_tech",
+      "prompt": "When a customer calls, what actually happens?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — controls and audits: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — controls and audits: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — controls and audits: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — controls and audits: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Dedicated team or system, clear protocols — it's handled" },
+        { "key": "B", "label": "Front desk or whoever's available picks it up" },
+        { "key": "C", "label": "Inconsistent — things fall through the cracks" },
+        { "key": "D", "label": "It's a known problem we haven't solved" }
       ]
     },
     {
-      "id": "gb_f_10",
-      "domainId": "risk_governance",
-      "prompt": "How prepared are you for security incidents, backups, DR testing, and vendor concentration risk?",
+      "id": "biz_f_10",
+      "domainId": "revenue_growth",
+      "prompt": "Do you have a real process for bringing in new business — or does it just kind of happen?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — security and resilience: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — security and resilience: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — security and resilience: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — security and resilience: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — a defined pipeline we work consistently" },
+        { "key": "B", "label": "Some activities, but no real system behind them" },
+        { "key": "C", "label": "Mostly word-of-mouth and hope" },
+        { "key": "D", "label": "Revenue is unpredictable month to month" }
       ]
     },
     {
-      "id": "gb_f_11",
-      "domainId": "workforce_process",
-      "prompt": "How current are SOPs, playbooks, and decision rights for critical operational processes?",
+      "id": "biz_f_11",
+      "domainId": "revenue_growth",
+      "prompt": "If your top 3 clients disappeared tomorrow, what would happen to your business?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — process documentation: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — process documentation: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — process documentation: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — process documentation: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "We'd be fine — revenue is well diversified (no single client over 30%)" },
+        { "key": "B", "label": "We'd feel it — 30–50% of revenue would be gone" },
+        { "key": "C", "label": "It would be serious — they represent 50–75% of what we bring in" },
+        { "key": "D", "label": "It would end us — 75%+ of our revenue is concentrated in a few relationships" }
       ]
     },
     {
-      "id": "gb_f_12",
-      "domainId": "workforce_process",
-      "prompt": "How effective is training, change management, and adoption measurement when new tools or processes launch?",
+      "id": "biz_f_12",
+      "domainId": "revenue_growth",
+      "prompt": "When did you last actually review your pricing?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — change and training: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — change and training: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — change and training: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — change and training: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "At least once a year — sometimes more" },
+        { "key": "B", "label": "When we start losing deals or feeling pressure" },
+        { "key": "C", "label": "Rarely — we set it and haven't touched it" },
+        { "key": "D", "label": "Never — pricing was set once and that was that" }
       ]
     },
     {
-      "id": "gb_f_13",
-      "domainId": "customer_experience",
-      "prompt": "How disciplined are support tiers, QA sampling, and feedback loops into product/ops improvements?",
+      "id": "biz_f_13",
+      "domainId": "scalability",
+      "prompt": "If you doubled your client load tomorrow, what breaks first?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — support and quality: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — support and quality: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — support and quality: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — support and quality: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Nothing obvious — we're built to scale" },
+        { "key": "B", "label": "A few things, but nothing we couldn't recover from" },
+        { "key": "C", "label": "Multiple systems would fail" },
+        { "key": "D", "label": "Everything breaks — we're already at capacity" }
       ]
     },
     {
-      "id": "gb_f_14",
-      "domainId": "revenue_cash",
-      "prompt": "How credible is forecasting (pipeline hygiene, forecast governance, and variance reviews)?",
+      "id": "biz_f_14",
+      "domainId": "scalability",
+      "prompt": "Honestly — does this business run without you, or does it need you there every day?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — forecasting: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — forecasting: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — forecasting: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — forecasting: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "It mostly runs without me" },
+        { "key": "B", "label": "It runs okay — I check in but don't need to be hands-on daily" },
+        { "key": "C", "label": "It slows down noticeably when I'm not around" },
+        { "key": "D", "label": "It stops without me — full stop" }
       ]
     },
     {
-      "id": "gb_f_15",
-      "domainId": "operations_delivery",
-      "prompt": "How institutionalized are retrospectives, KPI reviews, and improvement backlogs tied to owners and dates?",
+      "id": "biz_f_15",
+      "domainId": "scalability",
+      "prompt": "When you need to make a business decision, do you have data you actually trust?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — continuous improvement: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — continuous improvement: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — continuous improvement: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — continuous improvement: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — dashboards and reports I rely on" },
+        { "key": "B", "label": "Some data, gaps in others" },
+        { "key": "C", "label": "Data is hard to pull and usually outdated by the time I see it" },
+        { "key": "D", "label": "We make most decisions by gut feel" }
       ]
     }
   ]

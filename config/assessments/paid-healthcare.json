@@ -3,1140 +3,497 @@
   "tier": "paid",
   "track": "healthcare",
   "domains": [
-    {
-      "id": "patient_access",
-      "name": "Patient experience & access",
-      "weight": 1
-    },
-    {
-      "id": "revenue_cycle",
-      "name": "Revenue cycle & financial operations",
-      "weight": 1
-    },
-    {
-      "id": "clinical_ops",
-      "name": "Clinical & care delivery operations",
-      "weight": 1
-    },
-    {
-      "id": "technology_data",
-      "name": "Technology, data & interoperability",
-      "weight": 1
-    },
-    {
-      "id": "compliance_risk",
-      "name": "Compliance, privacy & risk",
-      "weight": 1
-    },
-    {
-      "id": "workforce_ops",
-      "name": "Workforce, scheduling & workflow",
-      "weight": 1
-    }
+    { "id": "financials_revenue", "name": "Financials & Revenue Health", "weight": 1 },
+    { "id": "staffing_hr", "name": "Staffing & HR Operations", "weight": 1 },
+    { "id": "billing_rcm", "name": "Billing & Revenue Cycle", "weight": 1 },
+    { "id": "automation", "name": "Manual Tasks & Automation Readiness", "weight": 1 },
+    { "id": "phone_comms", "name": "Phone Systems & Communication", "weight": 1 },
+    { "id": "org_structure", "name": "Staff Roles & Organizational Structure", "weight": 1 },
+    { "id": "labor_costs", "name": "Labor Costs & Workforce Economics", "weight": 1 }
   ],
   "questions": [
     {
-      "id": "hc_p_001",
-      "domainId": "patient_access",
-      "prompt": "Rate your operational maturity for: Online self-scheduling coverage and rules for visit types.",
+      "id": "hc_p_01",
+      "domainId": "financials_revenue",
+      "prompt": "What's your organization's total annual gross revenue?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Under $1M" },
+        { "key": "B", "label": "$1M–$5M" },
+        { "key": "C", "label": "$5M–$25M" },
+        { "key": "D", "label": "$25M+" }
       ]
     },
     {
-      "id": "hc_p_002",
-      "domainId": "patient_access",
-      "prompt": "Rate your operational maturity for: Waitlist management and appointment utilization optimization.",
+      "id": "hc_p_02",
+      "domainId": "financials_revenue",
+      "prompt": "What's your net collection rate — what you actually collect vs. what you're owed after contractual adjustments?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "98% or better — we collect nearly everything we're owed" },
+        { "key": "B", "label": "94–97%" },
+        { "key": "C", "label": "88–93% — there's meaningful leakage here" },
+        { "key": "D", "label": "Below 88% — or we honestly don't track this at that level" }
       ]
     },
     {
-      "id": "hc_p_003",
-      "domainId": "patient_access",
-      "prompt": "Rate your operational maturity for: Call center/service level metrics for patient access.",
+      "id": "hc_p_03",
+      "domainId": "financials_revenue",
+      "prompt": "What percentage of your revenue comes from government payers — Medicare and Medicaid?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Under 20%" },
+        { "key": "B", "label": "20–40%" },
+        { "key": "C", "label": "40–60%" },
+        { "key": "D", "label": "60%+ — the majority of what we bill goes through CMS" }
       ]
     },
     {
-      "id": "hc_p_004",
-      "domainId": "patient_access",
-      "prompt": "Rate your operational maturity for: Triage protocols for urgent add-ons and same-day access.",
+      "id": "hc_p_04",
+      "domainId": "financials_revenue",
+      "prompt": "Are you actually reviewing your financials every month — P&L, balance sheet, cash flow — with someone who can help you interpret them?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — with an external accountant and internal review" },
+        { "key": "B", "label": "Yes — internal only" },
+        { "key": "C", "label": "Quarterly only" },
+        { "key": "D", "label": "Rarely or never — financials aren't a regular conversation" }
       ]
     },
     {
-      "id": "hc_p_005",
-      "domainId": "patient_access",
-      "prompt": "Rate your operational maturity for: Multilingual access and ADA accommodations across channels.",
+      "id": "hc_p_05",
+      "domainId": "financials_revenue",
+      "prompt": "What does your operating margin look like — revenue minus everything it costs you to operate?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "15%+ — healthy" },
+        { "key": "B", "label": "8–14% — workable" },
+        { "key": "C", "label": "3–7% — thin" },
+        { "key": "D", "label": "Under 3%, or we're operating at a loss" }
       ]
     },
     {
-      "id": "hc_p_006",
-      "domainId": "patient_access",
-      "prompt": "Rate your operational maturity for: Portal adoption and secure messaging turnaround expectations.",
+      "id": "hc_p_06",
+      "domainId": "financials_revenue",
+      "prompt": "Do you have a rolling 90-day cash flow forecast?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — updated every week" },
+        { "key": "B", "label": "Yes — updated monthly" },
+        { "key": "C", "label": "Informally — we have a rough sense but nothing documented" },
+        { "key": "D", "label": "No — we find out where we stand when the bank statement shows up" }
       ]
     },
     {
-      "id": "hc_p_007",
-      "domainId": "patient_access",
-      "prompt": "Rate your operational maturity for: Pre-visit planning including labs/imaging orders completed ahead of time.",
+      "id": "hc_p_07",
+      "domainId": "financials_revenue",
+      "prompt": "If you have multiple locations or service lines, can you tell which ones are actually profitable?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — each location or line has its own P&L we review monthly" },
+        { "key": "B", "label": "Combined reporting only — we can't break it out by location" },
+        { "key": "C", "label": "We estimate it, but there's no formal system" },
+        { "key": "D", "label": "It all runs together — we have no idea which parts are making money" }
       ]
     },
     {
-      "id": "hc_p_008",
-      "domainId": "patient_access",
-      "prompt": "Rate your operational maturity for: No-show risk scoring and targeted intervention playbooks.",
+      "id": "hc_p_08",
+      "domainId": "staffing_hr",
+      "prompt": "How many FTEs are you running right now?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "1–10" },
+        { "key": "B", "label": "11–30" },
+        { "key": "C", "label": "31–75" },
+        { "key": "D", "label": "75+" }
       ]
     },
     {
-      "id": "hc_p_009",
-      "domainId": "revenue_cycle",
-      "prompt": "Rate your operational maturity for: Charge capture completeness and provider education loop.",
+      "id": "hc_p_09",
+      "domainId": "staffing_hr",
+      "prompt": "What's your annualized staff turnover rate?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Under 15% — we keep our people" },
+        { "key": "B", "label": "15–25% — industry average, but there's room to improve" },
+        { "key": "C", "label": "25–40% — turnover is a real operational drag" },
+        { "key": "D", "label": "40%+ — we're in a revolving door situation" }
       ]
     },
     {
-      "id": "hc_p_010",
-      "domainId": "revenue_cycle",
-      "prompt": "Rate your operational maturity for: Coder query workflow and turnaround time discipline.",
+      "id": "hc_p_10",
+      "domainId": "staffing_hr",
+      "prompt": "Do you do formal performance reviews — documented, consistent, with actual follow-through?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — at least annually, with written plans" },
+        { "key": "B", "label": "Informally — conversations happen, but nothing gets documented" },
+        { "key": "C", "label": "Rarely" },
+        { "key": "D", "label": "Never — reviews just don't happen here" }
       ]
     },
     {
-      "id": "hc_p_011",
-      "domainId": "revenue_cycle",
-      "prompt": "Rate your operational maturity for: Payer contract modeling and underpayment detection.",
+      "id": "hc_p_11",
+      "domainId": "staffing_hr",
+      "prompt": "When someone new joins your team, is there an actual onboarding program — or do you just throw them in and hope for the best?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — a structured program with defined milestones" },
+        { "key": "B", "label": "Basic orientation only" },
+        { "key": "C", "label": "Shadowing only — we show them the ropes informally" },
+        { "key": "D", "label": "No onboarding — new hires figure it out as they go" }
       ]
     },
     {
-      "id": "hc_p_012",
-      "domainId": "revenue_cycle",
-      "prompt": "Rate your operational maturity for: Prior authorization tracking and escalation paths.",
+      "id": "hc_p_12",
+      "domainId": "staffing_hr",
+      "prompt": "How is clinical staff scheduling managed?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Scheduling software that catches conflicts automatically" },
+        { "key": "B", "label": "Spreadsheet or shared calendar" },
+        { "key": "C", "label": "Manager handles it manually via text and email" },
+        { "key": "D", "label": "Day-to-day — we're often scrambling to fill holes" }
       ]
     },
     {
-      "id": "hc_p_013",
-      "domainId": "revenue_cycle",
-      "prompt": "Rate your operational maturity for: Credit balance and refund governance.",
+      "id": "hc_p_13",
+      "domainId": "staffing_hr",
+      "prompt": "Are you doing anything proactive to keep your people — before they decide to leave?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — we have formal retention programs and do stay interviews" },
+        { "key": "B", "label": "Informally — we ask people why they stay, but nothing structured" },
+        { "key": "C", "label": "Exit interviews only — we find out why they leave, not why they stay" },
+        { "key": "D", "label": "No retention strategy — people leave and we replace them" }
       ]
     },
     {
-      "id": "hc_p_014",
-      "domainId": "revenue_cycle",
-      "prompt": "Rate your operational maturity for: Cash posting automation and exception queues.",
+      "id": "hc_p_14",
+      "domainId": "staffing_hr",
+      "prompt": "Are your HR policies written down somewhere your team can actually access them?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — current employee handbook, digitally accessible" },
+        { "key": "B", "label": "A handbook exists, but it's outdated" },
+        { "key": "C", "label": "Partial documentation — some things are written, most aren't" },
+        { "key": "D", "label": "No — HR policies live in someone's head" }
       ]
     },
     {
-      "id": "hc_p_015",
-      "domainId": "revenue_cycle",
-      "prompt": "Rate your operational maturity for: Bad debt and charity care policy consistency.",
+      "id": "hc_p_15",
+      "domainId": "billing_rcm",
+      "prompt": "Who's doing your billing?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "In-house — we have a dedicated billing department" },
+        { "key": "B", "label": "Third-party billing company" },
+        { "key": "C", "label": "Hybrid — some in-house, some outsourced" },
+        { "key": "D", "label": "The provider handles it themselves" }
       ]
     },
     {
-      "id": "hc_p_016",
-      "domainId": "revenue_cycle",
-      "prompt": "Rate your operational maturity for: KPI cadence for net collection rate and days in AR.",
+      "id": "hc_p_16",
+      "domainId": "billing_rcm",
+      "prompt": "What's your first-pass clean claim rate?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "95%+ — almost everything goes out clean" },
+        { "key": "B", "label": "90–94%" },
+        { "key": "C", "label": "80–89% — a lot of claims need rework before they pay" },
+        { "key": "D", "label": "Under 80% — or we don't actually track this" }
       ]
     },
     {
-      "id": "hc_p_017",
-      "domainId": "clinical_ops",
-      "prompt": "Rate your operational maturity for: Template standardization and note bloat reduction.",
+      "id": "hc_p_17",
+      "domainId": "billing_rcm",
+      "prompt": "What's your average days in AR?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Under 30 days" },
+        { "key": "B", "label": "30–45 days" },
+        { "key": "C", "label": "45–60 days" },
+        { "key": "D", "label": "60+ days — money is sitting way too long" }
       ]
     },
     {
-      "id": "hc_p_018",
-      "domainId": "clinical_ops",
-      "prompt": "Rate your operational maturity for: Inbox/workflow management for clinician tasks.",
+      "id": "hc_p_18",
+      "domainId": "billing_rcm",
+      "prompt": "What's your overall denial rate?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Under 3% — denials are rare" },
+        { "key": "B", "label": "3–7%" },
+        { "key": "C", "label": "7–15% — denials are a real revenue problem" },
+        { "key": "D", "label": "15%+ — or we don't have a number we trust" }
       ]
     },
     {
-      "id": "hc_p_019",
-      "domainId": "clinical_ops",
-      "prompt": "Rate your operational maturity for: Quality measure attribution and numerator/denominator integrity.",
+      "id": "hc_p_19",
+      "domainId": "billing_rcm",
+      "prompt": "When you get a denial, do you have a process for figuring out why — and fixing the upstream problem?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — categorized, tracked, and used to fix the root cause" },
+        { "key": "B", "label": "We work denials, but we don't track why they're happening" },
+        { "key": "C", "label": "We work the easy ones and let the complex ones sit" },
+        { "key": "D", "label": "Denials pile up until they get written off" }
       ]
     },
     {
-      "id": "hc_p_020",
-      "domainId": "clinical_ops",
-      "prompt": "Rate your operational maturity for: Population health panel management and outreach campaigns.",
+      "id": "hc_p_20",
+      "domainId": "billing_rcm",
+      "prompt": "How are prior authorizations being handled?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Dedicated PA team or automated tool — delays are rare" },
+        { "key": "B", "label": "Front desk handles it — some delays, but there's a process" },
+        { "key": "C", "label": "Ad hoc — PAs are causing regular claim delays" },
+        { "key": "D", "label": "It's a significant revenue leak we haven't figured out how to solve" }
       ]
     },
     {
-      "id": "hc_p_021",
-      "domainId": "clinical_ops",
-      "prompt": "Rate your operational maturity for: Medication reconciliation reliability at transitions.",
+      "id": "hc_p_21",
+      "domainId": "billing_rcm",
+      "prompt": "Do patients know what they owe before they walk in the door?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — we counsel patients before the visit, at the visit, and after" },
+        { "key": "B", "label": "At check-in only" },
+        { "key": "C", "label": "Only when a patient asks" },
+        { "key": "D", "label": "No — patients usually find out when they get a bill weeks later" }
       ]
     },
     {
-      "id": "hc_p_022",
-      "domainId": "clinical_ops",
-      "prompt": "Rate your operational maturity for: Care gap closure reporting by site and provider.",
+      "id": "hc_p_22",
+      "domainId": "billing_rcm",
+      "prompt": "What happens to patient balances after insurance pays?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Automated statements, patient portal, payment plan options — it's a system" },
+        { "key": "B", "label": "Paper statements only" },
+        { "key": "C", "label": "Inconsistent — patient balances age out and we end up writing them off" },
+        { "key": "D", "label": "We rarely collect patient balances effectively — it's a known gap" }
       ]
     },
     {
-      "id": "hc_p_023",
-      "domainId": "clinical_ops",
-      "prompt": "Rate your operational maturity for: Telehealth parity workflows and billing alignment.",
+      "id": "hc_p_23",
+      "domainId": "automation",
+      "prompt": "What percentage of your admin work is still being done by hand — data entry, scheduling, reminders, reports?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Under 10% — we've automated most of it" },
+        { "key": "B", "label": "10–30%" },
+        { "key": "C", "label": "30–60% — a lot of manual work is still happening" },
+        { "key": "D", "label": "60%+ — this place runs on manual processes" }
       ]
     },
     {
-      "id": "hc_p_024",
-      "domainId": "clinical_ops",
-      "prompt": "Rate your operational maturity for: Supply and room turnover efficiency in procedural areas.",
+      "id": "hc_p_24",
+      "domainId": "automation",
+      "prompt": "How are appointment reminders going out?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Automated multi-touch sequence — text, email, and/or phone" },
+        { "key": "B", "label": "Automated — but just one touch" },
+        { "key": "C", "label": "Manual reminder calls by staff" },
+        { "key": "D", "label": "No reminder system — patients either show up or they don't" }
       ]
     },
     {
-      "id": "hc_p_025",
-      "domainId": "technology_data",
-      "prompt": "Rate your operational maturity for: Master patient index (MPI) stewardship and duplicate resolution SLAs.",
+      "id": "hc_p_25",
+      "domainId": "automation",
+      "prompt": "Does your EHR talk to your billing system, your scheduler, and your reports — or are your systems all living separate lives?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Fully integrated — one source of truth" },
+        { "key": "B", "label": "Partially integrated — some manual bridges between systems" },
+        { "key": "C", "label": "Mostly separate systems — staff are re-entering data constantly" },
+        { "key": "D", "label": "Paper-based or minimal technology" }
       ]
     },
     {
-      "id": "hc_p_026",
-      "domainId": "technology_data",
-      "prompt": "Rate your operational maturity for: Interface monitoring, alerting, and replay procedures.",
+      "id": "hc_p_26",
+      "domainId": "automation",
+      "prompt": "Are your operational reports being generated automatically — or does someone have to build them by hand every time?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — real-time dashboards, auto-generated" },
+        { "key": "B", "label": "Scheduled reports, but not real-time" },
+        { "key": "C", "label": "Manual reports pulled on demand when someone asks" },
+        { "key": "D", "label": "No operational reporting at all" }
       ]
     },
     {
-      "id": "hc_p_027",
-      "domainId": "technology_data",
-      "prompt": "Rate your operational maturity for: Data dictionary ownership and field governance.",
+      "id": "hc_p_27",
+      "domainId": "automation",
+      "prompt": "Have you looked at what AI tools could actually replace or support in your operation?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — we're actively implementing AI tools" },
+        { "key": "B", "label": "We've had the conversation, but nothing's been implemented" },
+        { "key": "C", "label": "We're aware AI exists — we just haven't evaluated what's relevant to us" },
+        { "key": "D", "label": "This hasn't come up at all" }
       ]
     },
     {
-      "id": "hc_p_028",
-      "domainId": "technology_data",
-      "prompt": "Rate your operational maturity for: Release management and regression testing discipline.",
+      "id": "hc_p_28",
+      "domainId": "automation",
+      "prompt": "Do your top 10 most frequent tasks have written SOPs — documented, accessible, and actually current?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — documented, accessible, and kept up to date" },
+        { "key": "B", "label": "Partially — some roles have SOPs, others don't" },
+        { "key": "C", "label": "Mostly tribal knowledge — it lives in people, not in documents" },
+        { "key": "D", "label": "No SOPs exist" }
       ]
     },
     {
-      "id": "hc_p_029",
-      "domainId": "technology_data",
-      "prompt": "Rate your operational maturity for: API strategy for partners versus one-off exports.",
+      "id": "hc_p_29",
+      "domainId": "phone_comms",
+      "prompt": "What kind of phone system are you running?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Cloud-based VoIP — call routing, recording, analytics, the works" },
+        { "key": "B", "label": "Basic VoIP — nothing fancy" },
+        { "key": "C", "label": "Traditional landline" },
+        { "key": "D", "label": "Cell phones, no formal system" }
       ]
     },
     {
-      "id": "hc_p_030",
-      "domainId": "technology_data",
-      "prompt": "Rate your operational maturity for: Identity and SSO posture for clinical applications.",
+      "id": "hc_p_30",
+      "domainId": "phone_comms",
+      "prompt": "What percentage of inbound calls actually get answered live on the first ring?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "85%+ — someone is almost always there to answer" },
+        { "key": "B", "label": "60–84%" },
+        { "key": "C", "label": "Under 60% — a significant number of calls are going to voicemail" },
+        { "key": "D", "label": "Unknown — we've never measured this" }
       ]
     },
     {
-      "id": "hc_p_031",
-      "domainId": "technology_data",
-      "prompt": "Rate your operational maturity for: Backup/restore testing evidence for critical systems.",
+      "id": "hc_p_31",
+      "domainId": "phone_comms",
+      "prompt": "Does your staff have scripted protocols for the calls they handle every day — scheduling, insurance, complaints?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — everyone is trained on documented scripts" },
+        { "key": "B", "label": "Informal guidelines exist — execution varies by person" },
+        { "key": "C", "label": "Staff handle calls however they see fit — no protocols" },
+        { "key": "D", "label": "No protocols at all" }
       ]
     },
     {
-      "id": "hc_p_032",
-      "domainId": "technology_data",
-      "prompt": "Rate your operational maturity for: Analytics warehouse freshness and trusted metrics definitions.",
+      "id": "hc_p_32",
+      "domainId": "phone_comms",
+      "prompt": "What happens when a patient calls after hours?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Dedicated answering service with an on-call protocol" },
+        { "key": "B", "label": "Voicemail — called back next business day" },
+        { "key": "C", "label": "Inconsistent — depends on who happens to see it" },
+        { "key": "D", "label": "After-hours calls go unanswered" }
       ]
     },
     {
-      "id": "hc_p_033",
-      "domainId": "compliance_risk",
-      "prompt": "Rate your operational maturity for: Minimum necessary enforcement in workflows and reporting.",
+      "id": "hc_p_33",
+      "domainId": "phone_comms",
+      "prompt": "Do you track call volume, hold times, and how often callers hang up before being helped?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — reviewed weekly as a KPI" },
+        { "key": "B", "label": "Some data is available, but we don't review it consistently" },
+        { "key": "C", "label": "We rarely look at call metrics" },
+        { "key": "D", "label": "No call analytics at all" }
       ]
     },
     {
-      "id": "hc_p_034",
-      "domainId": "compliance_risk",
-      "prompt": "Rate your operational maturity for: BAA inventory accuracy and renewal tracking.",
+      "id": "hc_p_34",
+      "domainId": "org_structure",
+      "prompt": "Does your org chart exist — and does it actually reflect how your organization works today?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — current, accurate, and shared with the team" },
+        { "key": "B", "label": "It exists, but it's outdated" },
+        { "key": "C", "label": "Informal — everyone roughly knows the structure" },
+        { "key": "D", "label": "No org chart" }
       ]
     },
     {
-      "id": "hc_p_035",
-      "domainId": "compliance_risk",
-      "prompt": "Rate your operational maturity for: Workforce sanctions/OIG checks and periodic reverification.",
+      "id": "hc_p_35",
+      "domainId": "org_structure",
+      "prompt": "Does every person in your organization have a written job description?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — every role has a current JD on file" },
+        { "key": "B", "label": "Most do — a few gaps" },
+        { "key": "C", "label": "A few exist — most roles are informal" },
+        { "key": "D", "label": "No formal job descriptions" }
       ]
     },
     {
-      "id": "hc_p_036",
-      "domainId": "compliance_risk",
-      "prompt": "Rate your operational maturity for: Device and media controls for workstations and removable media.",
+      "id": "hc_p_36",
+      "domainId": "org_structure",
+      "prompt": "Do your front-line staff know what they're allowed to handle on their own vs. what they need to escalate?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — documented escalation matrix that everyone follows" },
+        { "key": "B", "label": "Mostly understood, just not formally documented" },
+        { "key": "C", "label": "Inconsistent — staff either over-escalate everything or handle things they shouldn't" },
+        { "key": "D", "label": "No clarity — everything comes up the chain" }
       ]
     },
     {
-      "id": "hc_p_037",
-      "domainId": "compliance_risk",
-      "prompt": "Rate your operational maturity for: Break-glass auditing and justification reviews.",
+      "id": "hc_p_37",
+      "domainId": "org_structure",
+      "prompt": "Is there a management layer between your leadership and your front-line staff — and is it actually working?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — effective middle management in place" },
+        { "key": "B", "label": "One layer — but they're stretched thin" },
+        { "key": "C", "label": "Leadership manages front-line directly — no middle layer" },
+        { "key": "D", "label": "The owner is the only manager" }
       ]
     },
     {
-      "id": "hc_p_038",
-      "domainId": "compliance_risk",
-      "prompt": "Rate your operational maturity for: State privacy law mapping beyond HIPAA where applicable.",
+      "id": "hc_p_38",
+      "domainId": "org_structure",
+      "prompt": "If your scheduler calls in sick, can someone else cover that role — or does the whole thing fall apart?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — most roles have at least one trained backup" },
+        { "key": "B", "label": "Some cross-training exists" },
+        { "key": "C", "label": "Minimal — coverage gaps are a real and regular risk" },
+        { "key": "D", "label": "No cross-training at all" }
       ]
     },
     {
-      "id": "hc_p_039",
-      "domainId": "compliance_risk",
-      "prompt": "Rate your operational maturity for: Clinical research compliance if applicable.",
+      "id": "hc_p_39",
+      "domainId": "labor_costs",
+      "prompt": "What percentage of your total revenue goes to direct labor — wages and benefits combined?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Under 35%" },
+        { "key": "B", "label": "35–45%" },
+        { "key": "C", "label": "45–55%" },
+        { "key": "D", "label": "55%+ — labor is consuming most of what we bring in" }
       ]
     },
     {
-      "id": "hc_p_040",
-      "domainId": "compliance_risk",
-      "prompt": "Rate your operational maturity for: Vendor risk tiering and security assessment depth by tier.",
+      "id": "hc_p_40",
+      "domainId": "labor_costs",
+      "prompt": "Do you calculate revenue per FTE — and do you know how you benchmark against similar organizations?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — tracked monthly and benchmarked against industry data" },
+        { "key": "B", "label": "We've calculated it, but we don't track it regularly" },
+        { "key": "C", "label": "Never calculated" },
+        { "key": "D", "label": "We don't know how to calculate this" }
       ]
     },
     {
-      "id": "hc_p_041",
-      "domainId": "workforce_ops",
-      "prompt": "Rate your operational maturity for: Time and attendance accuracy and exception handling.",
+      "id": "hc_p_41",
+      "domainId": "labor_costs",
+      "prompt": "Is overtime in your organization planned and controlled — or is it just something that happens?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Strategic — minimized and planned in advance" },
+        { "key": "B", "label": "Occasional and generally controlled" },
+        { "key": "C", "label": "Regular unplanned overtime — it's a predictable cost leak" },
+        { "key": "D", "label": "Constant and out of control" }
       ]
     },
     {
-      "id": "hc_p_042",
-      "domainId": "workforce_ops",
-      "prompt": "Rate your operational maturity for: Credentialing/privileging cycle time and expirations monitoring.",
+      "id": "hc_p_42",
+      "domainId": "labor_costs",
+      "prompt": "Do you check your wages against market rates at least once a year?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — annual review using actual market data" },
+        { "key": "B", "label": "When we're hiring or losing people" },
+        { "key": "C", "label": "Rarely — we set salaries and don't revisit them" },
+        { "key": "D", "label": "Never benchmarked" }
       ]
     },
     {
-      "id": "hc_p_043",
-      "domainId": "workforce_ops",
-      "prompt": "Rate your operational maturity for: Shift swap governance and overtime controls.",
+      "id": "hc_p_43",
+      "domainId": "labor_costs",
+      "prompt": "Do you track how much it costs you to hire someone — and how long it takes to fill an open seat?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — both are tracked as KPIs" },
+        { "key": "B", "label": "One of the two" },
+        { "key": "C", "label": "Neither is tracked formally" },
+        { "key": "D", "label": "No recruitment metrics at all" }
       ]
     },
     {
-      "id": "hc_p_044",
-      "domainId": "workforce_ops",
-      "prompt": "Rate your operational maturity for: Centralized scheduling for multi-site coverage.",
+      "id": "hc_p_44",
+      "domainId": "labor_costs",
+      "prompt": "Have you ever modeled what a 10% reduction in labor costs would look like — without cutting headcount?",
       "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
-      ]
-    },
-    {
-      "id": "hc_p_045",
-      "domainId": "workforce_ops",
-      "prompt": "Rate your operational maturity for: Role-based access provisioning and deprovisioning SLAs.",
-      "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
-      ]
-    },
-    {
-      "id": "hc_p_046",
-      "domainId": "workforce_ops",
-      "prompt": "Rate your operational maturity for: Performance coaching cadence tied to operational metrics.",
-      "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
-      ]
-    },
-    {
-      "id": "hc_p_047",
-      "domainId": "workforce_ops",
-      "prompt": "Rate your operational maturity for: Burnout indicators and staffing contingency plans.",
-      "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
-      ]
-    },
-    {
-      "id": "hc_p_048",
-      "domainId": "workforce_ops",
-      "prompt": "Rate your operational maturity for: Cross-training depth for critical roles.",
-      "choices": [
-        {
-          "key": "A",
-          "label": "Strong — this capability: clear owners, repeatable process, KPIs reviewed monthly, improving trend."
-        },
-        {
-          "key": "B",
-          "label": "Capable — this capability: works most of the time; gaps are known but not always prioritized."
-        },
-        {
-          "key": "C",
-          "label": "Emerging — this capability: inconsistent execution; limited measurement; frequent rework."
-        },
-        {
-          "key": "D",
-          "label": "At risk — this capability: unclear ownership, reactive firefighting, or material compliance/revenue exposure."
-        }
+        { "key": "A", "label": "Yes — we actively work efficiency improvements to reduce cost without reducing people" },
+        { "key": "B", "label": "We've discussed it, but never modeled it" },
+        { "key": "C", "label": "Haven't considered this" },
+        { "key": "D", "label": "We don't believe that's possible in our environment" }
       ]
     }
   ]
