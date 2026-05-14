@@ -196,6 +196,17 @@ export function getDeepDiveModules(track: BusinessTrack): DeepDiveModuleMeta[] {
   ];
 }
 
+/** Maps wizard `moduleScores` keys (`module-1` … `module-7`) to display titles for a track. */
+export function getDeepDiveModuleTitleForScoreKey(moduleScoreKey: string, track: BusinessTrack): string {
+  const match = /^module-(\d+)$/.exec(moduleScoreKey);
+  if (!match) return moduleScoreKey;
+  const moduleIndex = Number(match[1]);
+  if (!Number.isInteger(moduleIndex) || moduleIndex < 1 || moduleIndex > 7) return moduleScoreKey;
+  const modules = getDeepDiveModules(track);
+  const meta = modules.find((m) => m.moduleIndex === moduleIndex);
+  return meta?.title ?? `Module ${String(moduleIndex)}`;
+}
+
 let choiceSerial = 0;
 
 export function getDeepDiveQuestions(track: BusinessTrack): DeepDiveQuestion[] {
