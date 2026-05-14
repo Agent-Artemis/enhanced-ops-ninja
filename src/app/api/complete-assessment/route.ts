@@ -57,15 +57,20 @@ function errorMessage(err: unknown): string {
   return err instanceof Error ? err.message : "Unknown error";
 }
 
+function formatAssessmentScore(score: number): string {
+  if (!Number.isFinite(score)) return "0";
+  const rounded = Math.round(score);
+  if (!Number.isSafeInteger(rounded)) return "0";
+  return String(rounded);
+}
+
 function buildCompletionEmailHtml(params: {
   firstName: string;
   overallScore: number;
   calBookingUrl: string;
 }): string {
   const safeName = escapeHtmlMinimal(params.firstName);
-  const score = Number.isInteger(params.overallScore)
-    ? String(params.overallScore)
-    : String(params.overallScore);
+  const score = formatAssessmentScore(params.overallScore);
   const calHref = escapeHtmlAttr(params.calBookingUrl);
   return `<!DOCTYPE html>
 <html lang="en">
@@ -74,19 +79,29 @@ function buildCompletionEmailHtml(params: {
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:12px;padding:28px 24px;border:1px solid #e2e8f0;">
       <tr><td>
         <p style="margin:0 0 16px;">Hi ${safeName},</p>
-        <p style="margin:0 0 16px;">Thanks for completing your Deep Dive Assessment. Your overall score is <strong>${score}</strong> out of 100.</p>
-        <p style="margin:0 0 20px;">If you would like to review your results and discuss practical next steps, you can book a short call with me below.</p>
+        <p style="margin:0 0 16px;">Your Enhanced Ops deep dive is complete. Here is how you scored overall:</p>
+        <table role="presentation" cellspacing="0" cellpadding="0" style="margin:0 0 20px;width:100%;border-collapse:separate;border-spacing:0;">
+          <tr>
+            <td style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:10px;padding:16px 18px;text-align:center;">
+              <div style="font-size:13px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#64748b;margin:0 0 6px;">Overall score</div>
+              <div style="font-size:32px;font-weight:800;color:#0f172a;line-height:1.1;margin:0;">${score}<span style="font-size:18px;font-weight:600;color:#64748b;"> / 100</span></div>
+            </td>
+          </tr>
+        </table>
+        <p style="margin:0 0 16px;">Our ninjas have reviewed your answers and mapped what a focused implementation plan could look like for your team. On a short call we will walk through the highlights, answer questions, and outline practical next steps.</p>
         <p style="margin:0 0 24px;">
-          <a href="${calHref}" style="display:inline-block;background:#0f172a;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:600;">Schedule on Cal.com</a>
+          <a href="${calHref}" style="display:inline-block;background:#0f172a;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:600;">Schedule My Review Call →</a>
         </p>
-        <p style="margin:0;color:#64748b;font-size:14px;">Jeff Oldroyd<br />Enhanced Ops</p>
+        <p style="margin:0 0 12px;color:#64748b;font-size:14px;line-height:1.5;">If you choose to move forward with implementation, dollars you have already invested in this assessment apply toward that engagement.</p>
+        <p style="margin:0;color:#64748b;font-size:14px;">Jeff Oldroyd<br />Enhanced Ops Ninja</p>
       </td></tr>
     </table>
   </body>
 </html>`;
 }
 
-const DEFAULT_CAL_BOOKING_URL = "https://cal.com/jeff-oldroyd";
+const DEFAULT_CAL_BOOKING_URL =
+  "https://cal.com/enhancedopsninja/45-min-with-enhanced-ops-ninja";
 
 export async function POST(req: Request) {
   const cfg = checkRequiredEnv();
@@ -131,7 +146,7 @@ export async function POST(req: Request) {
     const { error: sendError } = await resend.emails.send({
       from: "jeff@enhancedops.ninja",
       to: email,
-      subject: "Your Deep Dive Assessment is complete — book a quick debrief",
+      subject: "Your EnhancedOps Assessment Results Are In",
       html,
     });
 
