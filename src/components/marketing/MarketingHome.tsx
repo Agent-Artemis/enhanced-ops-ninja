@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { MarketingAssessmentCards } from "@/components/marketing/MarketingAssessmentCards";
 import { MarketingFaq } from "@/components/marketing/MarketingFaq";
 import { MarketingFinalCta } from "@/components/marketing/MarketingFinalCta";
@@ -15,13 +16,9 @@ function placeholderCalendly() {
   window.alert("[CALENDLY/CAL.COM LINK]");
 }
 
-function placeholderStripe() {
-  window.alert(
-    "Stripe Checkout for the in-depth assessment ($1,500 promotional pricing; list $2,500) will open from this button.",
-  );
-}
-
 export function MarketingHome() {
+  const router = useRouter();
+
   return (
     <>
       <MarketingHeader onBookCall={placeholderCalendly} />
@@ -31,7 +28,7 @@ export function MarketingHome() {
         <MarketingProblems />
         <MarketingWorks />
         <MarketingServices />
-        <MarketingAssessmentCards onBookDeepDive={placeholderStripe} />
+        <MarketingAssessmentCards onBookDeepDive={() => router.push("/deep-dive")} />
         <MarketingFaq />
         <MarketingFinalCta onBookCall={placeholderCalendly} />
       </main>

@@ -478,7 +478,7 @@ export function AssessmentWizard() {
           >
             Download PDF
           </button>
-          <Link href="/assessment/deep-dive" className={RESULTS_PRIMARY_CTA_CLASS}>
+          <Link href="/deep-dive" className={RESULTS_PRIMARY_CTA_CLASS}>
             Go to Deep-Dive Assessment
           </Link>
         </div>
