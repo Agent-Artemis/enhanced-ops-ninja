@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 /** Minimal shape so we can read `payload`; extra keys are allowed. */
 const bodySchema = z
   .object({
-    payload: z.record(z.unknown()).optional(),
+    payload: z.record(z.unknown()).optional().nullable(),
   })
   .passthrough();
 
