@@ -13,6 +13,7 @@ import {
   type AppliedPricing,
   type BusinessTrack,
 } from "@/lib/deep-dive/pricing";
+import { DEEP_DIVE_LS, writeLocalStorage, writeLocalStorageIfEmpty } from "@/lib/deep-dive/assessment-storage";
 
 type Step = 0 | 1 | 2;
 
@@ -144,6 +145,9 @@ function GeneralBusinessSalesCopy() {
 type PaySectionProps = {
   assessmentId: string;
   amountLabel: string;
+  track: BusinessTrack;
+  email: string;
+  firstName: string;
   onPaid: () => void;
 };
 
@@ -179,11 +183,10 @@ function InnerPaySection(props: PaySectionProps) {
       return;
     }
     if (paymentIntent?.status === "succeeded") {
-      try {
-        localStorage.setItem("deepDiveAssessmentId", props.assessmentId);
-      } catch {
-        // non-fatal
-      }
+      writeLocalStorage(DEEP_DIVE_LS.assessmentId, props.assessmentId);
+      writeLocalStorageIfEmpty(DEEP_DIVE_LS.businessType, props.track);
+      writeLocalStorageIfEmpty(DEEP_DIVE_LS.email, props.email.trim());
+      writeLocalStorageIfEmpty(DEEP_DIVE_LS.firstName, props.firstName.trim());
       props.onPaid();
     }
   };
@@ -571,6 +574,9 @@ export function DeepDiveFlow() {
                 <InnerPaySection
                   assessmentId={assessmentId}
                   amountLabel={amountLabel}
+                  track={track}
+                  email={form.email}
+                  firstName={form.firstName}
                   onPaid={() => router.push("/deep-dive/assessment")}
                 />
               </Elements>
