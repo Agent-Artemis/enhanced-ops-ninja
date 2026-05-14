@@ -1,0 +1,149 @@
+/**
+ * Completes a paid deep-dive assessment row and emails the participant.
+ * DB schema for `deep_dive_assessments` (columns below) must exist in Supabase; no migration for this table ships in this repo yet.
+ */
+import { NextResponse } from "next/server";
+import { Resend } from "resend";
+import { z } from "zod";
+
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
+
+export const dynamic = "force-dynamic";
+
+const bodySchema = z.object({
+  assessmentId: z.string().uuid(),
+  answers: z.unknown(),
+  overallScore: z.number().finite(),
+  moduleScores: z.union([z.record(z.unknown()), z.array(z.unknown())]),
+  email: z.string().trim().email().max(320),
+  firstName: z.string().trim().min(1).max(120),
+});
+
+type EnvCheck =
+  | { ok: true; resendKey: string }
+  | { ok: false; message: string };
+
+function checkRequiredEnv(): EnvCheck {
+  const resendKey = process.env.RESEND_API_KEY;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!resendKey || !supabaseUrl || !supabaseServiceKey) {
+    const missing: string[] = [];
+    if (!resendKey) missing.push("RESEND_API_KEY");
+    if (!supabaseUrl) missing.push("NEXT_PUBLIC_SUPABASE_URL");
+    if (!supabaseServiceKey) missing.push("SUPABASE_SERVICE_ROLE_KEY");
+    return {
+      ok: false,
+      message: `Missing required environment variables: ${missing.join(", ")}`,
+    };
+  }
+  return { ok: true, resendKey };
+}
+
+function escapeHtmlMinimal(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+/** Escape a URL for use inside double-quoted HTML attributes. */
+function escapeHtmlAttr(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/'/g, "&#39;");
+}
+
+function errorMessage(err: unknown): string {
+  return err instanceof Error ? err.message : "Unknown error";
+}
+
+function buildCompletionEmailHtml(params: {
+  firstName: string;
+  overallScore: number;
+  calBookingUrl: string;
+}): string {
+  const safeName = escapeHtmlMinimal(params.firstName);
+  const score = Number.isInteger(params.overallScore)
+    ? String(params.overallScore)
+    : String(params.overallScore);
+  const calHref = escapeHtmlAttr(params.calBookingUrl);
+  return `<!DOCTYPE html>
+<html lang="en">
+  <head><meta charset="utf-8" /></head>
+  <body style="margin:0;padding:24px;font-family:ui-sans-serif,system-ui,sans-serif;font-size:16px;line-height:1.6;color:#0f172a;background:#f8fafc;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:12px;padding:28px 24px;border:1px solid #e2e8f0;">
+      <tr><td>
+        <p style="margin:0 0 16px;">Hi ${safeName},</p>
+        <p style="margin:0 0 16px;">Thanks for completing your Deep Dive Assessment. Your overall score is <strong>${score}</strong> out of 100.</p>
+        <p style="margin:0 0 20px;">If you would like to review your results and discuss practical next steps, you can book a short call with me below.</p>
+        <p style="margin:0 0 24px;">
+          <a href="${calHref}" style="display:inline-block;background:#0f172a;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:600;">Schedule on Cal.com</a>
+        </p>
+        <p style="margin:0;color:#64748b;font-size:14px;">Jeff Oldroyd<br />Enhanced Ops</p>
+      </td></tr>
+    </table>
+  </body>
+</html>`;
+}
+
+const DEFAULT_CAL_BOOKING_URL = "https://cal.com/jeff-oldroyd";
+
+export async function POST(req: Request) {
+  const cfg = checkRequiredEnv();
+  if (!cfg.ok) {
+    return NextResponse.json({ error: cfg.message }, { status: 503 });
+  }
+
+  const json: unknown = await req.json().catch(() => null);
+  const parsed = bodySchema.safeParse(json);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
+  const { assessmentId, answers, overallScore, moduleScores, email, firstName } = parsed.data;
+  const completedAt = new Date().toISOString();
+  const calBookingUrl = process.env.CAL_COM_BOOKING_URL?.trim() || DEFAULT_CAL_BOOKING_URL;
+
+  const admin = getSupabaseAdmin();
+
+  try {
+    const { data: updatedRows, error: updateError } = await admin
+      .from("deep_dive_assessments")
+      .update({
+        assessment_answers: answers,
+        assessment_score: overallScore,
+        module_scores: moduleScores,
+        assessment_completed_at: completedAt,
+      })
+      .eq("id", assessmentId)
+      .select("id");
+
+    if (updateError) {
+      return NextResponse.json({ error: updateError.message }, { status: 500 });
+    }
+    if (!updatedRows?.length) {
+      return NextResponse.json({ error: "Assessment not found" }, { status: 404 });
+    }
+
+    const resend = new Resend(cfg.resendKey);
+    const html = buildCompletionEmailHtml({ firstName, overallScore, calBookingUrl });
+
+    const { error: sendError } = await resend.emails.send({
+      from: "jeff@enhancedops.ninja",
+      to: email,
+      subject: "Your Deep Dive Assessment is complete — book a quick debrief",
+      html,
+    });
+
+    if (sendError) {
+      return NextResponse.json(
+        { error: sendError.message ?? "Failed to send confirmation email" },
+        { status: 500 },
+      );
+    }
+
+    return NextResponse.json({ ok: true, assessmentCompletedAt: completedAt });
+  } catch (err: unknown) {
+    return NextResponse.json({ error: errorMessage(err) }, { status: 500 });
+  }
+}
