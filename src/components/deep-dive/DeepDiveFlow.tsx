@@ -4,12 +4,13 @@ import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-
 import { loadStripe, type Stripe } from "@stripe/stripe-js";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   basePricing,
   DEEP_DIVE_BASE_USD,
   formatUsd,
-  resolveDiscountOrAffiliateCode,
+  resolveAffiliateCode,
+  resolveDiscountCode,
   type AppliedPricing,
   type BusinessTrack,
 } from "@/lib/deep-dive/pricing";
@@ -56,7 +57,9 @@ function parseCreatePaymentIntentJson(json: unknown): CreatePaymentIntentSuccess
 function buildPaymentPayload(
   form: CheckoutForm,
   businessType: BusinessTrack,
-  pricing: AppliedPricing,
+  discountPricing: AppliedPricing,
+  appliedDiscountCode: string | null,
+  appliedAffiliateCode: string | null,
 ): Record<string, string | number> {
   const body: Record<string, string | number> = {
     firstName: form.firstName.trim(),
@@ -65,13 +68,11 @@ function buildPaymentPayload(
     phone: form.phone.trim(),
     orgName: form.orgName.trim(),
     businessType,
-    amountPaid: pricing.amountPaid,
+    amountPaid: discountPricing.amountPaid,
+    affiliate: appliedAffiliateCode ?? "",
   };
-  if (pricing.kind === "discount") {
-    body.discountCode = pricing.discountCode;
-  }
-  if (pricing.kind === "affiliate") {
-    body.affiliate = pricing.affiliate;
+  if (appliedDiscountCode) {
+    body.discountCode = appliedDiscountCode;
   }
   return body;
 }
@@ -269,9 +270,18 @@ export function DeepDiveFlow() {
     phone: "",
     orgName: "",
   });
-  const [codeInput, setCodeInput] = useState("");
-  const [pricing, setPricing] = useState<AppliedPricing>(() => basePricing());
-  const [codeFeedback, setCodeFeedback] = useState<string | null>(null);
+  const [discountInput, setDiscountInput] = useState("");
+  const [affiliateInput, setAffiliateInput] = useState("");
+  const [appliedDiscountCode, setAppliedDiscountCode] = useState<string | null>(null);
+  const [appliedAffiliateCode, setAppliedAffiliateCode] = useState<string | null>(null);
+  const [discountFeedback, setDiscountFeedback] = useState<string | null>(null);
+  const [affiliateFeedback, setAffiliateFeedback] = useState<string | null>(null);
+
+  const discountPricing = useMemo((): AppliedPricing => {
+    if (!appliedDiscountCode) return basePricing();
+    const r = resolveDiscountCode(appliedDiscountCode);
+    return r.ok ? r.pricing : basePricing();
+  }, [appliedDiscountCode]);
 
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
@@ -298,20 +308,48 @@ export function DeepDiveFlow() {
     setStep(2);
   };
 
-  const applyCode = () => {
-    const raw = codeInput;
+  const applyDiscount = () => {
+    const raw = discountInput;
     if (!raw.trim()) {
-      setPricing(basePricing());
-      setCodeFeedback(null);
+      setAppliedDiscountCode(null);
+      setDiscountFeedback(null);
       return;
     }
-    const result = resolveDiscountOrAffiliateCode(raw);
+    const normalized = raw.trim().toUpperCase();
+    if (appliedDiscountCode === normalized) {
+      setDiscountFeedback("That discount is already applied.");
+      return;
+    }
+    const result = resolveDiscountCode(raw);
     if (!result.ok) {
-      setCodeFeedback(result.message);
+      setDiscountFeedback(result.message);
       return;
     }
-    setPricing(result.pricing);
-    setCodeFeedback(result.pricing.kind === "base" ? null : result.pricing.summary);
+    const { pricing } = result;
+    if (pricing.kind !== "discount") return;
+    setAppliedDiscountCode(pricing.discountCode);
+    setDiscountFeedback(pricing.summary);
+  };
+
+  const applyAffiliate = () => {
+    const raw = affiliateInput;
+    if (!raw.trim()) {
+      setAppliedAffiliateCode(null);
+      setAffiliateFeedback(null);
+      return;
+    }
+    const normalized = raw.trim().toUpperCase();
+    if (appliedAffiliateCode === normalized) {
+      setAffiliateFeedback("That affiliate code is already applied.");
+      return;
+    }
+    const result = resolveAffiliateCode(raw);
+    if (!result.ok) {
+      setAffiliateFeedback(result.message);
+      return;
+    }
+    setAppliedAffiliateCode(result.affiliate);
+    setAffiliateFeedback(result.message);
   };
 
   const updateField = (key: keyof CheckoutForm, value: string) => {
@@ -345,7 +383,9 @@ export function DeepDiveFlow() {
       const res = await fetch("/api/create-payment-intent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(buildPaymentPayload(form, track, pricing)),
+        body: JSON.stringify(
+          buildPaymentPayload(form, track, discountPricing, appliedDiscountCode, appliedAffiliateCode),
+        ),
       });
       const json: unknown = await res.json().catch(() => null);
       const parsed = parseCreatePaymentIntentJson(json);
@@ -366,7 +406,7 @@ export function DeepDiveFlow() {
     }
   };
 
-  const amountLabel = formatUsd(pricing.amountPaid);
+  const amountLabel = formatUsd(discountPricing.amountPaid);
 
   return (
     <div className="min-h-screen bg-[#000000] text-white">
@@ -520,40 +560,70 @@ export function DeepDiveFlow() {
               </div>
             </div>
 
-            <div className="mt-8 rounded-xl border border-[rgb(255_255_255/0.1)] bg-[rgb(10_10_10)] p-5">
-              <label className={labelClass} htmlFor="dd-code">
-                Discount or affiliate code
-              </label>
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <input
-                  id="dd-code"
-                  className={inputClass}
-                  placeholder="Optional"
-                  value={codeInput}
-                  onChange={(e) => setCodeInput(e.target.value)}
-                />
-                <button
-                  type="button"
-                  className="shrink-0 rounded-lg border border-[rgb(26_110_204/0.5)] px-5 py-2.5 text-[14px] font-semibold text-[#1A6ECC] transition hover:bg-[rgb(26_110_204/0.15)]"
-                  onClick={applyCode}
-                >
-                  Apply
-                </button>
+            <div className="mt-8 space-y-6 rounded-xl border border-[rgb(255_255_255/0.1)] bg-[rgb(10_10_10)] p-5">
+              <div>
+                <label className={labelClass} htmlFor="dd-discount">
+                  Discount code
+                </label>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <input
+                    id="dd-discount"
+                    className={inputClass}
+                    placeholder="Optional"
+                    value={discountInput}
+                    onChange={(e) => setDiscountInput(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="shrink-0 rounded-lg border border-[rgb(26_110_204/0.5)] px-5 py-2.5 text-[14px] font-semibold text-[#1A6ECC] transition hover:bg-[rgb(26_110_204/0.15)]"
+                    onClick={applyDiscount}
+                  >
+                    Apply
+                  </button>
+                </div>
+                {discountFeedback ? (
+                  <p className="mt-3 text-sm text-[rgb(255_255_255/0.75)]" role="status">
+                    {discountFeedback}
+                  </p>
+                ) : null}
               </div>
-              {codeFeedback ? (
-                <p className="mt-3 text-sm text-[rgb(255_255_255/0.75)]" role="status">
-                  {codeFeedback}
-                </p>
-              ) : null}
-              <div className="mt-4 flex flex-col gap-1 border-t border-[rgb(255_255_255/0.08)] pt-4 text-sm">
+
+              <div className="border-t border-[rgb(255_255_255/0.08)] pt-6">
+                <label className={labelClass} htmlFor="dd-affiliate">
+                  Affiliate code
+                </label>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <input
+                    id="dd-affiliate"
+                    className={inputClass}
+                    placeholder="Optional"
+                    value={affiliateInput}
+                    onChange={(e) => setAffiliateInput(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="shrink-0 rounded-lg border border-[rgb(26_110_204/0.5)] px-5 py-2.5 text-[14px] font-semibold text-[#1A6ECC] transition hover:bg-[rgb(26_110_204/0.15)]"
+                    onClick={applyAffiliate}
+                  >
+                    Apply
+                  </button>
+                </div>
+                {affiliateFeedback ? (
+                  <p className="mt-3 text-sm text-[rgb(255_255_255/0.75)]" role="status">
+                    {affiliateFeedback}
+                  </p>
+                ) : null}
+              </div>
+
+              <div className="flex flex-col gap-1 border-t border-[rgb(255_255_255/0.08)] pt-4 text-sm">
                 <div className="flex justify-between text-[rgb(255_255_255/0.55)]">
                   <span>Base price</span>
                   <span>{formatUsd(DEEP_DIVE_BASE_USD)}</span>
                 </div>
-                {pricing.kind !== "base" ? (
+                {discountPricing.kind === "discount" ? (
                   <div className="flex justify-between text-[#1A6ECC]">
                     <span>Adjustment</span>
-                    <span>{pricing.summary}</span>
+                    <span>{discountPricing.summary}</span>
                   </div>
                 ) : null}
                 <div className="flex justify-between pt-2 text-base font-semibold text-white">

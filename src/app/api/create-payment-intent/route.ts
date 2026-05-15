@@ -70,7 +70,7 @@ export async function POST(req: Request) {
     amountPaid,
   } = parsed.data;
 
-  const affiliateResolved = affiliate && affiliate.length > 0 ? affiliate : "Jeff Oldroyd";
+  const affiliateResolved = affiliate && affiliate.trim().length > 0 ? affiliate.trim() : "";
   const discountCodeValue =
     discountCode && discountCode.length > 0 ? discountCode : null;
 

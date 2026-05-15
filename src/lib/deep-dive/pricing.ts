@@ -2,19 +2,44 @@ export const DEEP_DIVE_BASE_USD = 1500;
 
 export type BusinessTrack = "healthcare" | "business";
 
+/** Checkout price is driven only by discount codes; affiliate is metadata-only. */
 export type AppliedPricing =
   | { kind: "base"; amountPaid: number }
-  | { kind: "discount"; amountPaid: number; discountCode: string; summary: string }
-  | { kind: "affiliate"; amountPaid: number; affiliate: string; summary: string };
+  | { kind: "discount"; amountPaid: number; discountCode: string; summary: string };
 
-export type ResolveCodeResult =
+export type ResolveDiscountResult =
   | { ok: true; pricing: AppliedPricing }
   | { ok: false; message: string };
 
+export type ResolveAffiliateResult =
+  | { ok: true; affiliate: string; message: string }
+  | { ok: false; message: string };
+
+/** Explicit affiliates we recognize by name (case-insensitive). Extend as partners onboard. */
+export const KNOWN_AFFILIATE_CODES = ["7SJM1"] as const;
+
+const DISCOUNT_CODE_SET = new Set<string>(["PILOT10", "SILENTNINJA20", "TESTER4"]);
+
+/** Normalized (uppercase trim) string is one of the fixed discount codes. */
+export function isDiscountCode(normalized: string): boolean {
+  return DISCOUNT_CODE_SET.has(normalized);
+}
+
 /**
- * Case-insensitive codes for checkout. 7SJM1 is affiliate-only (full price).
+ * Whether `raw` should be accepted as an affiliate referral code for checkout.
+ * Rules: never a discount code; matches KNOWN_AFFILIATE_CODES; OR matches
+ * `^[A-Z0-9]{5}$` so future 5-character partner codes work without a deploy.
+ * (Documented here so product can widen the pattern later if needed.)
  */
-export function resolveDiscountOrAffiliateCode(raw: string): ResolveCodeResult {
+export function isAffiliateCode(raw: string): boolean {
+  const normalized = raw.trim().toUpperCase();
+  if (!normalized) return false;
+  if (isDiscountCode(normalized)) return false;
+  if (KNOWN_AFFILIATE_CODES.some((c) => c.toUpperCase() === normalized)) return true;
+  return /^[A-Z0-9]{5}$/.test(normalized);
+}
+
+export function resolveDiscountCode(raw: string): ResolveDiscountResult {
   const normalized = raw.trim().toUpperCase();
   if (!normalized) {
     return { ok: false, message: "Enter a code to apply." };
@@ -51,19 +76,24 @@ export function resolveDiscountOrAffiliateCode(raw: string): ResolveCodeResult {
           summary: "Test checkout: $1 due today.",
         },
       };
-    case "7SJM1":
-      return {
-        ok: true,
-        pricing: {
-          kind: "affiliate",
-          amountPaid: DEEP_DIVE_BASE_USD,
-          affiliate: "7SJM1",
-          summary: "Affiliate referral recorded — full price ($1,500 due today).",
-        },
-      };
     default:
-      return { ok: false, message: "That code is not valid for this checkout." };
+      return { ok: false, message: "That discount code is not valid for this checkout." };
   }
+}
+
+export function resolveAffiliateCode(raw: string): ResolveAffiliateResult {
+  const normalized = raw.trim().toUpperCase();
+  if (!normalized) {
+    return { ok: false, message: "Enter a code to apply." };
+  }
+  if (!isAffiliateCode(raw)) {
+    return { ok: false, message: "That affiliate code is not valid for this checkout." };
+  }
+  return {
+    ok: true,
+    affiliate: normalized,
+    message: "Affiliate referral recorded — price is unchanged.",
+  };
 }
 
 export function basePricing(): AppliedPricing {
