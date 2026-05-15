@@ -412,8 +412,16 @@ export function DeepDiveFlow() {
     <div className="min-h-screen bg-[#000000] text-white">
       <header className="border-b border-[rgb(255_255_255/0.08)] px-6 py-5">
         <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3">
-          <Link href="/" className="text-sm font-medium text-[rgb(255_255_255/0.65)] no-underline hover:text-white">
-            ← Enhanced Ops × Ninja
+          <Link
+            href="/"
+            className="inline-flex shrink-0 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1A6ECC]"
+          >
+            <img
+              src="/ninja-logo-full.png"
+              alt="Enhanced Ops × Ninja"
+              className="h-9 w-auto"
+              height={36}
+            />
           </Link>
           {step > 0 ? (
             <button
