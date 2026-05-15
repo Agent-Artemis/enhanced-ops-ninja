@@ -1,6 +1,9 @@
 /**
- * Generates operational health assessment JSON configs.
+ * Generates free-tier operational health assessment JSON configs.
  * Run: npm run generate:assessments
+ *
+ * paid-healthcare.json and paid-business.json are hand-maintained (Jeff's
+ * in-depth voice content). This script does not overwrite them.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -275,202 +278,6 @@ const bizFreePrompts = [
   },
 ];
 
-function paidHealthcareQuestions() {
-  const stems = [
-    {
-      domainId: "patient_access",
-      items: [
-        "Online self-scheduling coverage and rules for visit types",
-        "Waitlist management and appointment utilization optimization",
-        "Call center/service level metrics for patient access",
-        "Triage protocols for urgent add-ons and same-day access",
-        "Multilingual access and ADA accommodations across channels",
-        "Portal adoption and secure messaging turnaround expectations",
-        "Pre-visit planning including labs/imaging orders completed ahead of time",
-        "No-show risk scoring and targeted intervention playbooks",
-      ],
-    },
-    {
-      domainId: "revenue_cycle",
-      items: [
-        "Charge capture completeness and provider education loop",
-        "Coder query workflow and turnaround time discipline",
-        "Payer contract modeling and underpayment detection",
-        "Prior authorization tracking and escalation paths",
-        "Credit balance and refund governance",
-        "Cash posting automation and exception queues",
-        "Bad debt and charity care policy consistency",
-        "KPI cadence for net collection rate and days in AR",
-      ],
-    },
-    {
-      domainId: "clinical_ops",
-      items: [
-        "Template standardization and note bloat reduction",
-        "Inbox/workflow management for clinician tasks",
-        "Quality measure attribution and numerator/denominator integrity",
-        "Population health panel management and outreach campaigns",
-        "Medication reconciliation reliability at transitions",
-        "Care gap closure reporting by site and provider",
-        "Telehealth parity workflows and billing alignment",
-        "Supply and room turnover efficiency in procedural areas",
-      ],
-    },
-    {
-      domainId: "technology_data",
-      items: [
-        "Master patient index (MPI) stewardship and duplicate resolution SLAs",
-        "Interface monitoring, alerting, and replay procedures",
-        "Data dictionary ownership and field governance",
-        "Release management and regression testing discipline",
-        "API strategy for partners versus one-off exports",
-        "Identity and SSO posture for clinical applications",
-        "Backup/restore testing evidence for critical systems",
-        "Analytics warehouse freshness and trusted metrics definitions",
-      ],
-    },
-    {
-      domainId: "compliance_risk",
-      items: [
-        "Minimum necessary enforcement in workflows and reporting",
-        "BAA inventory accuracy and renewal tracking",
-        "Workforce sanctions/OIG checks and periodic reverification",
-        "Device and media controls for workstations and removable media",
-        "Break-glass auditing and justification reviews",
-        "State privacy law mapping beyond HIPAA where applicable",
-        "Clinical research compliance if applicable",
-        "Vendor risk tiering and security assessment depth by tier",
-      ],
-    },
-    {
-      domainId: "workforce_ops",
-      items: [
-        "Time and attendance accuracy and exception handling",
-        "Credentialing/privileging cycle time and expirations monitoring",
-        "Shift swap governance and overtime controls",
-        "Centralized scheduling for multi-site coverage",
-        "Role-based access provisioning and deprovisioning SLAs",
-        "Performance coaching cadence tied to operational metrics",
-        "Burnout indicators and staffing contingency plans",
-        "Cross-training depth for critical roles",
-      ],
-    },
-  ];
-
-  let n = 0;
-  const questions = [];
-  for (const block of stems) {
-    for (const text of block.items) {
-      n += 1;
-      questions.push({
-        id: `hc_p_${String(n).padStart(3, "0")}`,
-        domainId: block.domainId,
-        prompt: `Rate your operational maturity for: ${text}.`,
-        choices: maturityChoices("this capability"),
-      });
-    }
-  }
-  return questions;
-}
-
-function paidBusinessQuestions() {
-  const stems = [
-    {
-      domainId: "customer_experience",
-      items: [
-        "Lead source attribution and funnel hygiene",
-        "Speed-to-lead and after-hours coverage",
-        "Customer journey mapping and moment-of-truth metrics",
-        "Voice-of-customer program and closed-loop fixes",
-        "CX QA for sales and support conversations",
-        "Self-service deflection strategy and content governance",
-        "Partner/channel conflict rules and deal registration hygiene",
-        "NPS/CSAT tied to account-level action plans",
-      ],
-    },
-    {
-      domainId: "revenue_cash",
-      items: [
-        "Contract template governance and legal turnaround SLAs",
-        "Billing accuracy and usage metering where applicable",
-        "Sales commission alignment to cash collections",
-        "Sales tax/VAT determination and audit readiness",
-        "Revenue recognition policy adherence and evidence packs",
-        "A/R aging reviews and executive escalation thresholds",
-        "Payment failures and retry logic for subscriptions",
-        "Working capital reporting and 13-week cash views",
-      ],
-    },
-    {
-      domainId: "operations_delivery",
-      items: [
-        "SLA definitions by segment and enforcement",
-        "Backlog grooming tied to capacity planning",
-        "Incident management and postmortem quality",
-        "Change advisory for production releases",
-        "Inventory and COGS accuracy (if physical goods)",
-        "Warranty/returns processing and root-cause analytics",
-        "Field service dispatch optimization (if applicable)",
-        "OKR alignment from leadership to team execution",
-      ],
-    },
-    {
-      domainId: "technology_data",
-      items: [
-        "CRM as source-of-truth rules and dedupe governance",
-        "Integration catalog ownership and deprecation policy",
-        "Data retention and minimization for customer records",
-        "Secrets management and key rotation practices",
-        "Observability (logs/metrics/traces) for critical services",
-        "Access reviews for SaaS admin roles",
-        "MDM/device compliance for distributed teams",
-        "BI semantic layer and metric ownership",
-      ],
-    },
-    {
-      domainId: "risk_governance",
-      items: [
-        "Policy lifecycle management and annual attestation",
-        "Third-party risk assessments by criticality tier",
-        "Insurance coverage reviews and claims readiness",
-        "Regulatory change management process",
-        "Ethics and whistleblower intake handling",
-        "Board reporting quality for operational risk",
-        "Business continuity tabletop exercises",
-        "Records management and legal hold procedures",
-      ],
-    },
-    {
-      domainId: "workforce_process",
-      items: [
-        "Role clarity (RACI) for cross-functional workflows",
-        "Hiring funnel metrics and interviewer calibration",
-        "Onboarding checklists with system access SLAs",
-        "Performance improvement plans and documentation rigor",
-        "Knowledge base freshness and ownership",
-        "Internal comms cadence during operational incidents",
-        "Skills matrices for critical teams",
-        "Succession depth for key leaders",
-      ],
-    },
-  ];
-
-  let n = 0;
-  const questions = [];
-  for (const block of stems) {
-    for (const text of block.items) {
-      n += 1;
-      questions.push({
-        id: `gb_p_${String(n).padStart(3, "0")}`,
-        domainId: block.domainId,
-        prompt: `Rate your operational maturity for: ${text}.`,
-        choices: maturityChoices("this capability"),
-      });
-    }
-  }
-  return questions;
-}
-
 function writeJson(name, obj) {
   fs.mkdirSync(outDir, { recursive: true });
   fs.writeFileSync(path.join(outDir, name), `${JSON.stringify(obj, null, 2)}\n`, "utf8");
@@ -492,32 +299,15 @@ const freeBusiness = {
   questions: withChoices(bizFreePrompts),
 };
 
-const paidHealthcare = {
-  schemaVersion: 1,
-  tier: "paid",
-  track: "healthcare",
-  domains: hcDomains,
-  questions: paidHealthcareQuestions(),
-};
-
-const paidBusiness = {
-  schemaVersion: 1,
-  tier: "paid",
-  track: "business",
-  domains: bizDomains,
-  questions: paidBusinessQuestions(),
-};
-
 writeJson("free-healthcare.json", freeHealthcare);
 writeJson("free-business.json", freeBusiness);
-writeJson("paid-healthcare.json", paidHealthcare);
-writeJson("paid-business.json", paidBusiness);
 
 const counts = {
   freeHealthcare: freeHealthcare.questions.length,
   freeBusiness: freeBusiness.questions.length,
-  paidHealthcare: paidHealthcare.questions.length,
-  paidBusiness: paidBusiness.questions.length,
 };
 
-console.log("Wrote assessment configs:", counts);
+console.log("Wrote free assessment configs:", counts);
+console.log(
+  "Skipped paid-healthcare.json and paid-business.json (hand-maintained in-depth content).",
+);
