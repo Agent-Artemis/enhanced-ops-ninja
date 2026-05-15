@@ -4,7 +4,7 @@ import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-
 import { loadStripe } from "@stripe/stripe-js";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   basePricing,
   DEEP_DIVE_BASE_USD,
@@ -158,6 +158,30 @@ function InnerPaySection(props: PaySectionProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [elementReady, setElementReady] = useState(false);
   const [elementComplete, setElementComplete] = useState(false);
+  const [persistAfterPay, setPersistAfterPay] = useState<{
+    assessmentId: string;
+    track: BusinessTrack;
+    email: string;
+    firstName: string;
+  } | null>(null);
+  const onPaidRef = useRef(props.onPaid);
+  const persistHandledRef = useRef(false);
+  onPaidRef.current = props.onPaid;
+
+  useEffect(() => {
+    if (!persistAfterPay) {
+      persistHandledRef.current = false;
+      return;
+    }
+    if (persistHandledRef.current) return;
+    persistHandledRef.current = true;
+    writeLocalStorage(DEEP_DIVE_LS.assessmentId, persistAfterPay.assessmentId);
+    writeLocalStorageIfEmpty(DEEP_DIVE_LS.businessType, persistAfterPay.track);
+    writeLocalStorageIfEmpty(DEEP_DIVE_LS.email, persistAfterPay.email.trim());
+    writeLocalStorageIfEmpty(DEEP_DIVE_LS.firstName, persistAfterPay.firstName.trim());
+    setPersistAfterPay(null);
+    onPaidRef.current();
+  }, [persistAfterPay]);
 
   const onElementChange = useCallback((e: { complete: boolean }) => {
     setElementComplete(e.complete);
@@ -183,11 +207,12 @@ function InnerPaySection(props: PaySectionProps) {
       return;
     }
     if (paymentIntent?.status === "succeeded") {
-      writeLocalStorage(DEEP_DIVE_LS.assessmentId, props.assessmentId);
-      writeLocalStorageIfEmpty(DEEP_DIVE_LS.businessType, props.track);
-      writeLocalStorageIfEmpty(DEEP_DIVE_LS.email, props.email.trim());
-      writeLocalStorageIfEmpty(DEEP_DIVE_LS.firstName, props.firstName.trim());
-      props.onPaid();
+      setPersistAfterPay({
+        assessmentId: props.assessmentId,
+        track: props.track,
+        email: props.email,
+        firstName: props.firstName,
+      });
     }
   };
 
