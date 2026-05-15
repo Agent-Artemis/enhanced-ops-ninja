@@ -5,8 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
-  DEEP_DIVE_QUESTION_COUNT,
   getDeepDiveModules,
+  getDeepDiveQuestionCount,
   getDeepDiveQuestions,
   type DeepDiveChoiceLetter,
   type DeepDiveModuleMeta,
@@ -144,6 +144,7 @@ export function DeepDiveAssessmentWizard() {
   const track = businessType;
   const modules = useMemo(() => (track ? getDeepDiveModules(track) : []), [track]);
   const questions = useMemo(() => (track ? getDeepDiveQuestions(track) : []), [track]);
+  const questionCount = track ? getDeepDiveQuestionCount(track) : 0;
   const screens = useMemo(() => {
     if (!track || questions.length === 0) return [{ kind: "welcome" as const }];
     return buildScreens(modules, questions.length);
@@ -201,7 +202,7 @@ export function DeepDiveAssessmentWizard() {
   };
 
   const submitAssessment = async () => {
-    if (!track || !assessmentId || questions.length !== DEEP_DIVE_QUESTION_COUNT) return;
+    if (!track || !assessmentId || questions.length !== questionCount) return;
     for (const q of questions) {
       if (!answers[q.id]) {
         setSubmitError("Please answer every question before submitting.");
@@ -322,7 +323,7 @@ export function DeepDiveAssessmentWizard() {
                 {track === "healthcare" ? "Healthcare" : "General business"}
               </span>
               {" · "}
-              {DEEP_DIVE_QUESTION_COUNT} questions · about 45–60 minutes
+              {questionCount} questions · about 45–60 minutes
             </p>
             <button type="button" className={primaryBtnClass} onClick={goNext}>
               {primaryLabel}
