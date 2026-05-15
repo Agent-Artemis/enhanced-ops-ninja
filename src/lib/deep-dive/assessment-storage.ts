@@ -14,20 +14,35 @@ export const DEEP_DIVE_LS = {
 
 export type StoredBusinessType = "healthcare" | "business";
 
-export function readLocalStorage(key: string): string | null {
+/** Returns real browser Storage or null (SSR, broken polyfills, tests). Never throws. */
+function getBrowserLocalStorage(): Storage | null {
   if (typeof window === "undefined") return null;
   try {
-    return window.localStorage.getItem(key);
+    const ls = window.localStorage;
+    if (ls == null) return null;
+    if (typeof ls.getItem !== "function" || typeof ls.setItem !== "function") return null;
+    return ls;
+  } catch {
+    return null;
+  }
+}
+
+export function readLocalStorage(key: string): string | null {
+  const ls = getBrowserLocalStorage();
+  if (!ls) return null;
+  try {
+    return ls.getItem(key);
   } catch {
     return null;
   }
 }
 
 export function writeLocalStorageIfEmpty(key: string, value: string): void {
-  if (typeof window === "undefined") return;
+  const ls = getBrowserLocalStorage();
+  if (!ls) return;
   try {
-    if (window.localStorage.getItem(key) == null || window.localStorage.getItem(key) === "") {
-      window.localStorage.setItem(key, value);
+    if (ls.getItem(key) == null || ls.getItem(key) === "") {
+      ls.setItem(key, value);
     }
   } catch {
     // quota / private mode
@@ -35,9 +50,10 @@ export function writeLocalStorageIfEmpty(key: string, value: string): void {
 }
 
 export function writeLocalStorage(key: string, value: string): void {
-  if (typeof window === "undefined") return;
+  const ls = getBrowserLocalStorage();
+  if (!ls) return;
   try {
-    window.localStorage.setItem(key, value);
+    ls.setItem(key, value);
   } catch {
     // non-fatal
   }

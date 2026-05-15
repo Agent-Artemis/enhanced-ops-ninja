@@ -1,10 +1,10 @@
 "use client";
 
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
+import { loadStripe, type Stripe } from "@stripe/stripe-js";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   basePricing,
   DEEP_DIVE_BASE_USD,
@@ -251,9 +251,13 @@ export function DeepDiveFlow() {
   const router = useRouter();
   const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
-  const stripePromise = useMemo(() => {
-    if (!publishableKey) return null;
-    return loadStripe(publishableKey);
+  const [stripePromise, setStripePromise] = useState<Promise<Stripe | null> | null>(null);
+  useEffect(() => {
+    if (!publishableKey) {
+      setStripePromise(null);
+      return;
+    }
+    setStripePromise(loadStripe(publishableKey));
   }, [publishableKey]);
 
   const [step, setStep] = useState<Step>(0);
