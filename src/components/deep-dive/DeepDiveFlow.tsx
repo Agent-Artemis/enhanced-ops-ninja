@@ -417,7 +417,7 @@ export function DeepDiveFlow() {
             className="inline-flex shrink-0 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1A6ECC]"
           >
             <img
-              src="/ninja-logo-full.png"
+              src="/logo%20transparent.png"
               alt="Enhanced Ops × Ninja"
               className="h-9 w-auto"
               height={36}
