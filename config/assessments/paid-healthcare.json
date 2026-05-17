@@ -488,11 +488,11 @@
     {
       "id": "hc_p_44",
       "domainId": "labor_costs",
-      "prompt": "Have you ever modeled what a 10% reduction in labor costs would look like — without cutting headcount?",
+      "prompt": "Have you ever explored what efficiency gains — through automation, smarter scheduling, or cross-training — could save you without reducing headcount?",
       "choices": [
-        { "key": "A", "label": "Yes — we actively work efficiency improvements to reduce cost without reducing people" },
-        { "key": "B", "label": "We've discussed it, but never modeled it" },
-        { "key": "C", "label": "Haven't considered this" },
+        { "key": "A", "label": "Yes — we actively model and implement efficiency improvements to reduce cost without reducing people" },
+        { "key": "B", "label": "We've had the conversation, but never put real numbers to it" },
+        { "key": "C", "label": "This hasn't come up — we haven't thought about it this way" },
         { "key": "D", "label": "We don't believe that's possible in our environment" }
       ]
     }
