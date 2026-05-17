@@ -11,7 +11,8 @@
     "start": "next start",
     "lint": "next lint",
     "generate:assessments": "node scripts/generate-assessment-configs.mjs",
-    "generate:sample-pdf": "npx tsx scripts/generate-sample-pdf.ts"
+    "generate:sample-pdf": "npx tsx scripts/generate-sample-pdf.ts",
+    "validate:paid-assessments": "npx tsx scripts/validate-paid-assessments.ts"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.3.0",
