@@ -92,7 +92,7 @@
     {
       "id": "hc_p_08",
       "domainId": "staffing_hr",
-      "prompt": "How many FTEs are you running right now?",
+      "prompt": "How many F.T.E.'s (Full Time Employees) are you running right now?",
       "choices": [
         { "key": "A", "label": "1–10" },
         { "key": "B", "label": "11–30" },
