@@ -26,14 +26,17 @@ export function MarketingHero() {
             <span className="text-eon-blue">... Like a Ninja.</span>
           </p>
           <div className="z-[2] order-4 md:order-none">
-            <div className="mb-0 flex aspect-video w-full flex-col items-center justify-center rounded-[10px] border border-[rgb(26_110_204/0.3)] bg-[rgb(26_110_204/0.08)] p-8 text-center">
-              <div className="mb-2 text-5xl text-eon-blue">▶</div>
-              <p className="text-[13px] text-[rgb(255_255_255/0.55)]">
-                Watch: How Enhanced Ops Works (3 min)
-              </p>
-              <p className="mt-2 text-[11px] text-[rgb(255_255_255/0.4)]">
-                [VSL VIDEO PLACEHOLDER — to be replaced]
-              </p>
+            <div className="mb-0 aspect-video w-full overflow-hidden rounded-[10px] border border-[rgb(26_110_204/0.3)]">
+              <iframe
+                width="100%"
+                height="100%"
+                src="https://www.youtube.com/embed/3mxBUUr5y9A"
+                title="How Enhanced Ops Works"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                style={{ borderRadius: "12px" }}
+              />
             </div>
           </div>
         </div>
