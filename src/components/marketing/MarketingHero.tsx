@@ -30,7 +30,7 @@ export function MarketingHero() {
               <iframe
                 width="100%"
                 height="100%"
-                src="https://www.youtube.com/embed/3mxBUUr5y9A"
+                src="https://www.youtube.com/embed/3mxBUUr5y9A?modestbranding=1&rel=0&showinfo=0"
                 title="How Enhanced Ops Works"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
