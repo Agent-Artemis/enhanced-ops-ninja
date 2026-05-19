@@ -21,7 +21,7 @@ export function MarketingHome() {
 
   return (
     <>
-      <MarketingHeader onBookCall={placeholderCalendly} />
+      <MarketingHeader />
       <main>
         <MarketingHero />
         <MarketingStats />
