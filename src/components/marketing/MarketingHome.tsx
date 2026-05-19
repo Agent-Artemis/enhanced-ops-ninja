@@ -23,7 +23,7 @@ export function MarketingHome() {
     <>
       <MarketingHeader onBookCall={placeholderCalendly} />
       <main>
-        <MarketingHero onBookCall={placeholderCalendly} />
+        <MarketingHero />
         <MarketingStats />
         <MarketingProblems />
         <MarketingWorks />

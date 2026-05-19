@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export function MarketingHero(props: { onBookCall: () => void }) {
+export function MarketingHero() {
   return (
     <section className="border-b border-[rgb(26_110_204/0.3)] bg-eon-black px-6 pb-12 pt-8">
       <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-x-12 gap-y-6 md:grid-cols-2 md:grid-rows-[auto_1fr] md:gap-y-12">
@@ -24,19 +24,12 @@ export function MarketingHero(props: { onBookCall: () => void }) {
             more staff.
           </p>
           <div className="mb-4 flex flex-wrap gap-3">
-            <Link
-              href="/assessment"
+            <a
+              href="#assessment"
               className="inline-flex cursor-pointer items-center justify-center rounded-lg border-none bg-eon-blue px-7 py-3.5 text-[15px] font-medium text-white no-underline transition hover:bg-[#1562b8]"
             >
-              Get My Free Assessment →
-            </Link>
-            <button
-              type="button"
-              className="cursor-pointer rounded-lg border border-eon-blue bg-transparent px-7 py-3.5 text-[15px] font-medium text-eon-blue transition hover:bg-[rgb(26_110_204/0.1)]"
-              onClick={props.onBookCall}
-            >
-              Book a Strategy Call
-            </button>
+              Take Me to the Assessments
+            </a>
           </div>
           <p className="text-xs text-[rgb(255_255_255/0.4)]">
             🔒 HIPAA-compliant infrastructure | No obligation | Results in 24 hours
