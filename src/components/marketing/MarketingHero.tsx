@@ -3,8 +3,18 @@ import Link from "next/link";
 export function MarketingHero(props: { onBookCall: () => void }) {
   return (
     <section className="border-b border-[rgb(26_110_204/0.3)] bg-eon-black px-6 pb-12 pt-8">
-      <div className="mx-auto grid max-w-[1200px] items-start gap-12 md:grid-cols-2">
-        <div className="z-[2] mt-0 md:mt-44">
+      <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-x-12 gap-y-6 md:grid-cols-2 md:grid-rows-[auto_1fr] md:gap-y-12">
+        <h1 className="z-[2] mb-0 font-[family-name:var(--font-bebas)] text-[42px] uppercase leading-[1.15] tracking-[0.02em] md:col-start-1 md:row-start-1 md:text-[48px]">
+          <span className="text-white">STOP DOING IT</span>
+          <br />
+          <span className="text-eon-blue">THE HARD WAY</span>
+        </h1>
+        <p className="z-[2] mb-0 font-[family-name:var(--font-bebas)] text-[32px] uppercase leading-tight tracking-[0.04em] text-white md:col-start-2 md:row-start-1">
+          Cut Chaos. Get Results.
+          <br />
+          <span className="text-eon-blue">... Like a Ninja.</span>
+        </p>
+        <div className="z-[2] flex flex-col md:col-start-1 md:row-start-2">
           <p className="mb-6 text-[18px] font-semibold uppercase tracking-[0.15em] text-[rgb(255_255_255/0.55)]">
             Enhanced operations and assessments
           </p>
@@ -32,17 +42,7 @@ export function MarketingHero(props: { onBookCall: () => void }) {
             🔒 HIPAA-compliant infrastructure | No obligation | Results in 24 hours
           </p>
         </div>
-        <div className="z-[2]">
-          <p className="mb-12 font-[family-name:var(--font-bebas)] text-[32px] uppercase leading-tight tracking-[0.04em] text-white">
-            Cut Chaos. Get Results.
-            <br />
-            <span className="text-eon-blue">... Like a Ninja.</span>
-          </p>
-          <h1 className="mb-8 font-[family-name:var(--font-bebas)] text-[42px] uppercase leading-[1.15] tracking-[0.02em] md:text-[48px]">
-            <span className="text-white">STOP DOING IT</span>
-            <br />
-            <span className="text-eon-blue">THE HARD WAY</span>
-          </h1>
+        <div className="z-[2] md:col-start-2 md:row-start-2">
           <div className="mb-0 flex aspect-video flex-col items-center justify-center rounded-[10px] border border-[rgb(26_110_204/0.3)] bg-[rgb(26_110_204/0.08)] p-8 text-center">
             <div className="mb-2 text-5xl text-eon-blue">▶</div>
             <p className="text-[13px] text-[rgb(255_255_255/0.55)]">
