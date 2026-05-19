@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const NINJA_HERO_WIDTH = 200;
+const NINJA_HERO_WIDTH = 180;
 
 export function MarketingHero() {
   return (
@@ -12,14 +12,21 @@ export function MarketingHero() {
           <br />
           <span className="text-eon-blue">THE HARD WAY</span>
         </h1>
-        <div className="contents md:col-start-2 md:row-start-1 md:row-span-2 md:grid md:grid-cols-[minmax(0,1fr)_auto] md:grid-rows-[auto_auto] md:gap-x-4 md:gap-y-12">
-          <p className="z-[2] order-2 mb-0 font-[family-name:var(--font-bebas)] text-[32px] uppercase leading-tight tracking-[0.04em] text-white md:order-none md:col-start-1 md:row-start-1">
+        <div className="contents md:relative md:col-start-2 md:row-start-1 md:row-span-2 md:flex md:flex-col md:gap-y-12">
+          <Image
+            src="/Ninja_Transparent.png"
+            alt=""
+            width={NINJA_HERO_WIDTH}
+            height={270}
+            className="pointer-events-none absolute right-0 top-0 z-[1] hidden h-auto w-[180px] object-contain md:block"
+          />
+          <p className="z-[2] order-2 mb-0 font-[family-name:var(--font-bebas)] text-[32px] uppercase leading-tight tracking-[0.04em] text-white md:order-none">
             Cut Chaos. Get Results.
             <br />
             <span className="text-eon-blue">... Like a Ninja.</span>
           </p>
-          <div className="z-[2] order-4 md:order-none md:col-start-1 md:row-start-2">
-            <div className="mb-0 flex aspect-video flex-col items-center justify-center rounded-[10px] border border-[rgb(26_110_204/0.3)] bg-[rgb(26_110_204/0.08)] p-8 text-center">
+          <div className="z-[2] order-4 md:order-none">
+            <div className="mb-0 flex aspect-video w-full flex-col items-center justify-center rounded-[10px] border border-[rgb(26_110_204/0.3)] bg-[rgb(26_110_204/0.08)] p-8 text-center">
               <div className="mb-2 text-5xl text-eon-blue">▶</div>
               <p className="text-[13px] text-[rgb(255_255_255/0.55)]">
                 Watch: How Enhanced Ops Works (3 min)
@@ -28,15 +35,6 @@ export function MarketingHero() {
                 [VSL VIDEO PLACEHOLDER — to be replaced]
               </p>
             </div>
-          </div>
-          <div className="z-[2] hidden md:col-start-2 md:row-start-1 md:flex md:justify-end md:self-end">
-            <Image
-              src="/Ninja_Transparent.png"
-              alt=""
-              width={NINJA_HERO_WIDTH}
-              height={300}
-              className="h-auto w-[200px] object-contain"
-            />
           </div>
         </div>
         <div className="z-[2] order-3 flex flex-col md:col-start-1 md:row-start-2">
