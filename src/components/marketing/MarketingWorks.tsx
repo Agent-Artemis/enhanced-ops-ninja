@@ -21,9 +21,9 @@ export function MarketingWorks() {
         />
         <Step
           num="02"
-          image={<Image src="/step-02-ninja.png" alt="Ninja with star" width={80} height={80} />}
+          image={<Image src="/Ninja_Transparent.png" alt="Ninja with star" width={80} height={80} />}
           title="WE BUILD YOUR AUTOMATION ROADMAP"
-          body="Our team analyzes your workflow gaps and designs a custom AI automation stack. You'll see exactly what to fix first, what it will cost, and what you'll get back in time and revenue."
+          body="Our team analyzes your workflow gaps and designs a custom AI automation stack. You'll see exactly what to fix first, what it will cost, and what you can leverage in time, finances, staffing, and patient and client care."
         />
         <Step
           num="03"
