@@ -61,8 +61,8 @@ const stats: StatItem[] = [
 
 export function MarketingStats() {
   return (
-    <section className="flex w-full flex-row items-stretch bg-eon-blue px-10 py-6">
-      <div className="flex flex-[1.1] flex-col justify-center">
+    <section className="flex w-full flex-row items-stretch justify-center bg-eon-blue px-10 py-6">
+      <div className="flex w-[190px] shrink-0 flex-col justify-center">
         <p className="mb-1 text-[11px] uppercase tracking-[0.08em] text-white opacity-70">WE FOCUS ON</p>
         <p className="text-[26px] font-bold text-white">LEVERAGE</p>
       </div>
