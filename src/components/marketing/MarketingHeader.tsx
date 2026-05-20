@@ -15,6 +15,15 @@ export function MarketingHeader() {
             priority
           />
         </Link>
+        <div className="flex items-center gap-4">
+          <span className="text-[13px] text-white">Enter Secret Mission</span>
+          <Link
+            href="#"
+            className="inline-flex cursor-pointer items-center justify-center rounded-lg border-none bg-eon-blue px-7 py-3.5 text-[15px] font-medium text-white no-underline transition hover:bg-[#1562b8]"
+          >
+            Login
+          </Link>
+        </div>
       </div>
     </header>
   );
