@@ -17,7 +17,7 @@ export function MarketingWorks() {
           num="01"
           image={<Image src="/Ninja_Transparent.png" alt="Ninja leaping" width={80} height={80} />}
           title="WE ASSESS YOUR OPERATION"
-          body="Take our free 60-second assessment. Tell us where your biggest pain points are. We personally review every submission — no bots, no auto-responses. Your results are customized to your industry."
+          body="Take our Free Assessment or commit to change and take the Deep-Dive Assessment. Give us a picture of where your pain points are in your business. We review them and..."
         />
         <Step
           num="02"
