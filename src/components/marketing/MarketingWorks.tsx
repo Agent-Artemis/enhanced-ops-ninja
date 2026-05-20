@@ -15,7 +15,7 @@ export function MarketingWorks() {
       <div className="mx-auto max-w-[900px]">
         <Step
           num="01"
-          image={<Image src="/ninja-character.jpg" alt="Ninja leaping" width={80} height={80} />}
+          image={<Image src="/Ninja_Transparent.png" alt="Ninja leaping" width={80} height={80} />}
           title="WE ASSESS YOUR OPERATION"
           body="Take our free 60-second assessment. Tell us where your biggest pain points are. We personally review every submission — no bots, no auto-responses. Your results are customized to your industry."
         />
