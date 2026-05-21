@@ -67,7 +67,7 @@ export function MarketingWorks() {
               style={{ background: "transparent" }}
             />
           }
-          title="YOU OPERATE LIKE A MACHINE"
+          title="YOU OPERATE LIKE A NINJA"
           body="Real-time dashboards. Automated front desk. Recovered AR. Fewer no-shows. More revenue. Your team stops doing manual work and starts doing what they were hired to do."
         />
       </div>
