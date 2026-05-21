@@ -21,7 +21,17 @@ export function MarketingWorks() {
         />
         <Step
           num="02"
-          image={<Image src="/step-02-ninja.png" alt="Ninja with star" width={80} height={80} />}
+          imageWrapperClassName="bg-transparent [&_img]:bg-transparent [&_span]:bg-transparent"
+          image={
+            <Image
+              src="/step-02-ninja.png"
+              alt="Ninja with star"
+              width={80}
+              height={80}
+              className="bg-transparent object-contain"
+              style={{ background: "transparent" }}
+            />
+          }
           title="WE BUILD YOUR AUTOMATION ROADMAP"
           body="Our team analyzes your workflow gaps and designs a custom AI automation stack. You'll see exactly what to fix first, what it will cost, and what you can leverage in time, finances, staffing, and patient and client care."
         />
@@ -47,6 +57,7 @@ function Step(props: {
   image: ReactNode;
   title: string;
   body: string;
+  imageWrapperClassName?: string;
 }) {
   return (
     <div className="mb-6 grid grid-cols-1 items-start gap-8 rounded-[10px] border border-[rgb(255_255_255/0.08)] bg-eon-dark p-8 md:grid-cols-[80px_1fr]">
@@ -54,7 +65,11 @@ function Step(props: {
         {props.num}
       </div>
       <div>
-        <div className="mb-2">{props.image}</div>
+        <div
+          className={`mb-2${props.imageWrapperClassName ? ` ${props.imageWrapperClassName}` : ""}`}
+        >
+          {props.image}
+        </div>
         <h3 className="mb-2 font-[family-name:var(--font-bebas)] text-xl uppercase tracking-[0.03em]">
           {props.title}
         </h3>
