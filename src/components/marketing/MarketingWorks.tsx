@@ -56,7 +56,17 @@ export function MarketingWorks() {
         />
         <Step
           num="04"
-          image={<Image src="/step-04-ninja.png" alt="Ninja meditating" width={80} height={80} />}
+          imageWrapperClassName="bg-transparent [&_img]:bg-transparent [&_span]:bg-transparent"
+          image={
+            <Image
+              src="/Ninja_Meditation-transparent.png"
+              alt="Ninja meditating"
+              width={80}
+              height={80}
+              className="bg-transparent object-contain"
+              style={{ background: "transparent" }}
+            />
+          }
           title="YOU OPERATE LIKE A MACHINE"
           body="Real-time dashboards. Automated front desk. Recovered AR. Fewer no-shows. More revenue. Your team stops doing manual work and starts doing what they were hired to do."
         />
