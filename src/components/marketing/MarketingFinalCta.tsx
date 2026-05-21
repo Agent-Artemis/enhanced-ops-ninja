@@ -5,11 +5,11 @@ export function MarketingFinalCta(props: { onBookCall: () => void }) {
   return (
     <section className="bg-eon-blue px-6 py-16 text-center">
       <Image
-        src="/ninja-character.jpg"
+        src="/Ninja_Transparent.png"
         alt="Ninja confident"
         width={140}
         height={140}
-        className="mx-auto mb-6 opacity-85"
+        className="mx-auto mb-6 bg-transparent opacity-85"
       />
       <h2 className="mx-auto mb-4 max-w-[900px] font-[family-name:var(--font-bebas)] text-[36px] uppercase leading-tight tracking-[0.04em] md:text-[52px]">
         YOUR COMPETITION IS
