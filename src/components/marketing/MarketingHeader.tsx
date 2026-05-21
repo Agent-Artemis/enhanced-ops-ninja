@@ -19,7 +19,8 @@ export function MarketingHeader() {
           <span className="text-[26px] text-white">Enter Secret Mission</span>
           <Link
             href="#"
-            className="inline-flex cursor-pointer items-center justify-center rounded-lg border-none bg-eon-blue px-7 py-3.5 text-[30px] font-medium text-white no-underline transition hover:bg-[#1562b8]"
+            className="inline-flex cursor-pointer items-center justify-center rounded-lg border-none bg-eon-blue text-[30px] font-medium text-white no-underline transition hover:bg-[#1562b8]"
+            style={{ padding: '4px 12px' }}
           >
             Login
           </Link>
