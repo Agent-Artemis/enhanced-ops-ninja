@@ -12,10 +12,6 @@ import { MarketingServices } from "@/components/marketing/MarketingServices";
 import { MarketingStats } from "@/components/marketing/MarketingStats";
 import { MarketingWorks } from "@/components/marketing/MarketingWorks";
 
-function placeholderCalendly() {
-  window.alert("[CALENDLY/CAL.COM LINK]");
-}
-
 export function MarketingHome() {
   const router = useRouter();
 
@@ -30,7 +26,7 @@ export function MarketingHome() {
         <MarketingServices />
         <MarketingAssessmentCards onBookDeepDive={() => router.push("/deep-dive")} />
         <MarketingFaq />
-        <MarketingFinalCta onBookCall={placeholderCalendly} />
+        <MarketingFinalCta />
       </main>
       <MarketingFooter />
     </>
