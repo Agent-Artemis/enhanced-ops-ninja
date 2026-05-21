@@ -14,15 +14,6 @@ export function MarketingFooter() {
   return (
     <footer className="border-t border-[rgb(255_255_255/0.06)] bg-[#060606] px-6 pb-6 pt-12">
       <div className="mx-auto max-w-[1200px]">
-        <div className="mb-8">
-          <Image
-            src="/Ninja_Transparent.png"
-            alt="Enhanced Ops"
-            width={80}
-            height={80}
-            className="h-auto w-20 object-contain"
-          />
-        </div>
         <div className="mb-8 flex w-full items-end justify-evenly">
           {NINJA_PARADE.map((ninja) => (
             <Image
