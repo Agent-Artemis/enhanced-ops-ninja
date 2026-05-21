@@ -21,7 +21,7 @@ export function MarketingFaq() {
       },
       {
         q: "What size practices or businesses do you work with?",
-        a: "Solo providers to multi-location practices. Startups to mid-market companies. The assessment helps us scope the right solution for your size and budget.",
+        a: "Most of our clients range from $5M-$15M in annual revenue. The majority are in the healthcare industry, but we work in general business as well.",
       },
       {
         q: "What makes Enhanced Ops different from other AI vendors?",
