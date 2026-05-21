@@ -37,9 +37,22 @@ export function MarketingWorks() {
         />
         <Step
           num="03"
-          image={<Image src="/step-03-ninja.png" alt="Ninja jumping" width={80} height={80} />}
+          imageWrapperClassName="bg-transparent [&_img]:bg-transparent [&_span]:bg-transparent"
+          image={
+            <Image
+              src="/Ninja_Flying_Side_Kick-Transparent.png"
+              alt="Ninja jumping"
+              width={80}
+              height={80}
+              className="bg-transparent object-contain"
+              style={{ background: "transparent" }}
+            />
+          }
           title="WE DEPLOY THE TOOLS"
-          body="From HIPAA-compliant voice AI for healthcare to accounts receivable automation for business — we implement solutions that go live in days, not months. No IT team required."
+          body={`From HIPAA-compliant voice AI for healthcare to accounts receivable automation for business — we implement solutions that go live in days, not months. Three easy ways to work with us:
+• Do it for you
+• Do it with you
+• DIY and we coach you`}
         />
         <Step
           num="04"
