@@ -18,20 +18,22 @@ const bodySchema = z.object({
   businessType: z.string().trim().min(1).max(200),
   discountCode: z.string().trim().max(64).optional(),
   affiliate: z.string().trim().max(120).optional(),
-  amountPaid: z.number().finite().positive(),
+  amountPaid: z.number().finite().min(0),
 });
+
+type SupabaseConfigCheck =
+  | { ok: true; supabaseUrl: string; supabaseServiceKey: string }
+  | { ok: false; message: string };
 
 type ConfigCheck =
   | { ok: true; stripeKey: string; supabaseUrl: string; supabaseServiceKey: string }
   | { ok: false; message: string };
 
-function checkRequiredEnv(): ConfigCheck {
-  const stripeKey = process.env.STRIPE_SECRET_KEY;
+function checkSupabaseEnv(): SupabaseConfigCheck {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!stripeKey || !supabaseUrl || !supabaseServiceKey) {
+  if (!supabaseUrl || !supabaseServiceKey) {
     const missing: string[] = [];
-    if (!stripeKey) missing.push("STRIPE_SECRET_KEY");
     if (!supabaseUrl) missing.push("NEXT_PUBLIC_SUPABASE_URL");
     if (!supabaseServiceKey) missing.push("SUPABASE_SERVICE_ROLE_KEY");
     return {
@@ -39,19 +41,70 @@ function checkRequiredEnv(): ConfigCheck {
       message: `Missing required environment variables: ${missing.join(", ")}`,
     };
   }
-  return { ok: true, stripeKey, supabaseUrl, supabaseServiceKey };
+  return { ok: true, supabaseUrl, supabaseServiceKey };
+}
+
+function checkRequiredEnv(): ConfigCheck {
+  const stripeKey = process.env.STRIPE_SECRET_KEY;
+  const supabase = checkSupabaseEnv();
+  if (!supabase.ok) {
+    return supabase;
+  }
+  if (!stripeKey) {
+    return {
+      ok: false,
+      message: "Missing required environment variables: STRIPE_SECRET_KEY",
+    };
+  }
+  return { ok: true, stripeKey, supabaseUrl: supabase.supabaseUrl, supabaseServiceKey: supabase.supabaseServiceKey };
 }
 
 function errorMessage(err: unknown): string {
   return err instanceof Error ? err.message : "Unknown error";
 }
 
-export async function POST(req: Request) {
-  const cfg = checkRequiredEnv();
-  if (!cfg.ok) {
-    return NextResponse.json({ error: cfg.message }, { status: 503 });
+type AssessmentInsertFields = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  orgName: string;
+  businessType: string;
+  discountCodeValue: string | null;
+  affiliateResolved: string;
+  amountPaid: number;
+};
+
+async function insertAssessmentRecord(
+  supabaseUrl: string,
+  supabaseServiceKey: string,
+  fields: AssessmentInsertFields,
+  payment: { stripePaymentIntentId: string; paymentStatus?: string },
+) {
+  const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+
+  const row: Record<string, string | number | null> = {
+    first_name: fields.firstName,
+    last_name: fields.lastName,
+    email: fields.email,
+    phone: fields.phone,
+    org_name: fields.orgName,
+    business_type: fields.businessType,
+    discount_code: fields.discountCodeValue,
+    affiliate: fields.affiliateResolved,
+    amount_paid: fields.amountPaid,
+    stripe_payment_intent_id: payment.stripePaymentIntentId,
+  };
+  if (payment.paymentStatus) {
+    row.payment_status = payment.paymentStatus;
   }
 
+  return supabase.from("deep_dive_assessments").insert(row).select("id").single();
+}
+
+export async function POST(req: Request) {
   const json: unknown = await req.json().catch(() => null);
   const parsed = bodySchema.safeParse(json);
   if (!parsed.success) {
@@ -74,10 +127,53 @@ export async function POST(req: Request) {
   const discountCodeValue =
     discountCode && discountCode.length > 0 ? discountCode : null;
 
+  const insertFields: AssessmentInsertFields = {
+    firstName,
+    lastName,
+    email,
+    phone,
+    orgName,
+    businessType,
+    discountCodeValue,
+    affiliateResolved,
+    amountPaid,
+  };
+
+  if (amountPaid === 0) {
+    const cfg = checkSupabaseEnv();
+    if (!cfg.ok) {
+      return NextResponse.json({ error: cfg.message }, { status: 503 });
+    }
+
+    try {
+      const { data, error } = await insertAssessmentRecord(cfg.supabaseUrl, cfg.supabaseServiceKey, insertFields, {
+        stripePaymentIntentId: "BYPASS",
+        paymentStatus: "paid",
+      });
+
+      if (error || !data) {
+        return NextResponse.json(
+          { error: error?.message ?? "Failed to create assessment record" },
+          { status: 500 },
+        );
+      }
+
+      return NextResponse.json({
+        clientSecret: null,
+        assessmentId: data.id,
+        bypass: true,
+      });
+    } catch (err: unknown) {
+      return NextResponse.json({ error: errorMessage(err) }, { status: 500 });
+    }
+  }
+
+  const cfg = checkRequiredEnv();
+  if (!cfg.ok) {
+    return NextResponse.json({ error: cfg.message }, { status: 503 });
+  }
+
   const stripe = new Stripe(cfg.stripeKey);
-  const supabase = createClient(cfg.supabaseUrl, cfg.supabaseServiceKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
@@ -105,22 +201,14 @@ export async function POST(req: Request) {
       );
     }
 
-    const { data, error } = await supabase
-      .from("deep_dive_assessments")
-      .insert({
-        first_name: firstName,
-        last_name: lastName,
-        email,
-        phone,
-        org_name: orgName,
-        business_type: businessType,
-        discount_code: discountCodeValue,
-        affiliate: affiliateResolved,
-        amount_paid: amountPaid,
-        stripe_payment_intent_id: paymentIntent.id,
-      })
-      .select("id")
-      .single();
+    const { data, error } = await insertAssessmentRecord(
+      cfg.supabaseUrl,
+      cfg.supabaseServiceKey,
+      insertFields,
+      {
+        stripePaymentIntentId: paymentIntent.id,
+      },
+    );
 
     if (error || !data) {
       return NextResponse.json(

@@ -27,8 +27,9 @@ type CheckoutForm = {
 };
 
 type CreatePaymentIntentSuccess = {
-  clientSecret: string;
+  clientSecret: string | null;
   assessmentId: string;
+  bypass?: boolean;
 };
 
 type CreatePaymentIntentError = {
@@ -48,10 +49,29 @@ function parseCreatePaymentIntentJson(json: unknown): CreatePaymentIntentSuccess
   }
   const clientSecret = json.clientSecret;
   const assessmentId = json.assessmentId;
-  if (typeof clientSecret === "string" && typeof assessmentId === "string") {
+  const bypass = json.bypass === true;
+  if (typeof assessmentId !== "string") {
+    return { error: "Invalid payment response." };
+  }
+  if (bypass && clientSecret === null) {
+    return { clientSecret: null, assessmentId, bypass: true };
+  }
+  if (typeof clientSecret === "string") {
     return { clientSecret, assessmentId };
   }
   return { error: "Invalid payment response." };
+}
+
+function persistDeepDiveSession(
+  assessmentId: string,
+  track: BusinessTrack,
+  email: string,
+  firstName: string,
+) {
+  writeLocalStorage(DEEP_DIVE_LS.assessmentId, assessmentId);
+  writeLocalStorageIfEmpty(DEEP_DIVE_LS.businessType, track);
+  writeLocalStorageIfEmpty(DEEP_DIVE_LS.email, email.trim());
+  writeLocalStorageIfEmpty(DEEP_DIVE_LS.firstName, firstName.trim());
 }
 
 function buildPaymentPayload(
@@ -176,10 +196,12 @@ function InnerPaySection(props: PaySectionProps) {
     }
     if (persistHandledRef.current) return;
     persistHandledRef.current = true;
-    writeLocalStorage(DEEP_DIVE_LS.assessmentId, persistAfterPay.assessmentId);
-    writeLocalStorageIfEmpty(DEEP_DIVE_LS.businessType, persistAfterPay.track);
-    writeLocalStorageIfEmpty(DEEP_DIVE_LS.email, persistAfterPay.email.trim());
-    writeLocalStorageIfEmpty(DEEP_DIVE_LS.firstName, persistAfterPay.firstName.trim());
+    persistDeepDiveSession(
+      persistAfterPay.assessmentId,
+      persistAfterPay.track,
+      persistAfterPay.email,
+      persistAfterPay.firstName,
+    );
     setPersistAfterPay(null);
     onPaidRef.current();
   }, [persistAfterPay]);
@@ -373,7 +395,8 @@ export function DeepDiveFlow() {
       setPrepareError(v);
       return;
     }
-    if (!publishableKey || !stripePromise) {
+    const isPaymentBypass = discountPricing.amountPaid === 0;
+    if (!isPaymentBypass && (!publishableKey || !stripePromise)) {
       setPrepareError("Stripe is not configured (missing NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY).");
       return;
     }
@@ -395,6 +418,13 @@ export function DeepDiveFlow() {
         setAssessmentId(null);
         return;
       }
+      if (parsed.bypass) {
+        setClientSecret(null);
+        setAssessmentId(parsed.assessmentId);
+        persistDeepDiveSession(parsed.assessmentId, track, form.email, form.firstName);
+        router.push("/deep-dive/assessment");
+        return;
+      }
       setClientSecret(parsed.clientSecret);
       setAssessmentId(parsed.assessmentId);
     } catch {
@@ -407,6 +437,7 @@ export function DeepDiveFlow() {
   };
 
   const amountLabel = formatUsd(discountPricing.amountPaid);
+  const isPaymentBypass = discountPricing.amountPaid === 0;
 
   return (
     <div className="min-h-screen bg-[#000000] text-white">
@@ -651,14 +682,20 @@ export function DeepDiveFlow() {
               <button
                 type="button"
                 className="mt-8 w-full rounded-lg bg-[#1A6ECC] px-6 py-3.5 text-[15px] font-semibold text-white transition hover:bg-[#1562b8] disabled:cursor-not-allowed disabled:opacity-50"
-                disabled={preparing || !publishableKey}
+                disabled={preparing || (!isPaymentBypass && !publishableKey)}
                 onClick={() => void preparePayment()}
               >
-                {preparing ? "Preparing secure payment…" : "Continue to secure payment"}
+                {preparing
+                  ? isPaymentBypass
+                    ? "Starting assessment…"
+                    : "Preparing secure payment…"
+                  : isPaymentBypass
+                    ? "Continue to assessment"
+                    : "Continue to secure payment"}
               </button>
             ) : null}
 
-            {!publishableKey ? (
+            {!isPaymentBypass && !publishableKey ? (
               <p className="mt-4 text-center text-sm text-amber-400">
                 Missing Stripe publishable key. Add NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY to your environment.
               </p>

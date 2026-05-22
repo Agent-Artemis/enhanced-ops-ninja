@@ -18,7 +18,7 @@ export type ResolveAffiliateResult =
 /** Explicit affiliates we recognize by name (case-insensitive). Extend as partners onboard. */
 export const KNOWN_AFFILIATE_CODES = ["7SJM1"] as const;
 
-const DISCOUNT_CODE_SET = new Set<string>(["PILOT10", "SILENTNINJA20", "TESTER4"]);
+const DISCOUNT_CODE_SET = new Set<string>(["PILOT10", "SILENTNINJA20", "TESTER4", "MASTERTEST"]);
 
 /** Normalized (uppercase trim) string is one of the fixed discount codes. */
 export function isDiscountCode(normalized: string): boolean {
@@ -74,6 +74,16 @@ export function resolveDiscountCode(raw: string): ResolveDiscountResult {
           amountPaid: 1,
           discountCode: "TESTER4",
           summary: "Test checkout: $1 due today.",
+        },
+      };
+    case "MASTERTEST":
+      return {
+        ok: true,
+        pricing: {
+          kind: "discount",
+          amountPaid: 0,
+          discountCode: "MASTERTEST",
+          summary: "Internal test bypass: $0 due today.",
         },
       };
     default:
