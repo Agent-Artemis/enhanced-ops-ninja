@@ -473,6 +473,13 @@
         { "key": "C", "label": "This hasn't come up — we haven't thought about it this way" },
         { "key": "D", "label": "We don't believe that's possible in our environment" }
       ]
+    },
+    {
+      "id": "biz_p_43",
+      "domainId": "labor_costs",
+      "type": "open",
+      "prompt": "What encouraged you to take this assessment? What challenges or pains does your business have currently, in your own words?",
+      "choices": []
     }
   ]
 }

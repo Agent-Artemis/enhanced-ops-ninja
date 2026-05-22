@@ -8,10 +8,13 @@ export type DeepDiveChoiceLetter = "A" | "B" | "C" | "D";
 
 export type DeepDiveChoiceMap = Record<DeepDiveChoiceLetter, string>;
 
+export type DeepDiveQuestionType = "multiple_choice" | "open";
+
 export type DeepDiveQuestion = {
   id: string;
   moduleId: string;
   moduleIndex: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  type: DeepDiveQuestionType;
   prompt: string;
   choices: DeepDiveChoiceMap;
 };
@@ -72,6 +75,7 @@ function questionsFromConfig(config: AssessmentConfig): DeepDiveQuestion[] {
       id: q.id,
       moduleId,
       moduleIndex,
+      type: q.type,
       prompt: q.prompt,
       choices: choicesFromConfig(q.choices),
     };
@@ -107,5 +111,5 @@ export function getDeepDiveQuestionCount(track: BusinessTrack): number {
   return CONFIG_BY_TRACK[track].questions.length;
 }
 
-/** @deprecated Use getDeepDiveQuestionCount(track) — healthcare has 44 questions. */
-export const DEEP_DIVE_QUESTION_COUNT = 44;
+/** @deprecated Use getDeepDiveQuestionCount(track) — healthcare has 45 questions. */
+export const DEEP_DIVE_QUESTION_COUNT = 45;

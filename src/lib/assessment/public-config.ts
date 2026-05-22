@@ -8,6 +8,7 @@ export type PublicAssessmentPayload = {
   questions: Array<{
     id: string;
     domainId: string;
+    type: "multiple_choice" | "open";
     prompt: string;
     choices: Array<{ key: "A" | "B" | "C" | "D"; label: string }>;
   }>;
@@ -26,6 +27,7 @@ export function toPublicAssessmentPayload(config: AssessmentConfig): PublicAsses
     questions: config.questions.map((q) => ({
       id: q.id,
       domainId: q.domainId,
+      type: q.type,
       prompt: q.prompt,
       choices: q.choices,
     })),

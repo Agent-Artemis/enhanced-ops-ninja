@@ -15,12 +15,25 @@ export const domainSchema = z.object({
   weight: z.number().positive().default(1),
 });
 
-export const questionSchema = z.object({
-  id: z.string().min(1),
-  domainId: z.string().min(1),
-  prompt: z.string().min(1),
-  choices: z.array(choiceSchema).length(4),
-});
+export const questionTypeSchema = z.enum(["multiple_choice", "open"]).default("multiple_choice");
+
+export const questionSchema = z
+  .object({
+    id: z.string().min(1),
+    domainId: z.string().min(1),
+    type: questionTypeSchema,
+    prompt: z.string().min(1),
+    choices: z.array(choiceSchema).optional().default([]),
+  })
+  .superRefine((question, ctx) => {
+    if (question.type === "multiple_choice" && question.choices.length !== 4) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Multiple choice questions must have exactly 4 choices",
+        path: ["choices"],
+      });
+    }
+  });
 
 export const assessmentConfigSchema = z.object({
   schemaVersion: z.literal(1),

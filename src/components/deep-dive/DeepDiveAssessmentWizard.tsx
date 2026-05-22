@@ -40,15 +40,29 @@ function buildScreens(modules: DeepDiveModuleMeta[], questionCount: number): Scr
   return screens;
 }
 
+function isMultipleChoiceQuestion(question: DeepDiveQuestion): boolean {
+  return question.type === "multiple_choice";
+}
+
+function isQuestionAnswered(question: DeepDiveQuestion, answer: string | undefined): boolean {
+  if (question.type === "open") {
+    return (answer?.trim().length ?? 0) >= 10;
+  }
+  return answer === "A" || answer === "B" || answer === "C" || answer === "D";
+}
+
 function computeScoresFromAnswers(
   questions: DeepDiveQuestion[],
-  answers: Record<string, DeepDiveChoiceLetter>,
+  answers: Record<string, string>,
 ): { overallScore: number; moduleScores: Record<string, number> } {
   let totalPoints = 0;
+  let scoredQuestionCount = 0;
   const agg: Record<number, { sum: number; count: number }> = {};
   for (const q of questions) {
-    const letter = answers[q.id];
+    if (!isMultipleChoiceQuestion(q)) continue;
+    const letter = answers[q.id] as DeepDiveChoiceLetter | undefined;
     if (!letter) continue;
+    scoredQuestionCount += 1;
     const p = pointsForChoice(letter);
     totalPoints += p;
     const slot = agg[q.moduleIndex] ?? { sum: 0, count: 0 };
@@ -60,7 +74,7 @@ function computeScoresFromAnswers(
   for (const [k, v] of Object.entries(agg)) {
     moduleScores[`module-${k}`] = moduleScorePercent(v.sum, v.count);
   }
-  const overallScore = overallScorePercent(totalPoints, questions.length);
+  const overallScore = overallScorePercent(totalPoints, scoredQuestionCount);
   return { overallScore, moduleScores };
 }
 
@@ -71,6 +85,8 @@ const secondaryBtnClass =
   "inline-flex min-h-[44px] items-center justify-center rounded-lg border border-[rgb(26_110_204/0.45)] px-6 py-3 text-[15px] font-semibold text-[#1A6ECC] transition hover:bg-[rgb(26_110_204/0.12)] disabled:cursor-not-allowed disabled:opacity-45";
 const choiceBtnBase =
   "w-full rounded-lg border px-4 py-3 text-left text-[15px] leading-snug transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1A6ECC]";
+const openTextareaClass =
+  "min-h-[180px] w-full resize-y rounded-lg border border-[rgb(255_255_255/0.12)] bg-[rgb(10_10_10)] px-4 py-3 text-[15px] leading-relaxed text-white placeholder:text-[rgb(255_255_255/0.35)] transition focus-visible:border-[#1A6ECC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1A6ECC]";
 
 function ProgressBar(props: { value: number }) {
   const pct = Math.max(0, Math.min(100, props.value));
@@ -125,7 +141,7 @@ export function DeepDiveAssessmentWizard() {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [screenIndex, setScreenIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, DeepDiveChoiceLetter>>({});
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -163,10 +179,17 @@ export function DeepDiveAssessmentWizard() {
   const currentQuestion =
     current.kind === "question" ? questions[current.questionIndex] ?? null : null;
   const currentAnswer = currentQuestion ? answers[currentQuestion.id] : undefined;
+  const currentQuestionAnswered =
+    currentQuestion !== null && isQuestionAnswered(currentQuestion, currentAnswer);
 
   const setChoice = useCallback((letter: DeepDiveChoiceLetter) => {
     if (!currentQuestion) return;
     setAnswers((prev) => ({ ...prev, [currentQuestion.id]: letter }));
+  }, [currentQuestion]);
+
+  const setOpenAnswer = useCallback((text: string) => {
+    if (!currentQuestion) return;
+    setAnswers((prev) => ({ ...prev, [currentQuestion.id]: text }));
   }, [currentQuestion]);
 
   const goBack = () => {
@@ -192,7 +215,7 @@ export function DeepDiveAssessmentWizard() {
 
   const handlePrimaryAdvance = () => {
     if (current.kind === "question") {
-      if (!currentAnswer) return;
+      if (!currentQuestionAnswered) return;
       if (isLastScreen) {
         void submitAssessment();
         return;
@@ -204,7 +227,7 @@ export function DeepDiveAssessmentWizard() {
   const submitAssessment = async () => {
     if (!track || !assessmentId || questions.length !== questionCount) return;
     for (const q of questions) {
-      if (!answers[q.id]) {
+      if (!isQuestionAnswered(q, answers[q.id])) {
         setSubmitError("Please answer every question before submitting.");
         return;
       }
@@ -273,9 +296,7 @@ export function DeepDiveAssessmentWizard() {
           : "Next";
 
   const primaryDisabled =
-    submitting ||
-    (current.kind === "question" && !currentAnswer) ||
-    (current.kind === "question" && isLastScreen && !currentAnswer);
+    submitting || (current.kind === "question" && !currentQuestionAnswered);
 
   return (
     <div className={shellClass}>
@@ -363,26 +384,36 @@ export function DeepDiveAssessmentWizard() {
             <h2 className="mb-8 font-[family-name:var(--font-bebas)] text-3xl uppercase leading-tight tracking-[0.03em] text-white md:text-4xl">
               {currentQuestion.prompt}
             </h2>
-            <div className="space-y-3">
-              {(["A", "B", "C", "D"] as const).map((letter) => {
-                const selected = currentAnswer === letter;
-                return (
-                  <button
-                    key={letter}
-                    type="button"
-                    className={`${choiceBtnBase} ${
-                      selected
-                        ? "border-[#1A6ECC] bg-[rgb(26_110_204/0.18)] text-white"
-                        : "border-[rgb(255_255_255/0.12)] bg-[rgb(10_10_10)] text-[rgb(255_255_255/0.88)] hover:border-[rgb(26_110_204/0.45)]"
-                    }`}
-                    onClick={() => setChoice(letter)}
-                  >
-                    <span className="font-bold text-[#1A6ECC]">{letter}.</span>{" "}
-                    {currentQuestion.choices[letter]}
-                  </button>
-                );
-              })}
-            </div>
+            {currentQuestion.type === "open" ? (
+              <textarea
+                className={openTextareaClass}
+                value={currentAnswer ?? ""}
+                placeholder="Share your thoughts here..."
+                rows={8}
+                onChange={(event) => setOpenAnswer(event.target.value)}
+              />
+            ) : (
+              <div className="space-y-3">
+                {(["A", "B", "C", "D"] as const).map((letter) => {
+                  const selected = currentAnswer === letter;
+                  return (
+                    <button
+                      key={letter}
+                      type="button"
+                      className={`${choiceBtnBase} ${
+                        selected
+                          ? "border-[#1A6ECC] bg-[rgb(26_110_204/0.18)] text-white"
+                          : "border-[rgb(255_255_255/0.12)] bg-[rgb(10_10_10)] text-[rgb(255_255_255/0.88)] hover:border-[rgb(26_110_204/0.45)]"
+                      }`}
+                      onClick={() => setChoice(letter)}
+                    >
+                      <span className="font-bold text-[#1A6ECC]">{letter}.</span>{" "}
+                      {currentQuestion.choices[letter]}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
             {submitError ? (
               <p className="mt-6 text-sm text-red-400" role="alert">
                 {submitError}
