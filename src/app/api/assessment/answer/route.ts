@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { ASSESSMENT_SESSION_COOKIE } from "@/lib/assessment/constants";
+import { saveAssessmentResponse } from "@/lib/assessment/save-assessment-data";
 import { pointsForChoice } from "@/lib/scoring/points";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/admin";
 
@@ -47,15 +48,12 @@ export async function POST(req: Request) {
 
   const points = pointsForChoice(parsed.data.choiceKey);
 
-  const { error } = await admin.from("assessment_responses").upsert(
-    {
-      session_id: session.id,
-      question_id: parsed.data.questionId,
-      choice_key: parsed.data.choiceKey,
-      points,
-    },
-    { onConflict: "session_id,question_id" },
-  );
+  const { error } = await saveAssessmentResponse(admin, {
+    session_id: session.id,
+    question_id: parsed.data.questionId,
+    choice_key: parsed.data.choiceKey,
+    points,
+  });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { persistFreeDeepDiveLead } from "@/lib/assessment/persist-deep-dive-lead";
+import { saveAssessmentScore } from "@/lib/assessment/save-assessment-data";
 import { assessmentConfigFilename, loadAssessmentConfig } from "@/lib/assessments/load";
 import { ASSESSMENT_SESSION_COOKIE } from "@/lib/assessment/constants";
 import { computeScores, scoreBand } from "@/lib/scoring/compute";
@@ -128,16 +129,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: updateSessionError.message }, { status: 500 });
   }
 
-  const { error: scoreError } = await admin.from("assessment_scores").upsert(
-    {
-      session_id: session.id,
-      domain_scores: domainScoresMap,
-      overall_score: computed.overallScore,
-      scoring_version: computed.scoringVersion,
-      computed_at: nowIso,
-    },
-    { onConflict: "session_id" },
-  );
+  const { error: scoreError } = await saveAssessmentScore(admin, {
+    session_id: session.id,
+    domain_scores: domainScoresMap,
+    overall_score: computed.overallScore,
+    scoring_version: computed.scoringVersion,
+    computed_at: nowIso,
+  });
 
   if (scoreError) {
     return NextResponse.json({ error: scoreError.message }, { status: 500 });
