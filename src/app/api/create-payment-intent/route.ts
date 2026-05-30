@@ -7,6 +7,8 @@ import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
+import { insertDeepDiveAssessment } from "@/lib/deep-dive/insert-deep-dive-assessment";
+
 export const dynamic = "force-dynamic";
 
 const bodySchema = z.object({
@@ -101,7 +103,20 @@ async function insertAssessmentRecord(
     row.payment_status = payment.paymentStatus;
   }
 
-  return supabase.from("deep_dive_assessments").insert(row).select("id").single();
+  const result = await insertDeepDiveAssessment(supabase, row, {
+    lookupIdOnDuplicate: true,
+    email: fields.email,
+  });
+
+  if (!result.ok) {
+    return { data: null, error: { message: result.error.message, code: result.error.code } };
+  }
+
+  if (!result.id) {
+    return { data: null, error: { message: "Failed to create assessment record" } };
+  }
+
+  return { data: { id: result.id }, error: null };
 }
 
 export async function POST(req: Request) {
