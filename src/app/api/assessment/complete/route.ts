@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import { persistFreeDeepDiveLead } from "@/lib/assessment/persist-deep-dive-lead";
 import { assessmentConfigFilename, loadAssessmentConfig } from "@/lib/assessments/load";
 import { ASSESSMENT_SESSION_COOKIE } from "@/lib/assessment/constants";
 import { computeScores, scoreBand } from "@/lib/scoring/compute";
@@ -140,6 +141,19 @@ export async function POST(req: Request) {
 
   if (scoreError) {
     return NextResponse.json({ error: scoreError.message }, { status: 500 });
+  }
+
+  const { error: deepDiveError } = await persistFreeDeepDiveLead(admin, {
+    fullName: parsed.data.name,
+    email: parsed.data.email,
+    track: session.track,
+    answers,
+    overallScore: computed.overallScore,
+  });
+
+  if (deepDiveError) {
+    console.error("[assessment/complete] deep_dive_assessments insert failed:", deepDiveError);
+    return NextResponse.json({ error: deepDiveError.message }, { status: 500 });
   }
 
   return NextResponse.json({
