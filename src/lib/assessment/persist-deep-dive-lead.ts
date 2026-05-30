@@ -23,14 +23,21 @@ type PersistFreeDeepDiveLeadParams = {
   overallScore: number;
 };
 
+type PersistResult = { error: null } | { error: { message: string; code?: string } };
+
+function isDuplicateKeyError(code: string | undefined): boolean {
+  return code === "23505";
+}
+
 /**
  * Inserts a free-assessment completion row into deep_dive_assessments.
  * Uses the Supabase service-role client passed in (bypasses RLS).
+ * Plain INSERT only — duplicate email (23505) is treated as success.
  */
 export async function persistFreeDeepDiveLead(
   admin: SupabaseClient,
   params: PersistFreeDeepDiveLeadParams,
-) {
+): Promise<PersistResult> {
   const { firstName, lastName } = splitFullName(params.fullName);
   const createdAt = new Date().toISOString();
 
@@ -47,5 +54,15 @@ export async function persistFreeDeepDiveLead(
     created_at: createdAt,
   };
 
-  return admin.from("deep_dive_assessments").insert(row).select("id").single();
+  const { error } = await admin.from("deep_dive_assessments").insert(row).select("id").single();
+
+  if (!error) {
+    return { error: null };
+  }
+
+  if (isDuplicateKeyError(error.code)) {
+    return { error: null };
+  }
+
+  return { error: { message: error.message, code: error.code } };
 }

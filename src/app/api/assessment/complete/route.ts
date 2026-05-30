@@ -143,7 +143,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: scoreError.message }, { status: 500 });
   }
 
-  const { error: deepDiveError } = await persistFreeDeepDiveLead(admin, {
+  const deepDiveResult = await persistFreeDeepDiveLead(admin, {
     fullName: parsed.data.name,
     email: parsed.data.email,
     track: session.track,
@@ -151,9 +151,9 @@ export async function POST(req: Request) {
     overallScore: computed.overallScore,
   });
 
-  if (deepDiveError) {
-    console.error("[assessment/complete] deep_dive_assessments insert failed:", deepDiveError);
-    return NextResponse.json({ error: deepDiveError.message }, { status: 500 });
+  if (deepDiveResult.error) {
+    console.error("[assessment/complete] deep_dive_assessments insert failed:", deepDiveResult.error);
+    return NextResponse.json({ error: deepDiveResult.error.message }, { status: 500 });
   }
 
   return NextResponse.json({
