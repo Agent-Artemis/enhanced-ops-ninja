@@ -10,6 +10,7 @@ export const DEEP_DIVE_LS = {
   firstName: "deepDiveFirstName",
   overallScore: "deepDiveOverallScore",
   moduleScores: "deepDiveModuleScores",
+  answers: "deepDiveAnswers",
 } as const;
 
 export type StoredBusinessType = "healthcare" | "business";

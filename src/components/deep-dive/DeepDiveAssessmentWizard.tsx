@@ -162,6 +162,10 @@ export function DeepDiveAssessmentWizard() {
     if (resolvedFirstName) writeLocalStorage(DEEP_DIVE_LS.firstName, resolvedFirstName);
     setEmail(resolvedEmail);
     setFirstName(resolvedFirstName);
+    const storedAnswers = readLocalStorage(DEEP_DIVE_LS.answers);
+    if (storedAnswers) {
+      try { setAnswers(JSON.parse(storedAnswers)); } catch { /* ignore */ }
+    }
     setHydrated(true);
   }, [searchParams]);
 
@@ -192,12 +196,20 @@ export function DeepDiveAssessmentWizard() {
 
   const setChoice = useCallback((letter: DeepDiveChoiceLetter) => {
     if (!currentQuestion) return;
-    setAnswers((prev) => ({ ...prev, [currentQuestion.id]: letter }));
+    setAnswers((prev) => {
+      const next = { ...prev, [currentQuestion.id]: letter };
+      writeLocalStorage(DEEP_DIVE_LS.answers, JSON.stringify(next));
+      return next;
+    });
   }, [currentQuestion]);
 
   const setOpenAnswer = useCallback((text: string) => {
     if (!currentQuestion) return;
-    setAnswers((prev) => ({ ...prev, [currentQuestion.id]: text }));
+    setAnswers((prev) => {
+      const next = { ...prev, [currentQuestion.id]: text };
+      writeLocalStorage(DEEP_DIVE_LS.answers, JSON.stringify(next));
+      return next;
+    });
   }, [currentQuestion]);
 
   const goBack = () => {
@@ -272,6 +284,7 @@ export function DeepDiveAssessmentWizard() {
       }
       writeLocalStorage(DEEP_DIVE_LS.overallScore, String(overallScore));
       writeLocalStorage(DEEP_DIVE_LS.moduleScores, JSON.stringify(moduleScores));
+      console.log("[DeepDive] pushing to score with params", { overallScore, moduleScores });
       router.push(`/deep-dive/score?os=${encodeURIComponent(String(overallScore))}&ms=${encodeURIComponent(JSON.stringify(moduleScores))}`);
     } catch {
       setSubmitError("Network error. Check your connection and try again.");
