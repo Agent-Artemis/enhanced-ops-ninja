@@ -218,7 +218,7 @@ function InnerPaySection(props: PaySectionProps) {
     setBusy(true);
     setErrorMessage(null);
     const origin = window.location.origin;
-    const returnUrl = `${origin}/deep-dive/assessment?deepDiveAssessmentId=${encodeURIComponent(props.assessmentId)}`;
+    const returnUrl = `${origin}/deep-dive/assessment?deepDiveAssessmentId=${encodeURIComponent(props.assessmentId)}&dde=${encodeURIComponent(props.email)}&ddf=${encodeURIComponent(props.firstName)}`;
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: { return_url: returnUrl },

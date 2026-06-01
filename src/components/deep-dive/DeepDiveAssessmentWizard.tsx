@@ -152,8 +152,16 @@ export function DeepDiveAssessmentWizard() {
     }
     setAssessmentId(readLocalStorage(DEEP_DIVE_LS.assessmentId));
     setBusinessType(parseBusinessType(readLocalStorage(DEEP_DIVE_LS.businessType)));
-    setEmail(readLocalStorage(DEEP_DIVE_LS.email) ?? "");
-    setFirstName(readLocalStorage(DEEP_DIVE_LS.firstName) ?? "");
+    const emailFromQuery = searchParams.get("dde");
+    const firstNameFromQuery = searchParams.get("ddf");
+    const storedEmail = readLocalStorage(DEEP_DIVE_LS.email) ?? "";
+    const storedFirstName = readLocalStorage(DEEP_DIVE_LS.firstName) ?? "";
+    const resolvedEmail = emailFromQuery ? decodeURIComponent(emailFromQuery) : storedEmail;
+    const resolvedFirstName = firstNameFromQuery ? decodeURIComponent(firstNameFromQuery) : storedFirstName;
+    if (resolvedEmail) writeLocalStorage(DEEP_DIVE_LS.email, resolvedEmail);
+    if (resolvedFirstName) writeLocalStorage(DEEP_DIVE_LS.firstName, resolvedFirstName);
+    setEmail(resolvedEmail);
+    setFirstName(resolvedFirstName);
     setHydrated(true);
   }, [searchParams]);
 
