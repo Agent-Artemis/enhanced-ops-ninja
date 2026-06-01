@@ -24,3 +24,7 @@ yarn-error.log*
 # os
 .DS_Store
 .env*.local
+
+# playwright
+/test-results/
+/playwright-report/
