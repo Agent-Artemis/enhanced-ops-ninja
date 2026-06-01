@@ -284,7 +284,7 @@ export function DeepDiveAssessmentWizard() {
       }
       writeLocalStorage(DEEP_DIVE_LS.overallScore, String(overallScore));
       writeLocalStorage(DEEP_DIVE_LS.moduleScores, JSON.stringify(moduleScores));
-      console.log("[DeepDive] pushing to score with params", { overallScore, moduleScores });
+      console.log("[DeepDive] pushing to score with params", { overallScore, moduleScores, answersCount: Object.keys(answers).length, answers });
       router.push(`/deep-dive/score?os=${encodeURIComponent(String(overallScore))}&ms=${encodeURIComponent(JSON.stringify(moduleScores))}`);
     } catch {
       setSubmitError("Network error. Check your connection and try again.");
