@@ -1,7 +1,7 @@
 import paidBusinessConfig from "@config/assessments/paid-business.json";
 import paidHealthcareConfig from "@config/assessments/paid-healthcare.json";
 
-import type { AssessmentConfig } from "@/lib/assessments/schema";
+import { assessmentConfigSchema, type AssessmentConfig } from "@/lib/assessments/schema";
 import type { BusinessTrack } from "@/lib/deep-dive/pricing";
 
 export type DeepDiveChoiceLetter = "A" | "B" | "C" | "D";
@@ -49,8 +49,8 @@ const DOMAIN_MODULE_IDS: Record<string, string> = {
 };
 
 const CONFIG_BY_TRACK: Record<BusinessTrack, AssessmentConfig> = {
-  healthcare: paidHealthcareConfig as AssessmentConfig,
-  business: paidBusinessConfig as AssessmentConfig,
+  healthcare: assessmentConfigSchema.parse(paidHealthcareConfig),
+  business: assessmentConfigSchema.parse(paidBusinessConfig),
 };
 
 function choicesFromConfig(
