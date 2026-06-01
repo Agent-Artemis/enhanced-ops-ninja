@@ -10,6 +10,7 @@ import {
   parseBusinessType,
   readLocalStorage,
   type StoredBusinessType,
+  writeLocalStorage,
 } from "@/lib/deep-dive/assessment-storage";
 
 const NINJA_REVIEW_COPY =
@@ -127,10 +128,21 @@ export default function DeepDiveScorePage() {
   const [track, setTrack] = useState<StoredBusinessType | null>(null);
 
   useEffect(() => {
-    const rawOverall = readLocalStorage(DEEP_DIVE_LS.overallScore);
+    const params = new URLSearchParams(window.location.search);
+    const osParam = params.get("os");
+    const msParam = params.get("ms");
+
+    const rawOverall = osParam ? decodeURIComponent(osParam) : readLocalStorage(DEEP_DIVE_LS.overallScore);
     const n = rawOverall != null ? Number(rawOverall) : NaN;
-    setOverall(Number.isFinite(n) ? Math.round(n) : null);
-    setModules(parseModuleScores(readLocalStorage(DEEP_DIVE_LS.moduleScores)));
+    const resolvedOverall = Number.isFinite(n) ? Math.round(n) : null;
+    if (resolvedOverall !== null) writeLocalStorage(DEEP_DIVE_LS.overallScore, String(resolvedOverall));
+    setOverall(resolvedOverall);
+
+    const rawModules = msParam ? decodeURIComponent(msParam) : readLocalStorage(DEEP_DIVE_LS.moduleScores);
+    const resolvedModules = parseModuleScores(rawModules);
+    if (resolvedModules) writeLocalStorage(DEEP_DIVE_LS.moduleScores, JSON.stringify(resolvedModules));
+    setModules(resolvedModules);
+
     const fn = readLocalStorage(DEEP_DIVE_LS.firstName);
     setFirstName(fn != null && fn.trim().length > 0 ? fn.trim() : null);
     setTrack(parseBusinessType(readLocalStorage(DEEP_DIVE_LS.businessType)));

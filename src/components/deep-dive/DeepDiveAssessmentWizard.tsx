@@ -272,7 +272,7 @@ export function DeepDiveAssessmentWizard() {
       }
       writeLocalStorage(DEEP_DIVE_LS.overallScore, String(overallScore));
       writeLocalStorage(DEEP_DIVE_LS.moduleScores, JSON.stringify(moduleScores));
-      router.push("/deep-dive/score");
+      router.push(`/deep-dive/score?os=${encodeURIComponent(String(overallScore))}&ms=${encodeURIComponent(JSON.stringify(moduleScores))}`);
     } catch {
       setSubmitError("Network error. Check your connection and try again.");
       setSubmitting(false);
