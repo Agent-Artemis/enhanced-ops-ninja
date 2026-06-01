@@ -1,5 +1,24 @@
 # EnhancedOps.ninja — Claude Code Context
 
+## Agent Protocol — Master-Brain Sync (Do This Every Session)
+
+**SESSION START — before touching any code:**
+1. Pull latest Master-Brain: `gh api repos/Agent-Artemis/Master-Brain/contents/enhanced-ops-ninja/CLAUDE.md --jq '.content' | base64 -d`
+2. Read `enhanced-ops-ninja/CLAUDE.md` and `eon-app/CLAUDE.md` in Master-Brain
+3. Read `Agent-Artemis/Master-Brain/WORKFLOW.md` for full agent protocol
+4. Then open this repo and begin work
+
+**SESSION END — before closing:**
+1. Update this file with any fixes made, prompts completed, decisions taken, or new patterns discovered
+2. Push updated CLAUDE.md to `Agent-Artemis/Master-Brain` as `enhanced-ops-ninja/CLAUDE.md`
+3. If eon-app was also touched, update that file in Master-Brain too
+4. Commit message format: `Sync CLAUDE.md — [brief description of what changed]`
+
+Master-Brain repo: `Agent-Artemis/Master-Brain` (private)  
+Full agent protocol: `WORKFLOW.md` in Master-Brain root
+
+---
+
 Public-facing Next.js app at [enhancedops.ninja](https://enhancedops.ninja).  
 Handles marketing, free assessments, and paid deep-dive assessments.  
 Auto-deploys to Vercel on push to `main`.  
