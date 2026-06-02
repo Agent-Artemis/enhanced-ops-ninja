@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import Script from 'next/script';
 
 const CAL_LINK = 'enhancedopsninja/45-min-with-enhanced-ops-ninja';
@@ -34,12 +35,12 @@ export default function SchedulePage() {
       <div className="min-h-screen bg-[#000000] text-white">
         <header className="border-b border-[rgb(255_255_255/0.08)] px-6 py-5">
           <div className="mx-auto flex max-w-3xl items-center justify-between">
-            <a href="/deep-dive/score" className="text-sm font-medium text-[rgb(255_255_255/0.65)] no-underline hover:text-white">
+            <Link href="/deep-dive/score" className="text-sm font-medium text-[rgb(255_255_255/0.65)] no-underline hover:text-white">
               ← Back to results
-            </a>
-            <a href="/" className="text-sm font-medium text-[#1A6ECC] no-underline hover:underline">
+            </Link>
+            <Link href="/" className="text-sm font-medium text-[#1A6ECC] no-underline hover:underline">
               Enhanced Ops × Ninja
-            </a>
+            </Link>
           </div>
         </header>
 

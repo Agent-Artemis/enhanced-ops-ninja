@@ -124,4 +124,36 @@ test("healthcare paid assessment: completes all 45 questions and shows a real sc
   const moduleRows = page.locator("div.mb-5");
   await expect(moduleRows.first()).toBeVisible();
   expect(await moduleRows.count()).toBeGreaterThanOrEqual(7);
+
+  // ── Fix 1: Ninja Review copy is future tense ─────────────────────────────
+  await expect(page.getByText(/will review your answers and map/i)).toBeVisible();
+  // Confirm old past-tense wording is gone
+  await expect(page.getByText(/have reviewed your answers/i)).not.toBeVisible();
+
+  // ── Fix 2: Module bars are colour-coded, not all blue ────────────────────
+  // With all-A answers the score is 100 — every bar should be green (#22c55e).
+  // Verify at least one bar fill element has a non-blue background colour.
+  const firstBarFill = moduleRows.first().locator("div.h-full");
+  const barStyle = await firstBarFill.getAttribute("style");
+  expect(barStyle).toContain("background-color");
+  // Green (#22c55e) for score=100; must NOT be the old static blue (#1A6ECC)
+  expect(barStyle).not.toContain("#1A6ECC");
+  expect(barStyle).not.toContain("1A6ECC");
+
+  // ── Fix 3: Schedule button exists and the schedule page loads ─────────────
+  const scheduleBtn = page.getByRole("link", { name: /schedule my 1:1 review call/i });
+  await expect(scheduleBtn).toBeVisible();
+
+  // Navigate to the schedule page and confirm Cal.com embed mounts
+  await scheduleBtn.click();
+  await page.waitForURL("**/deep-dive/schedule**", { timeout: 15_000 });
+  await expect(page.getByRole("heading", { name: /book your review call/i })).toBeVisible();
+
+  // Cal embed target div must exist in the DOM
+  await expect(page.locator("#cal-review-call")).toBeAttached();
+
+  // Cal.com embed script should load (may take a moment)
+  await page.waitForTimeout(3000);
+  // Verify the page didn't crash — no "Results not found" or error heading visible
+  await expect(page.getByText(/results not found/i)).not.toBeVisible();
 });
