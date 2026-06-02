@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Script from 'next/script';
 
-const CAL_LINK = 'enhancedopsninja/45-min-with-enhanced-ops-ninja';
+const CAL_LINK = 'enhancedopsninja/45-min';
 
 function initCal() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

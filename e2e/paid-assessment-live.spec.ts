@@ -12,8 +12,10 @@
 
 import { expect, test } from "@playwright/test";
 
-const TEST_EMAIL = "jeff@augeo-hq.com";
-const TEST_FIRST = "Jeff";
+// Dedicated test address — keeps automated runs out of Jeff's real inbox.
+// Uses + alias so it routes to the same mailbox if needed for inspection.
+const TEST_EMAIL = "jeff+playwright@augeo-hq.com";
+const TEST_FIRST = "Playwright";
 const TEST_LAST = "Test";
 const TEST_PHONE = "5555550100";
 const TEST_ORG = "EON Live Test";

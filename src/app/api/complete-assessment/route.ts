@@ -88,7 +88,7 @@ function buildCompletionEmailHtml(params: {
             </td>
           </tr>
         </table>
-        <p style="margin:0 0 16px;">Our ninjas have reviewed your answers and mapped what a focused implementation plan could look like for your team. On a short call we will walk through the highlights, answer questions, and outline practical next steps.</p>
+        <p style="margin:0 0 16px;">Our ninjas will review your answers and map what a focused implementation plan could look like for your team. On a short call we will walk through the highlights, answer questions, and outline practical next steps.</p>
         <p style="margin:0 0 24px;">
           <a href="${calHref}" style="display:inline-block;background:#0f172a;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:600;">Schedule My Review Call →</a>
         </p>
@@ -100,8 +100,9 @@ function buildCompletionEmailHtml(params: {
 </html>`;
 }
 
-const DEFAULT_CAL_BOOKING_URL =
-  "https://cal.com/enhancedopsninja/45-min-with-enhanced-ops-ninja";
+// The correct Cal.com event slug — verified 200 OK.
+// "45-min-with-enhanced-ops-ninja" returns 404; the working slug is "45-min".
+const DEFAULT_CAL_BOOKING_URL = "https://cal.com/enhancedopsninja/45-min";
 
 export async function POST(req: Request) {
   const cfg = checkRequiredEnv();
