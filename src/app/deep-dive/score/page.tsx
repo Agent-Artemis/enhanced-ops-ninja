@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Script from "next/script";
 import { useEffect, useMemo, useState } from "react";
 
 import { getDeepDiveModuleTitleForScoreKey } from "@/lib/deep-dive/assessment-data";
@@ -12,6 +13,26 @@ import {
   type StoredBusinessType,
   writeLocalStorage,
 } from "@/lib/deep-dive/assessment-storage";
+
+const CAL_LINK = "enhancedopsninja/45-min";
+const CAL_FULL_URL = "https://cal.com/enhancedopsninja/45-min";
+
+function initCalEmbed() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Cal = (window as any).Cal;
+  if (!Cal) return;
+  Cal("init", "scorePageBooking", { origin: "https://cal.com" });
+  Cal("scorePageBooking", "inline", {
+    elementOrSelector: "#cal-score-booking",
+    calLink: CAL_LINK,
+    config: { layout: "month_view" },
+  });
+  Cal("scorePageBooking", "ui", {
+    styles: { branding: { brandColor: "#1A6ECC" } },
+    hideEventTypeDetails: false,
+    layout: "month_view",
+  });
+}
 
 const NINJA_REVIEW_COPY =
   "Our ninjas will review your answers and map what a focused implementation plan could look like for your team. On a short call we will walk through the highlights, answer questions, and outline practical next steps.";
@@ -269,18 +290,47 @@ export default function DeepDiveScorePage() {
           <p className="text-[15px] leading-relaxed text-[rgb(255_255_255/0.82)]">{NINJA_REVIEW_COPY}</p>
         </div>
 
-        <p className="mb-8 text-center text-sm text-[rgb(255_255_255/0.55)]">
+        <p className="mb-10 text-center text-sm text-[rgb(255_255_255/0.55)]">
           A summary of your score has been sent to your email.
         </p>
 
-        <div className="flex justify-center">
-          <Link
-            href="/deep-dive/schedule"
-            className="inline-flex min-h-[48px] items-center justify-center rounded-lg bg-[#1A6ECC] px-8 py-3 text-[15px] font-semibold text-white no-underline transition hover:bg-[#1562b8]"
-          >
-            Schedule My 1:1 Review Call →
-          </Link>
+        {/* Booking section */}
+        <div className="rounded-xl border border-[rgb(26_110_204/0.35)] bg-[rgb(10_10_10)] px-6 py-8">
+          <p className="mb-1 text-center text-xs font-semibold uppercase tracking-[0.14em] text-[#1A6ECC]">
+            Next step
+          </p>
+          <h2 className="mb-3 text-center font-[family-name:var(--font-bebas)] text-[36px] uppercase leading-none tracking-[0.04em] md:text-[44px]">
+            Book Your 1:1 Review Call
+          </h2>
+          <p className="mb-6 text-center text-[15px] leading-relaxed text-[rgb(255_255_255/0.6)]">
+            45 minutes to walk through your results, identify your biggest opportunities, and map practical next steps.
+          </p>
+
+          {/* Direct link — always works regardless of embed status */}
+          <div className="mb-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <a
+              href={CAL_FULL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-[52px] w-full items-center justify-center rounded-lg bg-[#1A6ECC] px-8 py-3 text-[15px] font-semibold text-white no-underline transition hover:bg-[#1562b8] sm:w-auto"
+            >
+              Open Booking Page →
+            </a>
+            <span className="text-sm text-[rgb(255_255_255/0.35)]">or use the calendar below</span>
+          </div>
+
+          {/* Cal.com inline embed — loads asynchronously */}
+          <div
+            id="cal-score-booking"
+            style={{ minHeight: "600px", borderRadius: "10px", overflow: "hidden" }}
+          />
         </div>
+
+        <Script
+          src="https://app.cal.com/embed/embed.js"
+          strategy="afterInteractive"
+          onLoad={initCalEmbed}
+        />
       </main>
     </div>
   );
