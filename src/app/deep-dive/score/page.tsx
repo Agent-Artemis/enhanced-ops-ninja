@@ -14,7 +14,7 @@ import {
 } from "@/lib/deep-dive/assessment-storage";
 
 const NINJA_REVIEW_COPY =
-  "Our ninjas have reviewed your answers and mapped what a focused implementation plan could look like for your team. On a short call we will walk through the highlights, answer questions, and outline practical next steps.";
+  "Our ninjas will review your answers and map what a focused implementation plan could look like for your team. On a short call we will walk through the highlights, answer questions, and outline practical next steps.";
 
 type TierInfo = { label: string; color: string; ringColor: string };
 
@@ -102,18 +102,26 @@ function ScoreRing(props: { value: number; strokeColor: string }) {
   );
 }
 
+function barColorFromScore(score: number): string {
+  if (score >= 75) return "#22c55e"; // green  — Operationally Strong
+  if (score >= 60) return "#eab308"; // yellow — Functional, Room to Grow
+  if (score >= 40) return "#f97316"; // orange — Needs Attention
+  return "#ef4444";                  // red    — Significant Gaps
+}
+
 function ModuleBar(props: { label: string; score: number }) {
   const pct = Math.max(0, Math.min(100, Math.round(props.score)));
+  const color = barColorFromScore(pct);
   return (
     <div className="mb-5 last:mb-0">
       <div className="mb-2 flex items-start justify-between gap-3 text-[14px] leading-snug">
         <span className="text-[rgb(255_255_255/0.88)]">{props.label}</span>
-        <span className="shrink-0 font-semibold tabular-nums text-[#1A6ECC]">{pct}</span>
+        <span className="shrink-0 font-semibold tabular-nums" style={{ color }}>{pct}</span>
       </div>
       <div className="h-2.5 w-full overflow-hidden rounded-full bg-[rgb(255_255_255/0.08)]">
         <div
-          className="h-full rounded-full bg-[#1A6ECC] transition-[width] duration-500 ease-out"
-          style={{ width: `${pct}%` }}
+          className="h-full rounded-full transition-[width] duration-500 ease-out"
+          style={{ width: `${pct}%`, backgroundColor: color }}
         />
       </div>
     </div>
