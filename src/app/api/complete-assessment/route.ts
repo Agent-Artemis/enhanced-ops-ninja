@@ -68,10 +68,12 @@ function buildCompletionEmailHtml(params: {
   firstName: string;
   overallScore: number;
   calBookingUrl: string;
+  portalLink: string;
 }): string {
   const safeName = escapeHtmlMinimal(params.firstName);
   const score = formatAssessmentScore(params.overallScore);
   const calHref = escapeHtmlAttr(params.calBookingUrl);
+  const portalHref = escapeHtmlAttr(params.portalLink);
   return `<!DOCTYPE html>
 <html lang="en">
   <head><meta charset="utf-8" /></head>
@@ -89,9 +91,14 @@ function buildCompletionEmailHtml(params: {
           </tr>
         </table>
         <p style="margin:0 0 16px;">Our ninjas will review your answers and map what a focused implementation plan could look like for your team. On a short call we will walk through the highlights, answer questions, and outline practical next steps.</p>
-        <p style="margin:0 0 24px;">
+        <p style="margin:0 0 12px;">
           <a href="${calHref}" style="display:inline-block;background:#0f172a;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:600;">Schedule My Review Call →</a>
         </p>
+        <p style="margin:0 0 24px;">
+          <a href="${portalHref}" style="display:inline-block;background:#1A6ECC;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:600;">Access Your Secret Mission Portal →</a>
+        </p>
+        <p style="margin:0 0 4px;color:#64748b;font-size:13px;">Your mission portal is where you will track your implementation progress, view your briefing, and see your results. The link above logs you in automatically — bookmark the portal after you land.</p>
+        <p style="margin:0 0 20px;color:#94a3b8;font-size:12px;">This login link expires in 24 hours. You can always request a new one at <a href="https://mission.enhancedops.ninja" style="color:#1A6ECC;">mission.enhancedops.ninja</a>.</p>
         <p style="margin:0 0 12px;color:#64748b;font-size:14px;line-height:1.5;">If you choose to move forward with implementation, dollars you have already invested in this assessment apply toward that engagement.</p>
         <p style="margin:0;color:#64748b;font-size:14px;">Jeff Oldroyd<br />Enhanced Ops Ninja</p>
       </td></tr>
@@ -141,8 +148,37 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Assessment not found" }, { status: 404 });
     }
 
+    // Generate a one-time magic link to the client portal.
+    // Try 'invite' first (creates user if new), fall back to 'magiclink' for
+    // existing users. Either way the client clicks once and is logged in.
+    const PORTAL_URL = "https://mission.enhancedops.ninja";
+    let portalLink = PORTAL_URL;
+    try {
+      const { data: linkData } = await admin.auth.admin.generateLink({
+        type: "invite",
+        email,
+        options: { redirectTo: PORTAL_URL },
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const actionLink = (linkData as any)?.properties?.action_link as string | undefined;
+      if (actionLink) portalLink = actionLink;
+    } catch {
+      try {
+        const { data: mlData } = await admin.auth.admin.generateLink({
+          type: "magiclink",
+          email,
+          options: { redirectTo: PORTAL_URL },
+        });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const actionLink = (mlData as any)?.properties?.action_link as string | undefined;
+        if (actionLink) portalLink = actionLink;
+      } catch {
+        // Fall back to plain portal URL — client can request magic link themselves
+      }
+    }
+
     const resend = new Resend(cfg.resendKey);
-    const html = buildCompletionEmailHtml({ firstName, overallScore, calBookingUrl });
+    const html = buildCompletionEmailHtml({ firstName, overallScore, calBookingUrl, portalLink });
 
     const { error: sendError } = await resend.emails.send({
       from: "jeff@enhancedops.ninja",
