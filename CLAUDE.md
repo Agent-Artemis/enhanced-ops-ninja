@@ -243,3 +243,27 @@ npx playwright test e2e/paid-assessment-live.spec.ts  # real DB + email
 ## Relationship to eon-app
 
 Both apps share the same Supabase project. When a free assessment completes here, a DB trigger creates a client card in the eon-app at stage `free_assessment_complete`. Paid deep-dive data feeds into the eon-app's Secret Mission Briefing generation. See `~/eon-app/CLAUDE.md` for full CRM context.
+
+---
+
+## Client Portal (`mission.enhancedops.ninja`)
+
+### Auth invite flow — `complete-assessment/route.ts` (`a5a4936`)
+After saving scores, the route generates a one-time Supabase magic/invite link to `mission.enhancedops.ninja`:
+- `type: 'invite'` for new users (creates account), falls back to `type: 'magiclink'` for existing users
+- Link embedded in completion email as "Access Your Secret Mission Portal →" button alongside Cal.com CTA
+- Link expires in 24h; client can request a new one at mission.enhancedops.ninja
+
+### Client data API — `GET /api/client-portal/data` (`a5a4936`)
+The eon-app client portal calls this endpoint with the client's Supabase JWT.
+
+- CORS headers configured for `mission.enhancedops.ninja`, `dojo.enhancedops.ninja`, `localhost:5173/5174`
+- Verifies JWT via `admin.auth.getUser(token)`
+- Looks up by `user.email`:
+  - `deep_dive_assessments` → scores, module breakdown, business type, completion timestamp
+  - `clients` → pipeline stage (matched by `primary_contact_email`)
+  - `briefings` → stories (no `team_notes`), status
+  - `mission_maps` (live only) + `map_columns` + `map_tasks`
+- Returns structured JSON for the portal to render
+
+**CORS origins allowed:** `https://mission.enhancedops.ninja`, `https://dojo.enhancedops.ninja`, `http://localhost:5173`, `http://localhost:5174`
