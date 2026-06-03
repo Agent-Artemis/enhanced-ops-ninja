@@ -123,8 +123,8 @@ Email + firstName passed as URL params `dde`/`ddf`. Answers auto-saved to `DEEP_
 ### 6. Cal.com booking on score page (`ecf66ff`)
 Booking section embedded directly on the score page — no intermediate navigation. Direct-link button (`target="_blank"`) plus inline Cal.com embed via `next/script afterInteractive`. The `/deep-dive/schedule` page still exists for email links.
 
-### 7. Portal chooser modal (`e682a8e`)
-`MarketingHeader.tsx` now has "Enter the Mission" button that opens a full-screen modal. Two choices: "I'm a Ninja" → `dojo.enhancedops.ninja`, "I'm a Client" → `mission.enhancedops.ninja`. ESC + backdrop close.
+### 7. Header button — direct to client portal (`135207a`)
+`MarketingHeader.tsx` "Enter the Mission" button is a direct `<a href="https://mission.enhancedops.ninja">` — no modal, no choice. EON team accesses Ninja Dojo by typing `dojo.enhancedops.ninja` directly; there is no entry point from the marketing site for the team.
 
 ---
 
