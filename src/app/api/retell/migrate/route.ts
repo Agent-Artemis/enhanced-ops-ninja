@@ -13,7 +13,7 @@ import { Pool } from "pg";
 
 export const dynamic = "force-dynamic";
 
-// Individual DDL statements — run separately to avoid multi-statement issues with pg.
+// Individual DDL statements — executed separately to avoid multi-statement issues.
 const DDL_STATEMENTS = [
   `create table if not exists public.retell_calls (
     id uuid primary key default gen_random_uuid(),
@@ -56,21 +56,28 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "POSTGRES_URL_NON_POOLING not configured" }, { status: 503 });
   }
 
+  // Supabase uses a self-signed CA cert in their direct postgres connection.
+  // Disable TLS verification for this one-time migration only.
+  // eslint-disable-next-line n/no-process-env
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
   const pool = new Pool({
     connectionString,
-    ssl: { rejectUnauthorized: false },
     max: 1,
-    connectionTimeoutMillis: 10000,
+    connectionTimeoutMillis: 15000,
   });
 
   const client = await pool.connect().catch((err: unknown) => {
-    const msg = err instanceof Error ? err.message : "Unknown error";
-    return { error: msg };
+    return { connectError: err instanceof Error ? err.message : String(err) };
   });
 
-  if ("error" in client) {
+  // Restore TLS validation
+  // eslint-disable-next-line n/no-process-env
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "1";
+
+  if ("connectError" in client) {
     await pool.end().catch(() => null);
-    return NextResponse.json({ error: client.error }, { status: 500 });
+    return NextResponse.json({ error: client.connectError }, { status: 500 });
   }
 
   try {
