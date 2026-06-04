@@ -1,7 +1,7 @@
 /**
  * ONE-TIME MIGRATION ENDPOINT — DELETE THIS FILE AFTER USE.
  *
- * Creates the retell_calls table in Supabase.
+ * Creates the retell_calls table in Supabase via direct Postgres connection.
  * Protected by a bearer token: RETELL_MIGRATE_SECRET.
  *
  * Usage:
@@ -9,8 +9,7 @@
  *     -H "Authorization: Bearer <RETELL_MIGRATE_SECRET>"
  */
 import { NextResponse } from "next/server";
-
-import { getSupabaseAdmin } from "@/lib/supabase/admin";
+import { Pool } from "pg";
 
 export const dynamic = "force-dynamic";
 
@@ -53,43 +52,23 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const connectionString = process.env.POSTGRES_URL_NON_POOLING;
+  if (!connectionString) {
+    return NextResponse.json({ error: "POSTGRES_URL_NON_POOLING not configured" }, { status: 503 });
+  }
+
+  const pool = new Pool({
+    connectionString,
+    ssl: { rejectUnauthorized: false },
+    max: 1,
+  });
+
   try {
-    const admin = getSupabaseAdmin();
-    // Use the rpc exec approach — first create the exec_sql helper via a raw approach.
-    // Supabase supports running arbitrary SQL via the pg query endpoint when using
-    // the service role and the right path. We'll use the rpc approach.
-    const { error } = await admin.rpc("exec_sql", { sql: MIGRATION_SQL }).maybeSingle();
-
-    if (error && error.message.includes("exec_sql")) {
-      // exec_sql function doesn't exist — need to create it first.
-      // The service role can create functions via the REST API directly.
-      // We bootstrap by calling the pg query endpoint.
-      const pgResp = await fetch(
-        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/rpc/exec_sql`,
-        {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
-            "apikey": process.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ sql: MIGRATION_SQL }),
-        },
-      );
-
-      if (!pgResp.ok) {
-        const body = await pgResp.text();
-        return NextResponse.json(
-          { error: "Migration failed — exec_sql not available", details: body },
-          { status: 500 },
-        );
-      }
-    } else if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
+    await pool.query(MIGRATION_SQL);
+    await pool.end();
     return NextResponse.json({ ok: true, message: "retell_calls table created (or already exists)" });
   } catch (err: unknown) {
+    await pool.end().catch(() => null);
     const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
