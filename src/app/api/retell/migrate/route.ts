@@ -57,8 +57,8 @@ export async function POST(req: Request) {
   }
 
   // Supabase uses a self-signed CA cert in their direct postgres connection.
-  // Disable TLS verification for this one-time migration only.
-  // eslint-disable-next-line n/no-process-env
+  // Temporarily disable TLS verification for this one-time migration only.
+  const prev = process.env.NODE_TLS_REJECT_UNAUTHORIZED;
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
   const pool = new Pool({
@@ -71,9 +71,7 @@ export async function POST(req: Request) {
     return { connectError: err instanceof Error ? err.message : String(err) };
   });
 
-  // Restore TLS validation
-  // eslint-disable-next-line n/no-process-env
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "1";
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = prev ?? "1";
 
   if ("connectError" in client) {
     await pool.end().catch(() => null);
