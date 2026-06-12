@@ -1,0 +1,33 @@
+name: Deploy to Vercel
+# Why this exists: Vercel silently BLOCKS webhook deploys from our git author
+# (incident 2026-06-04→12, see Master Brain SHARED-LEARNINGS). This Action
+# creates the deployment via API as the team OWNER token instead — trusted,
+# and it fails LOUDLY if the deploy doesn't reach READY.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel production deployment
+        run: |
+          RESPONSE=$(curl -s -X POST "https://api.vercel.com/v13/deployments" \
+            -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"name":"enhanced-ops-ninja","project":"prj_qjwUtH5eOVJ9Rq0ti3g7y8tBsAqA","target":"production","gitSource":{"type":"github","repoId":"1228173587","ref":"${{ github.sha }}"}}')
+          DEPLOY_ID=$(echo "$RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin).get('id',''))")
+          if [ -z "$DEPLOY_ID" ]; then echo "Create failed: $RESPONSE"; exit 1; fi
+          echo "Deployment: $DEPLOY_ID"
+          for i in $(seq 1 60); do
+            sleep 10
+            STATE=$(curl -s -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
+              "https://api.vercel.com/v13/deployments/$DEPLOY_ID" \
+              | python3 -c "import sys,json; print(json.load(sys.stdin).get('readyState'))")
+            echo "[$i] $STATE"
+            [ "$STATE" = "READY" ] && exit 0
+            { [ "$STATE" = "ERROR" ] || [ "$STATE" = "CANCELED" ] || [ "$STATE" = "BLOCKED" ]; } && exit 1
+          done
+          echo "Timed out waiting for READY"; exit 1
