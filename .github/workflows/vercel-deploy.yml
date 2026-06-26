@@ -1,0 +1,51 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Vercel
+        id: deploy
+        run: |
+          DEPLOY_URL=$(curl -s -X POST "https://api.vercel.com/v13/deployments" \
+            -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "name": "enhanced-ops-ninja",
+              "gitSource": {
+                "type": "github",
+                "repoId": "${{ github.event.repository.id }}",
+                "ref": "${{ github.ref_name }}",
+                "sha": "${{ github.sha }}"
+              },
+              "projectId": "prj_qjwUtH5eOVJ9Rq0ti3g7y8tBsAqA",
+              "target": "production"
+            }' | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('url',''))")
+          echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+          echo "Deploying: https://$DEPLOY_URL"
+
+      - name: Wait for deployment
+        run: |
+          URL="${{ steps.deploy.outputs.url }}"
+          for i in $(seq 1 30); do
+            STATUS=$(curl -s "https://api.vercel.com/v13/deployments?url=$URL&limit=1" \
+              -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('deployments',[{}])[0].get('readyState',''))" 2>/dev/null)
+            echo "Attempt $i: $STATUS"
+            if [ "$STATUS" = "READY" ]; then
+              echo "✅ Deployed successfully"
+              exit 0
+            fi
+            if [ "$STATUS" = "ERROR" ] || [ "$STATUS" = "BLOCKED" ] || [ "$STATUS" = "CANCELED" ]; then
+              echo "❌ Deployment failed with status: $STATUS"
+              exit 1
+            fi
+            sleep 10
+          done
+          echo "❌ Timeout waiting for deployment"
+          exit 1
