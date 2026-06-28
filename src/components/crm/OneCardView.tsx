@@ -6,7 +6,7 @@ import { ContactCard } from './ContactCard';
 import { fileUnderDate, pullToActive, sendToAlpha } from '@/lib/crm/data';
 import {
   todayStack, dayTabs, monthTabs, alphaGroups,
-  contactsForDay, contactsForMonth, MONTH_NAMES,
+  contactsForDay, contactsForMonth,
 } from '@/lib/crm/filing';
 
 interface Props {
