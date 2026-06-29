@@ -112,7 +112,7 @@ function LoginScreen() {
 export default function CrmPage() {
   // Default false — show login immediately, upgrade to true if session found
   const [authed, setAuthed]           = useState(false);
-  const [checking, setChecking]       = useState(false); // false = show login by default
+  const [checking, setChecking]       = useState(true);  // spin briefly while we check hash/session
   const [view, setView]               = useState<CrmView>('onecard');
   const [contacts, setContacts]       = useState<Contact[]>([]);
   const [stages, setStages]           = useState<Stage[]>([]);
@@ -126,6 +126,8 @@ export default function CrmPage() {
 
   useEffect(() => {
     let cancelled = false;
+
+    const giveUp = setTimeout(() => setChecking(false), 3000);
 
     async function checkAuth() {
       try {
@@ -152,6 +154,7 @@ export default function CrmPage() {
         const { data } = await sb.auth.getSession();
         if (cancelled) return;
 
+        clearTimeout(giveUp);
         const email = data.session?.user?.email ?? '';
         if (data.session && isAllowed(email)) setAuthed(true);
         setChecking(false);
@@ -164,6 +167,7 @@ export default function CrmPage() {
         });
         subRef.current = sub.subscription;
       } catch {
+        clearTimeout(giveUp);
         if (!cancelled) setChecking(false);
       }
     }
@@ -171,6 +175,7 @@ export default function CrmPage() {
     checkAuth();
     return () => {
       cancelled = true;
+      clearTimeout(giveUp);
       subRef.current?.unsubscribe();
     };
   }, []);
