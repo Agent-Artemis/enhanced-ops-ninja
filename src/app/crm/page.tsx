@@ -100,17 +100,25 @@ export default function CrmPage() {
   const [drawerOpen, setDrawerOpen]     = useState(false);
 
   useEffect(() => {
-    sb.auth.getSession().then(({ data }) => {
-      const email = data.session?.user?.email ?? '';
-      const ok = email.endsWith('@enhancedops.ninja') || email === 'jeff@augeo-hq.com';
-      setAuthed(!!data.session && ok);
-    });
+    // Timeout fallback — if Supabase doesn't respond in 4s, show login
+    const timeout = setTimeout(() => setAuthed(false), 4000);
+
+    sb.auth.getSession()
+      .then(({ data }) => {
+        clearTimeout(timeout);
+        const email = data.session?.user?.email ?? '';
+        const ok = email.endsWith('@enhancedops.ninja') || email === 'jeff@augeo-hq.com';
+        setAuthed(!!data.session && ok);
+      })
+      .catch(() => { clearTimeout(timeout); setAuthed(false); });
+
     const { data: sub } = sb.auth.onAuthStateChange((_e, session) => {
+      clearTimeout(timeout);
       const email = session?.user?.email ?? '';
       const ok = email.endsWith('@enhancedops.ninja') || email === 'jeff@augeo-hq.com';
       setAuthed(!!session && ok);
     });
-    return () => sub.subscription.unsubscribe();
+    return () => { clearTimeout(timeout); sub.subscription.unsubscribe(); };
   }, []);
 
   const refresh = useCallback(async () => {
