@@ -100,7 +100,7 @@ function LoginScreen() {
 export default function CrmPage() {
   // Default false — show login immediately, upgrade to true if session found
   const [authed, setAuthed]           = useState(false);
-  const [checking, setChecking]       = useState(true);
+  const [checking, setChecking]       = useState(false); // false = show login by default
   const [view, setView]               = useState<CrmView>('onecard');
   const [contacts, setContacts]       = useState<Contact[]>([]);
   const [stages, setStages]           = useState<Stage[]>([]);
