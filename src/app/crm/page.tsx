@@ -22,8 +22,8 @@ function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState('');
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
+  async function sendLink() {
+    if (!email) return;
     setError('');
     if (!isAllowed(email)) {
       setError('Access restricted to @enhancedops.ninja accounts.');
@@ -31,16 +31,27 @@ function LoginScreen() {
     }
     setLoading(true);
     try {
-      const { createClient } = await import('@supabase/supabase-js');
-      const sb = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
-      const { error: err } = await sb.auth.signInWithOtp({
-        email,
-        options: { emailRedirectTo: 'https://crm.enhancedops.ninja' },
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      if (!supabaseUrl || !supabaseKey) throw new Error('Missing Supabase config');
+
+      // Use REST API directly — no SDK dependency in this path
+      const res = await fetch(`${supabaseUrl}/auth/v1/otp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': supabaseKey,
+        },
+        body: JSON.stringify({
+          email,
+          create_user: true,
+          options: { emailRedirectTo: 'https://crm.enhancedops.ninja' },
+        }),
       });
-      if (err) throw err;
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.msg || body.error_description || `Error ${res.status}`);
+      }
       setSent(true);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to send link');
@@ -67,15 +78,15 @@ function LoginScreen() {
             </p>
           </div>
         ) : (
-          <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && sendLink()}
                 placeholder="you@enhancedops.ninja"
-                required
                 style={{ width: '100%', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '10px 12px', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
               />
             </div>
@@ -83,13 +94,14 @@ function LoginScreen() {
               <p style={{ fontSize: '13px', color: '#dc2626', background: '#fef2f2', padding: '8px 12px', borderRadius: '8px', margin: 0 }}>{error}</p>
             )}
             <button
-              type="submit"
-              disabled={loading || !email}
-              style={{ background: '#1A6ECC', color: '#fff', border: 'none', borderRadius: '8px', padding: '11px', fontSize: '14px', fontWeight: 600, cursor: loading || !email ? 'not-allowed' : 'pointer', opacity: loading || !email ? 0.6 : 1 }}
+              type="button"
+              onClick={sendLink}
+              disabled={loading}
+              style={{ background: '#1A6ECC', color: '#fff', border: 'none', borderRadius: '8px', padding: '11px', fontSize: '14px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1 }}
             >
               {loading ? 'Sending…' : 'Send Magic Link'}
             </button>
-          </form>
+          </div>
         )}
       </div>
     </div>
