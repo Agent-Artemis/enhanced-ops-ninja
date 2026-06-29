@@ -68,10 +68,11 @@ export default function CrmPage() {
     if (authed) refresh().finally(() => setLoading(false));
   }, [authed, refresh]);
 
-  // Redirect to login
+  // Redirect to login — use /login not /crm/login because the subdomain
+  // rewrite already prepends /crm/, so /login → /crm/login correctly
   useEffect(() => {
     if (authed === false) {
-      window.location.href = '/crm/login';
+      window.location.href = '/login';
     }
   }, [authed]);
 
