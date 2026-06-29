@@ -132,8 +132,22 @@ export default function CrmPage() {
         const { createClient } = await import('@supabase/supabase-js');
         const sb = createClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          { auth: { detectSessionInUrl: true, persistSession: true } }
         );
+
+        // Handle token hash passed from the dojo (access_token in URL fragment)
+        const hash = typeof window !== 'undefined' ? window.location.hash : '';
+        if (hash.includes('access_token=')) {
+          const params = new URLSearchParams(hash.replace('#', ''));
+          const accessToken  = params.get('access_token') ?? '';
+          const refreshToken = params.get('refresh_token') ?? '';
+          if (accessToken) {
+            await sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+            // Clean the tokens out of the URL
+            window.history.replaceState(null, '', window.location.pathname);
+          }
+        }
 
         const { data } = await sb.auth.getSession();
         if (cancelled) return;
