@@ -285,7 +285,6 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
           onDragLeave={onZoneDragLeave}
           onDrop={e => onZoneDrop(e, 'action-needed')}
           dz={dzStyle('action-needed')}
-          isDragging={isDragging || drag1_31}
         />
 
         {/* No Action */}
@@ -299,7 +298,6 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
           onDragLeave={onZoneDragLeave}
           onDrop={e => onZoneDrop(e, 'no-action')}
           dz={dzStyle('no-action')}
-          isDragging={isDragging || drag1_31}
         />
 
         {/* Section label */}
@@ -430,8 +428,7 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
             onDragLeave={onZoneDragLeave}
             onDrop={e => onZoneDrop(e, 'alpha')}
             dz={dzStyle('alpha')}
-            isDragging={isDragging || drag1_31}
-          />
+            />
         </div>
       </aside>
 
@@ -487,7 +484,7 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
 // ── Sidebar item ───────────────────────────────────────────────────────────────
 function SbItem({
   label, count, countColor, active, prefix, onClick,
-  onDragOver, onDragLeave, onDrop, dz, isDragging,
+  onDragOver, onDragLeave, onDrop, dz,
 }: {
   label: string; count: number; countColor?: string;
   active: boolean; prefix?: string; onClick: () => void;
@@ -495,7 +492,6 @@ function SbItem({
   onDragLeave: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent) => void;
   dz?: React.CSSProperties;
-  isDragging: boolean;
 }) {
   return (
     <button

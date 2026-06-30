@@ -1,84 +1,88 @@
 'use client';
 
 import { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-const sb = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Lazy singleton — avoids module-level createClient call that breaks prerendering
+let _sb: SupabaseClient | null = null;
+function getSb() {
+  if (!_sb) {
+    _sb = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
+  }
+  return _sb;
+}
 
 export default function CrmLogin() {
-  const [email, setEmail] = useState('');
-  const [sent, setSent] = useState(false);
+  const [email, setEmail]     = useState('');
+  const [sent, setSent]       = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError]     = useState('');
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
-
-    const allowed =
-      email.endsWith('@enhancedops.ninja') || email === 'jeff@augeo-hq.com';
-    if (!allowed) {
-      setError('Access restricted to @enhancedops.ninja accounts.');
-      return;
-    }
-
+    const allowed = email.endsWith('@enhancedops.ninja') || email === 'jeff@augeo-hq.com';
+    if (!allowed) { setError('Access restricted to @enhancedops.ninja accounts.'); return; }
     setLoading(true);
-    const { error: err } = await sb.auth.signInWithOtp({
+    const { error: err } = await getSb().auth.signInWithOtp({
       email,
       options: { emailRedirectTo: 'https://crm.enhancedops.ninja' },
     });
     setLoading(false);
-
     if (err) { setError(err.message); return; }
     setSent(true);
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
-        <div className="text-center mb-8">
-          <div className="text-3xl mb-2">🥷</div>
-          <h1 className="text-xl font-bold text-slate-800">EON CRM</h1>
-          <p className="text-sm text-slate-500 mt-1">Sign in to continue</p>
+    <div style={{
+      minHeight: '100vh', backgroundColor: '#1f2937',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: 24, fontFamily: 'system-ui, sans-serif',
+    }}>
+      <div style={{
+        width: '100%', maxWidth: 440,
+        backgroundColor: '#111111', borderRadius: 16,
+        boxShadow: '0 24px 48px rgba(0,0,0,0.5)', padding: 48,
+      }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-ninja.png" alt="Ninja CRM" style={{ height: 80, objectFit: 'contain', marginBottom: 12 }} />
+          <p style={{ fontSize: 13, color: '#6b7280', margin: 0 }}>Ninja CRM — Team Access</p>
         </div>
 
         {sent ? (
-          <div className="text-center">
-            <div className="text-4xl mb-4">📬</div>
-            <p className="text-slate-700 font-medium">Check your email</p>
-            <p className="text-sm text-slate-500 mt-2">
-              We sent a magic link to <strong>{email}</strong>
-            </p>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            backgroundColor: '#E8F0FF', color: '#1A6BF9',
+            borderRadius: 8, padding: '14px 16px', fontSize: 14, fontWeight: 500,
+          }}>
+            📬 Check your email for your access link.
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="you@enhancedops.ninja"
-                required
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A6ECC]"
-              />
-            </div>
-
-            {error && (
-              <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">
-                {error}
-              </p>
-            )}
-
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <input
+              type="email" value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="you@enhancedops.ninja"
+              required
+              style={{
+                width: '100%', height: 44, padding: '0 14px',
+                backgroundColor: '#1f2937', border: '1px solid #374151',
+                borderRadius: 8, fontSize: 14, color: '#FFFFFF',
+                outline: 'none', boxSizing: 'border-box',
+              }}
+            />
+            {error && <p style={{ color: '#dc2626', fontSize: 13, margin: 0 }}>{error}</p>}
             <button
-              type="submit"
-              disabled={loading || !email}
-              className="w-full bg-[#1A6ECC] text-white py-2 rounded-lg text-sm font-medium hover:bg-[#155fb3] disabled:opacity-40 transition-colors"
+              type="submit" disabled={loading || !email}
+              style={{
+                width: '100%', height: 44, background: '#1A6BF9', color: '#fff',
+                border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600,
+                cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
+              }}
             >
               {loading ? 'Sending…' : 'Send Magic Link'}
             </button>
