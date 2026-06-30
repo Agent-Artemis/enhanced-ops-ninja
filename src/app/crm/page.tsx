@@ -199,7 +199,7 @@ export default function CrmPage() {
         fetchContacts(), fetchStages(), fetchTeam(), fetchSequences(), fetchVoiceAgents(),
       ]);
       setContacts(c); setStages(s); setTeam(t); setSequences(seq); setAgents(ag);
-    } catch { setAuthed(false); }
+    } catch { /* data fetch failed — leave current state, don't force logout */ }
   }, []);
 
   useEffect(() => {
