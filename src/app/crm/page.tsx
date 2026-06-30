@@ -79,7 +79,6 @@ function LoginScreen() {
     if (!isAllowed(email)) { setError('Access restricted to @enhancedops.ninja accounts.'); return; }
     setLoading(true);
     try {
-      // Use SDK so PKCE verifier is stored — required for the magic link callback to work
       const { error: err } = await getSb().auth.signInWithOtp({
         email,
         options: { emailRedirectTo: 'https://crm.enhancedops.ninja' },
@@ -92,34 +91,74 @@ function LoginScreen() {
   }
 
   return (
-    <div style={{ minHeight:'100vh', background:'#f8fafc', display:'flex', alignItems:'center', justifyContent:'center', padding:'16px', fontFamily:'system-ui,sans-serif' }}>
-      <div style={{ width:'100%', maxWidth:'360px', background:'#fff', borderRadius:'16px', boxShadow:'0 2px 12px rgba(0,0,0,.08)', border:'1px solid #e2e8f0', padding:'40px 32px' }}>
-        <div style={{ textAlign:'center', marginBottom:'32px' }}>
-          <div style={{ fontSize:'40px', marginBottom:'8px' }}>🥷</div>
-          <h1 style={{ fontSize:'20px', fontWeight:700, color:'#1e293b', margin:'0 0 4px' }}>EON CRM</h1>
-          <p style={{ fontSize:'14px', color:'#64748b', margin:0 }}>Sign in to continue</p>
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(160deg, #0A0A0C 0%, #0E1118 50%, #0A0D14 100%)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: 16, fontFamily: 'system-ui, sans-serif',
+    }}>
+      <div style={{
+        width: '100%', maxWidth: 360,
+        background: '#111318',
+        borderRadius: 16,
+        boxShadow: '0 0 0 1px rgba(26,110,204,0.2), 0 24px 48px rgba(0,0,0,0.6)',
+        padding: '40px 32px',
+      }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <div style={{ fontSize: 48, marginBottom: 10 }}>🥷</div>
+          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#E2E8F0', margin: '0 0 4px' }}>
+            Ninja CRM
+          </h1>
+          <p style={{ fontSize: 13, color: '#546070', margin: 0 }}>Sign in to continue</p>
         </div>
         {sent ? (
-          <div style={{ textAlign:'center' }}>
-            <div style={{ fontSize:'36px', marginBottom:'12px' }}>📬</div>
-            <p style={{ fontWeight:600, color:'#1e293b', margin:'0 0 8px' }}>Check your email</p>
-            <p style={{ fontSize:'14px', color:'#64748b', margin:0 }}>Magic link sent to <strong>{email}</strong></p>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 36, marginBottom: 12 }}>📬</div>
+            <p style={{ fontWeight: 600, color: '#E2E8F0', margin: '0 0 8px' }}>Check your email</p>
+            <p style={{ fontSize: 13, color: '#546070', margin: 0 }}>
+              Magic link sent to <strong style={{ color: '#94A3B8' }}>{email}</strong>
+            </p>
           </div>
         ) : (
-          <div style={{ display:'flex', flexDirection:'column', gap:'12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div>
-              <label style={{ display:'block', fontSize:'12px', fontWeight:600, color:'#475569', marginBottom:'6px' }}>Email</label>
+              <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#546070', marginBottom: 6, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                Email
+              </label>
               <input
-                type="email" value={email} onChange={e => setEmail(e.target.value)}
+                type="email" value={email}
+                onChange={e => setEmail(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && sendLink()}
                 placeholder="you@enhancedops.ninja"
-                style={{ width:'100%', border:'1px solid #cbd5e1', borderRadius:'8px', padding:'10px 12px', fontSize:'14px', outline:'none', boxSizing:'border-box' }}
+                style={{
+                  width: '100%',
+                  background: '#0A0C10',
+                  border: '1px solid rgba(26,110,204,0.25)',
+                  borderRadius: 8, padding: '10px 12px',
+                  fontSize: 14, outline: 'none',
+                  color: '#E2E8F0', boxSizing: 'border-box',
+                }}
               />
             </div>
-            {error && <p style={{ fontSize:'13px', color:'#dc2626', background:'#fef2f2', padding:'8px 12px', borderRadius:'8px', margin:0 }}>{error}</p>}
+            {error && (
+              <p style={{
+                fontSize: 12, color: '#EF4444',
+                background: 'rgba(239,68,68,0.1)',
+                border: '1px solid rgba(239,68,68,0.2)',
+                padding: '8px 12px', borderRadius: 6, margin: 0,
+              }}>
+                {error}
+              </p>
+            )}
             <button
               type="button" onClick={sendLink} disabled={loading}
-              style={{ background:'#1A6ECC', color:'#fff', border:'none', borderRadius:'8px', padding:'11px', fontSize:'14px', fontWeight:600, cursor:loading?'not-allowed':'pointer', opacity:loading?0.6:1 }}
+              style={{
+                background: loading ? '#0F3D7A' : '#1A6ECC',
+                color: '#fff', border: 'none', borderRadius: 8,
+                padding: 12, fontSize: 14, fontWeight: 600,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.7 : 1, transition: 'all 0.15s',
+              }}
             >
               {loading ? 'Sending…' : 'Send Magic Link'}
             </button>
