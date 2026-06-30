@@ -8,9 +8,9 @@ import { KanbanView } from '@/components/crm/KanbanView';
 import { ListView } from '@/components/crm/ListView';
 import { ContactDrawer } from '@/components/crm/ContactDrawer';
 import {
-  fetchContacts, fetchStages, fetchTeam, fetchSequences, fetchVoiceAgents,
+  fetchContacts, fetchStages, fetchTeam, fetchSequences,
 } from '@/lib/crm/data';
-import type { Contact, Stage, TeamMember, Sequence, VoiceAgent, CrmView } from '@/lib/crm/types';
+import type { Contact, Stage, TeamMember, Sequence, CrmView } from '@/lib/crm/types';
 
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SB_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -173,7 +173,6 @@ export default function CrmPage() {
   const [stages, setStages]           = useState<Stage[]>([]);
   const [team, setTeam]               = useState<TeamMember[]>([]);
   const [sequences, setSequences]     = useState<Sequence[]>([]);
-  const [agents, setAgents]           = useState<VoiceAgent[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [drawerContact, setDrawerContact] = useState<Contact | null>(null);
   const [drawerOpen, setDrawerOpen]   = useState(false);
@@ -224,10 +223,10 @@ export default function CrmPage() {
 
   const refresh = useCallback(async () => {
     try {
-      const [c, s, t, seq, ag] = await Promise.all([
-        fetchContacts(), fetchStages(), fetchTeam(), fetchSequences(), fetchVoiceAgents(),
+      const [c, s, t, seq] = await Promise.all([
+        fetchContacts(), fetchStages(), fetchTeam(), fetchSequences(),
       ]);
-      setContacts(c); setStages(s); setTeam(t); setSequences(seq); setAgents(ag);
+      setContacts(c); setStages(s); setTeam(t); setSequences(seq);
     } catch { /* data fetch failed — leave current state, don't force logout */ }
   }, []);
 
