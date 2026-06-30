@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { Contact, Stage, TeamMember, Sequence, VoiceAgent, Note } from '@/lib/crm/types';
+import type { Contact, Stage, TeamMember, Sequence, Note } from '@/lib/crm/types';
 import { upsertContact, deleteContact, addNote } from '@/lib/crm/data';
 
 interface Props {
@@ -10,7 +10,6 @@ interface Props {
   stages: Stage[];
   team: TeamMember[];
   sequences: Sequence[];
-  agents: VoiceAgent[];
   onClose: () => void;
   onSaved: () => void;
 }
@@ -18,7 +17,7 @@ interface Props {
 const EMPTY: Partial<Contact> = {
   first_name: '', last_name: '', company: '', email: '', phone: '',
   stage_id: undefined, assigned_to: undefined, sequence_id: undefined,
-  voice_agent_id: undefined, next_action_date: '', is_active: true,
+  next_action_date: '', is_active: true,
 };
 
 // Dark theme tokens (matching dojo)
@@ -52,7 +51,7 @@ const labelStyle: React.CSSProperties = {
   letterSpacing: '0.04em', textTransform: 'uppercase',
 };
 
-export function ContactDrawer({ open, contact, stages, team, sequences, agents, onClose, onSaved }: Props) {
+export function ContactDrawer({ open, contact, stages, team, sequences, onClose, onSaved }: Props) {
   const [form, setForm]         = useState<Partial<Contact>>(EMPTY);
   const [notes, setNotes]       = useState<Note[]>([]);
   const [newNote, setNewNote]   = useState('');
@@ -213,16 +212,6 @@ export function ContactDrawer({ open, contact, stages, team, sequences, agents, 
                 {sequences.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
             </div>
-          </div>
-
-          {/* Voice Agent */}
-          <div style={{ marginBottom: 16 }}>
-            <label style={labelStyle}>AI Voice Agent</label>
-            <select value={form.voice_agent_id ?? ''} onChange={e => set('voice_agent_id', e.target.value || undefined)}
-              style={{ ...inputStyle, cursor: 'pointer' }}>
-              <option value="">— None —</option>
-              {agents.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
-            </select>
           </div>
 
           {/* Next Action Date + Active */}

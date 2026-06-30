@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef } from 'react';
 import type { Contact, Stage } from '@/lib/crm/types';
 import { ContactCard } from './ContactCard';
-import { fileUnderDate, pullToActive, sendToAlpha } from '@/lib/crm/data';
+import { fileUnderDate, sendToAlpha } from '@/lib/crm/data';
 import { MONTH_NAMES, todayStack, contactsForMonth } from '@/lib/crm/filing';
 
 interface Props {
@@ -148,6 +148,9 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
   function onCardDragStart(e: React.DragEvent, contact: Contact) {
     setDragCardId(contact.id);
     e.dataTransfer.effectAllowed = 'move';
+    // Store ID in dataTransfer so onZoneDragOver can detect this synchronously
+    // without waiting for React state to re-render (avoids stale closure bug)
+    e.dataTransfer.setData('application/crm-card', contact.id);
 
     // Build a rotated ghost that looks like a card being picked up
     const el = e.currentTarget as HTMLElement;
@@ -181,7 +184,10 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
 
   // ── Zone drag handlers ────────────────────────────────────────────────────────
   function onZoneDragOver(e: React.DragEvent, zone: DropZone) {
-    if (!dragCardId && !drag1_31) return;
+    // Check dataTransfer.types synchronously — avoids stale-closure bug where
+    // dragCardId React state hasn't updated yet on the first dragover event
+    const hasCard = e.dataTransfer.types.includes('application/crm-card');
+    if (!hasCard && !drag1_31) return;
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     setDropZone(zone);
@@ -196,9 +202,8 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
 
   async function onZoneDrop(e: React.DragEvent, zone: DropZone) {
     e.preventDefault();
-    // Capture and clear drag state immediately so the card snaps back
-    // visually before the async DB write completes
-    const cardId = dragCardId;
+    // Read cardId from dataTransfer first (synchronous), fall back to state
+    const cardId = e.dataTransfer.getData('application/crm-card') || dragCardId;
     setDragCardId(null);
     setDropZone(null);
 
@@ -429,9 +434,10 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
 
         {panel === 'alpha' ? (
           <AlphaGrid
-            contacts={alphaList} stages={stages} onOpen={onOpen} onRefresh={onRefresh}
+            contacts={alphaList} stages={stages} onOpen={onOpen}
             dragCardId={dragCardId} justDropped={justDropped}
             onCardDragStart={onCardDragStart} onCardDragEnd={onCardDragEnd}
+            onSnooze={snooze}
           />
         ) : panelCards.length === 0 ? (
           <p style={{ color: T.textMuted, fontSize: 13 }}>Nothing filed here.</p>
@@ -606,24 +612,21 @@ function CardGrid({ children }: { children: React.ReactNode }) {
 }
 
 // ── Card slot — card stays visible (faded) while the ghost follows cursor ──────
-function CardSlot({ isDragging, children }: { isDragging: boolean; children: React.ReactNode }) {
-  return (
-    <div style={{ transition: 'opacity 0.15s', pointerEvents: isDragging ? 'none' : undefined }}>
-      {children}
-    </div>
-  );
+function CardSlot({ children }: { isDragging: boolean; children: React.ReactNode }) {
+  return <>{children}</>;
 }
 
 // ── Alpha grid ────────────────────────────────────────────────────────────────
 function AlphaGrid({
-  contacts, stages, onOpen, onRefresh, dragCardId, justDropped,
-  onCardDragStart, onCardDragEnd,
+  contacts, stages, onOpen, dragCardId, justDropped,
+  onCardDragStart, onCardDragEnd, onSnooze,
 }: {
   contacts: Contact[]; stages: Stage[];
-  onOpen: (c: Contact) => void; onRefresh: () => Promise<void>;
+  onOpen: (c: Contact) => void;
   dragCardId: string | null; justDropped: string | null;
   onCardDragStart: (e: React.DragEvent, c: Contact) => void;
   onCardDragEnd: () => void;
+  onSnooze: (c: Contact, days: number) => void;
 }) {
   const groups: Record<string, Contact[]> = {};
   for (const c of contacts) {
@@ -653,11 +656,11 @@ function AlphaGrid({
                   isDragging={dragCardId === c.id}
                   justDropped={justDropped === c.id}
                   actions={
-                    <QuickBtn
-                      label="★ activate"
-                      onClick={() => pullToActive(c.id).then(onRefresh)}
-                      blue
-                    />
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                      <QuickBtn label="+1d"   onClick={() => onSnooze(c, 1)} />
+                      <QuickBtn label="+1wk"  onClick={() => onSnooze(c, 7)} />
+                      <QuickBtn label="→ Now" onClick={() => onSnooze(c, 0)} blue />
+                    </div>
                   }
                 />
               </CardSlot>

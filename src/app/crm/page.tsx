@@ -248,7 +248,7 @@ export default function CrmPage() {
       </main>
       <ContactDrawer
         open={drawerOpen} contact={drawerContact} stages={stages}
-        team={team} sequences={sequences} agents={agents}
+        team={team} sequences={sequences}
         onClose={() => { setDrawerOpen(false); setDrawerContact(null); }}
         onSaved={async () => { await refresh(); setDrawerOpen(false); setDrawerContact(null); }}
       />
