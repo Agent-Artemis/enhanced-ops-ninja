@@ -5,7 +5,8 @@ import type { Contact, Stage } from '@/lib/crm/types';
 interface Props {
   contact: Contact;
   stages: Stage[];
-  onClick: () => void;
+  onClick?: () => void;
+  onDoubleClick?: () => void;
   actions?: React.ReactNode;
   draggable?: boolean;
   onDragStart?: (e: React.DragEvent) => void;
@@ -15,7 +16,7 @@ interface Props {
 }
 
 export function ContactCard({
-  contact, stages, onClick, actions,
+  contact, stages, onClick, onDoubleClick, actions,
   draggable = false, onDragStart, onDragEnd,
   isDragging = false, justDropped = false,
 }: Props) {
@@ -29,6 +30,7 @@ export function ContactCard({
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
       onClick={isDragging ? undefined : onClick}
+      onDoubleClick={isDragging ? undefined : onDoubleClick}
       style={{
         // 3x5 index card — cream stock, pops against dark background
         background: '#FFFEF7',
@@ -39,7 +41,7 @@ export function ContactCard({
           ? 'none'
           : '0 3px 10px rgba(0,0,0,0.45), 0 1px 3px rgba(0,0,0,0.3)',
         cursor: draggable ? (isDragging ? 'grabbing' : 'grab') : 'pointer',
-        opacity: isDragging ? 0 : 1,        // slot shows ghost outline; card hidden
+        opacity: isDragging ? 0.4 : 1,      // faded in place while drag ghost follows cursor
         userSelect: 'none',
         overflow: 'hidden',
         fontFamily: 'system-ui, sans-serif',

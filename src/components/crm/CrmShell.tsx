@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import type { CrmView } from '@/lib/crm/types';
 
 interface Props {
@@ -25,10 +24,11 @@ export function CrmShell({ view, onViewChange, onNewCard }: Props) {
     }}>
       {/* Logo only — no text */}
       <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-        <Image src="/logo-dark.png" alt="EnhancedOps.ninja" width={120} height={30} style={{ objectFit: 'contain' }} />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo-dark.png" alt="EnhancedOps.ninja" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
       </div>
 
-      <nav style={{ display: 'flex', gap: 4 }}>
+      <nav style={{ display: 'flex', gap: 4, marginLeft: 32 }}>
         {TABS.map(t => (
           <button
             key={t.id}

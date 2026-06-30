@@ -196,6 +196,12 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
 
   async function onZoneDrop(e: React.DragEvent, zone: DropZone) {
     e.preventDefault();
+    // Capture and clear drag state immediately so the card snaps back
+    // visually before the async DB write completes
+    const cardId = dragCardId;
+    setDragCardId(null);
+    setDropZone(null);
+
     if (drag1_31) {
       if (zone.startsWith('month:')) {
         const [, m] = zone.split(':');
@@ -203,12 +209,9 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
         setDaysOpen(true);
       }
       setDrag1_31(false);
-      setDropZone(null);
       return;
     }
-    if (dragCardId) await fileTo(dragCardId, zone);
-    setDragCardId(null);
-    setDropZone(null);
+    if (cardId) await fileTo(cardId, zone);
   }
 
   // ── 1-31 divider drag ────────────────────────────────────────────────────────
@@ -438,7 +441,7 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
               <CardSlot key={c.id} isDragging={dragCardId === c.id}>
                 <ContactCard
                   contact={c} stages={stages}
-                  onClick={() => onOpen(c)}
+                  onDoubleClick={() => onOpen(c)}
                   draggable
                   onDragStart={e => onCardDragStart(e, c)}
                   onDragEnd={onCardDragEnd}
@@ -602,17 +605,11 @@ function CardGrid({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ── Card slot — shows ghost placeholder when being dragged ─────────────────────
+// ── Card slot — card stays visible (faded) while the ghost follows cursor ──────
 function CardSlot({ isDragging, children }: { isDragging: boolean; children: React.ReactNode }) {
   return (
-    <div style={{
-      borderRadius: 6,
-      border: isDragging ? `2px dashed ${T.border}` : '2px solid transparent',
-      background: isDragging ? 'rgba(255,255,255,0.02)' : undefined,
-      transition: 'all 0.15s',
-      minHeight: isDragging ? 80 : undefined,
-    }}>
-      {isDragging ? null : children}
+    <div style={{ transition: 'opacity 0.15s', pointerEvents: isDragging ? 'none' : undefined }}>
+      {children}
     </div>
   );
 }
@@ -649,7 +646,7 @@ function AlphaGrid({
             {groups[letter].map(c => (
               <CardSlot key={c.id} isDragging={dragCardId === c.id}>
                 <ContactCard
-                  contact={c} stages={stages} onClick={() => onOpen(c)}
+                  contact={c} stages={stages} onDoubleClick={() => onOpen(c)}
                   draggable
                   onDragStart={e => onCardDragStart(e, c)}
                   onDragEnd={onCardDragEnd}

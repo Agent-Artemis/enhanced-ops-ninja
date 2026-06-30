@@ -1,6 +1,6 @@
 export default function CrmLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div style={{ minHeight: '100vh', background: '#111111' }}>
       {children}
     </div>
   );
