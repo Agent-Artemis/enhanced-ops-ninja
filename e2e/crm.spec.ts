@@ -8,7 +8,7 @@
  * Run: npx playwright test e2e/crm.spec.ts --workers=1
  */
 
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 const BASE       = 'https://crm.enhancedops.ninja';
 const SB_URL     = 'https://tbjynbevrhkfzpswehsj.supabase.co';
@@ -28,17 +28,14 @@ async function adminFetch(path: string, body?: object) {
   });
 }
 
-// Script injected into browser before page load — sets Supabase session in localStorage
-const INJECT_SESSION_SCRIPT = `
-  (function({ key, at, rt }) {
-    try {
-      const b = at.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
-      const p = JSON.parse(atob(b + '=='.slice(0,(4-b.length%4)%4)));
-      const s = { access_token:at, refresh_token:rt, token_type:'bearer', expires_in:3600, expires_at:p.exp, user:p };
-      localStorage.setItem(key, JSON.stringify({ currentSession:s, expiresAt:p.exp }));
-    } catch(e) { console.error('inject session failed:', e); }
-  })(args);
-`;
+async function injectAndReload(page: Page, at: string, rt: string) {
+  // Simulate the exact magic link flow: navigate with #access_token= in URL.
+  // The CRM's useEffect reads this hash, calls writeLocalSession(), then setAuthed(true).
+  // This is exactly what happens when a real magic link is clicked.
+  const url = `${BASE}#access_token=${at}&refresh_token=${encodeURIComponent(rt)}&token_type=bearer&type=bearer`;
+  await page.goto(url, { waitUntil: 'load', timeout: 30_000 });
+  // Don't wait for networkidle — Supabase requests may hang with deleted users
+}
 
 test.describe.serial('CRM e2e', () => {
   test.beforeAll(async ({ browser }) => {
@@ -103,15 +100,7 @@ test.describe.serial('CRM e2e', () => {
     await ctx.close();
   });
 
-  test.afterAll(async () => {
-    if (testUserId) {
-      await fetch(`${SB_URL}/auth/v1/admin/users/${testUserId}`, {
-        method: 'DELETE',
-        headers: { apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}` },
-      });
-      console.log('Test user deleted');
-    }
-  });
+  // No afterAll — cleanup runs as the final test so user stays alive for all auth tests
 
   // ── 1: Login form ──────────────────────────────────────────────────────────
   test('login form renders when unauthenticated', async ({ page }) => {
@@ -169,8 +158,7 @@ test.describe.serial('CRM e2e', () => {
   // ── 4: CRM shell ──────────────────────────────────────────────────────────
   test('authenticated session shows CRM shell', async ({ page }) => {
     test.skip(!savedAt, 'No auth tokens');
-    await page.addInitScript(new Function('args', INJECT_SESSION_SCRIPT) as () => void, { key: SB_KEY, at: savedAt, rt: savedRt });
-    await page.goto(BASE, { waitUntil: 'networkidle', timeout: 30_000 });
+    await injectAndReload(page, savedAt, savedRt);
     await expect(page.locator('text=One Card')).toBeVisible({ timeout: 15_000 });
     await expect(page.locator('text=Kanban')).toBeVisible();
     await expect(page.locator('text=List')).toBeVisible();
@@ -182,11 +170,10 @@ test.describe.serial('CRM e2e', () => {
   // ── 5: One Card view ───────────────────────────────────────────────────────
   test('One Card view shows tickler sidebar', async ({ page }) => {
     test.skip(!savedAt, 'No auth tokens');
-    await page.addInitScript(new Function('args', INJECT_SESSION_SCRIPT) as () => void, { key: SB_KEY, at: savedAt, rt: savedRt });
-    await page.goto(BASE, { waitUntil: 'networkidle', timeout: 30_000 });
+    await injectAndReload(page, savedAt, savedRt);
     await expect(page.locator('text=One Card')).toBeVisible({ timeout: 15_000 });
-    await expect(page.locator('text=TODAY')).toBeVisible({ timeout: 8_000 });
-    await expect(page.locator('text=A – Z')).toBeVisible();
+    await expect(page.locator('button:has-text("TODAY")')).toBeVisible({ timeout: 8_000 });
+    await expect(page.locator('button:has-text("A – Z")')).toBeVisible();
     await page.screenshot({ path: 'test-results/crm-05-onecard.png' });
     console.log('✅ One Card: TODAY + A–Z visible');
   });
@@ -194,8 +181,7 @@ test.describe.serial('CRM e2e', () => {
   // ── 6: Kanban view ─────────────────────────────────────────────────────────
   test('Kanban view shows stage columns', async ({ page }) => {
     test.skip(!savedAt, 'No auth tokens');
-    await page.addInitScript(new Function('args', INJECT_SESSION_SCRIPT) as () => void, { key: SB_KEY, at: savedAt, rt: savedRt });
-    await page.goto(BASE, { waitUntil: 'networkidle', timeout: 30_000 });
+    await injectAndReload(page, savedAt, savedRt);
     await expect(page.locator('button:has-text("Kanban")')).toBeVisible({ timeout: 15_000 });
     await page.locator('button:has-text("Kanban")').click();
     await expect(page.locator('text=Lead')).toBeVisible({ timeout: 8_000 });
@@ -207,8 +193,7 @@ test.describe.serial('CRM e2e', () => {
   // ── 7: List view ───────────────────────────────────────────────────────────
   test('List view shows table headers', async ({ page }) => {
     test.skip(!savedAt, 'No auth tokens');
-    await page.addInitScript(new Function('args', INJECT_SESSION_SCRIPT) as () => void, { key: SB_KEY, at: savedAt, rt: savedRt });
-    await page.goto(BASE, { waitUntil: 'networkidle', timeout: 30_000 });
+    await injectAndReload(page, savedAt, savedRt);
     await expect(page.locator('button:has-text("List")')).toBeVisible({ timeout: 15_000 });
     await page.locator('button:has-text("List")').click();
     await expect(page.locator('text=Name')).toBeVisible({ timeout: 8_000 });
@@ -220,8 +205,7 @@ test.describe.serial('CRM e2e', () => {
   // ── 8: New Card drawer ─────────────────────────────────────────────────────
   test('New Card drawer opens and closes', async ({ page }) => {
     test.skip(!savedAt, 'No auth tokens');
-    await page.addInitScript(new Function('args', INJECT_SESSION_SCRIPT) as () => void, { key: SB_KEY, at: savedAt, rt: savedRt });
-    await page.goto(BASE, { waitUntil: 'networkidle', timeout: 30_000 });
+    await injectAndReload(page, savedAt, savedRt);
     await expect(page.locator('button:has-text("+ New Card")')).toBeVisible({ timeout: 15_000 });
     await page.locator('button:has-text("+ New Card")').click();
     await expect(page.locator('text=New Contact')).toBeVisible({ timeout: 5_000 });
@@ -230,5 +214,18 @@ test.describe.serial('CRM e2e', () => {
     await expect(page.locator('text=New Contact')).not.toBeVisible({ timeout: 3_000 });
     await page.screenshot({ path: 'test-results/crm-09-drawer-closed.png' });
     console.log('✅ New Card drawer opens and closes');
+  });
+
+  // ── cleanup ─────────────────────────────────────────────────────────────────
+  // Runs as final test so the user stays alive for all auth tests above
+  test('cleanup test user', async () => {
+    if (testUserId) {
+      await fetch(`${SB_URL}/auth/v1/admin/users/${testUserId}`, {
+        method: 'DELETE',
+        headers: { apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}` },
+      });
+      console.log('Test user deleted');
+      testUserId = '';
+    }
   });
 });
