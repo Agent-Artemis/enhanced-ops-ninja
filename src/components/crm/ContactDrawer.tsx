@@ -21,13 +21,44 @@ const EMPTY: Partial<Contact> = {
   voice_agent_id: undefined, next_action_date: '', is_active: true,
 };
 
+// Dark theme tokens (matching dojo)
+const D = {
+  drawer:   '#1A1A1A',
+  header:   '#111111',
+  body:     '#1A1A1A',
+  footer:   '#111111',
+  border:   '#2d2d2d',
+  input:    '#0f1117',
+  inputBorder: '#374151',
+  text:     '#FFFFFF',
+  textSec:  '#9ca3af',
+  textMut:  '#6b7280',
+  label:    '#9ca3af',
+  blue:     '#1A6BF9',
+  noteBg:   '#111111',
+  red:      '#EF4444',
+};
+
+const inputStyle: React.CSSProperties = {
+  width: '100%', padding: '8px 12px',
+  background: D.input, border: `1px solid ${D.inputBorder}`,
+  borderRadius: 8, fontSize: 14, color: D.text, outline: 'none',
+  boxSizing: 'border-box', appearance: 'none',
+};
+
+const labelStyle: React.CSSProperties = {
+  display: 'block', fontSize: 11, fontWeight: 600,
+  color: D.label, marginBottom: 5,
+  letterSpacing: '0.04em', textTransform: 'uppercase',
+};
+
 export function ContactDrawer({ open, contact, stages, team, sequences, agents, onClose, onSaved }: Props) {
-  const [form, setForm]       = useState<Partial<Contact>>(EMPTY);
-  const [notes, setNotes]     = useState<Note[]>([]);
-  const [newNote, setNewNote] = useState('');
-  const [saving, setSaving]   = useState(false);
+  const [form, setForm]         = useState<Partial<Contact>>(EMPTY);
+  const [notes, setNotes]       = useState<Note[]>([]);
+  const [newNote, setNewNote]   = useState('');
+  const [saving, setSaving]     = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [error, setError]     = useState('');
+  const [error, setError]       = useState('');
 
   useEffect(() => {
     if (open) {
@@ -50,30 +81,19 @@ export function ContactDrawer({ open, contact, stages, team, sequences, agents, 
 
   async function save() {
     if (!form.first_name?.trim()) { setError('First name required'); return; }
-    setSaving(true);
-    setError('');
-    try {
-      await upsertContact(form);
-      onSaved();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Save failed');
-    } finally {
-      setSaving(false);
-    }
+    setSaving(true); setError('');
+    try { await upsertContact(form); onSaved(); }
+    catch (e) { setError(e instanceof Error ? e.message : 'Save failed'); }
+    finally { setSaving(false); }
   }
 
   async function handleDelete() {
     if (!contact?.id) return;
     if (!confirm('Delete this contact?')) return;
     setDeleting(true);
-    try {
-      await deleteContact(contact.id);
-      onSaved();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Delete failed');
-    } finally {
-      setDeleting(false);
-    }
+    try { await deleteContact(contact.id); onSaved(); }
+    catch (e) { setError(e instanceof Error ? e.message : 'Delete failed'); }
+    finally { setDeleting(false); }
   }
 
   async function submitNote() {
@@ -89,135 +109,182 @@ export function ContactDrawer({ open, contact, stages, team, sequences, agents, 
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/30 z-40"
         onClick={onClose}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 40 }}
       />
 
       {/* Drawer */}
-      <aside className="fixed right-0 top-0 bottom-0 w-full max-w-xl bg-white z-50 shadow-2xl flex flex-col overflow-hidden">
+      <aside style={{
+        position: 'fixed', right: 0, top: 0, bottom: 0,
+        width: '100%', maxWidth: 520,
+        background: D.drawer, zIndex: 50,
+        display: 'flex', flexDirection: 'column', overflow: 'hidden',
+        boxShadow: '-8px 0 40px rgba(0,0,0,0.6)',
+        fontFamily: 'system-ui, sans-serif',
+      }}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 shrink-0">
-          <h2 className="text-lg font-semibold text-slate-800">
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '16px 24px',
+          background: D.header, borderBottom: `1px solid ${D.border}`,
+          flexShrink: 0,
+        }}>
+          <h2 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: D.text }}>
             {contact ? `${contact.first_name} ${contact.last_name ?? ''}` : 'New Contact'}
           </h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              color: D.textMut, fontSize: 22, lineHeight: 1, padding: 4,
+            }}
+          >
+            &times;
+          </button>
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
-          {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded">{error}</p>}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
+          {error && (
+            <div style={{
+              fontSize: 13, color: D.red, background: 'rgba(239,68,68,0.1)',
+              border: '1px solid rgba(239,68,68,0.2)',
+              padding: '8px 12px', borderRadius: 6, marginBottom: 16,
+            }}>
+              {error}
+            </div>
+          )}
 
-          {/* Name row */}
-          <div className="grid grid-cols-2 gap-3">
+          {/* Name */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">First Name *</label>
-              <input type="text" value={form.first_name ?? ''} onChange={e => set('first_name', e.target.value)}
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A6ECC]" />
+              <label style={labelStyle}>First Name *</label>
+              <input type="text" value={form.first_name ?? ''} onChange={e => set('first_name', e.target.value)} style={inputStyle} />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Last Name</label>
-              <input type="text" value={form.last_name ?? ''} onChange={e => set('last_name', e.target.value)}
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A6ECC]" />
+              <label style={labelStyle}>Last Name</label>
+              <input type="text" value={form.last_name ?? ''} onChange={e => set('last_name', e.target.value)} style={inputStyle} />
             </div>
           </div>
 
           {/* Company */}
-          <div>
-            <label className="block text-xs font-medium text-slate-600 mb-1">Company</label>
-            <input type="text" value={form.company ?? ''} onChange={e => set('company', e.target.value)}
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A6ECC]" />
+          <div style={{ marginBottom: 16 }}>
+            <label style={labelStyle}>Company</label>
+            <input type="text" value={form.company ?? ''} onChange={e => set('company', e.target.value)} style={inputStyle} />
           </div>
 
-          {/* Contact info */}
-          <div className="grid grid-cols-2 gap-3">
+          {/* Phone / Email */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Phone</label>
-              <input type="tel" value={form.phone ?? ''} onChange={e => set('phone', e.target.value)}
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A6ECC]" />
+              <label style={labelStyle}>Phone</label>
+              <input type="tel" value={form.phone ?? ''} onChange={e => set('phone', e.target.value)} style={inputStyle} />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Email</label>
-              <input type="email" value={form.email ?? ''} onChange={e => set('email', e.target.value)}
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A6ECC]" />
+              <label style={labelStyle}>Email</label>
+              <input type="email" value={form.email ?? ''} onChange={e => set('email', e.target.value)} style={inputStyle} />
             </div>
           </div>
 
           {/* Stage */}
-          <div>
-            <label className="block text-xs font-medium text-slate-600 mb-1">Stage</label>
+          <div style={{ marginBottom: 16 }}>
+            <label style={labelStyle}>Stage</label>
             <select value={form.stage_id ?? ''} onChange={e => set('stage_id', e.target.value || undefined)}
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A6ECC]">
+              style={{ ...inputStyle, cursor: 'pointer' }}>
               <option value="">— No stage —</option>
               {stages.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
             </select>
           </div>
 
-          {/* Assigned / Sequence / Voice Agent */}
-          <div className="grid grid-cols-2 gap-3">
+          {/* Assigned / Sequence */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Assigned To</label>
+              <label style={labelStyle}>Assigned To</label>
               <select value={form.assigned_to ?? ''} onChange={e => set('assigned_to', e.target.value || undefined)}
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A6ECC]">
+                style={{ ...inputStyle, cursor: 'pointer' }}>
                 <option value="">— Unassigned —</option>
                 {team.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Sequence</label>
+              <label style={labelStyle}>Sequence</label>
               <select value={form.sequence_id ?? ''} onChange={e => set('sequence_id', e.target.value || undefined)}
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A6ECC]">
+                style={{ ...inputStyle, cursor: 'pointer' }}>
                 <option value="">— None —</option>
                 {sequences.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-medium text-slate-600 mb-1">AI Voice Agent</label>
+          {/* Voice Agent */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={labelStyle}>AI Voice Agent</label>
             <select value={form.voice_agent_id ?? ''} onChange={e => set('voice_agent_id', e.target.value || undefined)}
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A6ECC]">
+              style={{ ...inputStyle, cursor: 'pointer' }}>
               <option value="">— None —</option>
               {agents.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
             </select>
           </div>
 
-          {/* Next action date */}
-          <div className="grid grid-cols-2 gap-3 items-end">
+          {/* Next Action Date + Active */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, alignItems: 'end', marginBottom: 16 }}>
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Next Action Date</label>
+              <label style={labelStyle}>Next Action Date</label>
               <input type="date" value={form.next_action_date ?? ''} onChange={e => set('next_action_date', e.target.value || undefined)}
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A6ECC]" />
+                style={{ ...inputStyle, colorScheme: 'dark' }} />
             </div>
-            <div className="flex items-center gap-2 pb-2">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 8 }}>
               <input type="checkbox" id="is_active" checked={form.is_active ?? true} onChange={e => set('is_active', e.target.checked)}
-                className="w-4 h-4 accent-[#1A6ECC]" />
-              <label htmlFor="is_active" className="text-sm text-slate-600">Active</label>
+                style={{ width: 16, height: 16, accentColor: D.blue, cursor: 'pointer' }} />
+              <label htmlFor="is_active" style={{ fontSize: 14, color: D.textSec, cursor: 'pointer' }}>Active</label>
             </div>
           </div>
 
           {/* Notes */}
           {contact && (
-            <div className="border-t border-slate-200 pt-4">
-              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Notes</h3>
-              <div className="space-y-2 max-h-48 overflow-y-auto mb-3">
-                {notes.length === 0 && <p className="text-xs text-slate-400">No notes yet.</p>}
+            <div style={{ borderTop: `1px solid ${D.border}`, paddingTop: 16 }}>
+              <div style={{
+                fontSize: 10, fontWeight: 700, color: D.textMut,
+                letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12,
+              }}>
+                Notes
+              </div>
+              <div style={{ maxHeight: 200, overflowY: 'auto', marginBottom: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {notes.length === 0 && (
+                  <p style={{ fontSize: 12, color: D.textMut, fontStyle: 'italic', margin: 0 }}>No notes yet.</p>
+                )}
                 {notes.map(n => (
-                  <div key={n.id} className="bg-slate-50 rounded-lg px-3 py-2">
-                    <p className="text-sm text-slate-700">{n.body}</p>
-                    <p className="text-xs text-slate-400 mt-1">{new Date(n.created_at).toLocaleString()}</p>
+                  <div key={n.id} style={{
+                    background: D.noteBg, borderRadius: 8, padding: '8px 12px',
+                    border: `1px solid ${D.border}`,
+                  }}>
+                    <p style={{ margin: 0, fontSize: 13, color: D.text }}>{n.body}</p>
+                    <p style={{ margin: '4px 0 0', fontSize: 11, color: D.textMut }}>
+                      {new Date(n.created_at).toLocaleString()}
+                    </p>
                   </div>
                 ))}
               </div>
-              <div className="flex gap-2">
+              <div style={{ display: 'flex', gap: 8 }}>
                 <textarea
                   value={newNote}
                   onChange={e => setNewNote(e.target.value)}
                   placeholder="Add a note…"
                   rows={2}
-                  className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#1A6ECC]"
+                  style={{
+                    flex: 1, ...inputStyle, resize: 'none',
+                    padding: '8px 12px', fontSize: 13,
+                  }}
                 />
-                <button onClick={submitNote} disabled={!newNote.trim()}
-                  className="px-3 py-2 bg-[#1A6ECC] text-white text-sm rounded-lg disabled:opacity-40 hover:bg-[#155fb3] transition-colors">
+                <button
+                  onClick={submitNote}
+                  disabled={!newNote.trim()}
+                  style={{
+                    padding: '0 16px', background: D.blue, color: '#fff',
+                    border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600,
+                    cursor: newNote.trim() ? 'pointer' : 'not-allowed',
+                    opacity: newNote.trim() ? 1 : 0.4,
+                  }}
+                >
                   Add
                 </button>
               </div>
@@ -226,20 +293,44 @@ export function ContactDrawer({ open, contact, stages, team, sequences, agents, 
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-slate-200 shrink-0 flex items-center justify-between gap-3">
-          {contact && (
-            <button onClick={handleDelete} disabled={deleting}
-              className="text-sm text-red-600 hover:text-red-800 disabled:opacity-40">
+        <div style={{
+          padding: '14px 24px',
+          background: D.footer, borderTop: `1px solid ${D.border}`,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          gap: 12, flexShrink: 0,
+        }}>
+          {contact ? (
+            <button
+              onClick={handleDelete} disabled={deleting}
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                fontSize: 13, color: D.red, opacity: deleting ? 0.4 : 1,
+              }}
+            >
               {deleting ? 'Deleting…' : 'Delete'}
             </button>
-          )}
-          <div className="flex gap-3 ml-auto">
-            <button onClick={onClose}
-              className="px-4 py-2 text-sm text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-50">
+          ) : <span />}
+
+          <div style={{ display: 'flex', gap: 10, marginLeft: 'auto' }}>
+            <button
+              onClick={onClose}
+              style={{
+                padding: '8px 18px', fontSize: 13,
+                background: 'transparent', color: D.textSec,
+                border: `1px solid ${D.inputBorder}`, borderRadius: 8, cursor: 'pointer',
+              }}
+            >
               Cancel
             </button>
-            <button onClick={save} disabled={saving}
-              className="px-4 py-2 text-sm bg-[#1A6ECC] text-white rounded-lg hover:bg-[#155fb3] disabled:opacity-40 transition-colors">
+            <button
+              onClick={save} disabled={saving}
+              style={{
+                padding: '8px 18px', fontSize: 13, fontWeight: 600,
+                background: D.blue, color: '#fff',
+                border: 'none', borderRadius: 8, cursor: 'pointer',
+                opacity: saving ? 0.6 : 1,
+              }}
+            >
               {saving ? 'Saving…' : (contact ? 'Save' : 'Create')}
             </button>
           </div>

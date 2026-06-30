@@ -16,14 +16,12 @@ interface Props {
 // ── Panel type ─────────────────────────────────────────────────────────────────
 type Panel =
   | 'action-needed'
-  | 'no-action'
   | 'alpha'
   | { month: string; year: number }
   | { month: string; year: number; day: number };
 
 type DropZone =
   | 'action-needed'
-  | 'no-action'
   | 'alpha'
   | `month:${string}:${number}`
   | `day:${string}:${number}:${number}`;
@@ -111,12 +109,11 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
 
   // ── Computed ──────────────────────────────────────────────────────────────────
   const actionNeeded = todayStack(contacts);
-  const noAction     = contacts.filter(c => c.is_active && !c.next_action_date);
-  const alphaList    = contacts.filter(c => !c.is_active);
+  // A-Z = inactive contacts + active contacts with no scheduled date
+  const alphaList    = contacts.filter(c => !c.is_active || !c.next_action_date);
 
   function getPanelCards(): Contact[] {
     if (panel === 'action-needed') return actionNeeded;
-    if (panel === 'no-action')     return noAction;
     if (panel === 'alpha')         return alphaList;
     if ('day' in panel)   return contactsForDay(contacts, panel.month, panel.year, panel.day);
     if ('month' in panel) return contactsForMonth(contacts, panel.month, panel.year);
@@ -125,7 +122,6 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
 
   function panelLabel(): string {
     if (panel === 'action-needed') return `Action Needed — ${actionNeeded.length}`;
-    if (panel === 'no-action')     return `No Action — ${noAction.length}`;
     if (panel === 'alpha')         return `A–Z — ${alphaList.length}`;
     if ('day' in panel)   return `${panel.month} ${panel.day}, ${panel.year}`;
     if ('month' in panel) return `${panel.month} ${panel.year}`;
@@ -134,9 +130,8 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
 
   // ── Filing ────────────────────────────────────────────────────────────────────
   const fileTo = useCallback(async (cardId: string, zone: DropZone) => {
-    if (zone === 'action-needed')      await fileUnderDate(cardId, todayStr());
-    else if (zone === 'no-action')     await pullToActive(cardId);
-    else if (zone === 'alpha')         await sendToAlpha(cardId);
+    if (zone === 'action-needed')  await fileUnderDate(cardId, todayStr());
+    else if (zone === 'alpha')     await sendToAlpha(cardId);
     else if (zone.startsWith('month:')) {
       const [, m, yr] = zone.split(':');
       await fileUnderDate(cardId, makeDate(m, Number(yr), 1));
@@ -285,19 +280,6 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
           onDragLeave={onZoneDragLeave}
           onDrop={e => onZoneDrop(e, 'action-needed')}
           dz={dzStyle('action-needed')}
-        />
-
-        {/* No Action */}
-        <SbItem
-          label="No Action"
-          count={noAction.length}
-          active={panel === 'no-action'}
-          prefix="○"
-          onClick={() => setPanel('no-action')}
-          onDragOver={e => onZoneDragOver(e, 'no-action')}
-          onDragLeave={onZoneDragLeave}
-          onDrop={e => onZoneDrop(e, 'no-action')}
-          dz={dzStyle('no-action')}
         />
 
         {/* Section label */}

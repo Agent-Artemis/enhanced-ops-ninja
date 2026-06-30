@@ -20,21 +20,14 @@ export function CrmShell({ view, onViewChange, onNewCard }: Props) {
     <header style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 30,
       height: 56, background: '#1A1A1A',
-      borderBottom: '1px solid #2d2d2d',
+      borderBottom: '2px solid #1A6BF9',
       display: 'flex', alignItems: 'center', padding: '0 20px', gap: 20,
     }}>
-      {/* Logo */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-        <Image src="/logo-dark.png" alt="Ninja CRM" width={100} height={28} style={{ objectFit: 'contain' }} />
-        <span style={{
-          fontSize: 11, fontWeight: 700, color: '#1A6BF9',
-          letterSpacing: '0.08em', textTransform: 'uppercase',
-        }}>
-          CRM
-        </span>
+      {/* Logo only — no text */}
+      <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+        <Image src="/logo-dark.png" alt="EnhancedOps.ninja" width={120} height={30} style={{ objectFit: 'contain' }} />
       </div>
 
-      {/* View tabs */}
       <nav style={{ display: 'flex', gap: 4 }}>
         {TABS.map(t => (
           <button
@@ -59,10 +52,8 @@ export function CrmShell({ view, onViewChange, onNewCard }: Props) {
         style={{
           padding: '6px 16px', background: '#1A6BF9', color: '#fff',
           border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600,
-          cursor: 'pointer', transition: 'opacity 0.15s',
+          cursor: 'pointer',
         }}
-        onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
-        onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
       >
         + New Card
       </button>
