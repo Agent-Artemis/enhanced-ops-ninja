@@ -46,12 +46,20 @@ function readLocalSession() {
   } catch { return null; }
 }
 
+function decodeJwtPayload(token: string): Record<string, unknown> {
+  // JWT uses base64URL (- and _ instead of + and /) — atob needs standard base64
+  const b64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+  const padded = b64 + '=='.slice(0, (4 - b64.length % 4) % 4);
+  return JSON.parse(atob(padded));
+}
+
 function writeLocalSession(access_token: string, refresh_token: string) {
   if (typeof localStorage === 'undefined') return;
   try {
-    const payload = JSON.parse(atob(access_token.split('.')[1]));
-    const session = { access_token, refresh_token, token_type: 'bearer', expires_in: 3600, expires_at: payload.exp, user: payload };
-    localStorage.setItem(SB_STORAGE_KEY, JSON.stringify({ currentSession: session, expiresAt: payload.exp }));
+    const payload = decodeJwtPayload(access_token);
+    const exp = payload.exp as number;
+    const session = { access_token, refresh_token, token_type: 'bearer', expires_in: 3600, expires_at: exp, user: payload };
+    localStorage.setItem(SB_STORAGE_KEY, JSON.stringify({ currentSession: session, expiresAt: exp }));
   } catch { /* ignore */ }
 }
 
@@ -147,6 +155,8 @@ export default function CrmPage() {
       const sb = getSb();
 
       // 1. Dojo token passthrough — hash fragment (#access_token=...)
+      //    Write to localStorage immediately (fast, no network) so readLocalSession finds it.
+      //    SDK's detectSessionInUrl also handles this automatically via onAuthStateChange.
       const hash = window.location.hash.replace('#', '');
       if (hash.includes('access_token=')) {
         const p = new URLSearchParams(hash);
@@ -154,8 +164,6 @@ export default function CrmPage() {
         const rt = p.get('refresh_token') ?? '';
         if (at) {
           writeLocalSession(at, rt);
-          // Also tell the SDK about the session
-          await sb.auth.setSession({ access_token: at, refresh_token: rt }).catch(() => {});
           window.history.replaceState(null, '', window.location.pathname + window.location.search);
         }
       }
