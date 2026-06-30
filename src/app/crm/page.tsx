@@ -38,9 +38,10 @@ function readLocalSession() {
     const raw = localStorage.getItem(SB_STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    const session = parsed?.currentSession ?? parsed;
+    // Support both flat format (SDK native) and legacy { currentSession }
+    const session = parsed?.access_token ? parsed : (parsed?.currentSession ?? parsed);
     if (!session?.access_token) return null;
-    const exp = parsed?.expiresAt ?? session?.expires_at ?? 0;
+    const exp = session?.expires_at ?? parsed?.expiresAt ?? 0;
     if (exp && exp < Date.now() / 1000) return null;
     return session;
   } catch { return null; }
@@ -58,8 +59,10 @@ function writeLocalSession(access_token: string, refresh_token: string) {
   try {
     const payload = decodeJwtPayload(access_token);
     const exp = payload.exp as number;
+    // Write in the flat format Supabase SDK v2 expects so getCrmClient()
+    // can read it via auth.getSession() and attach auth headers to queries
     const session = { access_token, refresh_token, token_type: 'bearer', expires_in: 3600, expires_at: exp, user: payload };
-    localStorage.setItem(SB_STORAGE_KEY, JSON.stringify({ currentSession: session, expiresAt: exp }));
+    localStorage.setItem(SB_STORAGE_KEY, JSON.stringify(session));
   } catch { /* ignore */ }
 }
 
