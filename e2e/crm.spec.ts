@@ -58,7 +58,10 @@ test.beforeAll(async ({ browser }) => {
   authedCtx = await browser.newContext();
   const page = await authedCtx.newPage();
 
-  // Intercept console errors for debugging
+  // Log all 404s to find what's blocking React hydration
+  page.on('response', res => {
+    if (res.status() === 404) console.log('404:', res.url().slice(0, 120));
+  });
   page.on('console', msg => {
     if (msg.type() === 'error') console.log('BROWSER ERR:', msg.text().slice(0, 120));
   });
@@ -76,9 +79,22 @@ test.beforeAll(async ({ browser }) => {
     await page.goto(BASE, { timeout: 20_000 });
   }
 
-  // Wait for either CRM shell or login form
-  await page.waitForSelector('text=EON CRM', { timeout: 20_000 });
-  const onCRM = await page.locator('text=One Card').isVisible({ timeout: 3_000 }).catch(() => false);
+  // Wait for React to hydrate and write session to localStorage
+  const sbKey = `sb-tbjynbevrhkfzpswehsj-auth-token`;
+  try {
+    await page.waitForFunction(
+      (key) => !!localStorage.getItem(key),
+      sbKey,
+      { timeout: 15_000 }
+    );
+    console.log('✅ Session written to localStorage');
+  } catch {
+    const stored = await page.evaluate((key) => localStorage.getItem(key), sbKey);
+    console.log('❌ Session NOT in localStorage. Value:', stored?.slice(0, 60));
+  }
+
+  // Wait for CRM shell to appear (session recognized)
+  const onCRM = await page.locator('text=One Card').isVisible({ timeout: 10_000 }).catch(() => false);
   console.log('CRM shell visible:', onCRM, '| URL:', page.url().slice(0, 60));
   await page.screenshot({ path: 'test-results/crm-00-auth-setup.png' });
   await page.close();
@@ -115,10 +131,18 @@ test('login form renders when unauthenticated', async ({ page }) => {
 
 // ── 2: Domain restriction ─────────────────────────────────────────────────────
 test('non-allowed domain shows access error', async ({ page }) => {
+  page.on('console', msg => { if (msg.type() === 'error') console.log('ERR:', msg.text().slice(0, 100)); });
   await page.goto(BASE, { waitUntil: 'networkidle', timeout: 30_000 });
   await expect(page.locator('input[type="email"]')).toBeVisible({ timeout: 10_000 });
 
-  await fillReact(page, 'input[type="email"]', 'hacker@gmail.com');
+  const input = page.locator('input[type="email"]');
+  await input.click();
+  await input.type('hacker@gmail.com', { delay: 50 });
+  // Verify React state got the value
+  const val = await input.inputValue();
+  console.log('Input value after typing:', val);
+  expect(val).toBe('hacker@gmail.com');
+
   await page.locator('button:has-text("Send Magic Link")').click();
   await expect(page.locator('text=Access restricted')).toBeVisible({ timeout: 8_000 });
   await page.screenshot({ path: 'test-results/crm-02-rejected.png' });

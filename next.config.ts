@@ -6,9 +6,10 @@ const nextConfig: NextConfig = {
     return {
       beforeFiles: [
         {
-          source: "/:path*",
+          // Exclude /_next/* (static assets, chunks, HMR) from the rewrite
+          source: "/((?!_next).*)",
           has: [{ type: "host", value: "crm.enhancedops.ninja" }],
-          destination: "/crm/:path*",
+          destination: "/crm/$1",
         },
       ],
     };
