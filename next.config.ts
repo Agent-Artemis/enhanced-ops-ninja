@@ -8,9 +8,11 @@ const nextConfig: NextConfig = {
   assetPrefix: process.env.NODE_ENV === 'production' ? 'https://enhancedops.ninja' : '',
   async rewrites() {
     return {
-      beforeFiles: [
+      // afterFiles lets Next.js serve /public static files first (logo, favicon, etc.),
+      // then applies the host rewrite for actual CRM routes.
+      // beforeFiles intercepted /logo-dark.png → /crm/logo-dark.png (404).
+      afterFiles: [
         {
-          // Exclude /_next/* (static assets, chunks, HMR) from the rewrite
           source: "/((?!_next).*)",
           has: [{ type: "host", value: "crm.enhancedops.ninja" }],
           destination: "/crm/$1",
