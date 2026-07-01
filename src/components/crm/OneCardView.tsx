@@ -3,8 +3,8 @@
 import { useState, useCallback, useRef } from 'react';
 import type { Contact, Stage } from '@/lib/crm/types';
 import { ContactCard } from './ContactCard';
-import { fileUnderDate, sendToAlpha } from '@/lib/crm/data';
-import { MONTH_NAMES, todayStack, contactsForMonth } from '@/lib/crm/filing';
+import { fileUnderDate, pullToActive, sendToAlpha } from '@/lib/crm/data';
+import { MONTH_NAMES, contactsForMonth } from '@/lib/crm/filing';
 
 interface Props {
   contacts: Contact[];
@@ -105,13 +105,28 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
   const [dragCardId, setDragCardId]   = useState<string | null>(null);
   const [drag1_31, setDrag1_31]       = useState(false);
   const [dropZone, setDropZone]       = useState<DropZone | null>(null);
-  const [justDropped, setJustDropped] = useState<string | null>(null); // for snap animation
+  const [justDropped, setJustDropped] = useState<string | null>(null);
   const ghostRef = useRef<HTMLElement | null>(null);
 
+  // Year collapse — next year starts collapsed
+  const currYear = new Date().getFullYear();
+  const [collapsedYears, setCollapsedYears] = useState<Set<number>>(
+    () => new Set([currYear + 1])
+  );
+  function toggleYear(yr: number) {
+    setCollapsedYears(prev => {
+      const next = new Set(prev);
+      if (next.has(yr)) next.delete(yr); else next.add(yr);
+      return next;
+    });
+  }
+
   // ── Computed ──────────────────────────────────────────────────────────────────
-  const actionNeeded = todayStack(contacts);
-  // A-Z = inactive contacts + active contacts with no scheduled date
-  const alphaList    = contacts.filter(c => !c.is_active || !c.next_action_date);
+  // Action Needed = active contacts with NO specific date (unfiled hot leads)
+  // Cards with dates live in the calendar slots — even today's date stays there
+  const actionNeeded = contacts.filter(c => c.is_active && !c.next_action_date);
+  // A-Z = inactive contacts only
+  const alphaList    = contacts.filter(c => !c.is_active);
 
   function getPanelCards(): Contact[] {
     if (panel === 'action-needed') return actionNeeded;
@@ -131,7 +146,7 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
 
   // ── Filing ────────────────────────────────────────────────────────────────────
   const fileTo = useCallback(async (cardId: string, zone: DropZone) => {
-    if (zone === 'action-needed')  await fileUnderDate(cardId, todayStr());
+    if (zone === 'action-needed')  await pullToActive(cardId); // active, no date
     else if (zone === 'alpha')     await sendToAlpha(cardId);
     else if (zone.startsWith('month:')) {
       const [, m, yr] = zone.split(':');
@@ -311,100 +326,116 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
             panel.month === name && panel.year === year && !('day' in panel);
           const active = isDz(zone);
 
+          const yearCollapsed = collapsedYears.has(year);
+
           return (
             <div key={`${name}-${year}`}>
-              {/* Year divider — shown whenever year changes */}
+              {/* Year header — clickable to collapse/expand that year's months */}
               {(prevYear === null || prevYear !== year) && (
-                <div style={{
-                  padding: '8px 14px 4px',
-                  fontSize: 10, fontWeight: 800,
-                  color: year === new Date().getFullYear() ? T.blue : T.textSec,
-                  letterSpacing: '0.12em',
-                  borderTop: prevYear !== null ? `1px solid ${T.border}` : undefined,
-                  marginTop: prevYear !== null ? 6 : 0,
-                }}>
-                  {year}
-                </div>
-              )}
-              {/* Month row */}
-              <div
-                style={{
-                  display: 'flex', alignItems: 'stretch',
-                  ...dzStyle(zone),
-                  transition: 'background 0.12s',
-                }}
-                onDragOver={e => onZoneDragOver(e, zone)}
-                onDragLeave={onZoneDragLeave}
-                onDrop={e => onZoneDrop(e, zone)}
-              >
                 <button
-                  onClick={() => {
-                    setPanel({ month: name, year });
-                    if (docked) setDaysOpen(o => !o);
-                  }}
+                  onClick={() => toggleYear(year)}
                   style={{
-                    flex: 1, display: 'flex', alignItems: 'center',
+                    width: '100%', display: 'flex', alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '7px 10px',
-                    paddingLeft: 11,
-                    background: isActiveMonth ? T.sidebarActive : 'transparent',
-                    color: isActiveMonth ? T.sidebarActiveText : T.sidebarInactive,
-                    borderTop: 'none', borderRight: 'none', borderBottom: 'none',
-                    borderLeft: `3px solid ${isActiveMonth ? T.sidebarActiveBorder : 'transparent'}`,
-                    cursor: 'pointer', fontSize: 13,
-                    fontWeight: docked ? 600 : 400,
+                    padding: '8px 14px 4px',
+                    fontSize: 10, fontWeight: 800,
+                    color: year === currYear ? T.blue : T.textSec,
+                    letterSpacing: '0.12em',
+                    background: 'transparent', border: 'none', cursor: 'pointer',
+                    borderTop: prevYear !== null ? `1px solid ${T.border}` : 'none',
+                    marginTop: prevYear !== null ? 4 : 0,
                     textAlign: 'left',
-                    transition: 'color 0.15s, background 0.15s',
                   }}
                 >
-                  <span>{name}</span>
-                  {count > 0 && (
-                    <span style={{ fontSize: 10, color: T.textMuted, marginRight: docked ? 4 : 0 }}>
-                      {count}
-                    </span>
-                  )}
+                  <span>{year}</span>
+                  <span style={{ fontSize: 9, opacity: 0.6 }}>{yearCollapsed ? '▶' : '▼'}</span>
                 </button>
-
-                {/* 1-31 tab — lives inside docked month */}
-                {docked && (
-                  <button
-                    draggable
-                    onDragStart={on1_31DragStart}
-                    onDragEnd={() => { setDrag1_31(false); setDropZone(null); }}
-                    onClick={e => { e.stopPropagation(); setDaysOpen(o => !o); }}
-                    title="Drag to move 1–31 into another month"
-                    style={{
-                      padding: '4px 8px', margin: '4px 4px 4px 0',
-                      background: daysOpen ? T.blue : 'rgba(26,107,249,0.2)',
-                      color: daysOpen ? '#fff' : '#6B9CF9',
-                      border: 'none', borderRadius: 4,
-                      cursor: 'grab', fontSize: 10, fontWeight: 700,
-                      letterSpacing: '0.02em', flexShrink: 0,
-                      userSelect: 'none',
-                    }}
-                  >
-                    1–31
-                  </button>
-                )}
-              </div>
-
-              {/* Day calendar — only on docked month when open */}
-              {docked && daysOpen && (
-                <DayCalendar
-                  name={name} year={year} contacts={contacts} panel={panel}
-                  dropZone={dropZone} isDragging={isDragging}
-                  onDayClick={day => setPanel({ month: name, year, day })}
-                  onDayDragOver={(e, day) => onZoneDragOver(e, `day:${name}:${year}:${day}`)}
-                  onDayDragLeave={onZoneDragLeave}
-                  onDayDrop={(e, day) => onZoneDrop(e, `day:${name}:${year}:${day}`)}
-                />
               )}
 
-              {/* Hint while dragging 1-31 */}
-              {drag1_31 && !docked && active && (
-                <div style={{ padding: '3px 14px 4px', fontSize: 10, color: T.blue }}>
-                  Drop to file 1–31 here
-                </div>
+              {/* Month rows hidden when year is collapsed */}
+              {!yearCollapsed && (
+                <>
+                  {/* Month row */}
+                  <div
+                    style={{
+                      display: 'flex', alignItems: 'stretch',
+                      ...dzStyle(zone),
+                      transition: 'background 0.12s',
+                    }}
+                    onDragOver={e => onZoneDragOver(e, zone)}
+                    onDragLeave={onZoneDragLeave}
+                    onDrop={e => onZoneDrop(e, zone)}
+                  >
+                    <button
+                      onClick={() => {
+                        setPanel({ month: name, year });
+                        if (docked) setDaysOpen(o => !o);
+                      }}
+                      style={{
+                        flex: 1, display: 'flex', alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '7px 10px',
+                        paddingLeft: 11,
+                        background: isActiveMonth ? T.sidebarActive : 'transparent',
+                        color: isActiveMonth ? T.sidebarActiveText : T.sidebarInactive,
+                        borderTop: 'none', borderRight: 'none', borderBottom: 'none',
+                        borderLeft: `3px solid ${isActiveMonth ? T.sidebarActiveBorder : 'transparent'}`,
+                        cursor: 'pointer', fontSize: 13,
+                        fontWeight: docked ? 600 : 400,
+                        textAlign: 'left',
+                        transition: 'color 0.15s, background 0.15s',
+                      }}
+                    >
+                      <span>{name}</span>
+                      {count > 0 && (
+                        <span style={{ fontSize: 10, color: T.textMuted, marginRight: docked ? 4 : 0 }}>
+                          {count}
+                        </span>
+                      )}
+                    </button>
+
+                    {/* 1-31 tab — lives inside docked month */}
+                    {docked && (
+                      <button
+                        draggable
+                        onDragStart={on1_31DragStart}
+                        onDragEnd={() => { setDrag1_31(false); setDropZone(null); }}
+                        onClick={e => { e.stopPropagation(); setDaysOpen(o => !o); }}
+                        title="Drag to move 1–31 into another month"
+                        style={{
+                          padding: '4px 8px', margin: '4px 4px 4px 0',
+                          background: daysOpen ? T.blue : 'rgba(26,107,249,0.2)',
+                          color: daysOpen ? '#fff' : '#6B9CF9',
+                          border: 'none', borderRadius: 4,
+                          cursor: 'grab', fontSize: 10, fontWeight: 700,
+                          letterSpacing: '0.02em', flexShrink: 0,
+                          userSelect: 'none',
+                        }}
+                      >
+                        1–31
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Day calendar — only on docked month when open */}
+                  {docked && daysOpen && (
+                    <DayCalendar
+                      name={name} year={year} contacts={contacts} panel={panel}
+                      dropZone={dropZone} isDragging={isDragging}
+                      onDayClick={day => setPanel({ month: name, year, day })}
+                      onDayDragOver={(e, day) => onZoneDragOver(e, `day:${name}:${year}:${day}`)}
+                      onDayDragLeave={onZoneDragLeave}
+                      onDayDrop={(e, day) => onZoneDrop(e, `day:${name}:${year}:${day}`)}
+                    />
+                  )}
+
+                  {/* Hint while dragging 1-31 */}
+                  {drag1_31 && !docked && active && (
+                    <div style={{ padding: '3px 14px 4px', fontSize: 10, color: T.blue }}>
+                      Drop to file 1–31 here
+                    </div>
+                  )}
+                </>
               )}
             </div>
           );
