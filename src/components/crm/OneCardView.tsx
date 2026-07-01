@@ -679,9 +679,13 @@ function AlphaGrid({
 }) {
   const groups: Record<string, Contact[]> = {};
   for (const c of contacts) {
-    const letter = ((c.last_name ?? c.first_name ?? '?')[0] ?? '?').toUpperCase();
+    const letter = (c.first_name?.[0] ?? '?').toUpperCase();
     if (!groups[letter]) groups[letter] = [];
     groups[letter].push(c);
+  }
+  // Sort each group alphabetically by first name
+  for (const letter of Object.keys(groups)) {
+    groups[letter].sort((a, b) => (a.first_name ?? '').localeCompare(b.first_name ?? ''));
   }
   if (Object.keys(groups).length === 0) {
     return <p style={{ color: T.textMuted, fontSize: 13 }}>No contacts in A–Z.</p>;

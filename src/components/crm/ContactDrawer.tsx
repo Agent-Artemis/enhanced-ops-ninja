@@ -63,7 +63,7 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
   const [leadSource, setLeadSource]   = useState('');
   const [referredBy, setReferredBy]   = useState('');
   const [affiliateId, setAffiliateId] = useState('');
-  const [affiliates, setAffiliates]   = useState<{ id: string; first_name: string; last_name?: string; company?: string }[]>([]);
+  const [affiliates, setAffiliates]   = useState<{ id: string; name: string; code: string }[]>([]);
 
   useEffect(() => {
     if (open) {
@@ -251,13 +251,13 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
                 <option value="">— Select affiliate —</option>
                 {affiliates.map(a => (
                   <option key={a.id} value={a.id}>
-                    {a.first_name} {a.last_name ?? ''}{a.company ? ` (${a.company})` : ''}
+                    {a.name}
                   </option>
                 ))}
               </select>
               {affiliates.length === 0 && (
                 <p style={{ margin: '4px 0 0', fontSize: 11, color: D.textMut }}>
-                  Tag a contact with &ldquo;affiliate&rdquo; to add them here.
+                  No active affiliates found. Add one in the Dojo → Affiliates.
                 </p>
               )}
             </div>
