@@ -397,7 +397,12 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
                     >
                       <span>{name}</span>
                       {count > 0 && (
-                        <span style={{ fontSize: 10, color: T.textMuted, marginRight: docked ? 4 : 0 }}>
+                        <span style={{
+                          fontSize: 10, fontWeight: 700,
+                          padding: '1px 6px', borderRadius: 10, minWidth: 18, textAlign: 'center',
+                          background: 'rgba(26,107,249,0.25)', color: '#6B9CF9',
+                          marginRight: docked ? 4 : 0,
+                        }}>
                           {count}
                         </span>
                       )}
@@ -524,7 +529,12 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
               >
                 <span>{letter}</span>
                 {count > 0 && (
-                  <span style={{ fontSize: 10, color: T.textMuted, paddingRight: 8 }}>{count}</span>
+                  <span style={{
+                    fontSize: 10, fontWeight: 700,
+                    padding: '1px 6px', borderRadius: 10, minWidth: 18, textAlign: 'center',
+                    background: 'rgba(26,107,249,0.25)', color: '#6B9CF9',
+                    marginRight: 8,
+                  }}>{count}</span>
                 )}
               </button>
             );
