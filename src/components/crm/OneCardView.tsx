@@ -90,7 +90,6 @@ function makeDate(name: string, year: number, day: number): string {
   return `${year}-${String(mIdx + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
-function todayStr(): string { return new Date().toISOString().slice(0, 10); }
 
 // ── Main component ─────────────────────────────────────────────────────────────
 export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
