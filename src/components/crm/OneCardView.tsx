@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import type { Contact, Stage } from '@/lib/crm/types';
 import { ContactCard } from './ContactCard';
 import { fileUnderDate, pullToActive, sendToAlpha } from '@/lib/crm/data';
@@ -99,6 +99,8 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
   const [panel, setPanel]             = useState<Panel>('action-needed');
   const [daysDockedTo, setDaysDockedTo] = useState<string>(currentMonthName);
   const [daysOpen, setDaysOpen]       = useState(true);
+  const [alphaOpen, setAlphaOpen]     = useState(false);
+  const [focusLetter, setFocusLetter] = useState<string | null>(null);
 
   // Drag state
   const [dragCardId, setDragCardId]   = useState<string | null>(null);
@@ -126,6 +128,14 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
   const actionNeeded = contacts.filter(c => c.is_active && !c.next_action_date);
   // A-Z = inactive contacts only
   const alphaList    = contacts.filter(c => !c.is_active);
+
+  // Letter counts for sidebar
+  const letterCounts: Record<string, number> = {};
+  for (const c of alphaList) {
+    const l = (c.first_name?.[0] ?? '?').toUpperCase();
+    letterCounts[l] = (letterCounts[l] ?? 0) + 1;
+  }
+  const ALL_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
   function getPanelCards(): Contact[] {
     if (panel === 'action-needed') return actionNeeded;
@@ -453,17 +463,72 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
 
         {/* A–Z */}
         <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 8 }}>
-          <SbItem
-            label="A – Z"
-            count={alphaList.length}
-            active={panel === 'alpha'}
-            prefix="📋"
-            onClick={() => setPanel('alpha')}
+          {/* A-Z header — drag target + expand toggle */}
+          <button
+            onClick={() => { setPanel('alpha'); setAlphaOpen(o => !o); setFocusLetter(null); }}
             onDragOver={e => onZoneDragOver(e, 'alpha')}
             onDragLeave={onZoneDragLeave}
             onDrop={e => onZoneDrop(e, 'alpha')}
-            dz={dzStyle('alpha')}
-            />
+            style={{
+              width: '100%', display: 'flex', alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '9px 12px', paddingLeft: 11,
+              background: panel === 'alpha' ? T.sidebarActive : 'transparent',
+              color: panel === 'alpha' ? T.sidebarActiveText : T.sidebarInactive,
+              borderTop: 'none', borderRight: 'none', borderBottom: 'none',
+              borderLeft: `3px solid ${panel === 'alpha' ? T.sidebarActiveBorder : 'transparent'}`,
+              cursor: 'pointer', fontSize: 13,
+              fontWeight: panel === 'alpha' ? 600 : 400,
+              textAlign: 'left', transition: 'color 0.15s, background 0.15s',
+              ...dzStyle('alpha'),
+            }}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+              <span style={{ fontSize: 11, opacity: 0.8 }}>📋</span>
+              A – Z
+            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              {alphaList.length > 0 && (
+                <span style={{
+                  fontSize: 10, fontWeight: 700,
+                  padding: '1px 6px', borderRadius: 10, minWidth: 18, textAlign: 'center',
+                  background: 'rgba(26,107,249,0.25)', color: '#6B9CF9',
+                }}>
+                  {alphaList.length}
+                </span>
+              )}
+              <span style={{ fontSize: 9, opacity: 0.6 }}>{alphaOpen ? '▼' : '▶'}</span>
+            </div>
+          </button>
+
+          {/* Alphabet rows */}
+          {alphaOpen && ALL_LETTERS.map(letter => {
+            const count = letterCounts[letter] ?? 0;
+            const isActive = panel === 'alpha' && focusLetter === letter;
+            return (
+              <button
+                key={letter}
+                onClick={() => { setPanel('alpha'); setFocusLetter(letter); }}
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '4px 12px 4px 28px',
+                  background: isActive ? T.sidebarActive : 'transparent',
+                  color: count > 0 ? (isActive ? T.sidebarActiveText : T.sidebarInactive) : T.textMuted,
+                  border: 'none', cursor: count > 0 ? 'pointer' : 'default',
+                  fontSize: 12, fontWeight: count > 0 ? 500 : 400,
+                  textAlign: 'left', opacity: count === 0 ? 0.35 : 1,
+                  borderLeft: `3px solid ${isActive ? T.sidebarActiveBorder : 'transparent'}`,
+                }}
+                disabled={count === 0}
+              >
+                <span>{letter}</span>
+                {count > 0 && (
+                  <span style={{ fontSize: 10, color: T.textMuted, paddingRight: 8 }}>{count}</span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </aside>
 
@@ -482,7 +547,7 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
             contacts={alphaList} stages={stages} onOpen={onOpen}
             dragCardId={dragCardId} justDropped={justDropped}
             onCardDragStart={onCardDragStart} onCardDragEnd={onCardDragEnd}
-            onSnooze={snooze}
+            onSnooze={snooze} focusLetter={focusLetter}
           />
         ) : panelCards.length === 0 ? (
           <p style={{ color: T.textMuted, fontSize: 13 }}>Nothing filed here.</p>
@@ -668,7 +733,7 @@ function CardSlot({ children }: { isDragging: boolean; children: React.ReactNode
 // ── Alpha grid ────────────────────────────────────────────────────────────────
 function AlphaGrid({
   contacts, stages, onOpen, dragCardId, justDropped,
-  onCardDragStart, onCardDragEnd, onSnooze,
+  onCardDragStart, onCardDragEnd, onSnooze, focusLetter,
 }: {
   contacts: Contact[]; stages: Stage[];
   onOpen: (c: Contact) => void;
@@ -676,7 +741,16 @@ function AlphaGrid({
   onCardDragStart: (e: React.DragEvent, c: Contact) => void;
   onCardDragEnd: () => void;
   onSnooze: (c: Contact, days: number) => void;
+  focusLetter: string | null;
 }) {
+  const letterRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  useEffect(() => {
+    if (focusLetter && letterRefs.current[focusLetter]) {
+      letterRefs.current[focusLetter]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [focusLetter]);
+
   const groups: Record<string, Contact[]> = {};
   for (const c of contacts) {
     const letter = (c.first_name?.[0] ?? '?').toUpperCase();
@@ -693,7 +767,7 @@ function AlphaGrid({
   return (
     <div>
       {Object.keys(groups).sort().map(letter => (
-        <div key={letter} style={{ marginBottom: 24 }}>
+        <div key={letter} ref={el => { letterRefs.current[letter] = el; }} style={{ marginBottom: 24 }}>
           <div style={{
             fontSize: 10, fontWeight: 700, color: T.textMuted,
             letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10,
