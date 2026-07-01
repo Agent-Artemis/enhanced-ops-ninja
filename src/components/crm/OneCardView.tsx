@@ -46,15 +46,16 @@ const T = {
   dayBg:             '#111111',
 };
 
-// ── Rolling tickler: past months wrap to next year ─────────────────────────────
+// ── Rolling tickler: 12 months starting from current month, in chronological order ─
 function buildMonthSlots(): { name: string; year: number }[] {
   const today = new Date();
-  const curr = today.getMonth();
-  const yr   = today.getFullYear();
-  return MONTH_NAMES.map((name, idx) => ({
-    name,
-    year: idx < curr ? yr + 1 : yr,
-  }));
+  const curr  = today.getMonth();
+  const yr    = today.getFullYear();
+  return Array.from({ length: 12 }, (_, i) => {
+    const monthIdx = (curr + i) % 12;
+    const year     = yr + Math.floor((curr + i) / 12);
+    return { name: MONTH_NAMES[monthIdx], year };
+  });
 }
 
 function daysInMonthFor(name: string, year: number): number {
@@ -263,7 +264,7 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
   // ── Render ────────────────────────────────────────────────────────────────────
   return (
     <div style={{
-      display: 'flex', height: 'calc(100vh - 56px)',
+      display: 'flex', height: 'calc(100vh - 88px)',
       fontFamily: 'system-ui, -apple-system, sans-serif',
       background: T.pageBg,
     }}>
@@ -299,8 +300,9 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
           Monthly Tickler
         </div>
 
-        {/* All 12 months */}
-        {MONTH_SLOTS.map(({ name, year }) => {
+        {/* All 12 months — grouped by year with year labels */}
+        {MONTH_SLOTS.map(({ name, year }, slotIdx) => {
+          const prevYear = slotIdx > 0 ? MONTH_SLOTS[slotIdx - 1].year : null;
           const count   = countForMonth(contacts, name, year);
           const docked  = daysDockedTo === name;
           const zone: DropZone = `month:${name}:${year}`;
@@ -311,6 +313,19 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
 
           return (
             <div key={`${name}-${year}`}>
+              {/* Year divider — shown whenever year changes */}
+              {(prevYear === null || prevYear !== year) && (
+                <div style={{
+                  padding: '8px 14px 4px',
+                  fontSize: 10, fontWeight: 800,
+                  color: year === new Date().getFullYear() ? T.blue : T.textSec,
+                  letterSpacing: '0.12em',
+                  borderTop: prevYear !== null ? `1px solid ${T.border}` : undefined,
+                  marginTop: prevYear !== null ? 6 : 0,
+                }}>
+                  {year}
+                </div>
+              )}
               {/* Month row */}
               <div
                 style={{
@@ -535,8 +550,10 @@ function DayCalendar({
   onDayDragLeave: (e: React.DragEvent) => void;
   onDayDrop: (e: React.DragEvent, d: number) => void;
 }) {
-  const total  = daysInMonthFor(name, year);
-  const counts = perDayCounts(contacts, name, year);
+  const total     = daysInMonthFor(name, year);
+  const counts    = perDayCounts(contacts, name, year);
+  // Day of week for the 1st (0=Sun … 6=Sat) — controls calendar offset
+  const firstDOW  = new Date(year, MONTH_NAMES.indexOf(name), 1).getDay();
 
   return (
     <div style={{
@@ -552,8 +569,10 @@ function DayCalendar({
           }}>{d}</div>
         ))}
       </div>
-      {/* Day cells */}
+      {/* Day cells with correct day-of-week offset */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
+        {/* Empty cells before day 1 */}
+        {Array.from({ length: firstDOW }, (_, i) => <div key={`blank-${i}`} />)}
         {Array.from({ length: total }, (_, i) => i + 1).map(day => {
           const count = counts[day] ?? 0;
           const dzKey: DropZone = `day:${name}:${year}:${day}`;

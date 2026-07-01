@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { Contact, Stage, TeamMember, Sequence, Note } from '@/lib/crm/types';
-import { upsertContact, deleteContact, addNote } from '@/lib/crm/data';
+import { upsertContact, deleteContact, addNote, fetchAffiliateContacts } from '@/lib/crm/data';
 
 interface Props {
   open: boolean;
@@ -59,18 +59,33 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
   const [deleting, setDeleting] = useState(false);
   const [error, setError]       = useState('');
 
+  // Lead source fields (stored in custom_fields)
+  const [leadSource, setLeadSource]   = useState('');
+  const [referredBy, setReferredBy]   = useState('');
+  const [affiliateId, setAffiliateId] = useState('');
+  const [affiliates, setAffiliates]   = useState<{ id: string; first_name: string; last_name?: string; company?: string }[]>([]);
+
   useEffect(() => {
     if (open) {
       if (contact) {
         const { notes: n, ...rest } = contact;
         setForm(rest);
         setNotes(n ?? []);
+        const cf = contact.custom_fields ?? {};
+        setLeadSource((cf.lead_source as string) ?? '');
+        setReferredBy((cf.referred_by as string) ?? '');
+        setAffiliateId((cf.affiliate_id as string) ?? '');
       } else {
         setForm(EMPTY);
         setNotes([]);
+        setLeadSource('');
+        setReferredBy('');
+        setAffiliateId('');
       }
       setNewNote('');
       setError('');
+      // Load affiliates (contacts tagged 'affiliate')
+      fetchAffiliateContacts().then(setAffiliates).catch(() => setAffiliates([]));
     }
   }, [open, contact]);
 
@@ -81,7 +96,11 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
   async function save() {
     if (!form.first_name?.trim()) { setError('First name required'); return; }
     setSaving(true); setError('');
-    try { await upsertContact(form); onSaved(); }
+    const customFields: Record<string, unknown> = { ...(form.custom_fields ?? {}) };
+    if (leadSource) customFields.lead_source = leadSource;
+    if (leadSource === 'referral' && referredBy) customFields.referred_by = referredBy;
+    if (leadSource === 'affiliate' && affiliateId) customFields.affiliate_id = affiliateId;
+    try { await upsertContact({ ...form, custom_fields: customFields }); onSaved(); }
     catch (e) { setError(e instanceof Error ? e.message : 'Save failed'); }
     finally { setSaving(false); }
   }
@@ -193,6 +212,56 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
               {stages.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
             </select>
           </div>
+
+          {/* Lead Source */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={labelStyle}>Lead Source</label>
+            <select
+              value={leadSource}
+              onChange={e => { setLeadSource(e.target.value); setReferredBy(''); setAffiliateId(''); }}
+              style={{ ...inputStyle, cursor: 'pointer' }}
+            >
+              <option value="">— None —</option>
+              <option value="referral">Referral</option>
+              <option value="affiliate">Affiliate</option>
+            </select>
+          </div>
+
+          {leadSource === 'referral' && (
+            <div style={{ marginBottom: 16 }}>
+              <label style={labelStyle}>Referred By</label>
+              <input
+                type="text"
+                value={referredBy}
+                onChange={e => setReferredBy(e.target.value)}
+                placeholder="Name of the person who referred"
+                style={inputStyle}
+              />
+            </div>
+          )}
+
+          {leadSource === 'affiliate' && (
+            <div style={{ marginBottom: 16 }}>
+              <label style={labelStyle}>Affiliate</label>
+              <select
+                value={affiliateId}
+                onChange={e => setAffiliateId(e.target.value)}
+                style={{ ...inputStyle, cursor: 'pointer' }}
+              >
+                <option value="">— Select affiliate —</option>
+                {affiliates.map(a => (
+                  <option key={a.id} value={a.id}>
+                    {a.first_name} {a.last_name ?? ''}{a.company ? ` (${a.company})` : ''}
+                  </option>
+                ))}
+              </select>
+              {affiliates.length === 0 && (
+                <p style={{ margin: '4px 0 0', fontSize: 11, color: D.textMut }}>
+                  Tag a contact with &ldquo;affiliate&rdquo; to add them here.
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Assigned / Sequence */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>

@@ -59,7 +59,7 @@ export function KanbanView({ contacts, stages, onOpen, onRefresh }: Props) {
   return (
     <div style={{
       display: 'flex', gap: 12, padding: '20px 24px',
-      overflowX: 'auto', minHeight: 'calc(100vh - 56px)',
+      overflowX: 'auto', minHeight: 'calc(100vh - 88px)',
       background: '#111111', alignItems: 'flex-start',
     }}>
       {allStages.map(stage => {

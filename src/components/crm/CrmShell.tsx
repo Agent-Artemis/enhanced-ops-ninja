@@ -18,14 +18,14 @@ export function CrmShell({ view, onViewChange, onNewCard }: Props) {
   return (
     <header style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 30,
-      height: 56, background: '#1A1A1A',
+      height: 88, background: '#1A1A1A',
       borderBottom: '2px solid #1A6BF9',
       display: 'flex', alignItems: 'center', padding: '0 20px', gap: 20,
     }}>
       {/* Logo only — no text */}
       <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo-dark.png" alt="EnhancedOps.ninja" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
+        <img src="/logo-dark.png" alt="EnhancedOps.ninja" style={{ height: 72, width: 'auto', objectFit: 'contain' }} />
       </div>
 
       <nav style={{ display: 'flex', gap: 4, marginLeft: 32 }}>
