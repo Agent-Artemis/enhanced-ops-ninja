@@ -68,14 +68,14 @@ export async function sendToAlpha(contactId: string): Promise<void> {
   if (error) throw error;
 }
 
-export async function fetchAffiliateContacts(): Promise<{ id: string; name: string; code: string }[]> {
+export async function fetchAffiliateContacts(): Promise<{ id: string; name: string; code: string; contact_name?: string }[]> {
   try {
     const { data } = await (await sb())
       .from('affiliates')
-      .select('id, name, code')
+      .select('id, name, code, contact_name')
       .eq('status', 'active')
       .order('name', { ascending: true });
-    return (data ?? []) as { id: string; name: string; code: string }[];
+    return (data ?? []) as { id: string; name: string; code: string; contact_name?: string }[];
   } catch { return []; }
 }
 

@@ -63,7 +63,7 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
   const [leadSource, setLeadSource]   = useState('');
   const [referredBy, setReferredBy]   = useState('');
   const [affiliateId, setAffiliateId] = useState('');
-  const [affiliates, setAffiliates]   = useState<{ id: string; name: string; code: string }[]>([]);
+  const [affiliates, setAffiliates]   = useState<{ id: string; name: string; code: string; contact_name?: string }[]>([]);
 
   useEffect(() => {
     if (open) {
@@ -251,7 +251,7 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
                 <option value="">— Select affiliate —</option>
                 {affiliates.map(a => (
                   <option key={a.id} value={a.id}>
-                    {a.name}
+                    {a.name}{a.contact_name ? ` — ${a.contact_name}` : ''}
                   </option>
                 ))}
               </select>
