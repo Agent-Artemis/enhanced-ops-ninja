@@ -1,5 +1,6 @@
 import { getCrmClient } from './client';
 import type { Contact, Note, Stage, TeamMember, Sequence, VoiceAgent } from './types';
+import { pendingBookingOf } from './types';
 
 // Await Supabase client initialization before making authenticated queries.
 // The lazy client reads localStorage on init, but that init is async —
@@ -132,15 +133,22 @@ export async function deleteVoiceAgent(id: string): Promise<void> {
 
 // ── Bookings review (Cal.com → pending_booking on custom_fields) ─────────────
 
-async function clearPendingBooking(contact: Contact): Promise<Record<string, unknown>> {
+function clearPendingBooking(contact: Contact): Record<string, unknown> {
   const cf = { ...(contact.custom_fields ?? {}) };
   delete cf['pending_booking'];
   return cf;
 }
 
-/** Approve: file the card on the booking date and clear the pending entry. */
+/**
+ * Approve: file the card on the booking date, keep the appointment time on the
+ * card (drives the time chip + chronological ordering), clear the pending entry.
+ */
 export async function approveBooking(contact: Contact, date: string | null): Promise<void> {
-  const custom_fields = await clearPendingBooking(contact);
+  const pb = pendingBookingOf(contact);
+  const custom_fields = clearPendingBooking(contact);
+  if (pb?.start_time) {
+    custom_fields['appointment'] = { start_time: pb.start_time, event_title: pb.event_title };
+  }
   const { error } = await (await sb())
     .from('crm_contacts')
     .update(date
@@ -152,7 +160,7 @@ export async function approveBooking(contact: Contact, date: string | null): Pro
 
 /** Ignore: clear the pending entry; the card keeps its current placement. */
 export async function ignoreBooking(contact: Contact): Promise<void> {
-  const custom_fields = await clearPendingBooking(contact);
+  const custom_fields = clearPendingBooking(contact);
   const { error } = await (await sb())
     .from('crm_contacts')
     .update({ custom_fields })

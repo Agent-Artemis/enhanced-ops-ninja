@@ -84,3 +84,31 @@ export function pendingBookingOf(c: Contact): PendingBooking | null {
   const pb = c.custom_fields?.['pending_booking'];
   return pb && typeof pb === 'object' && !Array.isArray(pb) ? (pb as PendingBooking) : null;
 }
+
+/** A confirmed appointment attached to a card (set when a booking is approved). */
+export interface Appointment {
+  start_time: string;         // ISO
+  event_title?: string;
+}
+
+export function appointmentOf(c: Contact): Appointment | null {
+  const a = c.custom_fields?.['appointment'];
+  return a && typeof a === 'object' && !Array.isArray(a) && (a as Appointment).start_time
+    ? (a as Appointment) : null;
+}
+
+/** "9:00 AM" in the business timezone. */
+export function appointmentTimeLabel(a: Appointment): string {
+  const d = new Date(a.start_time);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Denver' });
+}
+
+/** YYYY-MM-DD of the appointment in the business timezone (to match next_action_date). */
+export function appointmentDateString(a: Appointment): string {
+  const d = new Date(a.start_time);
+  if (Number.isNaN(d.getTime())) return '';
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Denver', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(d);
+}

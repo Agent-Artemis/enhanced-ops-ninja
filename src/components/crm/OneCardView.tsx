@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import type { Contact, Stage } from '@/lib/crm/types';
+import { appointmentOf } from '@/lib/crm/types';
 import { ContactCard } from './ContactCard';
 import { fileUnderDate, pullToActive, sendToAlpha } from '@/lib/crm/data';
 import { MONTH_NAMES, contactsForMonth } from '@/lib/crm/filing';
@@ -85,6 +86,19 @@ function contactsForDay(contacts: Contact[], name: string, year: number, day: nu
   return contacts.filter(c => c.is_active && c.next_action_date === target);
 }
 
+// Calendar order: by filed date, then appointment time (timed cards first), then name
+function chronological(list: Contact[]): Contact[] {
+  return [...list].sort((a, b) => {
+    const da = a.next_action_date ?? '9999', db = b.next_action_date ?? '9999';
+    if (da !== db) return da.localeCompare(db);
+    const ta = appointmentOf(a)?.start_time, tb = appointmentOf(b)?.start_time;
+    if (ta && tb) return ta.localeCompare(tb);
+    if (ta) return -1;
+    if (tb) return 1;
+    return (a.first_name ?? '').localeCompare(b.first_name ?? '');
+  });
+}
+
 function makeDate(name: string, year: number, day: number): string {
   const mIdx = MONTH_NAMES.indexOf(name);
   return `${year}-${String(mIdx + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -140,8 +154,8 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
   function getPanelCards(): Contact[] {
     if (panel === 'action-needed') return actionNeeded;
     if (panel === 'alpha')         return alphaList;
-    if ('day' in panel)   return contactsForDay(contacts, panel.month, panel.year, panel.day);
-    if ('month' in panel) return contactsForMonth(contacts, panel.month, panel.year);
+    if ('day' in panel)   return chronological(contactsForDay(contacts, panel.month, panel.year, panel.day));
+    if ('month' in panel) return chronological(contactsForMonth(contacts, panel.month, panel.year));
     return [];
   }
 
@@ -561,24 +575,29 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
           />
         ) : panelCards.length === 0 ? (
           <p style={{ color: T.textMuted, fontSize: 13 }}>Nothing filed here.</p>
-        ) : (
-          <CardGrid>
-            {panelCards.map(c => (
-              <CardSlot key={c.id} isDragging={dragCardId === c.id}>
-                <ContactCard
-                  contact={c} stages={stages}
-                  onDoubleClick={() => onOpen(c)}
-                  draggable
-                  onDragStart={e => onCardDragStart(e, c)}
-                  onDragEnd={onCardDragEnd}
-                  isDragging={dragCardId === c.id}
-                  justDropped={justDropped === c.id}
-                  actions={quickActions(c)}
-                />
-              </CardSlot>
-            ))}
-          </CardGrid>
-        )}
+        ) : (() => {
+          // Dated panels read like a calendar agenda: single column, time order
+          const isAgenda = typeof panel === 'object' && ('day' in panel || 'month' in panel);
+          const Wrapper = isAgenda ? CardStack : CardGrid;
+          return (
+            <Wrapper>
+              {panelCards.map(c => (
+                <CardSlot key={c.id} isDragging={dragCardId === c.id}>
+                  <ContactCard
+                    contact={c} stages={stages}
+                    onDoubleClick={() => onOpen(c)}
+                    draggable
+                    onDragStart={e => onCardDragStart(e, c)}
+                    onDragEnd={onCardDragEnd}
+                    isDragging={dragCardId === c.id}
+                    justDropped={justDropped === c.id}
+                    actions={quickActions(c)}
+                  />
+                </CardSlot>
+              ))}
+            </Wrapper>
+          );
+        })()}
       </main>
 
       <style>{`
@@ -730,6 +749,15 @@ function CardGrid({ children }: { children: React.ReactNode }) {
       gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
       gap: 14,
     }}>
+      {children}
+    </div>
+  );
+}
+
+// ── Card stack — vertical agenda for dated panels ──────────────────────────────
+function CardStack({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 420 }}>
       {children}
     </div>
   );

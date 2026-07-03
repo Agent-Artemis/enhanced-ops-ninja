@@ -1,6 +1,7 @@
 'use client';
 
 import type { Contact, Stage } from '@/lib/crm/types';
+import { appointmentOf, appointmentTimeLabel, appointmentDateString } from '@/lib/crm/types';
 
 interface Props {
   contact: Contact;
@@ -80,11 +81,25 @@ export function ContactCard({
             {stage.name}
           </span>
         ) : <span />}
-        {contact.next_action_date && (
-          <span style={{ fontSize: 10, color: '#7C6B4A', fontWeight: 600 }}>
-            {contact.next_action_date}
-          </span>
-        )}
+        {contact.next_action_date && (() => {
+          // Show the appointment time only while the card is filed on that same day
+          const appt = appointmentOf(contact);
+          const time = appt && appointmentDateString(appt) === contact.next_action_date
+            ? appointmentTimeLabel(appt) : null;
+          return (
+            <span style={{ fontSize: 10, color: '#7C6B4A', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}>
+              {contact.next_action_date}
+              {time && (
+                <span style={{
+                  background: '#1A6BF9', color: '#fff', borderRadius: 8,
+                  padding: '1px 6px', fontSize: 9, fontWeight: 800, letterSpacing: '0.02em',
+                }}>
+                  {time}
+                </span>
+              )}
+            </span>
+          );
+        })()}
       </div>
 
       {/* Name line */}
