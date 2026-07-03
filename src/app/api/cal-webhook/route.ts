@@ -1,6 +1,11 @@
 /**
- * Cal.com (or compatible) booking webhook: ties a scheduled call to the latest
- * `deep_dive_assessments` row for the attendee email and sends a confirmation email.
+ * Cal.com (or compatible) booking webhook.
+ *
+ * Every booking upserts a One Card System card (`crm_contacts`) filed on the
+ * appointment date, with a note recording what was booked. If the attendee also
+ * has a `deep_dive_assessments` row, that row is updated and a confirmation
+ * email is sent (assessment funnel only — DM/link bookings rely on Cal.com's
+ * own confirmation email).
  *
  * Cal payload shapes vary by product version and event type; this handler reads a
  * small set of tolerant paths and ignores unknown fields.
@@ -66,6 +71,22 @@ function normalizeAppointmentScheduledAt(startTime: unknown): string | null {
     return Number.isNaN(asDate.getTime()) ? null : asDate.toISOString();
   }
   return null;
+}
+
+/**
+ * YYYY-MM-DD in the business timezone (America/Denver) so the card is filed on
+ * the same calendar day the appointment shows on Jeff's Google Calendar.
+ */
+function toBusinessDateString(iso: string | null): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Denver",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(d);
 }
 
 function formatCallTimeForEmail(startTime: unknown): string {
@@ -139,14 +160,72 @@ export async function POST(req: Request) {
   const nameRaw = attendee?.name;
   const nameStr = typeof nameRaw === "string" ? nameRaw : "";
   const firstName = nameStr.split(" ")[0]?.trim() ?? "";
+  const lastName = nameStr.split(" ").slice(1).join(" ").trim();
   const startTime = payload?.startTime;
 
   const appointmentScheduledAt = normalizeAppointmentScheduledAt(startTime);
+  const callTimeLabel = formatCallTimeForEmail(startTime);
+  const eventTitleRaw = payload?.title ?? payload?.eventTitle ?? payload?.type;
+  const eventTitle = typeof eventTitleRaw === "string" && eventTitleRaw.trim() ? eventTitleRaw.trim() : "Appointment";
 
   const admin = getSupabaseAdmin();
 
   try {
-    const { data: row, error: selectError } = await admin
+    // ── One Card System: file a card on the appointment date ──────────────
+    // No date on the payload → card lands in "Action Needed" (is_active, no date).
+    const nextActionDate = toBusinessDateString(appointmentScheduledAt);
+
+    let contactId: string | null = null;
+    const { data: existingContact, error: contactSelectError } = await admin
+      .from("crm_contacts")
+      .select("id")
+      .ilike("email", email)
+      .limit(1)
+      .maybeSingle();
+
+    if (contactSelectError) {
+      return NextResponse.json({ error: contactSelectError.message }, { status: 500 });
+    }
+
+    if (existingContact?.id) {
+      const { error: contactUpdateError } = await admin
+        .from("crm_contacts")
+        .update({ next_action_date: nextActionDate, is_active: true, bucket: "active" })
+        .eq("id", existingContact.id);
+      if (contactUpdateError) {
+        return NextResponse.json({ error: contactUpdateError.message }, { status: 500 });
+      }
+      contactId = existingContact.id;
+    } else {
+      const { data: createdContact, error: contactInsertError } = await admin
+        .from("crm_contacts")
+        .insert({
+          first_name: firstName || email,
+          last_name: lastName || null,
+          email,
+          is_active: true,
+          bucket: "active",
+          next_action_date: nextActionDate,
+          tags: ["cal-booking"],
+        })
+        .select("id")
+        .single();
+      if (contactInsertError) {
+        return NextResponse.json({ error: contactInsertError.message }, { status: 500 });
+      }
+      contactId = createdContact?.id ?? null;
+    }
+
+    if (contactId) {
+      await admin.from("crm_notes").insert({
+        contact_id: contactId,
+        body: `Booked via Cal.com: ${eventTitle} — ${callTimeLabel}`,
+      });
+    }
+
+    // ── Assessment funnel (best-effort): update row + send confirmation ───
+    let assessmentId: string | null = null;
+    const { data: row } = await admin
       .from("deep_dive_assessments")
       .select("id")
       .eq("email", email)
@@ -154,41 +233,26 @@ export async function POST(req: Request) {
       .limit(1)
       .maybeSingle();
 
-    if (selectError) {
-      return NextResponse.json({ error: selectError.message }, { status: 500 });
-    }
-    if (!row?.id) {
-      return NextResponse.json({ error: "No matching assessment" }, { status: 404 });
-    }
+    if (row?.id) {
+      assessmentId = row.id;
+      const { error: updateError } = await admin
+        .from("deep_dive_assessments")
+        .update({ appointment_scheduled_at: appointmentScheduledAt })
+        .eq("id", row.id);
 
-    const { error: updateError } = await admin
-      .from("deep_dive_assessments")
-      .update({ appointment_scheduled_at: appointmentScheduledAt })
-      .eq("id", row.id);
-
-    if (updateError) {
-      return NextResponse.json({ error: updateError.message }, { status: 500 });
-    }
-
-    const resend = new Resend(cfg.resendKey);
-    const callTimeLabel = formatCallTimeForEmail(startTime);
-    const html = buildBookingConfirmedEmailHtml({ firstName: firstName || "there", callTimeLabel });
-
-    const { error: sendError } = await resend.emails.send({
-      from: "jeff@enhancedops.ninja",
-      to: email,
-      subject: "Your 1:1 Review Call Is Confirmed",
-      html,
-    });
-
-    if (sendError) {
-      return NextResponse.json(
-        { error: sendError.message ?? "Failed to send confirmation email" },
-        { status: 500 },
-      );
+      if (!updateError) {
+        const resend = new Resend(cfg.resendKey);
+        const html = buildBookingConfirmedEmailHtml({ firstName: firstName || "there", callTimeLabel });
+        await resend.emails.send({
+          from: "jeff@enhancedops.ninja",
+          to: email,
+          subject: "Your 1:1 Review Call Is Confirmed",
+          html,
+        });
+      }
     }
 
-    return NextResponse.json({ ok: true, assessmentId: row.id, appointmentScheduledAt });
+    return NextResponse.json({ ok: true, contactId, assessmentId, appointmentScheduledAt });
   } catch (err: unknown) {
     return NextResponse.json({ error: errorMessage(err) }, { status: 500 });
   }
