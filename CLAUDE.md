@@ -113,7 +113,7 @@ Email + firstName passed as URL params `dde`/`ddf`. Answers auto-saved to `DEEP_
 `create-payment-intent` catches Postgres 23505 on duplicate email and returns existing ID instead of throwing.
 
 ### 4. Cal.com URL was 404 (`ba914bf`)
-`45-min-with-enhanced-ops-ninja` does not exist — the correct slug is `45-min`. Fixed in `complete-assessment/route.ts` (completion email) and `schedule/page.tsx` (embed). Verify: `curl -o/dev/null -w "%{http_code}" https://cal.com/enhancedopsninja/45-min` → 200.
+`45-min-with-enhanced-ops-ninja` does not exist — the correct slug is `45-min`. UPDATE (Jul 2026): the assessment funnel now books `secret-mission-briefing` (60-min, hidden) instead — see Cal.com section below.
 
 ### 5. Score page improvements (`e764202`)
 - Ninja Review copy: past tense → future tense ("will review...map")
@@ -124,7 +124,7 @@ Email + firstName passed as URL params `dde`/`ddf`. Answers auto-saved to `DEEP_
 Booking section embedded directly on the score page — no intermediate navigation. Direct-link button (`target="_blank"`) plus inline Cal.com embed via `next/script afterInteractive`. The `/deep-dive/schedule` page still exists for email links.
 
 ### 7a. Social tab in CRM (`a6d8113`)
-`/crm` has a fourth view: **Social** (`CrmView` now includes `'social'`). `SocialView.tsx` is the social-media command center — LinkedIn is live (links to the Google Sheets "LinkedIn Content Calendar — Enhanced Ops" at doc ID `17xf0GmuVqj1_7DEPAWnLyK6Uf-q4iSk57z2hOvwEVzM`, plus the Cal.com 45-min booking link, LinkedIn feed and Sales Navigator). Facebook/Instagram/X are placeholder "soon" buttons. Workflow: Artemis drafts posts in the sheet (Status=DRAFT) → Jeff flips to APPROVED → Artemis posts via Playwright and records the live link (Status=POSTED). Post images are branded HTML→PNG renders (generator: `~/Projects/linkedin-content/generate-images.js`) committed to `public/social/` and served at `enhancedops.ninja/social/*.png`. Booking links go in the post's FIRST COMMENT (LinkedIn suppresses external links in post bodies); every post funnels to `https://cal.com/enhancedopsninja/45-min`.
+`/crm` has a fourth view: **Social** (`CrmView` now includes `'social'`). `SocialView.tsx` is the social-media command center — LinkedIn is live (links to the Google Sheets "LinkedIn Content Calendar — Enhanced Ops" at doc ID `17xf0GmuVqj1_7DEPAWnLyK6Uf-q4iSk57z2hOvwEVzM`, plus the Cal.com 45-min booking link, LinkedIn feed and Sales Navigator). Facebook/Instagram/X are placeholder "soon" buttons. Workflow: Artemis drafts posts in the sheet (Status=DRAFT) → Jeff flips to APPROVED → Artemis posts via Playwright and records the live link (Status=POSTED). Post images are branded HTML→PNG renders (generator: `~/Projects/linkedin-content/generate-images.js`) committed to `public/social/` and served at `enhancedops.ninja/social/*.png`. Booking links go in the post's FIRST COMMENT (LinkedIn suppresses external links in post bodies); post CTAs funnel to the 45-min ops review; LinkedIn DM outreach uses `https://cal.com/enhancedopsninja/30-min`.
 
 ### 7. Header button — direct to client portal (`135207a`)
 `MarketingHeader.tsx` "Enter the Mission" button is a direct `<a href="https://mission.enhancedops.ninja">` — no modal, no choice. EON team accesses Ninja Dojo by typing `dojo.enhancedops.ninja` directly; there is no entry point from the marketing site for the team.
@@ -192,7 +192,8 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 STRIPE_SECRET_KEY
 STRIPE_WEBHOOK_SECRET
 RESEND_API_KEY
-CAL_COM_BOOKING_URL   # default: https://cal.com/enhancedopsninja/45-min
+CAL_COM_BOOKING_URL   # default: https://cal.com/enhancedopsninja/secret-mission-briefing
+CAL_COM_API_KEY       # Cal.com API v2 (Bearer auth) — in Vercel prod+dev; account jeff@enhancedops.ninja
 ```
 
 ---
@@ -225,7 +226,12 @@ npx playwright test e2e/paid-assessment-live.spec.ts  # real DB + email
 - **Primary blue (this site):** `#1A6ECC` — not `#1A6BF9` (eon-app)
 - **Logo:** `/public/logo-transparent.png`
 - **Legal entity:** Augeo LLC (dba EnhancedOps.ninja)
-- **Cal.com:** `https://cal.com/enhancedopsninja/45-min`
+- **Cal.com** (account `jeff@enhancedops.ninja`, username `enhancedopsninja`, TZ America/Denver):
+  - `secret-mission-briefing` — 60 min, HIDDEN, assessment-checkout funnel (id 6204896)
+  - `1-hour` — "1 Hour with Jeff", general link (id 6204897)
+  - `30-min` — "30 Min with Jeff", LinkedIn DM outreach (id 5185711)
+  - `45-min` — legacy ops review link (still live, used by LinkedIn post CTAs)
+  - Webhook `fa6de199…` → `https://enhancedops.ninja/api/cal-webhook` on BOOKING_CREATED + BOOKING_RESCHEDULED (all event types) → Bookings review panel in /crm
 - **Email from:** `jeff@enhancedops.ninja`
 
 ---
@@ -235,7 +241,7 @@ npx playwright test e2e/paid-assessment-live.spec.ts  # real DB + email
 1. **Always parse assessment configs through Zod** — `assessmentConfigSchema.parse()`, never `as AssessmentConfig`
 2. **`npx tsc --noEmit` must pass** before every commit
 3. **`main` auto-deploys to Vercel** — keep it green
-4. **Cal.com slug is `45-min`** (not `45-min-with-enhanced-ops-ninja` — that's a 404)
+4. **Cal.com API is v2 only** (v1 decommissioned; Bearer auth + `cal-api-version` header). Assessment funnel books `secret-mission-briefing`; never use `45-min-with-enhanced-ops-ninja` (404)
 5. **Two scoring scales** — free (1-5) and paid (0-3) — intentional, do not merge
 6. **Q32 Playwright**: use `{ exact: true }` on "Next" button selector
 7. **Completion email** uses `jeff+playwright@augeo-hq.com` for automated tests — not Jeff's real inbox
