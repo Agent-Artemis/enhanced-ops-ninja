@@ -107,9 +107,9 @@ function buildCompletionEmailHtml(params: {
 </html>`;
 }
 
-// The correct Cal.com event slug — verified 200 OK.
-// "45-min-with-enhanced-ops-ninja" returns 404; the working slug is "45-min".
-const DEFAULT_CAL_BOOKING_URL = "https://cal.com/enhancedopsninja/45-min";
+// Assessment checkouts book the 60-min Secret Mission Briefing (hidden event —
+// reachable only via this link, not listed on the public Cal.com page).
+const DEFAULT_CAL_BOOKING_URL = "https://cal.com/enhancedopsninja/secret-mission-briefing";
 
 export async function POST(req: Request) {
   const cfg = checkRequiredEnv();

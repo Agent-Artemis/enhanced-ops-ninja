@@ -6,7 +6,7 @@ import { getStatusColor, getStatusEmoji, getStatusLabel } from "@/lib/ops-report
 
 export const dynamic = "force-dynamic";
 
-const DEFAULT_CAL = "https://cal.com/enhancedopsninja/45-min-with-enhanced-ops-ninja";
+const DEFAULT_CAL = "https://cal.com/enhancedopsninja/45-min";
 
 export default async function InDepthResultsPage({
   params,

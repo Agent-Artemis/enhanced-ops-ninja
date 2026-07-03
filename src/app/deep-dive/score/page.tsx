@@ -14,8 +14,8 @@ import {
   writeLocalStorage,
 } from "@/lib/deep-dive/assessment-storage";
 
-const CAL_LINK = "enhancedopsninja/45-min";
-const CAL_FULL_URL = "https://cal.com/enhancedopsninja/45-min";
+const CAL_LINK = "enhancedopsninja/secret-mission-briefing";
+const CAL_FULL_URL = "https://cal.com/enhancedopsninja/secret-mission-briefing";
 
 function initCalEmbed() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
