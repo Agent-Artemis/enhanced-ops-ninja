@@ -6,6 +6,7 @@ import { CrmShell } from '@/components/crm/CrmShell';
 import { OneCardView } from '@/components/crm/OneCardView';
 import { KanbanView } from '@/components/crm/KanbanView';
 import { ListView } from '@/components/crm/ListView';
+import { SocialView } from '@/components/crm/SocialView';
 import { ContactDrawer } from '@/components/crm/ContactDrawer';
 import {
   fetchContacts, fetchStages, fetchTeam, fetchSequences,
@@ -244,6 +245,7 @@ export default function CrmPage() {
         {view === 'onecard' && <OneCardView contacts={contacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onRefresh={refresh} />}
         {view === 'kanban'  && <KanbanView  contacts={contacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onRefresh={refresh} />}
         {view === 'list'    && <ListView    contacts={contacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} />}
+        {view === 'social'  && <SocialView />}
       </main>
       <ContactDrawer
         open={drawerOpen} contact={drawerContact} stages={stages}

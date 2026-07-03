@@ -69,4 +69,4 @@ export interface Contact {
   notes?: Note[];
 }
 
-export type CrmView = 'onecard' | 'kanban' | 'list';
+export type CrmView = 'onecard' | 'kanban' | 'list' | 'social';

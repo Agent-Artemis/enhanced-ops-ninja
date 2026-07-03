@@ -12,6 +12,7 @@ const TABS: { id: CrmView; label: string }[] = [
   { id: 'onecard', label: 'One Card' },
   { id: 'kanban',  label: 'Kanban' },
   { id: 'list',    label: 'List' },
+  { id: 'social',  label: 'Social' },
 ];
 
 export function CrmShell({ view, onViewChange, onNewCard }: Props) {
