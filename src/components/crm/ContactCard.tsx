@@ -88,7 +88,6 @@ export function ContactCard({
             ? appointmentTimeLabel(appt) : null;
           return (
             <span style={{ fontSize: 10, color: '#7C6B4A', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}>
-              {contact.next_action_date}
               {time && (
                 <span style={{
                   background: '#1A6BF9', color: '#fff', borderRadius: 8,
@@ -97,6 +96,7 @@ export function ContactCard({
                   {time}
                 </span>
               )}
+              {contact.next_action_date}
             </span>
           );
         })()}
