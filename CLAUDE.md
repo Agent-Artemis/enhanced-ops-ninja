@@ -123,6 +123,9 @@ Email + firstName passed as URL params `dde`/`ddf`. Answers auto-saved to `DEEP_
 ### 6. Cal.com booking on score page (`ecf66ff`)
 Booking section embedded directly on the score page — no intermediate navigation. Direct-link button (`target="_blank"`) plus inline Cal.com embed via `next/script afterInteractive`. The `/deep-dive/schedule` page still exists for email links.
 
+### 7a. Social tab in CRM (`a6d8113`)
+`/crm` has a fourth view: **Social** (`CrmView` now includes `'social'`). `SocialView.tsx` is the social-media command center — LinkedIn is live (links to the Google Sheets "LinkedIn Content Calendar — Enhanced Ops" at doc ID `117wrl2EVglvzpLY5ubiFfhoQgeqVB2QjHfGR6O8AlFw`, plus LinkedIn feed and Sales Navigator). Facebook/Instagram/X are placeholder "soon" buttons. Workflow: Artemis drafts posts in the sheet (Status=DRAFT) → Jeff flips to APPROVED → Artemis posts via Playwright and records the live link (Status=POSTED).
+
 ### 7. Header button — direct to client portal (`135207a`)
 `MarketingHeader.tsx` "Enter the Mission" button is a direct `<a href="https://mission.enhancedops.ninja">` — no modal, no choice. EON team accesses Ninja Dojo by typing `dojo.enhancedops.ninja` directly; there is no entry point from the marketing site for the team.
 
