@@ -3,7 +3,8 @@
 import { useState } from 'react';
 
 const CONTENT_CALENDAR_URL =
-  'https://docs.google.com/spreadsheets/d/117wrl2EVglvzpLY5ubiFfhoQgeqVB2QjHfGR6O8AlFw/edit';
+  'https://docs.google.com/spreadsheets/d/17xf0GmuVqj1_7DEPAWnLyK6Uf-q4iSk57z2hOvwEVzM/edit';
+const BOOKING_URL = 'https://cal.com/enhancedopsninja/45-min';
 
 interface Platform {
   id: string;
@@ -19,6 +20,7 @@ const PLATFORMS: Platform[] = [
     live: true,
     links: [
       { label: 'Content Calendar', url: CONTENT_CALENDAR_URL, primary: true },
+      { label: 'Booking Link (45-min)', url: BOOKING_URL },
       { label: 'LinkedIn Feed', url: 'https://www.linkedin.com/feed/' },
       { label: 'Sales Navigator', url: 'https://www.linkedin.com/sales/' },
     ],
