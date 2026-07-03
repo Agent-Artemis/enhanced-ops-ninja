@@ -1,11 +1,13 @@
 /**
  * Cal.com (or compatible) booking webhook.
  *
- * Every booking upserts a One Card System card (`crm_contacts`) filed on the
- * appointment date, with a note recording what was booked. If the attendee also
- * has a `deep_dive_assessments` row, that row is updated and a confirmation
- * email is sent (assessment funnel only — DM/link bookings rely on Cal.com's
- * own confirmation email).
+ * Every booking is queued for review in the One Card System: the contact card
+ * carries a `custom_fields.pending_booking` entry that the CRM's Bookings panel
+ * lists for approve / ignore. Approving files the card on the appointment date.
+ * Existing contacts (duplicates) are never moved or modified beyond the pending
+ * entry + a note. If the attendee also has a `deep_dive_assessments` row, that
+ * row is updated and a confirmation email is sent (assessment funnel only —
+ * DM/link bookings rely on Cal.com's own confirmation email).
  *
  * Cal payload shapes vary by product version and event type; this handler reads a
  * small set of tolerant paths and ignores unknown fields.
@@ -171,14 +173,15 @@ export async function POST(req: Request) {
   const admin = getSupabaseAdmin();
 
   try {
-    // ── One Card System: file a card on the appointment date ──────────────
-    // No date on the payload → card lands in "Action Needed" (is_active, no date).
+    // ── One Card System: queue the booking for review ─────────────────────
+    // The card is NOT filed on a date until approved in the CRM Bookings panel.
     const nextActionDate = toBusinessDateString(appointmentScheduledAt);
 
     let contactId: string | null = null;
+    let duplicate = false;
     const { data: existingContact, error: contactSelectError } = await admin
       .from("crm_contacts")
-      .select("id")
+      .select("id, custom_fields")
       .ilike("email", email)
       .limit(1)
       .maybeSingle();
@@ -187,26 +190,42 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: contactSelectError.message }, { status: 500 });
     }
 
+    const pendingBooking = {
+      event_title: eventTitle,
+      start_time: appointmentScheduledAt,
+      date: nextActionDate,
+      time_label: callTimeLabel,
+      duplicate: Boolean(existingContact?.id),
+    };
+
     if (existingContact?.id) {
+      duplicate = true;
+      const mergedCustomFields = {
+        ...(isRecord(existingContact.custom_fields) ? existingContact.custom_fields : {}),
+        pending_booking: pendingBooking,
+      };
       const { error: contactUpdateError } = await admin
         .from("crm_contacts")
-        .update({ next_action_date: nextActionDate, is_active: true, bucket: "active" })
+        .update({ custom_fields: mergedCustomFields })
         .eq("id", existingContact.id);
       if (contactUpdateError) {
         return NextResponse.json({ error: contactUpdateError.message }, { status: 500 });
       }
       contactId = existingContact.id;
     } else {
+      // New contacts start inactive in A-Z so they don't clutter Action Needed
+      // or date slots before Jeff approves the booking.
       const { data: createdContact, error: contactInsertError } = await admin
         .from("crm_contacts")
         .insert({
           first_name: firstName || email,
           last_name: lastName || null,
           email,
-          is_active: true,
-          bucket: "active",
-          next_action_date: nextActionDate,
+          is_active: false,
+          bucket: "alpha",
+          next_action_date: null,
           tags: ["cal-booking"],
+          custom_fields: { pending_booking: pendingBooking },
         })
         .select("id")
         .single();
@@ -252,7 +271,7 @@ export async function POST(req: Request) {
       }
     }
 
-    return NextResponse.json({ ok: true, contactId, assessmentId, appointmentScheduledAt });
+    return NextResponse.json({ ok: true, contactId, duplicate, assessmentId, appointmentScheduledAt });
   } catch (err: unknown) {
     return NextResponse.json({ error: errorMessage(err) }, { status: 500 });
   }

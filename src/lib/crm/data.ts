@@ -129,3 +129,61 @@ export async function deleteVoiceAgent(id: string): Promise<void> {
   const { error } = await (await sb()).from('crm_voice_agents').delete().eq('id', id);
   if (error) throw error;
 }
+
+// ── Bookings review (Cal.com → pending_booking on custom_fields) ─────────────
+
+async function clearPendingBooking(contact: Contact): Promise<Record<string, unknown>> {
+  const cf = { ...(contact.custom_fields ?? {}) };
+  delete cf['pending_booking'];
+  return cf;
+}
+
+/** Approve: file the card on the booking date and clear the pending entry. */
+export async function approveBooking(contact: Contact, date: string | null): Promise<void> {
+  const custom_fields = await clearPendingBooking(contact);
+  const { error } = await (await sb())
+    .from('crm_contacts')
+    .update(date
+      ? { next_action_date: date, is_active: true, bucket: 'active', custom_fields }
+      : { is_active: true, bucket: 'active', next_action_date: null, custom_fields })
+    .eq('id', contact.id);
+  if (error) throw error;
+}
+
+/** Ignore: clear the pending entry; the card keeps its current placement. */
+export async function ignoreBooking(contact: Contact): Promise<void> {
+  const custom_fields = await clearPendingBooking(contact);
+  const { error } = await (await sb())
+    .from('crm_contacts')
+    .update({ custom_fields })
+    .eq('id', contact.id);
+  if (error) throw error;
+}
+
+/** Fire a fake Cal.com booking at the live webhook to test the full flow. */
+export async function sendTestBooking(): Promise<{ ok: boolean; error?: string }> {
+  const now = new Date();
+  const start = new Date(now.getTime() + 24 * 60 * 60 * 1000); // tomorrow, same time
+  const stamp = `${now.getHours()}${String(now.getMinutes()).padStart(2, '0')}`;
+  try {
+    const res = await fetch('/api/cal-webhook', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        triggerEvent: 'BOOKING_CREATED',
+        payload: {
+          title: 'TEST BOOKING — safe to ignore/delete',
+          startTime: start.toISOString(),
+          attendees: [{ email: `test-booking-${stamp}@enhancedops.ninja`, name: `Test Booking ${stamp}` }],
+        },
+      }),
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => null) as { error?: string } | null;
+      return { ok: false, error: body?.error ?? `HTTP ${res.status}` };
+    }
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Network error' };
+  }
+}

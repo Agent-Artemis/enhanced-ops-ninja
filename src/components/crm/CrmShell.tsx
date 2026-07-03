@@ -6,6 +6,8 @@ interface Props {
   view: CrmView;
   onViewChange: (v: CrmView) => void;
   onNewCard: () => void;
+  bookingsCount?: number;
+  onToggleBookings?: () => void;
 }
 
 const TABS: { id: CrmView; label: string }[] = [
@@ -15,7 +17,7 @@ const TABS: { id: CrmView; label: string }[] = [
   { id: 'social',  label: 'Social' },
 ];
 
-export function CrmShell({ view, onViewChange, onNewCard }: Props) {
+export function CrmShell({ view, onViewChange, onNewCard, bookingsCount = 0, onToggleBookings }: Props) {
   return (
     <header style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 30,
@@ -47,6 +49,28 @@ export function CrmShell({ view, onViewChange, onNewCard }: Props) {
       </nav>
 
       <div style={{ flex: 1 }} />
+
+      {onToggleBookings && (
+        <button
+          onClick={onToggleBookings}
+          style={{
+            padding: '6px 14px', background: 'transparent', color: '#d1d5db',
+            border: '1px solid rgba(255,255,255,0.2)', borderRadius: 6,
+            fontSize: 13, fontWeight: 600, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: 8,
+          }}
+        >
+          Bookings
+          {bookingsCount > 0 && (
+            <span style={{
+              background: 'rgba(26,107,249,0.25)', color: '#6B9CF9',
+              borderRadius: 10, padding: '1px 6px', fontWeight: 700, fontSize: 12,
+            }}>
+              {bookingsCount}
+            </span>
+          )}
+        </button>
+      )}
 
       <button
         onClick={onNewCard}

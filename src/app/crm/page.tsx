@@ -7,6 +7,8 @@ import { OneCardView } from '@/components/crm/OneCardView';
 import { KanbanView } from '@/components/crm/KanbanView';
 import { ListView } from '@/components/crm/ListView';
 import { SocialView } from '@/components/crm/SocialView';
+import { BookingsPanel } from '@/components/crm/BookingsPanel';
+import { pendingBookingOf } from '@/lib/crm/types';
 import { ContactDrawer } from '@/components/crm/ContactDrawer';
 import {
   fetchContacts, fetchStages, fetchTeam, fetchSequences,
@@ -170,6 +172,7 @@ function Spinner() {
 export default function CrmPage() {
   const [authed, setAuthed]           = useState(false);
   const [view, setView]               = useState<CrmView>('onecard');
+  const [bookingsOpen, setBookingsOpen] = useState(false);
   const [contacts, setContacts]       = useState<Contact[]>([]);
   const [stages, setStages]           = useState<Stage[]>([]);
   const [team, setTeam]               = useState<TeamMember[]>([]);
@@ -240,7 +243,15 @@ export default function CrmPage() {
 
   return (
     <>
-      <CrmShell view={view} onViewChange={setView} onNewCard={() => { setDrawerContact(null); setDrawerOpen(true); }} />
+      <CrmShell
+        view={view} onViewChange={setView}
+        onNewCard={() => { setDrawerContact(null); setDrawerOpen(true); }}
+        bookingsCount={contacts.filter(c => pendingBookingOf(c)).length}
+        onToggleBookings={() => setBookingsOpen(o => !o)}
+      />
+      {bookingsOpen && (
+        <BookingsPanel contacts={contacts} onClose={() => setBookingsOpen(false)} onRefresh={refresh} />
+      )}
       <main style={{ paddingTop: 88 }}>
         {view === 'onecard' && <OneCardView contacts={contacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onRefresh={refresh} />}
         {view === 'kanban'  && <KanbanView  contacts={contacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onRefresh={refresh} />}

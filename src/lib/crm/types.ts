@@ -70,3 +70,17 @@ export interface Contact {
 }
 
 export type CrmView = 'onecard' | 'kanban' | 'list' | 'social';
+
+/** A Cal.com booking awaiting approve/ignore in the Bookings panel. */
+export interface PendingBooking {
+  event_title: string;
+  start_time: string | null;
+  date: string | null;        // YYYY-MM-DD in business timezone
+  time_label: string;
+  duplicate: boolean;         // true when the booker matched an existing card
+}
+
+export function pendingBookingOf(c: Contact): PendingBooking | null {
+  const pb = c.custom_fields?.['pending_booking'];
+  return pb && typeof pb === 'object' && !Array.isArray(pb) ? (pb as PendingBooking) : null;
+}
