@@ -190,20 +190,30 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: contactSelectError.message }, { status: 500 });
     }
 
+    // The 30-min event is used exclusively in LinkedIn DM outreach, so any
+    // booking of it is a LinkedIn conversion.
+    const isLinkedInFunnel = /30 ?min/i.test(eventTitle);
+
     const pendingBooking = {
       event_title: eventTitle,
       start_time: appointmentScheduledAt,
       date: nextActionDate,
       time_label: callTimeLabel,
       duplicate: Boolean(existingContact?.id),
+      source: isLinkedInFunnel ? "linkedin-dm" : null,
     };
 
     if (existingContact?.id) {
       duplicate = true;
-      const mergedCustomFields = {
+      const mergedCustomFields: Record<string, unknown> = {
         ...(isRecord(existingContact.custom_fields) ? existingContact.custom_fields : {}),
         pending_booking: pendingBooking,
       };
+      // Outreach lead converting: advance their funnel status
+      const li = mergedCustomFields["linkedin"];
+      if (isLinkedInFunnel && isRecord(li)) {
+        mergedCustomFields["linkedin"] = { ...li, status: "booked", booked_at: appointmentScheduledAt };
+      }
       const { error: contactUpdateError } = await admin
         .from("crm_contacts")
         .update({ custom_fields: mergedCustomFields })

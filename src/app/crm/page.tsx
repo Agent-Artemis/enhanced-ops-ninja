@@ -8,7 +8,7 @@ import { KanbanView } from '@/components/crm/KanbanView';
 import { ListView } from '@/components/crm/ListView';
 import { SocialView } from '@/components/crm/SocialView';
 import { BookingsPanel } from '@/components/crm/BookingsPanel';
-import { pendingBookingOf } from '@/lib/crm/types';
+import { pendingBookingOf, linkedinOf } from '@/lib/crm/types';
 import { ContactDrawer } from '@/components/crm/ContactDrawer';
 import {
   fetchContacts, fetchStages, fetchTeam, fetchSequences,
@@ -241,6 +241,14 @@ export default function CrmPage() {
   if (!authed) return <LoginScreen />;
   if (dataLoading) return <Spinner />;
 
+  // Un-engaged LinkedIn prospects stay out of the main OCS views — they live in
+  // the Social tab's Outreach panel until they book or get filed manually.
+  const ocsContacts = contacts.filter(c => {
+    const li = linkedinOf(c);
+    if (!li) return true;
+    return c.is_active || Boolean(pendingBookingOf(c)) || li.status === 'booked';
+  });
+
   return (
     <>
       <CrmShell
@@ -253,10 +261,10 @@ export default function CrmPage() {
         <BookingsPanel contacts={contacts} onClose={() => setBookingsOpen(false)} onRefresh={refresh} />
       )}
       <main style={{ paddingTop: 88 }}>
-        {view === 'onecard' && <OneCardView contacts={contacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onRefresh={refresh} />}
-        {view === 'kanban'  && <KanbanView  contacts={contacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onRefresh={refresh} />}
-        {view === 'list'    && <ListView    contacts={contacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} />}
-        {view === 'social'  && <SocialView />}
+        {view === 'onecard' && <OneCardView contacts={ocsContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onRefresh={refresh} />}
+        {view === 'kanban'  && <KanbanView  contacts={ocsContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onRefresh={refresh} />}
+        {view === 'list'    && <ListView    contacts={ocsContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} />}
+        {view === 'social'  && <SocialView contacts={contacts} onRefresh={refresh} />}
       </main>
       <ContactDrawer
         open={drawerOpen} contact={drawerContact} stages={stages}

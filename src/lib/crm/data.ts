@@ -195,3 +195,16 @@ export async function sendTestBooking(): Promise<{ ok: boolean; error?: string }
     return { ok: false, error: e instanceof Error ? e.message : 'Network error' };
   }
 }
+
+/** Update a LinkedIn lead's funnel status (custom_fields.linkedin.status). */
+export async function setLeadStatus(contact: Contact, status: string): Promise<void> {
+  const cf = { ...(contact.custom_fields ?? {}) };
+  const li = cf['linkedin'];
+  if (!li || typeof li !== 'object') return;
+  cf['linkedin'] = { ...(li as Record<string, unknown>), status };
+  const { error } = await (await sb())
+    .from('crm_contacts')
+    .update({ custom_fields: cf })
+    .eq('id', contact.id);
+  if (error) throw error;
+}

@@ -78,11 +78,31 @@ export interface PendingBooking {
   date: string | null;        // YYYY-MM-DD in business timezone
   time_label: string;
   duplicate: boolean;         // true when the booker matched an existing card
+  source?: string | null;     // 'linkedin-dm' when booked via the 30-min DM link
 }
 
 export function pendingBookingOf(c: Contact): PendingBooking | null {
   const pb = c.custom_fields?.['pending_booking'];
   return pb && typeof pb === 'object' && !Array.isArray(pb) ? (pb as PendingBooking) : null;
+}
+
+/** LinkedIn outreach prospect data (custom_fields.linkedin). */
+export type LeadStatus = 'new' | 'invited' | 'messaged' | 'replied' | 'booked' | 'skipped';
+
+export interface LinkedInLead {
+  profile_url: string;
+  title?: string | null;
+  company?: string | null;
+  location?: string | null;
+  status: LeadStatus;
+  added_at?: string;
+  booked_at?: string;
+}
+
+export function linkedinOf(c: Contact): LinkedInLead | null {
+  const li = c.custom_fields?.['linkedin'];
+  return li && typeof li === 'object' && !Array.isArray(li) && (li as LinkedInLead).profile_url
+    ? (li as LinkedInLead) : null;
 }
 
 /** A confirmed appointment attached to a card (set when a booking is approved). */
