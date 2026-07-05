@@ -84,6 +84,32 @@ export async function POST(req: Request) {
     | { action?: string; email?: string; stage_name?: string; stage?: string } | null;
   const admin = getSupabaseAdmin();
 
+  // Purge a test client across every table (dojo + OCS + funnel). Guarded to
+  // emails containing "+" (plus-aliases) so it can only hit test accounts.
+  const purge = body as { action?: string; email?: string } | null;
+  if (purge?.action === "purge_test_client" && purge.email) {
+    if (!purge.email.includes("+")) {
+      return NextResponse.json({ error: "refusing: only +alias test emails" }, { status: 400 });
+    }
+    const email = purge.email;
+    const report: Record<string, unknown> = {};
+
+    const { data: client } = await admin
+      .from("clients").select("id").ilike("primary_contact_email", email).limit(1).maybeSingle();
+    if (client?.id) {
+      await admin.from("assessments").delete().eq("client_id", client.id);
+      const { error } = await admin.from("clients").delete().eq("id", client.id);
+      report.client = error ? error.message : "deleted";
+    } else {
+      report.client = "none";
+    }
+    const d1 = await admin.from("crm_contacts").delete().ilike("email", email);
+    report.crm_contacts = d1.error ? d1.error.message : "deleted";
+    const d2 = await admin.from("deep_dive_assessments").delete().ilike("email", email);
+    report.deep_dive_assessments = d2.error ? d2.error.message : "deleted";
+    return NextResponse.json({ ok: true, purged: email, report });
+  }
+
   // Bridge a completed funnel assessment onto the dojo Deep Dive tab by seeding
   // the eon-app `assessments` row (which that tab reads by client_id). Maps the
   // score summary into raw_notes so the coach starts from the funnel result
