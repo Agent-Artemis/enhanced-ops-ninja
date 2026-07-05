@@ -25,17 +25,44 @@ export async function GET(req: Request) {
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     return NextResponse.json({ ok: true, stages: data });
   }
+
+  // eon-app dojo pipeline (clients table, shared Supabase project)
+  if (what === "client") {
+    const email = new URL(req.url).searchParams.get("email") ?? "";
+    const { data, error } = await admin.from("clients").select("*").ilike("primary_contact_email", email).limit(5);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ ok: true, clients: data });
+  }
+  if (what === "client_stages") {
+    const { data, error } = await admin.from("clients").select("stage").limit(500);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    const counts: Record<string, number> = {};
+    for (const r of data ?? []) counts[String(r.stage)] = (counts[String(r.stage)] ?? 0) + 1;
+    return NextResponse.json({ ok: true, stages: counts });
+  }
   return NextResponse.json({ error: "Unknown query" }, { status: 400 });
 }
 
 export async function POST(req: Request) {
   if (!authorized(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body = await req.json().catch(() => null) as
-    | { action?: string; email?: string; stage_name?: string } | null;
+    | { action?: string; email?: string; stage_name?: string; stage?: string } | null;
+  const admin = getSupabaseAdmin();
+
+  // Move an eon-app dojo client to a different pipeline stage
+  if (body?.action === "set_client_stage" && body.email && body.stage) {
+    const { data: updated, error } = await admin
+      .from("clients")
+      .update({ stage: body.stage })
+      .ilike("primary_contact_email", body.email)
+      .select("id, name, stage");
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ ok: true, updated });
+  }
+
   if (body?.action !== "set_stage" || !body.email || !body.stage_name) {
     return NextResponse.json({ error: "Expected {action:'set_stage', email, stage_name}" }, { status: 400 });
   }
-  const admin = getSupabaseAdmin();
 
   const { data: stage } = await admin
     .from("crm_stages").select("id, name").ilike("name", `%${body.stage_name}%`).limit(1).maybeSingle();
