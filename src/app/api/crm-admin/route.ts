@@ -34,10 +34,10 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: true, clients: data });
   }
   if (what === "client_stages") {
-    const { data, error } = await admin.from("clients").select("stage").limit(500);
+    const { data, error } = await admin.from("clients").select("pipeline_stage").limit(500);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     const counts: Record<string, number> = {};
-    for (const r of data ?? []) counts[String(r.stage)] = (counts[String(r.stage)] ?? 0) + 1;
+    for (const r of data ?? []) counts[String(r.pipeline_stage)] = (counts[String(r.pipeline_stage)] ?? 0) + 1;
     return NextResponse.json({ ok: true, stages: counts });
   }
   return NextResponse.json({ error: "Unknown query" }, { status: 400 });
@@ -53,9 +53,9 @@ export async function POST(req: Request) {
   if (body?.action === "set_client_stage" && body.email && body.stage) {
     const { data: updated, error } = await admin
       .from("clients")
-      .update({ stage: body.stage })
+      .update({ pipeline_stage: body.stage })
       .ilike("primary_contact_email", body.email)
-      .select("id, name, stage");
+      .select("id, name, pipeline_stage");
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     return NextResponse.json({ ok: true, updated });
   }
