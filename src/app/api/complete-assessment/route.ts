@@ -276,7 +276,10 @@ export async function POST(req: Request) {
       if (clientForOrg?.id) {
         const { data: existingAssessment } = await admin
           .from("assessments").select("id").eq("client_id", clientForOrg.id).limit(1).maybeSingle();
-        const estimates = deriveWorksheetEstimates(answers, track);
+        const estimates = deriveWorksheetEstimates(
+          (answers ?? {}) as Record<string, string>,
+          track,
+        );
         const estLines = Object.keys(estimates).length
           ? "\nEstimated from answers (approx — verify): " +
             Object.entries(estimates).map(([k, v]) => `${k}=${v}`).join(", ")
