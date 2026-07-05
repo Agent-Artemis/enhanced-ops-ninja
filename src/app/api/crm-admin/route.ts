@@ -40,6 +40,16 @@ export async function GET(req: Request) {
     for (const r of data ?? []) counts[String(r.pipeline_stage)] = (counts[String(r.pipeline_stage)] ?? 0) + 1;
     return NextResponse.json({ ok: true, stages: counts });
   }
+  if (what === "ocs") {
+    const email = new URL(req.url).searchParams.get("email") ?? "";
+    const { data, error } = await admin
+      .from("crm_contacts")
+      .select("first_name, last_name, is_active, bucket, next_action_date, custom_fields")
+      .ilike("email", email)
+      .limit(3);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ ok: true, contacts: data });
+  }
   if (what === "assessment") {
     const email = new URL(req.url).searchParams.get("email") ?? "";
     const { data, error } = await admin
