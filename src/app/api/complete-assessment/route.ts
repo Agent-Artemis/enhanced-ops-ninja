@@ -259,14 +259,14 @@ export async function POST(req: Request) {
       html,
     });
 
-    if (sendError) {
-      return NextResponse.json(
-        { error: sendError.message ?? "Failed to send confirmation email" },
-        { status: 500 },
-      );
-    }
-
-    return NextResponse.json({ ok: true, assessmentCompletedAt: completedAt });
+    // Email is best-effort: the assessment is saved and the card exists, so a
+    // mail-provider outage must not fail the client's completion.
+    return NextResponse.json({
+      ok: true,
+      assessmentCompletedAt: completedAt,
+      emailSent: !sendError,
+      ...(sendError ? { emailError: sendError.message ?? "send failed" } : {}),
+    });
   } catch (err: unknown) {
     return NextResponse.json({ error: errorMessage(err) }, { status: 500 });
   }

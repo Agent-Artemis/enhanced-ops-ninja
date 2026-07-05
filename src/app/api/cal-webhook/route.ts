@@ -270,14 +270,18 @@ export async function POST(req: Request) {
         .eq("id", row.id);
 
       if (!updateError) {
-        const resend = new Resend(cfg.resendKey);
-        const html = buildBookingConfirmedEmailHtml({ firstName: firstName || "there", callTimeLabel });
-        await resend.emails.send({
-          from: "jeff@enhancedops.ninja",
-          to: email,
-          subject: "Your 1:1 Review Call Is Confirmed",
-          html,
-        });
+        // Best-effort: Cal.com sends its own confirmation; ours is a bonus and
+        // must not make the webhook report failure (Cal would retry forever).
+        try {
+          const resend = new Resend(cfg.resendKey);
+          const html = buildBookingConfirmedEmailHtml({ firstName: firstName || "there", callTimeLabel });
+          await resend.emails.send({
+            from: "jeff@enhancedops.ninja",
+            to: email,
+            subject: "Your 1:1 Review Call Is Confirmed",
+            html,
+          });
+        } catch { /* mail failure must not fail the booking pipeline */ }
       }
     }
 
