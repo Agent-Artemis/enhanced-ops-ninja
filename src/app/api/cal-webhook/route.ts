@@ -91,21 +91,29 @@ function toBusinessDateString(iso: string | null): string | null {
   }).format(d);
 }
 
+// Format in the business timezone (America/Denver) — Vercel runs in UTC, so
+// without this the Bookings panel label and email would show UTC times.
+const CALL_TIME_FMT: Intl.DateTimeFormatOptions = {
+  dateStyle: "full",
+  timeStyle: "short",
+  timeZone: "America/Denver",
+};
+
 function formatCallTimeForEmail(startTime: unknown): string {
   if (startTime instanceof Date && !Number.isNaN(startTime.getTime())) {
-    return startTime.toLocaleString("en-US", { dateStyle: "full", timeStyle: "short" });
+    return startTime.toLocaleString("en-US", CALL_TIME_FMT);
   }
   if (typeof startTime === "string" && startTime.trim()) {
     const d = new Date(startTime);
     if (!Number.isNaN(d.getTime())) {
-      return d.toLocaleString("en-US", { dateStyle: "full", timeStyle: "short" });
+      return d.toLocaleString("en-US", CALL_TIME_FMT);
     }
     return startTime.trim();
   }
   if (typeof startTime === "number" && Number.isFinite(startTime)) {
     const d = new Date(startTime);
     if (!Number.isNaN(d.getTime())) {
-      return d.toLocaleString("en-US", { dateStyle: "full", timeStyle: "short" });
+      return d.toLocaleString("en-US", CALL_TIME_FMT);
     }
   }
   return "the scheduled time";
