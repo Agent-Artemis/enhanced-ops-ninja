@@ -52,11 +52,15 @@ export async function GET(req: Request) {
   }
   if (what === "assessment") {
     const email = new URL(req.url).searchParams.get("email") ?? "";
+    const full = new URL(req.url).searchParams.get("full") === "1";
+    const cols = full
+      ? "*"
+      : "id, email, business_type, assessment_score, module_scores, assessment_completed_at, appointment_scheduled_at, amount_paid";
     const { data, error } = await admin
       .from("deep_dive_assessments")
-      .select("id, email, business_type, assessment_score, module_scores, assessment_completed_at, appointment_scheduled_at, amount_paid")
+      .select(cols)
       .ilike("email", email)
-      .limit(3);
+      .limit(1);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     return NextResponse.json({ ok: true, assessments: data });
   }
