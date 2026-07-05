@@ -68,6 +68,52 @@ export async function POST(req: Request) {
     | { action?: string; email?: string; stage_name?: string; stage?: string } | null;
   const admin = getSupabaseAdmin();
 
+  // Bridge a completed funnel assessment onto the dojo Deep Dive tab by seeding
+  // the eon-app `assessments` row (which that tab reads by client_id). Maps the
+  // score summary into raw_notes so the coach starts from the funnel result
+  // instead of a blank worksheet.
+  const seedBody = body as { action?: string; email?: string } | null;
+  if (seedBody?.action === "seed_dojo_assessment" && seedBody.email) {
+    const email = seedBody.email;
+    const { data: client } = await admin
+      .from("clients").select("id, name").ilike("primary_contact_email", email).limit(1).maybeSingle();
+    if (!client?.id) return NextResponse.json({ error: "no client row for email" }, { status: 404 });
+
+    const { data: dd } = await admin
+      .from("deep_dive_assessments")
+      .select("assessment_score, module_scores, assessment_completed_at, business_type")
+      .ilike("email", email)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (!dd) return NextResponse.json({ error: "no funnel assessment for email" }, { status: 404 });
+
+    const moduleSummary = Object.entries((dd.module_scores as Record<string, number>) ?? {})
+      .map(([m, s]) => `${m}: ${s}%`).join(" · ");
+    const rawNotes =
+      `FUNNEL DEEP-DIVE RESULT (auto-imported)\n` +
+      `Overall score: ${dd.assessment_score}%\n` +
+      `Module scores: ${moduleSummary}\n` +
+      `Business type: ${dd.business_type ?? "n/a"}\n` +
+      `Completed: ${(dd.assessment_completed_at ?? "").slice(0, 10)}`;
+
+    // One assessments row per client — update if one already exists, else insert.
+    const { data: existing } = await admin
+      .from("assessments").select("id").eq("client_id", client.id).limit(1).maybeSingle();
+    let result;
+    if (existing?.id) {
+      result = await admin.from("assessments")
+        .update({ practice_name: client.name, assessment_date: (dd.assessment_completed_at ?? "").slice(0, 10), raw_notes: rawNotes })
+        .eq("id", existing.id).select("id").maybeSingle();
+    } else {
+      result = await admin.from("assessments")
+        .insert([{ client_id: client.id, status: "draft", practice_name: client.name, assessment_date: (dd.assessment_completed_at ?? "").slice(0, 10), raw_notes: rawNotes }])
+        .select("id").maybeSingle();
+    }
+    if (result.error) return NextResponse.json({ error: result.error.message }, { status: 500 });
+    return NextResponse.json({ ok: true, assessmentId: result.data?.id, seeded: rawNotes });
+  }
+
   // Write notes text onto an eon-app dojo client card
   const notesBody = body as { action?: string; email?: string; notes?: string } | null;
   if (notesBody?.action === "set_client_notes" && notesBody.email && notesBody.notes) {
