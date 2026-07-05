@@ -40,6 +40,25 @@ export async function GET(req: Request) {
     for (const r of data ?? []) counts[String(r.pipeline_stage)] = (counts[String(r.pipeline_stage)] ?? 0) + 1;
     return NextResponse.json({ ok: true, stages: counts });
   }
+  if (what === "assessment") {
+    const email = new URL(req.url).searchParams.get("email") ?? "";
+    const { data, error } = await admin
+      .from("deep_dive_assessments")
+      .select("id, email, business_type, assessment_score, module_scores, assessment_completed_at, appointment_scheduled_at, amount_paid")
+      .ilike("email", email)
+      .limit(3);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ ok: true, assessments: data });
+  }
+  if (what === "briefings") {
+    const email = new URL(req.url).searchParams.get("email") ?? "";
+    const { data: client } = await admin
+      .from("clients").select("id").ilike("primary_contact_email", email).limit(1).maybeSingle();
+    if (!client?.id) return NextResponse.json({ ok: true, briefings: [], note: "no client row" });
+    const { data, error } = await admin.from("briefings").select("*").eq("client_id", client.id).limit(3);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ ok: true, briefings: data });
+  }
   return NextResponse.json({ error: "Unknown query" }, { status: 400 });
 }
 
