@@ -222,11 +222,20 @@ export async function POST(req: Request) {
 
     // ── eon-app dojo pipeline: paid completions are not free assessments ───
     // A DB trigger stamps new client rows 'free_assessment_complete'; correct
-    // it here since this route only runs for the paid deep-dive.
+    // it here since this route only runs for the paid deep-dive. Also write the
+    // score summary into the client's notes so the dojo card shows the results
+    // (the clients table has no assessment columns of its own).
     try {
+      const moduleSummary = Object.entries(moduleScores ?? {})
+        .map(([m, s]) => `${m}: ${s}%`)
+        .join(" · ");
+      const noteText =
+        `DEEP-DIVE ASSESSMENT — completed ${completedAt.slice(0, 10)}\n` +
+        `Overall: ${overallScore}%\n` +
+        (moduleSummary ? `Modules: ${moduleSummary}` : "");
       await admin
         .from("clients")
-        .update({ pipeline_stage: "paid_assessment_complete" })
+        .update({ pipeline_stage: "paid_assessment_complete", notes: noteText })
         .ilike("primary_contact_email", email)
         .eq("pipeline_stage", "free_assessment_complete");
     } catch {

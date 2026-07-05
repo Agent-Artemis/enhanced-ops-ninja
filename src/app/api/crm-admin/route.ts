@@ -68,6 +68,18 @@ export async function POST(req: Request) {
     | { action?: string; email?: string; stage_name?: string; stage?: string } | null;
   const admin = getSupabaseAdmin();
 
+  // Write notes text onto an eon-app dojo client card
+  const notesBody = body as { action?: string; email?: string; notes?: string } | null;
+  if (notesBody?.action === "set_client_notes" && notesBody.email && notesBody.notes) {
+    const { data: updated, error } = await admin
+      .from("clients")
+      .update({ notes: notesBody.notes })
+      .ilike("primary_contact_email", notesBody.email)
+      .select("id, name");
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ ok: true, updated });
+  }
+
   // Move an eon-app dojo client to a different pipeline stage
   if (body?.action === "set_client_stage" && body.email && body.stage) {
     const { data: updated, error } = await admin
