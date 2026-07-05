@@ -220,6 +220,19 @@ export async function POST(req: Request) {
       // swallow — email flow continues regardless
     }
 
+    // ── eon-app dojo pipeline: paid completions are not free assessments ───
+    // A DB trigger stamps new client rows 'free_assessment_complete'; correct
+    // it here since this route only runs for the paid deep-dive.
+    try {
+      await admin
+        .from("clients")
+        .update({ pipeline_stage: "paid_assessment_complete" })
+        .ilike("primary_contact_email", email)
+        .eq("pipeline_stage", "free_assessment_complete");
+    } catch {
+      // best-effort — never block completion
+    }
+
     // Generate a one-time magic link to the client portal.
     // Try 'invite' first (creates user if new), fall back to 'magiclink' for
     // existing users. Either way the client clicks once and is logged in.
