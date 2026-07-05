@@ -238,6 +238,25 @@ export async function POST(req: Request) {
         .update({ pipeline_stage: "paid_assessment_complete", notes: noteText })
         .ilike("primary_contact_email", email)
         .eq("pipeline_stage", "free_assessment_complete");
+
+      // Seed the dojo Deep Dive tab (`assessments` table, read by client_id) so
+      // the coach starts from the funnel result instead of a blank worksheet.
+      const { data: clientRow } = await admin
+        .from("clients").select("id").ilike("primary_contact_email", email).limit(1).maybeSingle();
+      if (clientRow?.id) {
+        const { data: existingAssessment } = await admin
+          .from("assessments").select("id").eq("client_id", clientRow.id).limit(1).maybeSingle();
+        const rawNotes =
+          `FUNNEL DEEP-DIVE RESULT (auto-imported)\n` +
+          `Overall score: ${overallScore}%\n` +
+          `Module scores: ${moduleSummary}\n` +
+          `Completed: ${completedAt.slice(0, 10)}`;
+        if (existingAssessment?.id) {
+          await admin.from("assessments").update({ raw_notes: rawNotes }).eq("id", existingAssessment.id);
+        } else {
+          await admin.from("assessments").insert([{ client_id: clientRow.id, status: "draft", raw_notes: rawNotes }]);
+        }
+      }
     } catch {
       // best-effort — never block completion
     }
