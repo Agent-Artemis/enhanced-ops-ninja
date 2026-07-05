@@ -50,12 +50,15 @@ export async function GET(req: Request) {
   if (authError || !user?.email) {
     return NextResponse.json({ error: "Invalid token" }, { status: 401, headers });
   }
+  // Team gate: mirror the dojo's own model. Team members have a `users` row
+  // (looked up by auth id, as AdminRoute does); plus the known team logins and
+  // the @enhancedops.ninja domain. Clients (mission portal) have none of these.
   const callerEmail = user.email.toLowerCase();
-  const isTeamByDomain = callerEmail.endsWith("@enhancedops.ninja") || callerEmail === "jeff@augeo-hq.com";
-  let isTeam = isTeamByDomain;
+  const TEAM_LOGINS = new Set(["jeff@augeo-hq.com", "demo@augeo-hq.com"]);
+  let isTeam = callerEmail.endsWith("@enhancedops.ninja") || TEAM_LOGINS.has(callerEmail);
   if (!isTeam) {
     const { data: teamRow } = await admin
-      .from("users").select("id").ilike("email", callerEmail).limit(1).maybeSingle();
+      .from("users").select("id").eq("id", user.id).maybeSingle();
     isTeam = Boolean(teamRow?.id);
   }
   if (!isTeam) {
