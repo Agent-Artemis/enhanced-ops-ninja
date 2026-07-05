@@ -113,6 +113,30 @@ function buildCompletionEmailHtml(params: {
 // reachable only via this link, not listed on the public Cal.com page).
 const DEFAULT_CAL_BOOKING_URL = "https://cal.com/enhancedopsninja/secret-mission-briefing";
 
+/**
+ * Rough worksheet values derived from the client's ranged multiple-choice
+ * answers (midpoints). Approximate starting points the coach refines on the
+ * call — NOT precise figures. Healthcare track today; business track uses
+ * different question ids and can be added later.
+ */
+function deriveWorksheetEstimates(
+  answers: Record<string, string>,
+  track: string,
+): Record<string, number> {
+  if (track !== "healthcare") return {};
+  const out: Record<string, number> = {};
+  // hc_p_08 — FTE count → staff_count
+  const fte: Record<string, number> = { A: 5, B: 20, C: 53, D: 90 };
+  if (answers.hc_p_08 in fte) out.staff_count = fte[answers.hc_p_08];
+  // hc_p_01 — annual revenue → estimated_monthly_revenue (annual midpoint / 12)
+  const rev: Record<string, number> = { A: 42000, B: 250000, C: 1250000, D: 2500000 };
+  if (answers.hc_p_01 in rev) out.estimated_monthly_revenue = rev[answers.hc_p_01];
+  // hc_p_09 — turnover → turnover_rate_percent
+  const turn: Record<string, number> = { A: 10, B: 20, C: 32, D: 50 };
+  if (answers.hc_p_09 in turn) out.turnover_rate_percent = turn[answers.hc_p_09];
+  return out;
+}
+
 export async function POST(req: Request) {
   const cfg = checkRequiredEnv();
   if (!cfg.ok) {
@@ -252,16 +276,25 @@ export async function POST(req: Request) {
       if (clientForOrg?.id) {
         const { data: existingAssessment } = await admin
           .from("assessments").select("id").eq("client_id", clientForOrg.id).limit(1).maybeSingle();
+        const estimates = deriveWorksheetEstimates(answers, track);
+        const estLines = Object.keys(estimates).length
+          ? "\nEstimated from answers (approx — verify): " +
+            Object.entries(estimates).map(([k, v]) => `${k}=${v}`).join(", ")
+          : "";
         const rawNotes =
           `FUNNEL DEEP-DIVE RESULT (auto-imported)\n` +
           `Org: ${clientForOrg.name ?? "—"} | Type: ${track}\n` +
           `Overall score: ${overallScore}%\n` +
           namedLines.join("\n") + "\n" +
-          `Completed: ${completedAt.slice(0, 10)}`;
+          `Completed: ${completedAt.slice(0, 10)}` + estLines;
         if (existingAssessment?.id) {
+          // Never overwrite coach-entered numbers — only refresh notes.
           await admin.from("assessments").update({ raw_notes: rawNotes }).eq("id", existingAssessment.id);
         } else {
-          await admin.from("assessments").insert([{ client_id: clientForOrg.id, status: "draft", raw_notes: rawNotes }]);
+          // New row: seed the derived estimates alongside the notes.
+          await admin.from("assessments").insert([
+            { client_id: clientForOrg.id, status: "draft", raw_notes: rawNotes, ...estimates },
+          ]);
         }
       }
     } catch {
