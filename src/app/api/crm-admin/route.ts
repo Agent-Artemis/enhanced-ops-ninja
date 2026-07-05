@@ -99,19 +99,34 @@ export async function POST(req: Request) {
 
     // One assessments row per client — update if one already exists, else insert.
     const { data: existing } = await admin
-      .from("assessments").select("id").eq("client_id", client.id).limit(1).maybeSingle();
+      .from("assessments").select("*").eq("client_id", client.id).limit(1).maybeSingle();
+
+    // Only write columns that actually exist on the live table (eon-app's
+    // frontend field list diverges from the deployed schema).
+    const candidate: Record<string, unknown> = {
+      practice_name: client.name,
+      assessment_date: (dd.assessment_completed_at ?? "").slice(0, 10),
+      raw_notes: rawNotes,
+      overall_score: dd.assessment_score,
+      module_scores: dd.module_scores,
+      notes: rawNotes,
+    };
+
     let result;
-    if (existing?.id) {
-      result = await admin.from("assessments")
-        .update({ practice_name: client.name, assessment_date: (dd.assessment_completed_at ?? "").slice(0, 10), raw_notes: rawNotes })
-        .eq("id", existing.id).select("id").maybeSingle();
+    if (existing) {
+      const patch: Record<string, unknown> = {};
+      for (const k of Object.keys(candidate)) if (k in existing) patch[k] = candidate[k];
+      result = await admin.from("assessments").update(patch).eq("id", existing.id).select("*").maybeSingle();
     } else {
-      result = await admin.from("assessments")
-        .insert([{ client_id: client.id, status: "draft", practice_name: client.name, assessment_date: (dd.assessment_completed_at ?? "").slice(0, 10), raw_notes: rawNotes }])
-        .select("id").maybeSingle();
+      const { data: bare, error: insErr } = await admin
+        .from("assessments").insert([{ client_id: client.id, status: "draft" }]).select("*").maybeSingle();
+      if (insErr) return NextResponse.json({ error: insErr.message }, { status: 500 });
+      const patch: Record<string, unknown> = {};
+      for (const k of Object.keys(candidate)) if (bare && k in bare) patch[k] = candidate[k];
+      result = await admin.from("assessments").update(patch).eq("id", bare!.id).select("*").maybeSingle();
     }
     if (result.error) return NextResponse.json({ error: result.error.message }, { status: 500 });
-    return NextResponse.json({ ok: true, assessmentId: result.data?.id, seeded: rawNotes });
+    return NextResponse.json({ ok: true, columns: Object.keys(result.data ?? {}), row: result.data });
   }
 
   // Write notes text onto an eon-app dojo client card
