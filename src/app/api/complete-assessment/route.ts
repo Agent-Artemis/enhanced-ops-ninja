@@ -7,6 +7,8 @@ import { Resend } from "resend";
 import { z } from "zod";
 
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
+import { getDeepDiveModuleTitleForScoreKey } from "@/lib/deep-dive/assessment-data";
+import type { BusinessTrack } from "@/lib/deep-dive/pricing";
 
 export const dynamic = "force-dynamic";
 
@@ -226,13 +228,19 @@ export async function POST(req: Request) {
     // score summary into the client's notes so the dojo card shows the results
     // (the clients table has no assessment columns of its own).
     try {
-      const moduleSummary = Object.entries(moduleScores ?? {})
-        .map(([m, s]) => `${m}: ${s}%`)
-        .join(" · ");
+      const rowBiz = (updatedRows[0] as { business_type?: string | null }).business_type;
+      const track = (rowBiz === "business" ? "business" : "healthcare") as BusinessTrack;
+      // Domain names ("Financials & Revenue Health: 100%") instead of "module-1".
+      const namedLines = Object.entries(moduleScores ?? {})
+        .map(([k, s]) => `${getDeepDiveModuleTitleForScoreKey(k, track)}: ${s}%`);
       const noteText =
         `DEEP-DIVE ASSESSMENT — completed ${completedAt.slice(0, 10)}\n` +
         `Overall: ${overallScore}%\n` +
-        (moduleSummary ? `Modules: ${moduleSummary}` : "");
+        namedLines.join("\n");
+
+      const { data: clientForOrg } = await admin
+        .from("clients").select("id, name").ilike("primary_contact_email", email).limit(1).maybeSingle();
+
       await admin
         .from("clients")
         .update({ pipeline_stage: "paid_assessment_complete", notes: noteText })
@@ -241,20 +249,19 @@ export async function POST(req: Request) {
 
       // Seed the dojo Deep Dive tab (`assessments` table, read by client_id) so
       // the coach starts from the funnel result instead of a blank worksheet.
-      const { data: clientRow } = await admin
-        .from("clients").select("id").ilike("primary_contact_email", email).limit(1).maybeSingle();
-      if (clientRow?.id) {
+      if (clientForOrg?.id) {
         const { data: existingAssessment } = await admin
-          .from("assessments").select("id").eq("client_id", clientRow.id).limit(1).maybeSingle();
+          .from("assessments").select("id").eq("client_id", clientForOrg.id).limit(1).maybeSingle();
         const rawNotes =
           `FUNNEL DEEP-DIVE RESULT (auto-imported)\n` +
+          `Org: ${clientForOrg.name ?? "—"} | Type: ${track}\n` +
           `Overall score: ${overallScore}%\n` +
-          `Module scores: ${moduleSummary}\n` +
+          namedLines.join("\n") + "\n" +
           `Completed: ${completedAt.slice(0, 10)}`;
         if (existingAssessment?.id) {
           await admin.from("assessments").update({ raw_notes: rawNotes }).eq("id", existingAssessment.id);
         } else {
-          await admin.from("assessments").insert([{ client_id: clientRow.id, status: "draft", raw_notes: rawNotes }]);
+          await admin.from("assessments").insert([{ client_id: clientForOrg.id, status: "draft", raw_notes: rawNotes }]);
         }
       }
     } catch {

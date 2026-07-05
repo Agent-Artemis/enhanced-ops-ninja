@@ -7,6 +7,8 @@
 import { NextResponse } from "next/server";
 
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
+import { getDeepDiveModuleTitleForScoreKey } from "@/lib/deep-dive/assessment-data";
+import type { BusinessTrack } from "@/lib/deep-dive/pricing";
 
 export const dynamic = "force-dynamic";
 
@@ -102,13 +104,14 @@ export async function POST(req: Request) {
       .maybeSingle();
     if (!dd) return NextResponse.json({ error: "no funnel assessment for email" }, { status: 404 });
 
-    const moduleSummary = Object.entries((dd.module_scores as Record<string, number>) ?? {})
-      .map(([m, s]) => `${m}: ${s}%`).join(" · ");
+    const track = (dd.business_type === "business" ? "business" : "healthcare") as BusinessTrack;
+    const namedLines = Object.entries((dd.module_scores as Record<string, number>) ?? {})
+      .map(([k, s]) => `${getDeepDiveModuleTitleForScoreKey(k, track)}: ${s}%`);
     const rawNotes =
       `FUNNEL DEEP-DIVE RESULT (auto-imported)\n` +
+      `Org: ${client.name ?? "—"} | Type: ${track}\n` +
       `Overall score: ${dd.assessment_score}%\n` +
-      `Module scores: ${moduleSummary}\n` +
-      `Business type: ${dd.business_type ?? "n/a"}\n` +
+      namedLines.join("\n") + "\n" +
       `Completed: ${(dd.assessment_completed_at ?? "").slice(0, 10)}`;
 
     // One assessments row per client — update if one already exists, else insert.
