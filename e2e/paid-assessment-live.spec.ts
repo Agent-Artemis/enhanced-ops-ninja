@@ -14,11 +14,11 @@ import { expect, test } from "@playwright/test";
 
 // Dedicated test address — keeps automated runs out of Jeff's real inbox.
 // Uses + alias so it routes to the same mailbox if needed for inspection.
-const TEST_EMAIL = "jeff+playwright@augeo-hq.com";
-const TEST_FIRST = "Playwright";
-const TEST_LAST = "Test";
-const TEST_PHONE = "5555550100";
-const TEST_ORG = "EON Live Test";
+const TEST_EMAIL = process.env.E2E_EMAIL ?? "jeff+playwright@augeo-hq.com";
+const TEST_FIRST = process.env.E2E_FIRST ?? "Playwright";
+const TEST_LAST = process.env.E2E_LAST ?? "Test";
+const TEST_PHONE = process.env.E2E_PHONE ?? "5555550100";
+const TEST_ORG = process.env.E2E_ORG ?? "EON Live Test";
 const OPEN_ANSWER = "This is a test response for the open ended question";
 
 // Supabase REST for post-run DB verification

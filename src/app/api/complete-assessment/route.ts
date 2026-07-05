@@ -139,13 +139,85 @@ export async function POST(req: Request) {
         assessment_completed_at: completedAt,
       })
       .eq("id", assessmentId)
-      .select("id");
+      .select("id, last_name, phone, org_name, business_type");
 
     if (updateError) {
       return NextResponse.json({ error: updateError.message }, { status: 500 });
     }
     if (!updatedRows?.length) {
       return NextResponse.json({ error: "Assessment not found" }, { status: 404 });
+    }
+
+    // ── One Card System: every completed assessment becomes a dojo card ────
+    // Lands in "Action Needed" (active, no date) with the scores attached.
+    // Best-effort — a card failure must never block the completion email.
+    try {
+      const row = updatedRows[0] as {
+        id: string; last_name?: string | null; phone?: string | null;
+        org_name?: string | null; business_type?: string | null;
+      };
+      const assessmentInfo = {
+        assessment_id: assessmentId,
+        overall_score: overallScore,
+        module_scores: moduleScores,
+        business_type: row.business_type ?? null,
+        completed_at: completedAt,
+      };
+      const moduleLines = Object.entries(moduleScores ?? {})
+        .map(([m, s]) => `${m}: ${s}%`)
+        .join(" · ");
+
+      const { data: existingCard } = await admin
+        .from("crm_contacts")
+        .select("id, custom_fields")
+        .ilike("email", email)
+        .limit(1)
+        .maybeSingle();
+
+      let cardId = existingCard?.id ?? null;
+      if (cardId) {
+        const merged = {
+          ...(existingCard?.custom_fields && typeof existingCard.custom_fields === "object"
+            ? existingCard.custom_fields as Record<string, unknown> : {}),
+          assessment: assessmentInfo,
+        };
+        await admin
+          .from("crm_contacts")
+          .update({
+            company: row.org_name ?? undefined,
+            phone: row.phone ?? undefined,
+            is_active: true,
+            custom_fields: merged,
+          })
+          .eq("id", cardId);
+      } else {
+        const { data: created } = await admin
+          .from("crm_contacts")
+          .insert({
+            first_name: firstName || email,
+            last_name: row.last_name ?? null,
+            company: row.org_name ?? null,
+            phone: row.phone ?? null,
+            email,
+            is_active: true,
+            bucket: "active",
+            next_action_date: null,
+            tags: ["deep-dive"],
+            custom_fields: { assessment: assessmentInfo },
+          })
+          .select("id")
+          .single();
+        cardId = created?.id ?? null;
+      }
+
+      if (cardId) {
+        await admin.from("crm_notes").insert({
+          contact_id: cardId,
+          body: `Deep-Dive Assessment completed — Overall ${overallScore}%${moduleLines ? ` — ${moduleLines}` : ""}`,
+        });
+      }
+    } catch {
+      // swallow — email flow continues regardless
     }
 
     // Generate a one-time magic link to the client portal.
