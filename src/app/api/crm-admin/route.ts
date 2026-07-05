@@ -88,8 +88,10 @@ export async function POST(req: Request) {
   // emails containing "+" (plus-aliases) so it can only hit test accounts.
   const purge = body as { action?: string; email?: string } | null;
   if (purge?.action === "purge_test_client" && purge.email) {
-    if (!purge.email.includes("+")) {
-      return NextResponse.json({ error: "refusing: only +alias test emails" }, { status: 400 });
+    const e = purge.email.toLowerCase();
+    const looksTest = e.includes("+") || e.includes("test") || e.includes("artemis") || e.endsWith("@example.com");
+    if (!looksTest) {
+      return NextResponse.json({ error: "refusing: only test-pattern emails" }, { status: 400 });
     }
     const email = purge.email;
     const report: Record<string, unknown> = {};
