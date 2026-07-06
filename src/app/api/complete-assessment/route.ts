@@ -19,7 +19,16 @@ const bodySchema = z.object({
   moduleScores: z.union([z.record(z.unknown()), z.array(z.unknown())]),
   email: z.string().trim().email().max(320),
   firstName: z.string().trim().min(1).max(120),
+  operationalSnapshot: z.record(z.string()).optional(),
 });
+
+// Columns the optional "Your Numbers" step can pre-fill on the dojo worksheet.
+const OP_SNAPSHOT_COLUMNS = new Set([
+  "staff_count", "avg_staff_hourly_rate", "estimated_monthly_revenue",
+  "current_ar_aging_balance", "monthly_recruiting_spend", "turnover_rate_percent",
+  "avg_daily_patient_volume", "phone_interruptions_hrs_day", "insurance_verification_hrs_day",
+  "ar_followup_hrs_day", "practitioner_documentation_hrs_day", "manual_data_entry_min_per_employee",
+]);
 
 type EnvCheck =
   | { ok: true; resendKey: string }
@@ -149,7 +158,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  const { assessmentId, answers, overallScore, moduleScores, email, firstName } = parsed.data;
+  const { assessmentId, answers, overallScore, moduleScores, email, firstName, operationalSnapshot } = parsed.data;
+
+  // Parse the optional "Your Numbers" step into numeric worksheet columns.
+  // Client-provided figures override the midpoint estimates below.
+  const providedNumbers: Record<string, number> = {};
+  for (const [k, v] of Object.entries(operationalSnapshot ?? {})) {
+    if (!OP_SNAPSHOT_COLUMNS.has(k) || v == null || String(v).trim() === "") continue;
+    const n = Number(v);
+    if (Number.isFinite(n)) providedNumbers[k] = n;
+  }
   const completedAt = new Date().toISOString();
   const calBookingUrl = process.env.CAL_COM_BOOKING_URL?.trim() || DEFAULT_CAL_BOOKING_URL;
 
@@ -280,23 +298,32 @@ export async function POST(req: Request) {
           (answers ?? {}) as Record<string, string>,
           track,
         );
+        // Client-entered "Your Numbers" figures override the midpoint estimates.
+        const worksheetNumbers = { ...estimates, ...providedNumbers };
         const estLines = Object.keys(estimates).length
           ? "\nEstimated from answers (approx — verify): " +
             Object.entries(estimates).map(([k, v]) => `${k}=${v}`).join(", ")
+          : "";
+        const providedLines = Object.keys(providedNumbers).length
+          ? "\nClient-provided (Your Numbers step): " +
+            Object.entries(providedNumbers).map(([k, v]) => `${k}=${v}`).join(", ")
           : "";
         const rawNotes =
           `FUNNEL DEEP-DIVE RESULT (auto-imported)\n` +
           `Org: ${clientForOrg.name ?? "—"} | Type: ${track}\n` +
           `Overall score: ${overallScore}%\n` +
           namedLines.join("\n") + "\n" +
-          `Completed: ${completedAt.slice(0, 10)}` + estLines;
+          `Completed: ${completedAt.slice(0, 10)}` + estLines + providedLines;
         if (existingAssessment?.id) {
-          // Never overwrite coach-entered numbers — only refresh notes.
-          await admin.from("assessments").update({ raw_notes: rawNotes }).eq("id", existingAssessment.id);
+          // Existing worksheet: refresh notes, and apply any client-provided
+          // figures (but never overwrite with estimates — providedNumbers only).
+          await admin.from("assessments")
+            .update({ raw_notes: rawNotes, ...providedNumbers })
+            .eq("id", existingAssessment.id);
         } else {
-          // New row: seed the derived estimates alongside the notes.
+          // New row: seed estimates + client-provided figures (client wins).
           await admin.from("assessments").insert([
-            { client_id: clientForOrg.id, status: "draft", raw_notes: rawNotes, ...estimates },
+            { client_id: clientForOrg.id, status: "draft", raw_notes: rawNotes, ...worksheetNumbers },
           ]);
         }
       }

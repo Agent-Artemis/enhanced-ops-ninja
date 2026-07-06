@@ -24,7 +24,8 @@ import {
 type Screen =
   | { kind: "welcome" }
   | { kind: "moduleIntro"; moduleIndex: number }
-  | { kind: "question"; questionIndex: number };
+  | { kind: "question"; questionIndex: number }
+  | { kind: "yourNumbers" };
 
 function buildScreens(modules: DeepDiveModuleMeta[], questionCount: number): Screen[] {
   const screens: Screen[] = [{ kind: "welcome" }];
@@ -37,8 +38,28 @@ function buildScreens(modules: DeepDiveModuleMeta[], questionCount: number): Scr
       qIdx++;
     }
   }
+  // Optional operational-snapshot step — the exact figures that pre-fill the
+  // coach's Deep Dive worksheet. Skippable; keys match the dojo assessments cols.
+  screens.push({ kind: "yourNumbers" });
   return screens;
 }
+
+// Each key MUST match an `assessments` table column (eon-app dojo worksheet).
+const YOUR_NUMBERS_FIELDS: { key: string; label: string; hint?: string }[] = [
+  { key: "staff_count", label: "Total staff / employees" },
+  { key: "avg_staff_hourly_rate", label: "Average staff hourly rate ($)" },
+  { key: "estimated_monthly_revenue", label: "Estimated monthly revenue ($)" },
+  { key: "current_ar_aging_balance", label: "Current A/R aging balance ($)" },
+  { key: "monthly_recruiting_spend", label: "Monthly recruiting spend ($)" },
+  { key: "turnover_rate_percent", label: "Annual staff turnover (%)" },
+  { key: "avg_daily_patient_volume", label: "Average daily patient/client volume" },
+  { key: "phone_interruptions_hrs_day", label: "Phone interruptions (hrs/day)" },
+  { key: "insurance_verification_hrs_day", label: "Insurance verification calls (hrs/day)" },
+  { key: "ar_followup_hrs_day", label: "A/R follow-up calls (hrs/day)" },
+  { key: "practitioner_documentation_hrs_day", label: "Provider documentation (hrs/day)" },
+  { key: "manual_data_entry_min_per_employee", label: "Manual data entry (min/employee/day)" },
+];
+const OP_SNAPSHOT_LS = "deepDiveOpSnapshot";
 
 function isMultipleChoiceQuestion(question: DeepDiveQuestion): boolean {
   return question.type === "multiple_choice";
@@ -142,6 +163,7 @@ export function DeepDiveAssessmentWizard() {
   const [firstName, setFirstName] = useState("");
   const [screenIndex, setScreenIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [snapshot, setSnapshot] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -165,6 +187,10 @@ export function DeepDiveAssessmentWizard() {
     const storedAnswers = readLocalStorage(DEEP_DIVE_LS.answers);
     if (storedAnswers) {
       try { setAnswers(JSON.parse(storedAnswers)); } catch { /* ignore */ }
+    }
+    const storedSnapshot = readLocalStorage(OP_SNAPSHOT_LS);
+    if (storedSnapshot) {
+      try { setSnapshot(JSON.parse(storedSnapshot)); } catch { /* ignore */ }
     }
     setHydrated(true);
   }, [searchParams]);
@@ -212,6 +238,14 @@ export function DeepDiveAssessmentWizard() {
     });
   }, [currentQuestion]);
 
+  const setSnapshotField = useCallback((key: string, value: string) => {
+    setSnapshot((prev) => {
+      const next = { ...prev, [key]: value };
+      writeLocalStorage(OP_SNAPSHOT_LS, JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
   const goBack = () => {
     setSubmitError(null);
     setScreenIndex((i) => Math.max(0, i - 1));
@@ -236,10 +270,10 @@ export function DeepDiveAssessmentWizard() {
   const handlePrimaryAdvance = () => {
     if (current.kind === "question") {
       if (!currentQuestionAnswered) return;
-      if (isLastScreen) {
-        void submitAssessment();
-        return;
-      }
+    }
+    if (isLastScreen) {
+      void submitAssessment();
+      return;
     }
     goNext();
   };
@@ -270,6 +304,7 @@ export function DeepDiveAssessmentWizard() {
           moduleScores,
           email: email.trim(),
           firstName: firstName.trim(),
+          operationalSnapshot: snapshot,
         }),
       });
       const json: unknown = await res.json().catch(() => null);
@@ -312,9 +347,11 @@ export function DeepDiveAssessmentWizard() {
       ? "Start"
       : current.kind === "moduleIntro"
         ? "Begin questions"
-        : isLastScreen
+        : current.kind === "yourNumbers"
           ? "Submit assessment"
-          : "Next";
+          : isLastScreen
+            ? "Submit assessment"
+            : "Next";
 
   const primaryDisabled =
     submitting || (current.kind === "question" && !currentQuestionAnswered);
@@ -448,6 +485,55 @@ export function DeepDiveAssessmentWizard() {
                 type="button"
                 className={`${primaryBtnClass} sm:min-w-[200px]`}
                 disabled={Boolean(primaryDisabled)}
+                onClick={handlePrimaryAdvance}
+              >
+                {submitting ? "Submitting…" : primaryLabel}
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        {current.kind === "yourNumbers" ? (
+          <div>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-[#1A6ECC]">
+              Optional — your numbers
+            </p>
+            <h2 className="mb-4 font-[family-name:var(--font-bebas)] text-3xl uppercase leading-tight tracking-[0.03em] text-white md:text-4xl">
+              A few figures to sharpen your briefing
+            </h2>
+            <p className="mb-8 max-w-xl text-[15px] leading-relaxed text-[rgb(255_255_255/0.68)]">
+              These are optional — enter what you know and leave the rest blank. Anything you
+              provide goes straight to your strategist so your Secret Mission Briefing is built on
+              your real numbers instead of estimates. Estimate freely; nothing here is binding.
+            </p>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {YOUR_NUMBERS_FIELDS.map((f) => (
+                <label key={f.key} className="flex flex-col gap-1.5">
+                  <span className="text-sm text-[rgb(255_255_255/0.72)]">{f.label}</span>
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    className="w-full rounded-lg border border-[rgb(255_255_255/0.12)] bg-[rgb(10_10_10)] px-3.5 py-2.5 text-white outline-none focus:border-[#1A6ECC]"
+                    value={snapshot[f.key] ?? ""}
+                    placeholder="—"
+                    onChange={(e) => setSnapshotField(f.key, e.target.value)}
+                  />
+                </label>
+              ))}
+            </div>
+            {submitError ? (
+              <p className="mt-6 text-sm text-red-400" role="alert">
+                {submitError}
+              </p>
+            ) : null}
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:justify-between">
+              <button type="button" className={secondaryBtnClass} onClick={goBack}>
+                Back
+              </button>
+              <button
+                type="button"
+                className={`${primaryBtnClass} sm:min-w-[200px]`}
+                disabled={submitting}
                 onClick={handlePrimaryAdvance}
               >
                 {submitting ? "Submitting…" : primaryLabel}

@@ -20,6 +20,8 @@ const TEST_LAST = process.env.E2E_LAST ?? "Test";
 const TEST_PHONE = process.env.E2E_PHONE ?? "5555550100";
 const TEST_ORG = process.env.E2E_ORG ?? "EON Live Test";
 const OPEN_ANSWER = "This is a test response for the open ended question";
+const E2E_STAFF = 42;
+const E2E_RATE = 31;
 
 // Supabase REST for post-run DB verification
 const SUPABASE_URL = "https://tbjynbevrhkfzpswehsj.supabase.co";
@@ -78,7 +80,13 @@ test("LIVE: full paid assessment — Supabase write + score page", async ({ page
     const textarea = page.locator("textarea");
     if (await textarea.isVisible()) {
       await textarea.fill(OPEN_ANSWER);
-      // Last screen — submitting hits the REAL complete-assessment endpoint
+      // Open question is no longer the last screen — advance to "Your Numbers".
+      await page.getByRole("button", { name: "Next", exact: true }).click();
+      await page.waitForTimeout(200);
+      // Optional operational-snapshot step: fill a couple, leave the rest blank.
+      await page.locator('label:has-text("Total staff") input').fill(String(E2E_STAFF));
+      await page.locator('label:has-text("hourly rate") input').fill(String(E2E_RATE));
+      // Submitting hits the REAL complete-assessment endpoint
       const [caResponse] = await Promise.all([
         page.waitForResponse((r) => r.url().includes("/api/complete-assessment"), { timeout: 30000 }),
         page.getByRole("button", { name: "Submit assessment" }).click(),
