@@ -140,17 +140,18 @@ test("healthcare paid assessment: completes all 45 questions and shows a real sc
   expect(barStyle).not.toContain("#1A6ECC");
   expect(barStyle).not.toContain("1A6ECC");
 
-  // ── Fix 3: Schedule button exists and the schedule page loads ─────────────
-  const scheduleBtn = page.getByRole("link", { name: /schedule my 1:1 review call/i });
+  // ── Fix 3: Scheduling CTA and Cal embed are present on the score page ───────
+  // The score page now has inline booking — direct external link + Cal embed.
+  const scheduleBtn = page.getByRole("link", { name: /open booking page/i });
   await expect(scheduleBtn).toBeVisible();
+  // Link points at the correct Cal.com slug (not the old broken one)
+  await expect(scheduleBtn).toHaveAttribute("href", /cal\.com.*45-min/);
 
-  // Navigate to the schedule page and confirm Cal.com embed mounts
-  await scheduleBtn.click();
-  await page.waitForURL("**/deep-dive/schedule**", { timeout: 15_000 });
-  await expect(page.getByRole("heading", { name: /book your review call/i })).toBeVisible();
+  // Booking section heading is visible
+  await expect(page.getByRole("heading", { name: /book your 1:1 review call/i })).toBeVisible();
 
   // Cal embed mount point exists in the DOM
-  await expect(page.locator("#cal-review-call")).toBeAttached();
+  await expect(page.locator("#cal-score-booking")).toBeAttached();
 
   // Cal.com embed script tag is present — confirms the embed is wired up.
   // Note: Cal.com actively blocks headless browser execution so we cannot
@@ -160,8 +161,7 @@ test("healthcare paid assessment: completes all 45 questions and shows a real sc
   expect(html).toContain("app.cal.com/embed/embed.js");
 
   // The broken 404 slug must NOT appear anywhere in the page source.
-  // The correct slug ("45-min") lives in the compiled JS bundle, which
-  // is verified by the fact that the old slug is absent.
+  // The correct slug ("45-min") lives in the compiled JS bundle.
   expect(html).not.toContain("45-min-with-enhanced-ops-ninja");
 
   // Page rendered correctly — no crash state

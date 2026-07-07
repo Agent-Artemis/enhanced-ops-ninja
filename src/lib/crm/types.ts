@@ -88,6 +88,7 @@ export function pendingBookingOf(c: Contact): PendingBooking | null {
 
 /** LinkedIn outreach prospect data (custom_fields.linkedin). */
 export type LeadStatus = 'new' | 'invited' | 'messaged' | 'replied' | 'booked' | 'skipped';
+export type SequenceStep = 'msg1' | 'msg2' | 'msg3' | 'done';
 
 export interface LinkedInLead {
   profile_url: string;
@@ -97,6 +98,19 @@ export interface LinkedInLead {
   status: LeadStatus;
   added_at?: string;
   booked_at?: string;
+  // Sequence fields — populated by Artemis per-lead, advanced by UI
+  sequence_step?: SequenceStep;
+  sequence_due?: string;   // YYYY-MM-DD — date this step should be sent
+  msg1?: string;           // personalized connection request (<300 chars)
+  msg2?: string;           // personalized value drop
+  msg3?: string;           // personalized soft pitch + 30-min link
+  msg2_asset?: string;     // optional suggested asset to mention with msg2
+  msg3_asset?: string;     // optional suggested asset to mention with msg3
+  accepted?: boolean;      // true when LinkedIn connection was accepted
+  accepted_msg?: string;   // warm acceptance response: welcome + value drop + one-pager + 30-min link
+  msg1_sent_at?: string;
+  msg2_sent_at?: string;
+  msg3_sent_at?: string;
 }
 
 export function linkedinOf(c: Contact): LinkedInLead | null {

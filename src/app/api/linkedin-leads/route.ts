@@ -44,10 +44,13 @@ export async function POST(req: Request) {
   const errors: string[] = [];
 
   for (const lead of parsed.data.leads) {
+    // Normalize: strip trailing slash so Batch-B and Batch-C urls match consistently
+    const profileUrl = lead.profile_url.replace(/\/+$/, "");
+
     const { data: existing } = await admin
       .from("crm_contacts")
       .select("id")
-      .eq("custom_fields->linkedin->>profile_url", lead.profile_url)
+      .eq("custom_fields->linkedin->>profile_url", profileUrl)
       .limit(1)
       .maybeSingle();
 
@@ -67,7 +70,7 @@ export async function POST(req: Request) {
       tags: ["linkedin-lead"],
       custom_fields: {
         linkedin: {
-          profile_url: lead.profile_url,
+          profile_url: profileUrl,
           title: lead.title ?? null,
           company: lead.company ?? null,
           location: lead.location ?? null,

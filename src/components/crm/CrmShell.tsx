@@ -31,7 +31,18 @@ export function CrmShell({ view, onViewChange, onNewCard, bookingsCount = 0, onT
         <img src="/logo-dark.png" alt="EnhancedOps.ninja" style={{ height: 72, width: 'auto', objectFit: 'contain' }} />
       </div>
 
-      <nav style={{ display: 'flex', gap: 4, marginLeft: 32 }}>
+      <nav style={{ display: 'flex', gap: 4, marginLeft: 32, alignItems: 'center' }}>
+        <a
+          href="https://dojo.enhancedops.ninja"
+          style={{
+            padding: '5px 14px', borderRadius: 6, fontSize: 13, fontWeight: 500,
+            border: '1px solid rgba(255,255,255,0.15)', cursor: 'pointer',
+            background: 'transparent', color: '#9ca3af',
+            textDecoration: 'none', marginRight: 8,
+          }}
+        >
+          ← Dojo
+        </a>
         {TABS.map(t => (
           <button
             key={t.id}
