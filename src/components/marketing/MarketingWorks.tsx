@@ -1,5 +1,3 @@
-import type { ReactNode } from "react";
-
 export function MarketingWorks() {
   return (
     <section className="bg-eon-black px-6 py-16">
