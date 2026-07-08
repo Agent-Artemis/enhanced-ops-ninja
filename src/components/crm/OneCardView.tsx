@@ -108,9 +108,13 @@ function makeDate(name: string, year: number, day: number): string {
 // ── Main component ─────────────────────────────────────────────────────────────
 export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
   const MONTH_SLOTS = buildMonthSlots();
-  const currentMonthName = MONTH_NAMES[new Date().getMonth()];
+  const now = new Date();
+  const currentMonthName = MONTH_NAMES[now.getMonth()];
 
-  const [panel, setPanel]             = useState<Panel>('action-needed');
+  // Open on today's day panel so the current day's worklist is front-and-center on login.
+  const [panel, setPanel]             = useState<Panel>({
+    month: currentMonthName, year: now.getFullYear(), day: now.getDate(),
+  });
   const [daysDockedTo, setDaysDockedTo] = useState<string>(currentMonthName);
   const [daysOpen, setDaysOpen]       = useState(true);
   const [alphaOpen, setAlphaOpen]     = useState(false);

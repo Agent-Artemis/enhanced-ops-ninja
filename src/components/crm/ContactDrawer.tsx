@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { Contact, Stage, TeamMember, Sequence, Note } from '@/lib/crm/types';
+import { appointmentOf } from '@/lib/crm/types';
 import { upsertContact, deleteContact, addNote, fetchAffiliateContacts } from '@/lib/crm/data';
 
 interface Props {
@@ -51,6 +52,24 @@ const labelStyle: React.CSSProperties = {
   letterSpacing: '0.04em', textTransform: 'uppercase',
 };
 
+// Convert a wall-clock date + time in America/Denver to an ISO timestamp,
+// independent of the browser's own timezone (the app displays times in Denver).
+function denverWallClockToISO(dateStr: string, timeStr: string): string {
+  const [Y, M, D] = dateStr.split('-').map(Number);
+  const [h, m] = timeStr.split(':').map(Number);
+  const guessUTC = Date.UTC(Y, M - 1, D, h, m);
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Denver', hour12: false,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+    }).formatToParts(new Date(guessUTC)).map(p => [p.type, p.value]),
+  );
+  const asIfUTC = Date.UTC(+parts.year, +parts.month - 1, +parts.day, +parts.hour, +parts.minute, +parts.second);
+  const offsetMs = asIfUTC - guessUTC; // how far Denver is ahead of UTC (negative)
+  return new Date(guessUTC - offsetMs).toISOString();
+}
+
 export function ContactDrawer({ open, contact, stages, team, sequences, onClose, onSaved }: Props) {
   const [form, setForm]         = useState<Partial<Contact>>(EMPTY);
   const [notes, setNotes]       = useState<Note[]>([]);
@@ -63,6 +82,8 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
   const [leadSource, setLeadSource]   = useState('');
   const [referredBy, setReferredBy]   = useState('');
   const [affiliateId, setAffiliateId] = useState('');
+  // Scheduled appointment time (HH:MM, business timezone) — stored in custom_fields.appointment
+  const [apptTime, setApptTime]       = useState('');
   const [affiliates, setAffiliates]   = useState<{ id: string; name: string; code: string; contact_name?: string }[]>([]);
 
   useEffect(() => {
@@ -75,12 +96,21 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
         setLeadSource((cf.lead_source as string) ?? '');
         setReferredBy((cf.referred_by as string) ?? '');
         setAffiliateId((cf.affiliate_id as string) ?? '');
+        const appt = appointmentOf(contact);
+        setApptTime(
+          appt
+            ? new Date(appt.start_time).toLocaleTimeString('en-GB', {
+                timeZone: 'America/Denver', hour: '2-digit', minute: '2-digit',
+              })
+            : '',
+        );
       } else {
         setForm(EMPTY);
         setNotes([]);
         setLeadSource('');
         setReferredBy('');
         setAffiliateId('');
+        setApptTime('');
       }
       setNewNote('');
       setError('');
@@ -100,6 +130,17 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
     if (leadSource) customFields.lead_source = leadSource;
     if (leadSource === 'referral' && referredBy) customFields.referred_by = referredBy;
     if (leadSource === 'affiliate' && affiliateId) customFields.affiliate_id = affiliateId;
+    // Scheduled appointment time (only meaningful with a date). Timed cards sort to the top of their day.
+    if (form.next_action_date && apptTime) {
+      const existing = (customFields.appointment ?? {}) as Record<string, unknown>;
+      customFields.appointment = {
+        ...existing,
+        start_time: denverWallClockToISO(form.next_action_date, apptTime),
+        event_title: (existing.event_title as string) || 'Scheduled',
+      };
+    } else {
+      delete customFields.appointment;
+    }
     try { await upsertContact({ ...form, custom_fields: customFields }); onSaved(); }
     catch (e) { setError(e instanceof Error ? e.message : 'Save failed'); }
     finally { setSaving(false); }
@@ -283,18 +324,28 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
             </div>
           </div>
 
-          {/* Next Action Date + Active */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, alignItems: 'end', marginBottom: 16 }}>
+          {/* Next Action Date + Time */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 6 }}>
             <div>
               <label style={labelStyle}>Next Action Date</label>
               <input type="date" value={form.next_action_date ?? ''} onChange={e => set('next_action_date', e.target.value || undefined)}
                 style={{ ...inputStyle, colorScheme: 'dark' }} />
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 8 }}>
-              <input type="checkbox" id="is_active" checked={form.is_active ?? true} onChange={e => set('is_active', e.target.checked)}
-                style={{ width: 16, height: 16, accentColor: D.blue, cursor: 'pointer' }} />
-              <label htmlFor="is_active" style={{ fontSize: 14, color: D.textSec, cursor: 'pointer' }}>Active</label>
+            <div>
+              <label style={labelStyle}>Appointment Time</label>
+              <input type="time" value={apptTime} onChange={e => setApptTime(e.target.value)}
+                disabled={!form.next_action_date}
+                style={{ ...inputStyle, colorScheme: 'dark', opacity: form.next_action_date ? 1 : 0.5,
+                  cursor: form.next_action_date ? 'text' : 'not-allowed' }} />
             </div>
+          </div>
+          <p style={{ margin: '0 0 14px', fontSize: 11, color: D.textMut }}>
+            Add a time for scheduled appointments — timed cards rise to the top of that day.
+          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+            <input type="checkbox" id="is_active" checked={form.is_active ?? true} onChange={e => set('is_active', e.target.checked)}
+              style={{ width: 16, height: 16, accentColor: D.blue, cursor: 'pointer' }} />
+            <label htmlFor="is_active" style={{ fontSize: 14, color: D.textSec, cursor: 'pointer' }}>Active</label>
           </div>
 
           {/* Notes */}
