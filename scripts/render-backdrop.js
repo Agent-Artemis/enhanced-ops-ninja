@@ -21,7 +21,7 @@ html,body{width:1920px;height:1080px;overflow:hidden}
   background-image:linear-gradient(120deg, transparent 0 49.5%, #7FB2F5 49.7% 50%, transparent 50.2%);
   background-size:64px 64px}
 .vig{position:absolute;inset:0;background:radial-gradient(ellipse 80% 75% at 50% 45%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.62) 100%)}
-.ninja{position:absolute;right:-30px;bottom:-24px;height:600px;opacity:0.52;
+.ninja{position:absolute;right:-30px;top:28px;height:500px;opacity:0.52;
   filter:drop-shadow(0 0 34px rgba(26,110,204,0.45))}
 .logo{position:absolute;left:64px;top:54px;display:flex;align-items:center;gap:20px}
 .logo img{height:74px;filter:drop-shadow(0 3px 14px rgba(0,0,0,0.55))}
