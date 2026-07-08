@@ -107,6 +107,7 @@ export interface LinkedInLead {
   msg2_asset?: string;     // optional suggested asset to mention with msg2
   msg3_asset?: string;     // optional suggested asset to mention with msg3
   accepted?: boolean;      // true when LinkedIn connection was accepted
+  starred?: boolean;       // Jeff flagged this lead as a strong option
   accepted_msg?: string;   // warm acceptance response: welcome + value drop + one-pager + 30-min link
   msg1_sent_at?: string;
   msg2_sent_at?: string;

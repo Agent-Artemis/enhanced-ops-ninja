@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from 'react';
 import type { Contact, LeadStatus } from '@/lib/crm/types';
 import { linkedinOf, pendingBookingOf } from '@/lib/crm/types';
-import { setLeadStatus, advanceLinkedIn, moveLinkedInToToday } from '@/lib/crm/data';
+import { setLeadStatus, advanceLinkedIn, moveLinkedInToToday, setLeadStarred, deleteContact, addNote } from '@/lib/crm/data';
 
 const CONTENT_CALENDAR_URL =
   'https://docs.google.com/spreadsheets/d/17xf0GmuVqj1_7DEPAWnLyK6Uf-q4iSk57z2hOvwEVzM/edit';
@@ -103,15 +103,30 @@ interface LeadRowProps {
   isToday: boolean;
   onMarkSent: (contact: Contact, step: 'msg1' | 'msg2' | 'msg3') => Promise<void>;
   onMoveToday: (contact: Contact) => Promise<void>;
+  onStar: (contact: Contact, starred: boolean) => Promise<void>;
+  onDelete: (contact: Contact) => Promise<void>;
 }
 
-function LeadRow({ contact, step, message, asset, busy, isToday, onMarkSent, onMoveToday }: LeadRowProps) {
+function LeadRow({ contact, step, message, asset, busy, isToday, onMarkSent, onMoveToday, onStar, onDelete }: LeadRowProps) {
   const [copied, setCopied] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [movedToday, setMovedToday] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [noteText, setNoteText] = useState('');
+  const [noteSaved, setNoteSaved] = useState(false);
   const li = linkedinOf(contact)!;
   const meta = STEP_META[step];
   const name = `${contact.first_name ?? ''} ${contact.last_name ?? ''}`.trim();
+  const starred = !!li.starred;
+
+  async function saveNote() {
+    const body = noteText.trim();
+    if (!body) return;
+    await addNote(contact.id, body);
+    setNoteSaved(true);
+    setNoteText('');
+    setTimeout(() => { setNoteSaved(false); setNoteOpen(false); }, 1500);
+  }
 
   function copy() {
     if (!message) return;
@@ -134,6 +149,7 @@ function LeadRow({ contact, step, message, asset, busy, isToday, onMarkSent, onM
     <div style={{
       background: '#141414',
       border: '1px solid rgba(255,255,255,0.07)',
+      borderLeft: starred ? '3px solid #F5B301' : '1px solid rgba(255,255,255,0.07)',
       borderRadius: 8,
       marginBottom: 8,
       overflow: 'hidden',
@@ -143,6 +159,23 @@ function LeadRow({ contact, step, message, asset, busy, isToday, onMarkSent, onM
         display: 'flex', alignItems: 'center', gap: 10,
         padding: '10px 14px', flexWrap: 'wrap',
       }}>
+        {/* Star toggle */}
+        <button
+          onClick={() => onStar(contact, !starred)}
+          disabled={busy}
+          title={starred ? 'Unstar' : 'Star as a strong option'}
+          style={{
+            background: 'transparent', border: 'none',
+            cursor: busy ? 'default' : 'pointer',
+            fontSize: 16, lineHeight: 1, padding: 0,
+            color: starred ? '#F5B301' : '#4b5563',
+            opacity: busy ? 0.5 : 1, flexShrink: 0,
+            filter: starred ? 'none' : 'grayscale(1)',
+          }}
+        >
+          {starred ? '⭐' : '☆'}
+        </button>
+
         {/* Name */}
         <span style={{ fontSize: 14, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
           {name}
@@ -259,26 +292,93 @@ function LeadRow({ contact, step, message, asset, busy, isToday, onMarkSent, onM
                 >
                   {confirmed ? '✓ Sent' : busy ? 'Saving…' : 'Mark Sent'}
                 </button>
+
+                <button
+                  onClick={() => setNoteOpen(o => !o)}
+                  style={{
+                    padding: '6px 14px', fontSize: 13, fontWeight: 600,
+                    background: noteOpen ? 'rgba(255,255,255,0.06)' : 'transparent',
+                    color: '#9ca3af',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 6, cursor: 'pointer', transition: 'all 0.2s', flexShrink: 0,
+                  }}
+                >
+                  📝 Note
+                </button>
               </div>
 
-              {/* Right: move to today (only on upcoming leads) */}
-              {!isToday && (
+              {/* Right: move to today (only on upcoming leads) + delete */}
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                {!isToday && (
+                  <button
+                    onClick={moveToday}
+                    disabled={busy || movedToday}
+                    style={{
+                      padding: '5px 12px', fontSize: 12, fontWeight: 600,
+                      background: 'transparent',
+                      color: movedToday ? '#22c55e' : '#6b7280',
+                      border: `1px solid ${movedToday ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.08)'}`,
+                      borderRadius: 6, cursor: busy || movedToday ? 'default' : 'pointer',
+                      opacity: busy ? 0.5 : 1, transition: 'all 0.2s', flexShrink: 0,
+                    }}
+                  >
+                    {movedToday ? '✓ Moved' : '→ Today'}
+                  </button>
+                )}
+
                 <button
-                  onClick={moveToday}
-                  disabled={busy || movedToday}
+                  onClick={() => onDelete(contact)}
+                  disabled={busy}
                   style={{
-                    padding: '5px 12px', fontSize: 12, fontWeight: 600,
-                    background: 'transparent',
-                    color: movedToday ? '#22c55e' : '#6b7280',
-                    border: `1px solid ${movedToday ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.08)'}`,
-                    borderRadius: 6, cursor: busy || movedToday ? 'default' : 'pointer',
+                    padding: '5px 10px', fontSize: 12, fontWeight: 600,
+                    background: 'transparent', color: '#f87171',
+                    border: 'none', borderRadius: 6,
+                    cursor: busy ? 'default' : 'pointer',
                     opacity: busy ? 0.5 : 1, transition: 'all 0.2s', flexShrink: 0,
                   }}
                 >
-                  {movedToday ? '✓ Moved' : '→ Today'}
+                  Delete
                 </button>
-              )}
+              </div>
             </div>
+
+            {/* Note editor */}
+            {noteOpen && (
+              <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <textarea
+                  value={noteText}
+                  onChange={e => setNoteText(e.target.value)}
+                  placeholder="Add a note about this lead…"
+                  rows={3}
+                  style={{
+                    width: '100%', resize: 'vertical', boxSizing: 'border-box',
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 6, padding: '8px 10px',
+                    fontSize: 13, color: '#d1d5db', lineHeight: 1.5,
+                    fontFamily: 'inherit',
+                  }}
+                />
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <button
+                    onClick={saveNote}
+                    disabled={noteSaved || !noteText.trim()}
+                    style={{
+                      padding: '6px 14px', fontSize: 13, fontWeight: 600,
+                      background: noteSaved ? 'rgba(34,197,94,0.15)' : '#1A6BF9',
+                      color: noteSaved ? '#22c55e' : '#fff',
+                      border: noteSaved ? '1px solid rgba(34,197,94,0.4)' : 'none',
+                      borderRadius: 6,
+                      cursor: noteSaved || !noteText.trim() ? 'default' : 'pointer',
+                      opacity: !noteText.trim() && !noteSaved ? 0.5 : 1,
+                      transition: 'all 0.2s', flexShrink: 0,
+                    }}
+                  >
+                    {noteSaved ? '✓ Saved' : 'Save'}
+                  </button>
+                </div>
+              </div>
+            )}
           </>
         ) : (
           <div style={{ fontSize: 12, color: '#4b5563', fontStyle: 'italic', paddingTop: 4 }}>
@@ -307,9 +407,11 @@ interface DateGroupProps {
   isToday: boolean;
   onMarkSent: (contact: Contact, step: 'msg1' | 'msg2' | 'msg3') => Promise<void>;
   onMoveToday: (contact: Contact) => Promise<void>;
+  onStar: (contact: Contact, starred: boolean) => Promise<void>;
+  onDelete: (contact: Contact) => Promise<void>;
 }
 
-function DateGroup({ date, items, busy, isToday, onMarkSent, onMoveToday }: DateGroupProps) {
+function DateGroup({ date, items, busy, isToday, onMarkSent, onMoveToday, onStar, onDelete }: DateGroupProps) {
   const newItems      = items.filter(i => i.isNew);
   const followUpItems = items.filter(i => !i.isNew).sort((a, b) => {
     // msg2 before msg3
@@ -353,6 +455,8 @@ function DateGroup({ date, items, busy, isToday, onMarkSent, onMoveToday }: Date
               isToday={isToday}
               onMarkSent={onMarkSent}
               onMoveToday={onMoveToday}
+              onStar={onStar}
+              onDelete={onDelete}
             />
           ))}
         </div>
@@ -375,6 +479,8 @@ function DateGroup({ date, items, busy, isToday, onMarkSent, onMoveToday }: Date
               isToday={isToday}
               onMarkSent={onMarkSent}
               onMoveToday={onMoveToday}
+              onStar={onStar}
+              onDelete={onDelete}
             />
           ))}
         </div>
@@ -474,6 +580,18 @@ export function SocialView({ contacts, onRefresh }: Props) {
     try { await setLeadStatus(contact, status); onRefresh(); } finally { setBusy(null); }
   }
 
+  async function handleStar(contact: Contact, starred: boolean) {
+    setBusy(contact.id);
+    try { await setLeadStarred(contact, starred); onRefresh(); } finally { setBusy(null); }
+  }
+
+  async function handleDelete(contact: Contact) {
+    const name = `${contact.first_name ?? ''} ${contact.last_name ?? ''}`.trim() || 'this lead';
+    if (!confirm(`Delete ${name} from the CRM? This can't be undone.`)) return;
+    setBusy(contact.id);
+    try { await deleteContact(contact.id); onRefresh(); } finally { setBusy(null); }
+  }
+
   // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
@@ -560,6 +678,8 @@ export function SocialView({ contacts, onRefresh }: Props) {
             isToday
             onMarkSent={handleMarkSent}
             onMoveToday={handleMoveToday}
+            onStar={handleStar}
+            onDelete={handleDelete}
           />
         )}
       </div>
@@ -585,6 +705,8 @@ export function SocialView({ contacts, onRefresh }: Props) {
               isToday={false}
               onMarkSent={handleMarkSent}
               onMoveToday={handleMoveToday}
+              onStar={handleStar}
+              onDelete={handleDelete}
             />
           ))}
         </div>

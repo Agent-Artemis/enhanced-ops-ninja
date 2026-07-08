@@ -222,6 +222,19 @@ export async function setLeadStatus(contact: Contact, status: string): Promise<v
   if (error) throw error;
 }
 
+/** Star/unstar a LinkedIn lead (custom_fields.linkedin.starred). */
+export async function setLeadStarred(contact: Contact, starred: boolean): Promise<void> {
+  const cf = { ...(contact.custom_fields ?? {}) };
+  const li = cf['linkedin'];
+  if (!li || typeof li !== 'object') return;
+  cf['linkedin'] = { ...(li as Record<string, unknown>), starred };
+  const { error } = await (await sb())
+    .from('crm_contacts')
+    .update({ custom_fields: cf })
+    .eq('id', contact.id);
+  if (error) throw error;
+}
+
 /**
  * Mark a sequence step as sent and advance to the next step.
  * Sets {step}_sent_at, advances sequence_step, sets sequence_due for the next step,
