@@ -52,6 +52,15 @@ const labelStyle: React.CSSProperties = {
   letterSpacing: '0.04em', textTransform: 'uppercase',
 };
 
+// Auto-format a US phone number on blur: (XXX) XXX-XXXX, or +1 (XXX) XXX-XXXX.
+// Leaves partial or international numbers as typed so nothing gets mangled.
+function formatPhone(raw: string): string {
+  const digits = raw.replace(/\D/g, '');
+  if (digits.length === 10) return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+  if (digits.length === 11 && digits[0] === '1') return `+1 (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7)}`;
+  return raw;
+}
+
 // Convert a wall-clock date + time in America/Denver to an ISO timestamp,
 // independent of the browser's own timezone (the app displays times in Denver).
 function denverWallClockToISO(dateStr: string, timeStr: string): string {
@@ -236,7 +245,8 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
             <div>
               <label style={labelStyle}>Phone</label>
-              <input type="tel" value={form.phone ?? ''} onChange={e => set('phone', e.target.value)} style={inputStyle} />
+              <input type="tel" value={form.phone ?? ''} onChange={e => set('phone', e.target.value)}
+                onBlur={e => set('phone', formatPhone(e.target.value))} placeholder="(555) 123-4567" style={inputStyle} />
             </div>
             <div>
               <label style={labelStyle}>Email</label>
