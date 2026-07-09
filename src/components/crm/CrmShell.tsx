@@ -8,6 +8,10 @@ interface Props {
   onNewCard: () => void;
   bookingsCount?: number;
   onToggleBookings?: () => void;
+  onLogActivity?: () => void;
+  search: string;
+  onSearchChange: (v: string) => void;
+  showSearch?: boolean;
 }
 
 const TABS: { id: CrmView; label: string }[] = [
@@ -15,9 +19,10 @@ const TABS: { id: CrmView; label: string }[] = [
   { id: 'kanban',  label: 'Kanban' },
   { id: 'list',    label: 'List' },
   { id: 'social',  label: 'Social' },
+  { id: 'reports', label: 'Reports' },
 ];
 
-export function CrmShell({ view, onViewChange, onNewCard, bookingsCount = 0, onToggleBookings }: Props) {
+export function CrmShell({ view, onViewChange, onNewCard, bookingsCount = 0, onToggleBookings, onLogActivity, search, onSearchChange, showSearch = false }: Props) {
   return (
     <header style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 30,
@@ -59,7 +64,37 @@ export function CrmShell({ view, onViewChange, onNewCard, bookingsCount = 0, onT
         ))}
       </nav>
 
-      <div style={{ flex: 1 }} />
+      <div style={{ flex: 1, display: 'flex', justifyContent: 'center', padding: '0 16px' }}>
+        {showSearch && (
+          <div style={{ position: 'relative', width: '100%', maxWidth: 420 }}>
+            <input
+              type="text"
+              value={search}
+              onChange={e => onSearchChange(e.target.value)}
+              placeholder="Search cards — name, company, email, phone…"
+              style={{
+                width: '100%', height: 38, padding: '0 34px 0 14px',
+                background: '#0f1117', border: '1px solid #374151',
+                borderRadius: 8, fontSize: 13, color: '#fff', outline: 'none',
+                boxSizing: 'border-box',
+              }}
+            />
+            {search && (
+              <button
+                onClick={() => onSearchChange('')}
+                aria-label="Clear search"
+                style={{
+                  position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)',
+                  background: 'none', border: 'none', color: '#9ca3af', fontSize: 18,
+                  cursor: 'pointer', lineHeight: 1, padding: 0,
+                }}
+              >
+                &times;
+              </button>
+            )}
+          </div>
+        )}
+      </div>
 
       {onToggleBookings && (
         <button
@@ -80,6 +115,19 @@ export function CrmShell({ view, onViewChange, onNewCard, bookingsCount = 0, onT
               {bookingsCount}
             </span>
           )}
+        </button>
+      )}
+
+      {onLogActivity && (
+        <button
+          onClick={onLogActivity}
+          style={{
+            padding: '6px 14px', background: 'transparent', color: '#d1d5db',
+            border: '1px solid rgba(255,255,255,0.2)', borderRadius: 6,
+            fontSize: 13, fontWeight: 600, cursor: 'pointer',
+          }}
+        >
+          Log Activity
         </button>
       )}
 

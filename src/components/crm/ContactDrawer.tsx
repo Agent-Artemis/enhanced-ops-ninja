@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import type { Contact, Stage, TeamMember, Sequence, Note } from '@/lib/crm/types';
 import { appointmentOf } from '@/lib/crm/types';
 import { upsertContact, deleteContact, addNote, fetchAffiliateContacts } from '@/lib/crm/data';
+import { QuickLogActivity } from './QuickLogActivity';
 
 interface Props {
   open: boolean;
@@ -86,6 +87,7 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
   const [saving, setSaving]     = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError]       = useState('');
+  const [logOpen, setLogOpen]   = useState(false);
 
   // Lead source fields (stored in custom_fields)
   const [leadSource, setLeadSource]   = useState('');
@@ -150,7 +152,16 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
     } else {
       delete customFields.appointment;
     }
-    try { await upsertContact({ ...form, custom_fields: customFields }); onSaved(); }
+    try {
+      const saved = await upsertContact({ ...form, custom_fields: customFields });
+      // First note on a brand-new card: the composer holds it in `newNote` until
+      // the card exists, then we attach it. Best-effort — a note failure shouldn't
+      // block card creation.
+      if (!contact && newNote.trim()) {
+        try { await addNote(saved.id, newNote.trim()); } catch { /* note is best-effort */ }
+      }
+      onSaved();
+    }
     catch (e) { setError(e instanceof Error ? e.message : 'Save failed'); }
     finally { setSaving(false); }
   }
@@ -358,57 +369,94 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
             <label htmlFor="is_active" style={{ fontSize: 14, color: D.textSec, cursor: 'pointer' }}>Active</label>
           </div>
 
-          {/* Notes */}
+          {/* Activity — log outreach / meetings against this card */}
           {contact && (
-            <div style={{ borderTop: `1px solid ${D.border}`, paddingTop: 16 }}>
+            <div style={{ borderTop: `1px solid ${D.border}`, paddingTop: 16, marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{
                 fontSize: 10, fontWeight: 700, color: D.textMut,
-                letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12,
+                letterSpacing: '0.1em', textTransform: 'uppercase',
               }}>
-                Notes
+                Activity
               </div>
-              <div style={{ maxHeight: 200, overflowY: 'auto', marginBottom: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {notes.length === 0 && (
-                  <p style={{ fontSize: 12, color: D.textMut, fontStyle: 'italic', margin: 0 }}>No notes yet.</p>
-                )}
-                {notes.map(n => (
-                  <div key={n.id} style={{
-                    background: D.noteBg, borderRadius: 8, padding: '8px 12px',
-                    border: `1px solid ${D.border}`,
-                  }}>
-                    <p style={{ margin: 0, fontSize: 13, color: D.text }}>{n.body}</p>
-                    <p style={{ margin: '4px 0 0', fontSize: 11, color: D.textMut }}>
-                      {new Date(n.created_at).toLocaleString()}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <textarea
-                  value={newNote}
-                  onChange={e => setNewNote(e.target.value)}
-                  placeholder="Add a note…"
-                  rows={2}
-                  style={{
-                    flex: 1, ...inputStyle, resize: 'none',
-                    padding: '8px 12px', fontSize: 13,
-                  }}
-                />
-                <button
-                  onClick={submitNote}
-                  disabled={!newNote.trim()}
-                  style={{
-                    padding: '0 16px', background: D.blue, color: '#fff',
-                    border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600,
-                    cursor: newNote.trim() ? 'pointer' : 'not-allowed',
-                    opacity: newNote.trim() ? 1 : 0.4,
-                  }}
-                >
-                  Add
-                </button>
-              </div>
+              <button
+                onClick={() => setLogOpen(true)}
+                style={{
+                  padding: '6px 12px', background: 'transparent', color: D.blue,
+                  border: `1px solid ${D.blue}`, borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                }}
+              >
+                + Log outreach / meeting
+              </button>
             </div>
           )}
+
+          {/* Notes */}
+          <div style={{ borderTop: `1px solid ${D.border}`, paddingTop: 16 }}>
+            <div style={{
+              fontSize: 10, fontWeight: 700, color: D.textMut,
+              letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12,
+            }}>
+              Notes
+            </div>
+
+            {contact ? (
+              <>
+                <div style={{ maxHeight: 200, overflowY: 'auto', marginBottom: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {notes.length === 0 && (
+                    <p style={{ fontSize: 12, color: D.textMut, fontStyle: 'italic', margin: 0 }}>No notes yet.</p>
+                  )}
+                  {notes.map(n => (
+                    <div key={n.id} style={{
+                      background: D.noteBg, borderRadius: 8, padding: '8px 12px',
+                      border: `1px solid ${D.border}`,
+                    }}>
+                      <p style={{ margin: 0, fontSize: 13, color: D.text }}>{n.body}</p>
+                      <p style={{ margin: '4px 0 0', fontSize: 11, color: D.textMut }}>
+                        {new Date(n.created_at).toLocaleString()}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <textarea
+                    value={newNote}
+                    onChange={e => setNewNote(e.target.value)}
+                    placeholder="Add a note…"
+                    rows={2}
+                    style={{
+                      flex: 1, ...inputStyle, resize: 'none',
+                      padding: '8px 12px', fontSize: 13,
+                    }}
+                  />
+                  <button
+                    onClick={submitNote}
+                    disabled={!newNote.trim()}
+                    style={{
+                      padding: '0 16px', background: D.blue, color: '#fff',
+                      border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600,
+                      cursor: newNote.trim() ? 'pointer' : 'not-allowed',
+                      opacity: newNote.trim() ? 1 : 0.4,
+                    }}
+                  >
+                    Add
+                  </button>
+                </div>
+              </>
+            ) : (
+              // New card: no id yet, so hold the first note in state and persist it
+              // right after the card is created (see save()).
+              <textarea
+                value={newNote}
+                onChange={e => setNewNote(e.target.value)}
+                placeholder="Add a note — saved when you create the card…"
+                rows={3}
+                style={{
+                  width: '100%', ...inputStyle, resize: 'vertical',
+                  padding: '8px 12px', fontSize: 13,
+                }}
+              />
+            )}
+          </div>
         </div>
 
         {/* Footer */}
@@ -455,6 +503,14 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
           </div>
         </div>
       </aside>
+
+      {logOpen && contact && (
+        <QuickLogActivity
+          contactId={contact.id}
+          contactLabel={`${contact.first_name} ${contact.last_name ?? ''}`.trim()}
+          onClose={() => setLogOpen(false)}
+        />
+      )}
     </>
   );
 }
