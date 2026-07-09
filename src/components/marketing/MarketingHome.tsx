@@ -8,7 +8,6 @@ import { MarketingFooter } from "@/components/marketing/MarketingFooter";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import { MarketingHero } from "@/components/marketing/MarketingHero";
 import { MarketingProblems } from "@/components/marketing/MarketingProblems";
-import { MarketingServices } from "@/components/marketing/MarketingServices";
 import { MarketingStats } from "@/components/marketing/MarketingStats";
 import { MarketingWorks } from "@/components/marketing/MarketingWorks";
 
@@ -23,7 +22,6 @@ export function MarketingHome() {
         <MarketingStats />
         <MarketingProblems />
         <MarketingWorks />
-        <MarketingServices />
         <MarketingAssessmentCards onBookDeepDive={() => router.push("/deep-dive")} />
         <MarketingFaq />
         <MarketingFinalCta />
