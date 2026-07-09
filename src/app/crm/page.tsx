@@ -7,6 +7,8 @@ import { OneCardView } from '@/components/crm/OneCardView';
 import { KanbanView } from '@/components/crm/KanbanView';
 import { ListView } from '@/components/crm/ListView';
 import { SocialView } from '@/components/crm/SocialView';
+import { ReportsView } from '@/components/crm/ReportsView';
+import { QuickLogActivity } from '@/components/crm/QuickLogActivity';
 import { BookingsPanel } from '@/components/crm/BookingsPanel';
 import { pendingBookingOf, linkedinOf } from '@/lib/crm/types';
 import { ContactDrawer } from '@/components/crm/ContactDrawer';
@@ -172,7 +174,9 @@ function Spinner() {
 export default function CrmPage() {
   const [authed, setAuthed]           = useState(false);
   const [view, setView]               = useState<CrmView>('onecard');
+  const [search, setSearch]           = useState('');
   const [bookingsOpen, setBookingsOpen] = useState(false);
+  const [quickLogOpen, setQuickLogOpen] = useState(false);
   const [contacts, setContacts]       = useState<Contact[]>([]);
   const [stages, setStages]           = useState<Stage[]>([]);
   const [team, setTeam]               = useState<TeamMember[]>([]);
@@ -249,6 +253,23 @@ export default function CrmPage() {
     return c.is_active || Boolean(pendingBookingOf(c)) || li.status === 'booked';
   });
 
+  // Free-text search across the card views (One Card / Kanban / List). Matches
+  // name / company / email as text; phone matches on digits only so formatting
+  // like "(555)" doesn't get in the way.
+  const q = search.trim().toLowerCase();
+  const qDigits = q.replace(/\D/g, '');
+  const visibleContacts = q
+    ? ocsContacts.filter(c => {
+        const hay = [c.first_name, c.last_name, c.company, c.email]
+          .filter(Boolean).join(' ').toLowerCase();
+        if (hay.includes(q)) return true;
+        if (qDigits && (c.phone ?? '').replace(/\D/g, '').includes(qDigits)) return true;
+        return false;
+      })
+    : ocsContacts;
+
+  const isCardView = view === 'onecard' || view === 'kanban' || view === 'list';
+
   return (
     <>
       <CrmShell
@@ -256,15 +277,18 @@ export default function CrmPage() {
         onNewCard={() => { setDrawerContact(null); setDrawerOpen(true); }}
         bookingsCount={contacts.filter(c => pendingBookingOf(c)).length}
         onToggleBookings={() => setBookingsOpen(o => !o)}
+        onLogActivity={() => setQuickLogOpen(true)}
+        search={search} onSearchChange={setSearch} showSearch={isCardView}
       />
       {bookingsOpen && (
         <BookingsPanel contacts={contacts} onClose={() => setBookingsOpen(false)} onRefresh={refresh} />
       )}
       <main style={{ paddingTop: 88 }}>
-        {view === 'onecard' && <OneCardView contacts={ocsContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onRefresh={refresh} />}
-        {view === 'kanban'  && <KanbanView  contacts={ocsContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onRefresh={refresh} />}
-        {view === 'list'    && <ListView    contacts={ocsContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} />}
+        {view === 'onecard' && <OneCardView contacts={visibleContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onRefresh={refresh} />}
+        {view === 'kanban'  && <KanbanView  contacts={visibleContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onRefresh={refresh} />}
+        {view === 'list'    && <ListView    contacts={visibleContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} />}
         {view === 'social'  && <SocialView contacts={contacts} onRefresh={refresh} />}
+        {view === 'reports' && <ReportsView />}
       </main>
       <ContactDrawer
         open={drawerOpen} contact={drawerContact} stages={stages}
@@ -272,6 +296,9 @@ export default function CrmPage() {
         onClose={() => { setDrawerOpen(false); setDrawerContact(null); }}
         onSaved={async () => { await refresh(); setDrawerOpen(false); setDrawerContact(null); }}
       />
+      {quickLogOpen && (
+        <QuickLogActivity onClose={() => setQuickLogOpen(false)} onLogged={refresh} />
+      )}
     </>
   );
 }

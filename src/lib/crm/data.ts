@@ -1,5 +1,8 @@
 import { getCrmClient } from './client';
-import type { Contact, Note, Stage, TeamMember, Sequence, VoiceAgent } from './types';
+import type {
+  Contact, Note, Stage, TeamMember, Sequence, VoiceAgent,
+  Activity, ActivityKind, ActivityPlatform, MeetingOutcome,
+} from './types';
 import { pendingBookingOf } from './types';
 
 // Await Supabase client initialization before making authenticated queries.
@@ -33,6 +36,43 @@ export async function upsertContact(contact: Partial<Contact> & { id?: string })
 export async function deleteContact(id: string): Promise<void> {
   const { error } = await (await sb()).from('crm_contacts').delete().eq('id', id);
   if (error) throw error;
+}
+
+// ── Activities (outreach + meetings) ────────────────────────────────────────────
+export async function logActivity(a: {
+  kind: ActivityKind;
+  platform: ActivityPlatform;
+  contact_id?: string | null;
+  direction?: 'outbound' | 'inbound';
+  outcome?: MeetingOutcome | null;
+  occurred_at?: string;
+  body?: string | null;
+}): Promise<Activity> {
+  const { data, error } = await (await sb())
+    .from('crm_activities')
+    .insert({
+      kind: a.kind,
+      platform: a.platform,
+      contact_id: a.contact_id ?? null,
+      direction: a.direction ?? 'outbound',
+      outcome: a.outcome ?? null,
+      occurred_at: a.occurred_at ?? new Date().toISOString(),
+      body: a.body ?? null,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return data as Activity;
+}
+
+export async function fetchActivitiesForContact(contactId: string): Promise<Activity[]> {
+  const { data, error } = await (await sb())
+    .from('crm_activities')
+    .select('*')
+    .eq('contact_id', contactId)
+    .order('occurred_at', { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as Activity[];
 }
 
 export async function addNote(contactId: string, body: string): Promise<Note> {

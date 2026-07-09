@@ -69,7 +69,57 @@ export interface Contact {
   notes?: Note[];
 }
 
-export type CrmView = 'onecard' | 'kanban' | 'list' | 'social';
+export type CrmView = 'onecard' | 'kanban' | 'list' | 'social' | 'reports';
+
+// ── Activity tracking (outreach + meetings) — feeds the Reports dashboard ───────
+export type ActivityKind = 'outreach' | 'meeting';
+
+export type ActivityPlatform =
+  | 'linkedin' | 'facebook' | 'instagram' | 'x'
+  | 'phone' | 'text' | 'email' | 'referral' | 'in_person' | 'other';
+
+export type MeetingOutcome =
+  | 'booked' | 'held' | 'no_show' | 'rescheduled' | 'won' | 'lost' | 'follow_up';
+
+export interface Activity {
+  id: string;
+  contact_id?: string | null;   // nullable — pre-card outreach isn't tied to a card
+  kind: ActivityKind;
+  platform: ActivityPlatform;
+  direction: 'outbound' | 'inbound';
+  outcome?: MeetingOutcome | null;
+  occurred_at: string;
+  body?: string | null;
+  author_id?: string | null;
+  created_at: string;
+}
+
+export const ACTIVITY_PLATFORMS: { id: ActivityPlatform; label: string }[] = [
+  { id: 'linkedin',  label: 'LinkedIn' },
+  { id: 'facebook',  label: 'Facebook' },
+  { id: 'instagram', label: 'Instagram' },
+  { id: 'x',         label: 'X / Twitter' },
+  { id: 'phone',     label: 'Phone Call' },
+  { id: 'text',      label: 'Text / SMS' },
+  { id: 'email',     label: 'Email' },
+  { id: 'referral',  label: 'Referral' },
+  { id: 'in_person', label: 'In Person' },
+  { id: 'other',     label: 'Other' },
+];
+
+export const MEETING_OUTCOMES: { id: MeetingOutcome; label: string }[] = [
+  { id: 'booked',      label: 'Booked' },
+  { id: 'held',        label: 'Held' },
+  { id: 'no_show',     label: 'No-show' },
+  { id: 'rescheduled', label: 'Rescheduled' },
+  { id: 'won',         label: 'Won' },
+  { id: 'lost',        label: 'Lost' },
+  { id: 'follow_up',   label: 'Follow-up' },
+];
+
+export function platformLabel(p: string): string {
+  return ACTIVITY_PLATFORMS.find(x => x.id === p)?.label ?? p;
+}
 
 /** A Cal.com booking awaiting approve/ignore in the Bookings panel. */
 export interface PendingBooking {
