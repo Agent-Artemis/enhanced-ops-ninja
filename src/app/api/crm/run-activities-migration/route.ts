@@ -56,8 +56,14 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const conn = process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL;
-  if (!conn) return NextResponse.json({ error: "No POSTGRES_URL at runtime" }, { status: 500 });
+  const raw = process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL;
+  if (!raw) return NextResponse.json({ error: "No POSTGRES_URL at runtime" }, { status: 500 });
+
+  // Supabase presents a cert chain Node doesn't trust by default; for this
+  // short-lived one-shot migration we accept it. Strip any sslmode from the URL
+  // so our ssl config (below) is the single source of truth.
+  const conn = raw.replace(/([?&])sslmode=[^&]*/i, "$1").replace(/[?&]$/, "");
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
   const client = new Client({ connectionString: conn, ssl: { rejectUnauthorized: false } });
   try {
