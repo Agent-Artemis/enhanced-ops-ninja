@@ -30,7 +30,7 @@ const METRIC_COLS = METRICS.map(m => m.col) as MetricCol[];
 // Week starts MONDAY (ISO week). Flip this to 0 to make weeks start Sunday.
 const WEEK_START_DOW = 1;
 
-type DayRow = { activity_date: string } & Record<MetricCol, number>;
+type DayRow = { activity_date: string; linkedin_auto?: boolean } & Record<MetricCol, number>;
 type RowMap = Record<string, DayRow>;
 type Grouping = 'day' | 'week' | 'month';
 
@@ -71,12 +71,6 @@ function zeroRow(date: string): DayRow {
   const r = { activity_date: date } as DayRow;
   for (const c of METRIC_COLS) r[c] = 0;
   return r;
-}
-
-function rowTotal(r: DayRow): number {
-  let s = 0;
-  for (const c of METRIC_COLS) s += r[c];
-  return s;
 }
 
 // ── Range presets ────────────────────────────────────────────────────────────
@@ -131,6 +125,9 @@ export function DailyActivityLog() {
   const [grouping, setGrouping] = useState<Grouping>('day');
 
   const [rows, setRows] = useState<RowMap>({});
+  // Auto-derived LinkedIn send counts per LOCAL day (from crm_contacts sent stamps).
+  const [autoCounts, setAutoCounts] = useState<Record<string, number>>({});
+  const autoCountsRef = useRef<Record<string, number>>({}); // latest autoCounts for async save
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
 
@@ -143,6 +140,7 @@ export function DailyActivityLog() {
   const pending = useRef<Set<string>>(new Set());
 
   useEffect(() => { rowsRef.current = rows; }, [rows]);
+  useEffect(() => { autoCountsRef.current = autoCounts; }, [autoCounts]);
 
   const todayISO = localDateISO(new Date());
 
@@ -162,10 +160,36 @@ export function DailyActivityLog() {
         const date = String(raw.activity_date);
         const r = zeroRow(date);
         for (const c of METRIC_COLS) r[c] = Number(raw[c] ?? 0);
+        // Carry the auto/override flag through; default true (auto) when absent.
+        r.linkedin_auto = raw.linkedin_auto === false ? false : true;
         map[date] = r;
       }
       savedRef.current = JSON.parse(JSON.stringify(map));
       setRows(map);
+
+      // ── Auto-fill source: count real LinkedIn sends per LOCAL day ────────────
+      // Every sent lead stamps msg{1,2,3}_sent_at in custom_fields->linkedin.
+      // Skips use _skipped_at and must NOT count.
+      const { data: contacts } = await getCrmClient()
+        .from('crm_contacts')
+        .select('custom_fields')
+        .not('custom_fields->linkedin', 'is', null);
+      const counts: Record<string, number> = {};
+      for (const c of (contacts ?? []) as Record<string, unknown>[]) {
+        const cf = c.custom_fields as Record<string, unknown> | null | undefined;
+        const li = cf?.linkedin as Record<string, unknown> | null | undefined;
+        if (!li || typeof li !== 'object') continue; // guard: linkedin object may be missing
+        for (const stamp of ['msg1_sent_at', 'msg2_sent_at', 'msg3_sent_at'] as const) {
+          const ts = li[stamp];
+          if (!ts) continue;
+          const d = new Date(String(ts));
+          if (Number.isNaN(d.getTime())) continue;
+          const localDate = localDateISO(d);
+          counts[localDate] = (counts[localDate] ?? 0) + 1;
+        }
+      }
+      autoCountsRef.current = counts;
+      setAutoCounts(counts);
     } catch (e) {
       setLoadError(e instanceof Error ? e.message : 'Failed to load daily activity');
     } finally {
@@ -190,6 +214,10 @@ export function DailyActivityLog() {
     setSavingDates(s => new Set(s).add(date));
 
     const row = rowsRef.current[date] ?? zeroRow(date);
+    // LinkedIn: when auto, snapshot the real send count so the stored column
+    // stays in sync; when manually overridden, persist Jeff's typed value.
+    const isAuto = row.linkedin_auto !== false;
+    const linkedinValue = isAuto ? (autoCountsRef.current[date] ?? 0) : row.linkedin;
     const payload = {
       activity_date: date,
       phone_calls: row.phone_calls,
@@ -197,7 +225,8 @@ export function DailyActivityLog() {
       appts_made: row.appts_made,
       appts_kept: row.appts_kept,
       reschedules: row.reschedules,
-      linkedin: row.linkedin,
+      linkedin: linkedinValue,
+      linkedin_auto: isAuto,
       instagram: row.instagram,
       facebook: row.facebook,
       tiktok: row.tiktok,
@@ -228,19 +257,50 @@ export function DailyActivityLog() {
     const n = raw === '' ? 0 : Math.max(0, Math.floor(Number(raw)) || 0);
     setRows(r => {
       const base = r[date] ?? zeroRow(date);
-      return { ...r, [date]: { ...base, [col]: n } };
+      const next: DayRow = { ...base, [col]: n };
+      // Typing in the LinkedIn cell is a manual override — pin it off auto.
+      if (col === 'linkedin') next.linkedin_auto = false;
+      return { ...r, [date]: next };
     });
   }
+
+  // ── LinkedIn auto/override resolution ───────────────────────────────────────
+  /** Displayed LinkedIn value: auto rows show real sends, manual rows show stored. */
+  const resolvedLinkedIn = useCallback(
+    (dateISO: string, row: DayRow): number =>
+      row.linkedin_auto !== false ? (autoCounts[dateISO] ?? 0) : row.linkedin,
+    [autoCounts],
+  );
+  /** Row total using the resolved LinkedIn value (not the stored column). */
+  const resolvedRowTotal = useCallback(
+    (dateISO: string, row: DayRow): number => {
+      let s = 0;
+      for (const c of METRIC_COLS) s += c === 'linkedin' ? resolvedLinkedIn(dateISO, row) : row[c];
+      return s;
+    },
+    [resolvedLinkedIn],
+  );
+  /** Revert a manually-overridden LinkedIn cell back to the live auto count. */
+  const revertToAuto = useCallback((date: string) => {
+    setRows(r => {
+      const base = r[date] ?? zeroRow(date);
+      const next: DayRow = { ...base, linkedin_auto: true, linkedin: autoCountsRef.current[date] ?? 0 };
+      const updated = { ...r, [date]: next };
+      rowsRef.current = updated; // keep ref fresh for the immediate saveDay
+      return updated;
+    });
+    saveDay(date);
+  }, [saveDay]);
 
   // ── Derived: per-column range totals + grand total (over fetched rows) ──────
   const rangeSums = useMemo(() => {
     const sums = Object.fromEntries(METRIC_COLS.map(c => [c, 0])) as Record<MetricCol, number>;
     for (const d in rows) {
       if (d < from || d > to) continue;
-      for (const c of METRIC_COLS) sums[c] += rows[d][c];
+      for (const c of METRIC_COLS) sums[c] += c === 'linkedin' ? resolvedLinkedIn(d, rows[d]) : rows[d][c];
     }
     return sums;
-  }, [rows, from, to]);
+  }, [rows, from, to, resolvedLinkedIn]);
   const grandTotal = useMemo(() => METRIC_COLS.reduce((s, c) => s + rangeSums[c], 0), [rangeSums]);
 
   // ── Chips: This Week / This Month (period-to-date) / Range Total ────────────
@@ -250,12 +310,12 @@ export function DailyActivityLog() {
     const monthStart = localDateISO(new Date(now.getFullYear(), now.getMonth(), 1));
     let week = 0, month = 0;
     for (const d in rows) {
-      const t = rowTotal(rows[d]);
+      const t = resolvedRowTotal(d, rows[d]);
       if (d >= weekStart && d <= todayISO) week += t;
       if (d >= monthStart && d <= todayISO) month += t;
     }
     return { week, month, range: grandTotal };
-  }, [rows, grandTotal, todayISO]);
+  }, [rows, grandTotal, todayISO, resolvedRowTotal]);
 
   // ── Day rows (editable) ─────────────────────────────────────────────────────
   const dayList = useMemo(() => {
@@ -283,10 +343,10 @@ export function DailyActivityLog() {
       }
       let g = groups.get(key);
       if (!g) { g = { key, label, sums: Object.fromEntries(METRIC_COLS.map(c => [c, 0])) as Record<MetricCol, number> }; groups.set(key, g); }
-      for (const c of METRIC_COLS) g.sums[c] += rows[d][c];
+      for (const c of METRIC_COLS) g.sums[c] += c === 'linkedin' ? resolvedLinkedIn(d, rows[d]) : rows[d][c];
     }
     return [...groups.values()].sort((a, b) => (a.key < b.key ? 1 : -1)); // most recent first
-  }, [rows, grouping, from, to]);
+  }, [rows, grouping, from, to, resolvedLinkedIn]);
 
   // ── Render ──────────────────────────────────────────────────────────────────
   const btn = (active: boolean): React.CSSProperties => ({
@@ -368,18 +428,48 @@ export function DailyActivityLog() {
                       {saving && <span style={{ color: D.textMut, fontSize: 10, marginLeft: 6 }}>saving…</span>}
                       {rowErrors[date] && <span style={{ color: D.red, fontSize: 10, marginLeft: 6 }}>save failed</span>}
                     </td>
-                    {METRIC_COLS.map(col => (
-                      <td key={col} style={td}>
-                        <input
-                          inputMode="numeric" min={0}
-                          value={row[col] === 0 ? '' : row[col]}
-                          onChange={e => editCell(date, col, e.target.value)}
-                          onBlur={() => saveDay(date)}
-                          style={cellInput}
-                        />
-                      </td>
-                    ))}
-                    <td style={{ ...td, fontWeight: 700, color: D.text }}>{rowTotal(row)}</td>
+                    {METRIC_COLS.map(col => {
+                      if (col === 'linkedin') {
+                        const isAuto = row.linkedin_auto !== false;
+                        const liVal = resolvedLinkedIn(date, row);
+                        return (
+                          <td key={col} style={td}>
+                            <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                              <input
+                                inputMode="numeric" min={0}
+                                value={liVal === 0 ? '' : liVal}
+                                onChange={e => editCell(date, 'linkedin', e.target.value)}
+                                onBlur={() => saveDay(date)}
+                                title={isAuto ? 'Auto-filled from real LinkedIn sends — type to override' : 'Manual override'}
+                                style={isAuto ? { ...cellInput, borderColor: D.blue, background: 'rgba(26,107,249,0.12)' } : cellInput}
+                              />
+                              {isAuto ? (
+                                <span style={{ color: D.blue, fontSize: 9, fontWeight: 700, letterSpacing: '0.03em' }}>⚡ auto</span>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => revertToAuto(date)}
+                                  title="Revert to auto-filled send count"
+                                  style={{ background: 'transparent', border: 'none', color: D.textMut, fontSize: 9, fontWeight: 700, cursor: 'pointer', padding: 0 }}
+                                >↻ auto</button>
+                              )}
+                            </div>
+                          </td>
+                        );
+                      }
+                      return (
+                        <td key={col} style={td}>
+                          <input
+                            inputMode="numeric" min={0}
+                            value={row[col] === 0 ? '' : row[col]}
+                            onChange={e => editCell(date, col, e.target.value)}
+                            onBlur={() => saveDay(date)}
+                            style={cellInput}
+                          />
+                        </td>
+                      );
+                    })}
+                    <td style={{ ...td, fontWeight: 700, color: D.text }}>{resolvedRowTotal(date, row)}</td>
                   </tr>
                 );
               })}
