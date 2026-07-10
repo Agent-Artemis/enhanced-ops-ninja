@@ -120,6 +120,17 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
   const [alphaOpen, setAlphaOpen]     = useState(false);
   const [focusLetter, setFocusLetter] = useState<string | null>(null);
 
+  // Which stacks are fanned open (keyed by stack id). Clicking a primary's +N
+  // badge toggles its stack between the offset-peek look and a readable row.
+  const [expandedStacks, setExpandedStacks] = useState<Set<string>>(new Set());
+  function toggleStack(stackId: string) {
+    setExpandedStacks(prev => {
+      const next = new Set(prev);
+      if (next.has(stackId)) next.delete(stackId); else next.add(stackId);
+      return next;
+    });
+  }
+
   // Drag state
   const [dragCardId, setDragCardId]   = useState<string | null>(null);
   const [drag1_31, setDrag1_31]       = useState(false);
@@ -284,6 +295,12 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
     const ok = window.confirm(`Separate ${cardName(member)} from the stack?`);
     e.preventDefault();
     if (ok) unstackCard(member.id).then(onRefresh);
+  }
+
+  // Explicit "Separate" button on an expanded member — acts immediately, no confirm.
+  async function separateMember(member: Contact) {
+    await unstackCard(member.id);
+    await onRefresh();
   }
 
   // ── Zone drag handlers ────────────────────────────────────────────────────────
@@ -651,6 +668,89 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
                   .map(id => contacts.find(x => x.id === id))
                   .filter((x): x is Contact => Boolean(x));
                 const hasStack = members.length > 0;
+                const stackId  = stackOf(c)?.id ?? null;
+                const expanded = hasStack && stackId !== null && expandedStacks.has(stackId);
+
+                // +N badge — a real button that fans the stack open / collapses it.
+                const badge = hasStack && stackId && (
+                  <button
+                    onClick={e => { e.stopPropagation(); toggleStack(stackId); }}
+                    onMouseDown={e => e.stopPropagation()}
+                    draggable={false}
+                    title={expanded ? 'Collapse stack' : `Expand stack (${members.length})`}
+                    style={{
+                      position: 'absolute', top: -7, right: -7, zIndex: 3,
+                      background: T.blue, color: '#fff',
+                      fontSize: 11, fontWeight: 800,
+                      minWidth: 22, height: 22, borderRadius: 11,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      padding: '0 6px', border: 'none',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.5)',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {expanded ? '×' : `+${members.length}`}
+                  </button>
+                );
+
+                // The primary card — drop target for stacking, draggable to move the stack.
+                const primaryBlock = (
+                  <div
+                    style={{ position: 'relative', zIndex: 1, flexShrink: 0, width: '100%', maxWidth: expanded ? 260 : undefined }}
+                    onDragOver={onCardDragOverCard}
+                    onDrop={e => onCardDropOnCard(e, c)}
+                  >
+                    <ContactCard
+                      contact={c} stages={stages}
+                      onDoubleClick={() => onOpen(c)}
+                      draggable
+                      onDragStart={e => onCardDragStart(e, c)}
+                      onDragEnd={onCardDragEnd}
+                      isDragging={dragCardId === c.id}
+                      justDropped={justDropped === c.id}
+                      actions={quickActions(c)}
+                    />
+                    {badge}
+                  </div>
+                );
+
+                if (expanded) {
+                  // Fanned open: primary | member | member … in a readable, scrollable row.
+                  return (
+                    <CardSlot key={c.id} isDragging={dragCardId === c.id}>
+                      <div style={{
+                        display: 'flex', gap: 12, alignItems: 'flex-start',
+                        overflowX: 'auto', paddingBottom: 4,
+                        border: `1px dashed ${T.border}`, borderRadius: 8,
+                        padding: 10, background: 'rgba(26,107,249,0.04)',
+                      }}>
+                        {primaryBlock}
+                        {members.map(m => (
+                          <div key={m.id} style={{ position: 'relative', flexShrink: 0, width: 240 }}>
+                            <ContactCard contact={m} stages={stages} onDoubleClick={() => onOpen(m)} />
+                            <button
+                              onClick={e => { e.stopPropagation(); separateMember(m); }}
+                              title="Separate from stack"
+                              style={{
+                                position: 'absolute', top: -7, right: -7, zIndex: 3,
+                                background: T.red, color: '#fff',
+                                fontSize: 10, fontWeight: 800,
+                                height: 22, borderRadius: 11, padding: '0 9px',
+                                border: 'none', cursor: 'pointer',
+                                boxShadow: '0 2px 6px rgba(0,0,0,0.5)',
+                                display: 'flex', alignItems: 'center', gap: 3,
+                              }}
+                            >
+                              ⤴ Separate
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </CardSlot>
+                  );
+                }
+
+                // Collapsed: offset-peek look behind the primary, with the +N badge.
                 return (
                   <CardSlot key={c.id} isDragging={dragCardId === c.id}>
                     <div style={{ position: 'relative' }}>
@@ -674,37 +774,7 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
                           <ContactCard contact={m} stages={stages} />
                         </div>
                       ))}
-                      {/* Primary on top — also the drop target for stacking */}
-                      <div
-                        style={{ position: 'relative', zIndex: 1 }}
-                        onDragOver={onCardDragOverCard}
-                        onDrop={e => onCardDropOnCard(e, c)}
-                      >
-                        <ContactCard
-                          contact={c} stages={stages}
-                          onDoubleClick={() => onOpen(c)}
-                          draggable
-                          onDragStart={e => onCardDragStart(e, c)}
-                          onDragEnd={onCardDragEnd}
-                          isDragging={dragCardId === c.id}
-                          justDropped={justDropped === c.id}
-                          actions={quickActions(c)}
-                        />
-                        {hasStack && (
-                          <span style={{
-                            position: 'absolute', top: -7, right: -7, zIndex: 2,
-                            background: T.blue, color: '#fff',
-                            fontSize: 11, fontWeight: 800,
-                            minWidth: 22, height: 22, borderRadius: 11,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            padding: '0 6px',
-                            boxShadow: '0 2px 6px rgba(0,0,0,0.5)',
-                            pointerEvents: 'none',
-                          }}>
-                            +{members.length}
-                          </span>
-                        )}
-                      </div>
+                      {primaryBlock}
                     </div>
                   </CardSlot>
                 );
