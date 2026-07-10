@@ -85,6 +85,22 @@ export async function addNote(contactId: string, body: string): Promise<Note> {
   return data as Note;
 }
 
+export async function deleteNote(noteId: string): Promise<void> {
+  const { error } = await (await sb()).from('crm_notes').delete().eq('id', noteId);
+  if (error) throw error;
+}
+
+export async function updateNote(noteId: string, body: string): Promise<Note> {
+  const { data, error } = await (await sb())
+    .from('crm_notes')
+    .update({ body })
+    .eq('id', noteId)
+    .select()
+    .single();
+  if (error) throw error;
+  return data as Note;
+}
+
 export async function fileUnderDate(contactId: string, date: string): Promise<void> {
   const { error } = await (await sb())
     .from('crm_contacts')
