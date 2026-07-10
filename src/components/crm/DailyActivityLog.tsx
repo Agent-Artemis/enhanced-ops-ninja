@@ -15,7 +15,8 @@ const METRICS = [
   { col: 'phone_calls', label: 'Phone Calls', abbr: 'Calls' },
   { col: 'texts', label: 'Text', abbr: 'Text' },
   { col: 'appts_made', label: 'APPTS Made', abbr: 'Made' },
-  { col: 'appts_kept', label: 'APPTS Kept', abbr: 'Kept' },
+  { col: 'appts_kept_initial', label: 'Initial', abbr: 'Initial' },
+  { col: 'appts_kept_closing', label: 'Closing', abbr: 'Closing' },
   { col: 'closed', label: 'Closed', abbr: 'Closed' },
   { col: 'linkedin', label: 'LinkedIn', abbr: 'LinkedIn' },
   { col: 'instagram', label: 'Instagram', abbr: 'Insta' },
@@ -26,6 +27,9 @@ const METRICS = [
 
 type MetricCol = (typeof METRICS)[number]['col'];
 const METRIC_COLS = METRICS.map(m => m.col) as MetricCol[];
+
+// The two "APPTS Kept" sub-columns, grouped under a bracketed KEPT header.
+const KEPT_COLS: readonly MetricCol[] = ['appts_kept_initial', 'appts_kept_closing'];
 
 // Week starts MONDAY (ISO week). Flip this to 0 to make weeks start Sunday.
 const WEEK_START_DOW = 1;
@@ -256,7 +260,8 @@ export function DailyActivityLog() {
       phone_calls: row.phone_calls,
       texts: row.texts,
       appts_made: row.appts_made,
-      appts_kept: row.appts_kept,
+      appts_kept_initial: row.appts_kept_initial,
+      appts_kept_closing: row.appts_kept_closing,
       closed: row.closed,
       linkedin: linkedinValue,
       linkedin_auto: isAuto,
@@ -367,6 +372,8 @@ export function DailyActivityLog() {
     return sums;
   }, [rows, from, to, resolvedLinkedIn]);
   const grandTotal = useMemo(() => METRIC_COLS.reduce((s, c) => s + rangeSums[c], 0), [rangeSums]);
+  // Combined "KEPT" figure across the range = Initial + Closing kept appointments.
+  const keptRangeTotal = useMemo(() => KEPT_COLS.reduce((s, c) => s + rangeSums[c], 0), [rangeSums]);
   // Amount is money, NOT an activity count — its own dollar total over the range.
   const rangeAmount = useMemo(() => {
     let s = 0;
@@ -485,15 +492,41 @@ export function DailyActivityLog() {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ borderCollapse: 'collapse', width: '100%', minWidth: 720 }}>
             <thead>
+              {/* Top tier: single-label headers rowSpan both tiers; the KEPT group
+                  spans the two Kept sub-columns with a bracket rule + combined total. */}
               <tr>
-                <th style={{ ...th, textAlign: 'left', position: 'sticky', left: 0, background: D.card }}>Date</th>
-                {METRICS.map(m => (
-                  <Fragment key={m.col}>
-                    <th style={th} title={m.label}>{m.abbr}</th>
-                    {m.col === 'closed' && <th style={{ ...th, color: D.green }} title="Closed deal $ — auto-filled from signed MSAs">Amount</th>}
-                  </Fragment>
-                ))}
-                <th style={{ ...th, color: D.textSec }}>Day Total</th>
+                <th rowSpan={2} style={{ ...th, textAlign: 'left', position: 'sticky', left: 0, background: D.card }}>Date</th>
+                {METRICS.map(m => {
+                  // Render the bracketed KEPT group once, at the first Kept column…
+                  if (m.col === 'appts_kept_initial') {
+                    return (
+                      <th
+                        key="kept-group"
+                        colSpan={2}
+                        title="Appointments kept — Initial + Closing"
+                        style={{ ...th, textAlign: 'center', color: D.textSec, borderBottom: `2px solid ${D.textMut}`, paddingBottom: 4 }}
+                      >
+                        KEPT · {keptRangeTotal}
+                      </th>
+                    );
+                  }
+                  // …and skip the second Kept column here (covered by the colSpan).
+                  if (m.col === 'appts_kept_closing') return null;
+                  return (
+                    <Fragment key={m.col}>
+                      <th rowSpan={2} style={th} title={m.label}>{m.abbr}</th>
+                      {m.col === 'closed' && <th rowSpan={2} style={{ ...th, color: D.green }} title="Closed deal $ — auto-filled from signed MSAs">Amount</th>}
+                    </Fragment>
+                  );
+                })}
+                <th rowSpan={2} style={{ ...th, color: D.textSec }}>Day Total</th>
+              </tr>
+              {/* Bottom tier: only the two Kept sub-column labels sit under the bracket. */}
+              <tr>
+                {KEPT_COLS.map(c => {
+                  const m = METRICS.find(x => x.col === c)!;
+                  return <th key={c} style={th} title={`APPTS Kept — ${m.label}`}>{m.abbr}</th>;
+                })}
               </tr>
             </thead>
             <tbody>
