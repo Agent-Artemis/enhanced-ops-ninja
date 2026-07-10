@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from 'react';
 import type { Contact, LeadStatus } from '@/lib/crm/types';
 import { linkedinOf, pendingBookingOf } from '@/lib/crm/types';
-import { setLeadStatus, advanceLinkedIn, moveLinkedInToToday, setLeadStarred, deleteContact, addNote } from '@/lib/crm/data';
+import { setLeadStatus, advanceLinkedIn, skipLinkedIn, moveLinkedInToToday, setLeadStarred, deleteContact, addNote } from '@/lib/crm/data';
 
 const CONTENT_CALENDAR_URL =
   'https://docs.google.com/spreadsheets/d/17xf0GmuVqj1_7DEPAWnLyK6Uf-q4iSk57z2hOvwEVzM/edit';
@@ -102,14 +102,16 @@ interface LeadRowProps {
   busy: boolean;
   isToday: boolean;
   onMarkSent: (contact: Contact, step: 'msg1' | 'msg2' | 'msg3') => Promise<void>;
+  onSkip: (contact: Contact, step: 'msg1' | 'msg2' | 'msg3') => Promise<void>;
   onMoveToday: (contact: Contact) => Promise<void>;
   onStar: (contact: Contact, starred: boolean) => Promise<void>;
   onDelete: (contact: Contact) => Promise<void>;
 }
 
-function LeadRow({ contact, step, message, asset, busy, isToday, onMarkSent, onMoveToday, onStar, onDelete }: LeadRowProps) {
+function LeadRow({ contact, step, message, asset, busy, isToday, onMarkSent, onSkip, onMoveToday, onStar, onDelete }: LeadRowProps) {
   const [copied, setCopied] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
+  const [skipped, setSkipped] = useState(false);
   const [movedToday, setMovedToday] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
   const [noteText, setNoteText] = useState('');
@@ -138,6 +140,11 @@ function LeadRow({ contact, step, message, asset, busy, isToday, onMarkSent, onM
   async function markSent() {
     setConfirmed(true);
     await onMarkSent(contact, step);
+  }
+
+  async function skip() {
+    setSkipped(true);
+    await onSkip(contact, step);
   }
 
   async function moveToday() {
@@ -294,6 +301,24 @@ function LeadRow({ contact, step, message, asset, busy, isToday, onMarkSent, onM
                 </button>
 
                 <button
+                  onClick={skip}
+                  disabled={busy || confirmed || skipped}
+                  title="Move forward without recording it as sent"
+                  style={{
+                    padding: '6px 14px', fontSize: 13, fontWeight: 600,
+                    background: 'transparent',
+                    color: skipped ? '#f59e0b' : '#9ca3af',
+                    border: `1px solid ${skipped ? 'rgba(245,158,11,0.4)' : 'rgba(255,255,255,0.1)'}`,
+                    borderRadius: 6,
+                    cursor: busy || confirmed || skipped ? 'default' : 'pointer',
+                    opacity: busy ? 0.5 : 1,
+                    transition: 'all 0.2s', flexShrink: 0,
+                  }}
+                >
+                  {skipped ? '⤼ Skipped' : busy ? 'Saving…' : 'Skip'}
+                </button>
+
+                <button
                   onClick={() => setNoteOpen(o => !o)}
                   style={{
                     padding: '6px 14px', fontSize: 13, fontWeight: 600,
@@ -406,12 +431,13 @@ interface DateGroupProps {
   busy: string | null;
   isToday: boolean;
   onMarkSent: (contact: Contact, step: 'msg1' | 'msg2' | 'msg3') => Promise<void>;
+  onSkip: (contact: Contact, step: 'msg1' | 'msg2' | 'msg3') => Promise<void>;
   onMoveToday: (contact: Contact) => Promise<void>;
   onStar: (contact: Contact, starred: boolean) => Promise<void>;
   onDelete: (contact: Contact) => Promise<void>;
 }
 
-function DateGroup({ date, items, busy, isToday, onMarkSent, onMoveToday, onStar, onDelete }: DateGroupProps) {
+function DateGroup({ date, items, busy, isToday, onMarkSent, onSkip, onMoveToday, onStar, onDelete }: DateGroupProps) {
   const newItems      = items.filter(i => i.isNew);
   const followUpItems = items.filter(i => !i.isNew).sort((a, b) => {
     // msg2 before msg3
@@ -454,6 +480,7 @@ function DateGroup({ date, items, busy, isToday, onMarkSent, onMoveToday, onStar
               busy={busy === item.contact.id}
               isToday={isToday}
               onMarkSent={onMarkSent}
+              onSkip={onSkip}
               onMoveToday={onMoveToday}
               onStar={onStar}
               onDelete={onDelete}
@@ -478,6 +505,7 @@ function DateGroup({ date, items, busy, isToday, onMarkSent, onMoveToday, onStar
               busy={busy === item.contact.id}
               isToday={isToday}
               onMarkSent={onMarkSent}
+              onSkip={onSkip}
               onMoveToday={onMoveToday}
               onStar={onStar}
               onDelete={onDelete}
@@ -568,6 +596,11 @@ export function SocialView({ contacts, onRefresh }: Props) {
   async function handleMarkSent(contact: Contact, step: 'msg1' | 'msg2' | 'msg3') {
     setBusy(contact.id);
     try { await advanceLinkedIn(contact, step); onRefresh(); } finally { setBusy(null); }
+  }
+
+  async function handleSkip(contact: Contact, step: 'msg1' | 'msg2' | 'msg3') {
+    setBusy(contact.id);
+    try { await skipLinkedIn(contact, step); onRefresh(); } finally { setBusy(null); }
   }
 
   async function handleMoveToday(contact: Contact) {
@@ -677,6 +710,7 @@ export function SocialView({ contacts, onRefresh }: Props) {
             busy={busy}
             isToday
             onMarkSent={handleMarkSent}
+            onSkip={handleSkip}
             onMoveToday={handleMoveToday}
             onStar={handleStar}
             onDelete={handleDelete}
@@ -704,6 +738,7 @@ export function SocialView({ contacts, onRefresh }: Props) {
               busy={busy}
               isToday={false}
               onMarkSent={handleMarkSent}
+              onSkip={handleSkip}
               onMoveToday={handleMoveToday}
               onStar={handleStar}
               onDelete={handleDelete}
