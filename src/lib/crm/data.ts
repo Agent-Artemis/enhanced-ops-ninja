@@ -3,7 +3,7 @@ import type {
   Contact, Note, Stage, TeamMember, Sequence, VoiceAgent,
   Activity, ActivityKind, ActivityPlatform, MeetingOutcome,
 } from './types';
-import { pendingBookingOf } from './types';
+import { pendingBookingOf, stackOf, stackMemberIds } from './types';
 
 // Await Supabase client initialization before making authenticated queries.
 // The lazy client reads localStorage on init, but that init is async —
@@ -249,6 +249,132 @@ export async function sendTestBooking(): Promise<{ ok: boolean; error?: string }
     return { ok: true };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Network error' };
+  }
+}
+
+// ── Card stacking (custom_fields.stack) ──────────────────────────────────────
+// A stack co-locates several cards under one "primary": members inherit the
+// primary's next_action_date / is_active / bucket so they move together and the
+// list hides members (they render as offset peeks under the primary).
+
+/**
+ * File `memberIds` under the stack whose primary is `primaryId`.
+ * - Reuses the primary's existing stack id or mints a new one.
+ * - Each member gets custom_fields.stack = { id, role:'member', order } and is
+ *   co-located with the primary (next_action_date / is_active / bucket copied).
+ * - If a member was itself a primary of another stack, ALL of that stack's
+ *   members are re-parented into this stack (dragging a stack onto a card merges).
+ * - Read-modify-write preserves every other custom_fields key.
+ */
+export async function stackCards(primaryId: string, memberIds: string[]): Promise<void> {
+  const client = await sb();
+  const { data: all, error: fetchErr } = await client.from('crm_contacts').select('*');
+  if (fetchErr) throw fetchErr;
+  const contacts = (all ?? []) as Contact[];
+  const byId = new Map(contacts.map(c => [c.id, c]));
+
+  const primary = byId.get(primaryId);
+  if (!primary) return;
+
+  const existing = stackOf(primary);
+  const stackId = existing?.id ?? crypto.randomUUID();
+
+  // Next order = one past the current highest member order (or 1 for a new stack).
+  const currentMembers = stackMemberIds(primary, contacts).map(id => byId.get(id)!).filter(Boolean);
+  let nextOrder = currentMembers.reduce((m, c) => Math.max(m, stackOf(c)!.order), 0) + 1;
+
+  type Update = {
+    id: string;
+    custom_fields: Record<string, unknown>;
+    next_action_date?: string | null;
+    is_active?: boolean;
+    bucket?: Contact['bucket'];
+  };
+  const updates: Update[] = [];
+
+  // Establish the primary if it wasn't already a stack primary.
+  if (!existing) {
+    updates.push({
+      id: primary.id,
+      custom_fields: { ...(primary.custom_fields ?? {}), stack: { id: stackId, role: 'primary', order: 0 } },
+    });
+  }
+
+  // Expand each requested member; if it was a primary elsewhere, pull its members too.
+  const toAdd: string[] = [];
+  for (const mid of memberIds) {
+    if (mid === primaryId) continue;
+    const m = byId.get(mid);
+    if (!m) continue;
+    const ms = stackOf(m);
+    if (ms?.id === stackId) continue; // already in this stack
+    toAdd.push(mid);
+    if (ms?.role === 'primary') {
+      for (const sub of stackMemberIds(m, contacts)) {
+        if (sub !== primaryId && stackOf(byId.get(sub)!)?.id !== stackId) toAdd.push(sub);
+      }
+    }
+  }
+
+  for (const mid of [...new Set(toAdd)]) {
+    const m = byId.get(mid)!;
+    updates.push({
+      id: mid,
+      custom_fields: { ...(m.custom_fields ?? {}), stack: { id: stackId, role: 'member', order: nextOrder++ } },
+      next_action_date: primary.next_action_date ?? null,
+      is_active: primary.is_active,
+      bucket: primary.bucket,
+    });
+  }
+
+  for (const u of updates) {
+    const { id, ...fields } = u;
+    const { error } = await client.from('crm_contacts').update(fields).eq('id', id);
+    if (error) throw error;
+  }
+}
+
+/**
+ * Remove one card from its stack. The card keeps its current next_action_date
+ * (it stays where the stack was). If removing it leaves the primary with zero
+ * members, the primary's stack key is also removed (no lone 1-card stacks).
+ * Read-modify-write preserves every other custom_fields key.
+ */
+export async function unstackCard(cardId: string): Promise<void> {
+  const client = await sb();
+  const { data: all, error: fetchErr } = await client.from('crm_contacts').select('*');
+  if (fetchErr) throw fetchErr;
+  const contacts = (all ?? []) as Contact[];
+  const byId = new Map(contacts.map(c => [c.id, c]));
+
+  const card = byId.get(cardId);
+  if (!card) return;
+  const cs = stackOf(card);
+  if (!cs) return; // not in a stack — nothing to do
+
+  // Drop the stack key from this card.
+  const cf = { ...(card.custom_fields ?? {}) };
+  delete cf['stack'];
+  const { error: e1 } = await client.from('crm_contacts').update({ custom_fields: cf }).eq('id', cardId);
+  if (e1) throw e1;
+
+  // If the stack's primary now has no members left, dissolve it too.
+  const primary = contacts.find(c => {
+    const s = stackOf(c);
+    return s?.id === cs.id && s.role === 'primary';
+  });
+  if (!primary || primary.id === cardId) return;
+
+  const remaining = contacts.filter(c => {
+    if (c.id === cardId) return false;
+    const s = stackOf(c);
+    return s?.id === cs.id && s.role === 'member';
+  });
+  if (remaining.length === 0) {
+    const pcf = { ...(primary.custom_fields ?? {}) };
+    delete pcf['stack'];
+    const { error: e2 } = await client.from('crm_contacts').update({ custom_fields: pcf }).eq('id', primary.id);
+    if (e2) throw e2;
   }
 }
 
