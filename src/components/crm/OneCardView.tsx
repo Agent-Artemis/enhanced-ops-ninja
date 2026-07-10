@@ -2,9 +2,9 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import type { Contact, Stage } from '@/lib/crm/types';
-import { appointmentOf } from '@/lib/crm/types';
+import { appointmentOf, stackOf, stackMemberIds } from '@/lib/crm/types';
 import { ContactCard } from './ContactCard';
-import { fileUnderDate, pullToActive, sendToAlpha } from '@/lib/crm/data';
+import { fileUnderDate, pullToActive, sendToAlpha, stackCards, unstackCard } from '@/lib/crm/data';
 import { MONTH_NAMES, contactsForMonth } from '@/lib/crm/filing';
 
 interface Props {
@@ -156,10 +156,13 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
   const ALL_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
   function getPanelCards(): Contact[] {
-    if (panel === 'action-needed') return actionNeeded;
-    if (panel === 'alpha')         return alphaList;
-    if ('day' in panel)   return chronological(contactsForDay(contacts, panel.month, panel.year, panel.day));
-    if ('month' in panel) return chronological(contactsForMonth(contacts, panel.month, panel.year));
+    // Members of a stack are hidden from the list — they render as offset peeks
+    // under their primary. Only primaries and standalone cards appear.
+    const notMember = (c: Contact) => stackOf(c)?.role !== 'member';
+    if (panel === 'action-needed') return actionNeeded.filter(notMember);
+    if (panel === 'alpha')         return alphaList.filter(notMember);
+    if ('day' in panel)   return chronological(contactsForDay(contacts, panel.month, panel.year, panel.day)).filter(notMember);
+    if ('month' in panel) return chronological(contactsForMonth(contacts, panel.month, panel.year)).filter(notMember);
     return [];
   }
 
@@ -173,19 +176,27 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
 
   // ── Filing ────────────────────────────────────────────────────────────────────
   const fileTo = useCallback(async (cardId: string, zone: DropZone) => {
-    if (zone === 'action-needed')  await pullToActive(cardId); // active, no date
-    else if (zone === 'alpha')     await sendToAlpha(cardId);
-    else if (zone.startsWith('month:')) {
-      const [, m, yr] = zone.split(':');
-      await fileUnderDate(cardId, makeDate(m, Number(yr), 1));
-    } else if (zone.startsWith('day:')) {
-      const [, m, yr, d] = zone.split(':');
-      await fileUnderDate(cardId, makeDate(m, Number(yr), Number(d)));
+    const apply = async (id: string) => {
+      if (zone === 'action-needed')  await pullToActive(id); // active, no date
+      else if (zone === 'alpha')     await sendToAlpha(id);
+      else if (zone.startsWith('month:')) {
+        const [, m, yr] = zone.split(':');
+        await fileUnderDate(id, makeDate(m, Number(yr), 1));
+      } else if (zone.startsWith('day:')) {
+        const [, m, yr, d] = zone.split(':');
+        await fileUnderDate(id, makeDate(m, Number(yr), Number(d)));
+      }
+    };
+    await apply(cardId);
+    // Members follow their primary on every move: file each member to the same zone.
+    const card = contacts.find(c => c.id === cardId);
+    if (card && stackOf(card)?.role === 'primary') {
+      for (const mid of stackMemberIds(card, contacts)) await apply(mid);
     }
     setJustDropped(cardId);
     setTimeout(() => setJustDropped(null), 400);
     await onRefresh();
-  }, [onRefresh]);
+  }, [onRefresh, contacts]);
 
   // ── Card drag (physical feel) ─────────────────────────────────────────────────
   function onCardDragStart(e: React.DragEvent, contact: Contact) {
@@ -223,6 +234,56 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
   function onCardDragEnd() {
     setDragCardId(null);
     setDropZone(null);
+  }
+
+  // ── Stacking: drop a card ONTO another card ───────────────────────────────────
+  const cardName = (c: Contact) => `${c.first_name} ${c.last_name ?? ''}`.trim();
+
+  // The target card is the primary; if it's somehow a member, use its stack's primary.
+  function resolvePrimaryId(target: Contact): string {
+    const s = stackOf(target);
+    if (s?.role === 'member') {
+      const p = contacts.find(x => { const xs = stackOf(x); return xs?.id === s.id && xs.role === 'primary'; });
+      return p?.id ?? target.id;
+    }
+    return target.id;
+  }
+
+  function onCardDragOverCard(e: React.DragEvent) {
+    if (!e.dataTransfer.types.includes('application/crm-card')) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  }
+
+  async function onCardDropOnCard(e: React.DragEvent, target: Contact) {
+    const draggedId = e.dataTransfer.getData('application/crm-card');
+    if (!draggedId) return;
+    e.preventDefault();
+    e.stopPropagation(); // don't also trigger a zone drop underneath
+
+    const primaryId = resolvePrimaryId(target);
+    if (draggedId === primaryId) return; // can't stack a card onto itself
+
+    const dragged = contacts.find(c => c.id === draggedId);
+    const targetStack = stackOf(target);
+    const draggedStack = dragged ? stackOf(dragged) : null;
+    if (targetStack && draggedStack && targetStack.id === draggedStack.id) return; // already same stack
+
+    const draggedName = dragged ? cardName(dragged) : 'this card';
+    if (!window.confirm(`Stack ${draggedName} under ${cardName(target)}?`)) return;
+
+    setDragCardId(null);
+    setDropZone(null);
+    await stackCards(primaryId, [draggedId]);
+    await onRefresh();
+  }
+
+  // ── Un-stacking: grab an offset (member) peek → offer to separate ──────────────
+  function onMemberDragStart(e: React.DragEvent, member: Contact) {
+    // Grabbing the offset card asks to separate. Cancel the drag either way.
+    const ok = window.confirm(`Separate ${cardName(member)} from the stack?`);
+    e.preventDefault();
+    if (ok) unstackCard(member.id).then(onRefresh);
   }
 
   // ── Zone drag handlers ────────────────────────────────────────────────────────
@@ -585,20 +646,69 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
           const Wrapper = isAgenda ? CardStack : CardGrid;
           return (
             <Wrapper>
-              {panelCards.map(c => (
-                <CardSlot key={c.id} isDragging={dragCardId === c.id}>
-                  <ContactCard
-                    contact={c} stages={stages}
-                    onDoubleClick={() => onOpen(c)}
-                    draggable
-                    onDragStart={e => onCardDragStart(e, c)}
-                    onDragEnd={onCardDragEnd}
-                    isDragging={dragCardId === c.id}
-                    justDropped={justDropped === c.id}
-                    actions={quickActions(c)}
-                  />
-                </CardSlot>
-              ))}
+              {panelCards.map(c => {
+                const members = stackMemberIds(c, contacts)
+                  .map(id => contacts.find(x => x.id === id))
+                  .filter((x): x is Contact => Boolean(x));
+                const hasStack = members.length > 0;
+                return (
+                  <CardSlot key={c.id} isDragging={dragCardId === c.id}>
+                    <div style={{ position: 'relative' }}>
+                      {/* Member peeks — offset down-right behind the primary, each grabbable */}
+                      {members.map((m, i) => (
+                        <div
+                          key={m.id}
+                          draggable
+                          onDragStart={e => onMemberDragStart(e, m)}
+                          title={`${cardName(m)} — drag to separate`}
+                          style={{
+                            position: 'absolute', top: 0, left: 0, right: 0,
+                            transform: `translate(${(i + 1) * 10}px, ${(i + 1) * 10}px) scale(${1 - (i + 1) * 0.02})`,
+                            transformOrigin: 'top left',
+                            zIndex: -(i + 1),
+                            opacity: 0.85,
+                            cursor: 'grab',
+                            filter: 'brightness(0.97)',
+                          }}
+                        >
+                          <ContactCard contact={m} stages={stages} />
+                        </div>
+                      ))}
+                      {/* Primary on top — also the drop target for stacking */}
+                      <div
+                        style={{ position: 'relative', zIndex: 1 }}
+                        onDragOver={onCardDragOverCard}
+                        onDrop={e => onCardDropOnCard(e, c)}
+                      >
+                        <ContactCard
+                          contact={c} stages={stages}
+                          onDoubleClick={() => onOpen(c)}
+                          draggable
+                          onDragStart={e => onCardDragStart(e, c)}
+                          onDragEnd={onCardDragEnd}
+                          isDragging={dragCardId === c.id}
+                          justDropped={justDropped === c.id}
+                          actions={quickActions(c)}
+                        />
+                        {hasStack && (
+                          <span style={{
+                            position: 'absolute', top: -7, right: -7, zIndex: 2,
+                            background: T.blue, color: '#fff',
+                            fontSize: 11, fontWeight: 800,
+                            minWidth: 22, height: 22, borderRadius: 11,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            padding: '0 6px',
+                            boxShadow: '0 2px 6px rgba(0,0,0,0.5)',
+                            pointerEvents: 'none',
+                          }}>
+                            +{members.length}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </CardSlot>
+                );
+              })}
             </Wrapper>
           );
         })()}

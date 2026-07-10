@@ -170,6 +170,41 @@ export function linkedinOf(c: Contact): LinkedInLead | null {
     ? (li as LinkedInLead) : null;
 }
 
+/** Card-stacking membership (custom_fields.stack). Standalone cards have no `stack` key. */
+export interface CardStackRef {
+  id: string;                     // uuid shared by every card in the group
+  role: 'primary' | 'member';
+  order: number;                  // 0 = primary, 1..n = members
+}
+
+export function stackOf(c: Contact): CardStackRef | null {
+  const s = c.custom_fields?.['stack'];
+  if (s && typeof s === 'object' && !Array.isArray(s)) {
+    const r = s as Partial<CardStackRef>;
+    if (typeof r.id === 'string' && (r.role === 'primary' || r.role === 'member') && typeof r.order === 'number') {
+      return r as CardStackRef;
+    }
+  }
+  return null;
+}
+
+/**
+ * Member card ids of the stack whose primary is `primary`, sorted by order.
+ * Returns [] when `primary` is not a stack primary. Members are found across
+ * `all` by matching stack id + role==='member'.
+ */
+export function stackMemberIds(primary: Contact, all: Contact[]): string[] {
+  const s = stackOf(primary);
+  if (!s || s.role !== 'primary') return [];
+  return all
+    .filter(c => {
+      const cs = stackOf(c);
+      return cs?.id === s.id && cs.role === 'member';
+    })
+    .sort((a, b) => (stackOf(a)!.order) - (stackOf(b)!.order))
+    .map(c => c.id);
+}
+
 /** A confirmed appointment attached to a card (set when a booking is approved). */
 export interface Appointment {
   start_time: string;         // ISO
