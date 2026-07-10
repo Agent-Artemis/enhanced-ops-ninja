@@ -23,6 +23,31 @@ export async function fetchContacts(): Promise<Contact[]> {
   return data as Contact[];
 }
 
+/**
+ * Authoritative set of contact IDs eligible for the LinkedIn worklist TODAY.
+ *
+ * Reads the `linkedin_worklist` Postgres view — the single source of truth for
+ * the dedupe guard. The view returns leads due on/before the current
+ * America/Denver day and EXCLUDES any lead already messaged today, any replied
+ * lead, and any lead awaiting fresh copy. The Social tab intersects its
+ * client-side "today" bucket with this set so a lead can never appear on a day
+ * it already received a message.
+ *
+ * Returns null on error so the caller can fall back to its belt-and-braces
+ * client-side filter rather than showing an empty or stale list.
+ */
+export async function fetchLinkedInWorklistIds(): Promise<Set<string> | null> {
+  try {
+    const { data, error } = await (await sb())
+      .from('linkedin_worklist')
+      .select('id');
+    if (error) return null;
+    return new Set((data ?? []).map((r: { id: string }) => r.id));
+  } catch {
+    return null;
+  }
+}
+
 export async function upsertContact(contact: Partial<Contact> & { id?: string }): Promise<Contact> {
   const { data, error } = await (await sb())
     .from('crm_contacts')

@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import type { Contact, LeadStatus } from '@/lib/crm/types';
 import { linkedinOf, pendingBookingOf } from '@/lib/crm/types';
-import { setLeadStatus, advanceLinkedIn, moveLinkedInToToday, setLeadStarred, deleteContact, addNote } from '@/lib/crm/data';
+import { setLeadStatus, advanceLinkedIn, moveLinkedInToToday, setLeadStarred, deleteContact, addNote, fetchLinkedInWorklistIds } from '@/lib/crm/data';
 
 const CONTENT_CALENDAR_URL =
   'https://docs.google.com/spreadsheets/d/17xf0GmuVqj1_7DEPAWnLyK6Uf-q4iSk57z2hOvwEVzM/edit';
@@ -51,6 +51,24 @@ const STEP_META: Record<string, { label: string; color: string }> = {
 function todayStr(): string {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+// Server-side "today" for this business is America/Denver. The dedupe guard must
+// compare message-sent timestamps against the Denver calendar day, matching the
+// linkedin_worklist view — never the viewer's local day.
+function denverToday(): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Denver', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(new Date());
+}
+
+function denverDayOf(iso: string | undefined | null): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Denver', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(d);
 }
 
 function formatDateLabel(dateStr: string): string {
@@ -501,7 +519,18 @@ export function SocialView({ contacts, onRefresh }: Props) {
   const [statusFilter, setStatusFilter] = useState<LeadStatus | 'all'>('all');
   const [busy, setBusy] = useState<string | null>(null);
   const [showFunnel, setShowFunnel] = useState(false);
+  // Authoritative eligible-today IDs from the linkedin_worklist DB view (dedupe
+  // guard). null = not-yet-loaded or fetch failed → fall back to the
+  // belt-and-braces client-side filter below. Re-fetches whenever the parent
+  // refreshes contacts (e.g. after Mark Sent / Move to Today).
+  const [worklistIds, setWorklistIds] = useState<Set<string> | null>(null);
   const active = PLATFORMS.find(p => p.id === platform)!;
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchLinkedInWorklistIds().then(ids => { if (!cancelled) setWorklistIds(ids); });
+    return () => { cancelled = true; };
+  }, [contacts]);
 
   const leads = contacts
     .map(c => ({ contact: c, li: linkedinOf(c) }))
@@ -522,21 +551,39 @@ export function SocialView({ contacts, onRefresh }: Props) {
   const todayItems: WorkItem[] = [];
   const upcomingMap = new Map<string, WorkItem[]>();
 
+  const dToday = denverToday();
+
   for (const { contact, li } of leads) {
     const step = li.sequence_step;
-    if (!step || step === 'done' || !li.sequence_due) continue;
+    // Only actionable message steps render as work. Excludes done / replied /
+    // cooling and anything awaiting fresh copy.
+    if (step !== 'msg1' && step !== 'msg2' && step !== 'msg3') continue;
+    if (!li.sequence_due) continue;
+    if (li.replied === true || li.needs_copy === true) continue;
 
     const asset = step === 'msg2' ? li.msg2_asset : step === 'msg3' ? li.msg3_asset : undefined;
     const message = (li.accepted === true && li.accepted_msg)
       ? li.accepted_msg
       : li[step] as string | undefined;
     const item: WorkItem = {
-      contact, step: step as 'msg1' | 'msg2' | 'msg3',
+      contact, step,
       message, asset,
       isNew: step === 'msg1',
     };
 
     if (li.sequence_due <= today) {
+      // ── DEDUPE GUARD ───────────────────────────────────────────────────────
+      // A lead must never appear in today's list on a day it already received a
+      // message. Belt-and-braces to the linkedin_worklist view: skip if any
+      // message was sent on the Denver calendar day.
+      const messagedToday =
+        denverDayOf(li.msg1_sent_at) === dToday ||
+        denverDayOf(li.msg2_sent_at) === dToday ||
+        denverDayOf(li.msg3_sent_at) === dToday;
+      if (messagedToday) continue;
+      // Primary source of truth: the DB view. When it has loaded, honor it
+      // strictly — a lead absent from the view is not eligible today.
+      if (worklistIds && !worklistIds.has(contact.id)) continue;
       todayItems.push(item);
     } else {
       const arr = upcomingMap.get(li.sequence_due) ?? [];
@@ -544,6 +591,10 @@ export function SocialView({ contacts, onRefresh }: Props) {
       upcomingMap.set(li.sequence_due, arr);
     }
   }
+
+  // Leads awaiting fresh copy for a new round (14-day re-loop). Surfaced so a
+  // human/agent writes new copy before they can re-enter the sequence.
+  const needsCopyLeads = leads.filter(({ li }) => li.needs_copy === true);
 
   // Sort today: new (msg1) first, then msg2, then msg3; within each group alphabetical
   todayItems.sort((a, b) => {
@@ -557,7 +608,9 @@ export function SocialView({ contacts, onRefresh }: Props) {
 
   const hasTodayWork     = todayItems.length > 0;
   const hasAnyLeads      = leads.length > 0;
-  const pendingWithNoDue = leads.filter(({ li }) => li.sequence_step && li.sequence_step !== 'done' && !li.sequence_due).length;
+  const pendingWithNoDue = leads.filter(({ li }) =>
+    (li.sequence_step === 'msg1' || li.sequence_step === 'msg2' || li.sequence_step === 'msg3')
+    && !li.sequence_due && li.replied !== true && li.needs_copy !== true).length;
   const allDoneForToday  = !hasTodayWork && leads.some(({ li }) => {
     return li.sequence_due && li.sequence_due <= today &&
       (!li.sequence_step || li.sequence_step === 'done');
@@ -683,6 +736,34 @@ export function SocialView({ contacts, onRefresh }: Props) {
           />
         )}
       </div>
+
+      {/* ── Needs copy (14-day re-loop) ───────────────────────────────────── */}
+      {needsCopyLeads.length > 0 && (
+        <div style={{
+          background: 'rgba(245,179,1,0.06)', border: '1px solid rgba(245,179,1,0.3)',
+          borderRadius: 10, padding: '14px 18px', marginBottom: 24,
+        }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: '#F5B301', marginBottom: 6 }}>
+            Needs copy — {needsCopyLeads.length} {needsCopyLeads.length === 1 ? 'lead' : 'leads'} entering a new round
+          </div>
+          <div style={{ fontSize: 12, color: '#9ca3af', marginBottom: 10 }}>
+            These leads finished a round with no reply and are cooling into a fresh sequence. Write NEW msg1/msg2/msg3 copy (never reuse prior text) before they re-enter the queue.
+          </div>
+          {needsCopyLeads.map(({ contact, li }) => {
+            const n = `${contact.first_name ?? ''} ${contact.last_name ?? ''}`.trim();
+            return (
+              <div key={contact.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 2px', borderTop: '1px solid rgba(255,255,255,0.05)', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: '#fff', minWidth: 140 }}>{n}</span>
+                <span style={{ fontSize: 11, color: '#F5B301', fontWeight: 600 }}>Round {li.sequence_round ?? 1}</span>
+                <span style={{ fontSize: 12, color: '#6b7280', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {[li.title, li.company].filter(Boolean).join(' · ')}
+                </span>
+                <a href={li.profile_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: '#6B9CF9', textDecoration: 'none', flexShrink: 0 }}>Profile ↗</a>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* ── Upcoming ──────────────────────────────────────────────────────── */}
       {upcomingDates.length > 0 && (

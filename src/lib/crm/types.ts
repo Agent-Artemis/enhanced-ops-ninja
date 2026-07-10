@@ -138,7 +138,9 @@ export function pendingBookingOf(c: Contact): PendingBooking | null {
 
 /** LinkedIn outreach prospect data (custom_fields.linkedin). */
 export type LeadStatus = 'new' | 'invited' | 'messaged' | 'replied' | 'booked' | 'skipped';
-export type SequenceStep = 'msg1' | 'msg2' | 'msg3' | 'done';
+// msg1/2/3 → done is the base sequence. 'replied' is a permanent terminal state set
+// by reply detection. 'cooling' is a transient state used by the 14-day re-loop.
+export type SequenceStep = 'msg1' | 'msg2' | 'msg3' | 'done' | 'replied' | 'cooling';
 
 export interface LinkedInLead {
   profile_url: string;
@@ -162,6 +164,14 @@ export interface LinkedInLead {
   msg1_sent_at?: string;
   msg2_sent_at?: string;
   msg3_sent_at?: string;
+  // Reply detection — set by /api/linkedin/mark-replied. Terminal: a replied lead
+  // never surfaces in the worklist and is never auto-advanced.
+  replied?: boolean;
+  replied_at?: string;
+  // 14-day re-loop (gated behind LINKEDIN_LOOP_ENABLED). sequence_round starts at 1.
+  // needs_copy=true marks a lead that entered a new round and awaits fresh copy.
+  sequence_round?: number;
+  needs_copy?: boolean;
 }
 
 export function linkedinOf(c: Contact): LinkedInLead | null {
