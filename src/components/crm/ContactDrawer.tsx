@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import type { Contact, Stage, TeamMember, Sequence, Note } from '@/lib/crm/types';
 import { appointmentOf } from '@/lib/crm/types';
-import { upsertContact, deleteContact, addNote, fetchAffiliateContacts } from '@/lib/crm/data';
+import { upsertContact, deleteContact, addNote, deleteNote, updateNote, fetchAffiliateContacts } from '@/lib/crm/data';
 import { QuickLogActivity } from './QuickLogActivity';
 
 interface Props {
@@ -84,6 +84,10 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
   const [form, setForm]         = useState<Partial<Contact>>(EMPTY);
   const [notes, setNotes]       = useState<Note[]>([]);
   const [newNote, setNewNote]   = useState('');
+  const [editingId, setEditingId]     = useState<string | null>(null);
+  const [editBody, setEditBody]       = useState('');
+  const [savingEdit, setSavingEdit]   = useState(false);
+  const [deletingNoteId, setDeletingNoteId] = useState<string | null>(null);
   const [saving, setSaving]     = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError]       = useState('');
@@ -178,8 +182,43 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
   async function submitNote() {
     if (!contact?.id || !newNote.trim()) return;
     const note = await addNote(contact.id, newNote.trim());
-    setNotes(p => [...p, note]);
+    setNotes(p => [note, ...p]);
     setNewNote('');
+  }
+
+  async function removeNote(id: string) {
+    if (deletingNoteId) return;
+    if (!confirm('Delete this note?')) return;
+    setDeletingNoteId(id);
+    try {
+      await deleteNote(id);
+      setNotes(p => p.filter(x => x.id !== id));
+      if (editingId === id) { setEditingId(null); setEditBody(''); }
+    } catch (e) { setError(e instanceof Error ? e.message : 'Delete failed'); }
+    finally { setDeletingNoteId(null); }
+  }
+
+  function startEdit(n: Note) {
+    setEditingId(n.id);
+    setEditBody(n.body);
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+    setEditBody('');
+  }
+
+  async function saveEdit(id: string) {
+    const body = editBody.trim();
+    if (!body || savingEdit) return;
+    setSavingEdit(true);
+    try {
+      const updated = await updateNote(id, body);
+      setNotes(p => p.map(x => x.id === id ? updated : x));
+      setEditingId(null);
+      setEditBody('');
+    } catch (e) { setError(e instanceof Error ? e.message : 'Update failed'); }
+    finally { setSavingEdit(false); }
   }
 
   if (!open) return null;
@@ -401,23 +440,7 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
 
             {contact ? (
               <>
-                <div style={{ maxHeight: 200, overflowY: 'auto', marginBottom: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {notes.length === 0 && (
-                    <p style={{ fontSize: 12, color: D.textMut, fontStyle: 'italic', margin: 0 }}>No notes yet.</p>
-                  )}
-                  {notes.map(n => (
-                    <div key={n.id} style={{
-                      background: D.noteBg, borderRadius: 8, padding: '8px 12px',
-                      border: `1px solid ${D.border}`,
-                    }}>
-                      <p style={{ margin: 0, fontSize: 13, color: D.text }}>{n.body}</p>
-                      <p style={{ margin: '4px 0 0', fontSize: 11, color: D.textMut }}>
-                        {new Date(n.created_at).toLocaleString()}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-                <div style={{ display: 'flex', gap: 8 }}>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
                   <textarea
                     value={newNote}
                     onChange={e => setNewNote(e.target.value)}
@@ -440,6 +463,86 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
                   >
                     Add
                   </button>
+                </div>
+                <div style={{ maxHeight: 200, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {notes.length === 0 && (
+                    <p style={{ fontSize: 12, color: D.textMut, fontStyle: 'italic', margin: 0 }}>No notes yet.</p>
+                  )}
+                  {notes.map(n => (
+                    <div key={n.id} style={{
+                      background: D.noteBg, borderRadius: 8, padding: '8px 12px',
+                      border: `1px solid ${D.border}`,
+                    }}>
+                      {editingId === n.id ? (
+                        <>
+                          <textarea
+                            value={editBody}
+                            onChange={e => setEditBody(e.target.value)}
+                            rows={2}
+                            style={{
+                              width: '100%', ...inputStyle, resize: 'vertical',
+                              padding: '6px 8px', fontSize: 13,
+                            }}
+                          />
+                          <div style={{ display: 'flex', gap: 12, marginTop: 6 }}>
+                            <button
+                              onClick={() => saveEdit(n.id)}
+                              disabled={!editBody.trim() || savingEdit}
+                              style={{
+                                background: 'none', border: 'none', padding: 0,
+                                fontSize: 11, color: D.blue,
+                                cursor: editBody.trim() && !savingEdit ? 'pointer' : 'not-allowed',
+                                opacity: editBody.trim() ? 1 : 0.4,
+                              }}
+                            >
+                              {savingEdit ? 'Saving…' : 'Save'}
+                            </button>
+                            <button
+                              onClick={cancelEdit}
+                              style={{
+                                background: 'none', border: 'none', padding: 0,
+                                fontSize: 11, color: D.textMut, cursor: 'pointer',
+                              }}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <p style={{ margin: 0, fontSize: 13, color: D.text }}>{n.body}</p>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
+                            <p style={{ margin: 0, fontSize: 11, color: D.textMut }}>
+                              {new Date(n.created_at).toLocaleString()}
+                            </p>
+                            <div style={{ display: 'flex', gap: 10 }}>
+                              <button
+                                onClick={() => startEdit(n)}
+                                style={{
+                                  background: 'none', border: 'none', padding: 0,
+                                  fontSize: 11, color: D.textMut, cursor: 'pointer',
+                                }}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => removeNote(n.id)}
+                                disabled={deletingNoteId === n.id}
+                                style={{
+                                  background: 'none', border: 'none', padding: 0,
+                                  fontSize: 11, color: D.textMut,
+                                  cursor: deletingNoteId === n.id ? 'not-allowed' : 'pointer',
+                                  opacity: deletingNoteId === n.id ? 0.4 : 1,
+                                }}
+                              >
+                                {deletingNoteId === n.id ? 'Deleting…' : 'Delete'}
+                              </button>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </>
             ) : (
