@@ -99,6 +99,7 @@ export function ReportsView() {
   const [targetMRR, setTargetMRR] = useState('');
   const [meetingRatePct, setMeetingRatePct] = useState('');   // % of outreach → meeting
   const [closeRatePct, setCloseRatePct] = useState('25');     // % of meetings → signed client
+  const [avgMrrInput, setAvgMrrInput] = useState('');
 
   const load = useCallback(async (d: number) => {
     setLoading(true); setError('');
@@ -116,6 +117,13 @@ export function ReportsView() {
     }
   }, [data, meetingRatePct]);
 
+  // Seed avg MRR/client default from actuals once data lands (only if user hasn't typed one)
+  useEffect(() => {
+    if (data && avgMrrInput === '' && data.pipeline.avgDealMRR != null && data.pipeline.avgDealMRR > 0) {
+      setAvgMrrInput(String(Math.round(data.pipeline.avgDealMRR)));
+    }
+  }, [data, avgMrrInput]);
+
   const platformRows = useMemo(() => {
     if (!data) return [];
     const entries = ACTIVITY_PLATFORMS
@@ -129,13 +137,14 @@ export function ReportsView() {
   const model = useMemo(() => {
     const meetingRate = Math.max(0.001, (Number(meetingRatePct) || 0) / 100);
     const closeRate = Math.max(0.001, (Number(closeRatePct) || 0) / 100);
-    const avgDeal = data?.pipeline.avgDealMRR ?? null;
+    const typedAvg = Number(avgMrrInput);
+    const avgDeal = typedAvg > 0 ? typedAvg : (data?.pipeline.avgDealMRR ?? null);
     const clientsFromMRR = avgDeal && Number(targetMRR) > 0 ? Number(targetMRR) / avgDeal : 0;
     const driverClients = Math.max(Number(targetClients) || 0, clientsFromMRR);
     const requiredMeetings = driverClients / closeRate;
     const requiredOutreach = requiredMeetings / meetingRate;
     return { meetingRate, closeRate, avgDeal, clientsFromMRR, driverClients, requiredMeetings, requiredOutreach };
-  }, [data, targetClients, targetMRR, meetingRatePct, closeRatePct]);
+  }, [data, targetClients, targetMRR, meetingRatePct, closeRatePct, avgMrrInput]);
 
   // Split required outreach across platforms using the historical mix (fallback: LinkedIn)
   const outreachMix = useMemo(() => {
@@ -230,6 +239,7 @@ export function ReportsView() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginBottom: 18 }}>
               {labeledInput('Target New Clients', targetClients, setTargetClients)}
               {labeledInput('Target New MRR', targetMRR, setTargetMRR, { prefix: '$' })}
+              {labeledInput('Avg MRR / Client', avgMrrInput, setAvgMrrInput, { prefix: '$' })}
               {labeledInput('Outreach → Meeting', meetingRatePct, setMeetingRatePct, { suffix: '%' })}
               {labeledInput('Meeting → Client', closeRatePct, setCloseRatePct, { suffix: '%' })}
             </div>
