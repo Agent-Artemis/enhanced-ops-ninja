@@ -11,9 +11,12 @@ const nextConfig: NextConfig = {
       beforeFiles: [
         {
           // Rewrite CRM subdomain to /crm/* routes.
-          // Excludes: _next assets, and any path ending with a static file extension
-          // so that /public files (logo-dark.png etc.) are served directly.
-          source: "/((?!_next)(?!.*\\.(?:png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|ttf|eot|pdf|txt)(?:\\?.*)?$).*)",
+          // Excludes: _next assets, /api routes (so CRM API calls like
+          // /api/crm/reports resolve to the real apex route instead of a
+          // nonexistent /crm/api/* path — was causing a 404 in Reports), and
+          // any path ending with a static file extension so that /public files
+          // (logo-dark.png etc.) are served directly.
+          source: "/((?!_next)(?!api/)(?!.*\\.(?:png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|ttf|eot|pdf|txt)(?:\\?.*)?$).*)",
           has: [{ type: "host", value: "crm.enhancedops.ninja" }],
           destination: "/crm/$1",
         },
