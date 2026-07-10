@@ -329,3 +329,38 @@ export async function advanceLinkedIn(
     .eq('id', contact.id);
   if (error) throw error;
 }
+
+/**
+ * Skip a sequence step WITHOUT recording it as sent.
+ * Stamps {step}_skipped_at (durable audit marker) and advances the cadence
+ * exactly like advanceLinkedIn so the lead leaves today's list — but does NOT
+ * set {step}_sent_at and does NOT touch the funnel status.
+ */
+export async function skipLinkedIn(
+  contact: Contact,
+  step: 'msg1' | 'msg2' | 'msg3',
+): Promise<void> {
+  const cf = { ...(contact.custom_fields ?? {}) };
+  const li = { ...(cf['linkedin'] as Record<string, unknown> ?? {}) };
+  const now = new Date().toISOString();
+
+  // Record it as SKIPPED, not sent — do NOT set {step}_sent_at.
+  li[`${step}_skipped_at`] = now;
+
+  // Advance the cadence exactly like advanceLinkedIn so it leaves today's list.
+  const nextStep = step === 'msg1' ? 'msg2' : step === 'msg2' ? 'msg3' : 'done';
+  li['sequence_step'] = nextStep;
+  if (nextStep === 'msg2' || nextStep === 'msg3') {
+    const days = nextStep === 'msg2' ? 3 : 4;
+    const due = new Date();
+    due.setDate(due.getDate() + days);
+    li['sequence_due'] = due.toISOString().slice(0, 10);
+  }
+
+  cf['linkedin'] = li;
+  const { error } = await (await sb())
+    .from('crm_contacts')
+    .update({ custom_fields: cf })
+    .eq('id', contact.id);
+  if (error) throw error;
+}
