@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, type ReactNode } from "react";
 import Image from "next/image";
 
 type Row = { label: RowLabel; text: string };
@@ -37,7 +37,7 @@ export function MarketingWorks() {
         <div className="flex flex-col">
           <PathCard
             num="01"
-            image="/Ninja_Transparent.png"
+            image="/Ninja_Meditation-transparent.png"
             title="Assessment"
             rows={[
               { label: "Focus", text: "Time · Finance · Staffing · Patient Care" },
@@ -48,7 +48,7 @@ export function MarketingWorks() {
           <NinjaConnector />
           <PathCard
             num="02"
-            image="/step-02-ninja.png"
+            image="/Ninja_Shurikan-removebg-preview.png"
             title="Secret Mission Briefing"
             rows={[
               { label: "Focus", text: "Custom ROI breakdown" },
@@ -59,7 +59,7 @@ export function MarketingWorks() {
           <NinjaConnector />
           <PathCard
             num="03"
-            image="/step-03-ninja.png"
+            image="/Ninja_with_sword-removebg-preview.png"
             title="Mission Service Agreement"
             rows={[
               { label: "Focus", text: "Agreement authorized" },
@@ -70,7 +70,7 @@ export function MarketingWorks() {
           <NinjaConnector />
           <PathCard
             num="04"
-            image="/step-04-ninja.png"
+            image="/Ninja_horse_stance-transparent.png"
             title="Mission Funding"
             rows={[
               { label: "Focus", text: "Scope & timeline aligned" },
@@ -94,9 +94,9 @@ export function MarketingWorks() {
 
       {/* The three deployment phases — preserved as phase eyebrows above their cards */}
       <div className="mx-auto mt-14 max-w-[760px]">
-        <p className="mb-6 text-center text-[13px] font-semibold uppercase tracking-[0.14em] text-eon-blue">
+        <h3 className="mb-8 text-center font-[family-name:var(--font-bebas)] text-[42px] uppercase leading-none tracking-[0.04em] text-eon-blue [text-wrap:balance]">
           Three Phases of Deployment
-        </p>
+        </h3>
 
         <div className="flex flex-col">
           <PhaseBlock
@@ -130,7 +130,12 @@ export function MarketingWorks() {
             points={[
               "Ninja EMR + PM Creator",
               "Office Ninja — your in-house agent",
-              "Your EMR, your asset",
+              <Fragment key="emr-asset">
+                Your EMR,{" "}
+                <strong className="font-bold uppercase text-eon-blue">
+                  YOUR ASSET!
+                </strong>
+              </Fragment>,
               "Full operational ownership",
             ]}
           />
@@ -183,24 +188,22 @@ function PathCard(props: { num: string; image: string; title: string; rows: Row[
   );
 }
 
-function PhaseBlock(props: { numeral: string; phase: string; headline: string; points: string[] }) {
+function PhaseBlock(props: { numeral: string; phase: string; headline: string; points: ReactNode[] }) {
   return (
-    <div>
-      <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.16em] text-[rgb(255_255_255/0.4)]">
+    <div className={CARD}>
+      <p className="mb-1 text-[12px] font-semibold uppercase tracking-[0.16em] text-[rgb(255_255_255/0.4)]">
         Phase <span className="text-eon-blue">{props.numeral}</span> · {props.phase}
       </p>
-      <div className={CARD}>
-        <h3 className="mb-3 font-[family-name:var(--font-bebas)] text-2xl uppercase leading-none tracking-[0.03em]">
-          {props.headline}
-        </h3>
-        <ul className="flex flex-col gap-1.5">
-          {props.points.map((p) => (
-            <li key={p} className="text-[13px] leading-relaxed text-[rgb(255_255_255/0.55)]">
-              {p}
-            </li>
-          ))}
-        </ul>
-      </div>
+      <h3 className="mb-4 font-[family-name:var(--font-bebas)] text-[32px] uppercase leading-none tracking-[0.03em]">
+        {props.headline}
+      </h3>
+      <ul className="flex flex-col gap-1.5">
+        {props.points.map((p, i) => (
+          <li key={i} className="text-[13px] leading-relaxed text-[rgb(255_255_255/0.55)]">
+            {p}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -211,13 +214,13 @@ function PhaseBlock(props: { numeral: string; phase: string; headline: string; p
  */
 function NinjaConnector() {
   return (
-    <div aria-hidden="true" className="flex justify-center py-1.5 text-[rgb(255_255_255/0.4)]">
-      <svg width="18" height="26" viewBox="0 0 18 26" fill="none" role="presentation">
-        <line x1="9" y1="0" x2="9" y2="16" stroke="currentColor" strokeWidth="1.5" />
+    <div aria-hidden="true" className="flex justify-center py-1.5 text-eon-blue">
+      <svg width="26" height="52" viewBox="0 0 26 52" fill="none" role="presentation">
+        <line x1="13" y1="2" x2="13" y2="34" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
         <path
-          d="M3 15l6 7 6-7"
+          d="M5 32l8 10 8-10"
           stroke="currentColor"
-          strokeWidth="1.5"
+          strokeWidth="3"
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
