@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getCrmClient } from '@/lib/crm/client';
 import { ACTIVITY_PLATFORMS, platformLabel } from '@/lib/crm/types';
+import { DailyActivityLog } from './DailyActivityLog';
 
 // ── Types matching /api/crm/reports response ────────────────────────────────────
 interface ReportData {
@@ -150,6 +151,9 @@ export function ReportsView() {
 
   return (
     <div style={{ maxWidth: 1080, margin: '0 auto', padding: '28px 24px 80px' }}>
+      {/* Manual daily activity log — independent of the auto-metrics report below */}
+      <DailyActivityLog />
+
       {/* Header + range */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
         <div>
