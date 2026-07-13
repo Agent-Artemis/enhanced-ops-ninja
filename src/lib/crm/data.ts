@@ -3,7 +3,7 @@ import type {
   Contact, Note, Stage, TeamMember, Sequence, VoiceAgent,
   Activity, ActivityKind, ActivityPlatform, MeetingOutcome,
 } from './types';
-import { pendingBookingOf, stackOf, stackMemberIds } from './types';
+import { pendingBookingOf, stackOf, stackMemberIds, appointmentOf, appointmentMovedToDate } from './types';
 
 // Await Supabase client initialization before making authenticated queries.
 // The lazy client reads localStorage on init, but that init is async —
@@ -101,12 +101,70 @@ export async function updateNote(noteId: string, body: string): Promise<Note> {
   return data as Note;
 }
 
+/**
+ * File a card under `date`, and take its scheduled appointment with it.
+ *
+ * The appointment's `start_time` is an absolute instant stamped on the OLD day,
+ * while ContactCard only renders the time while the appointment's date matches
+ * `next_action_date` — so without this the time would silently stop showing
+ * ("the scheduled time goes away") even though the data was still there.
+ *
+ * The appointment is re-stamped onto the new date at the SAME Denver wall-clock
+ * time-of-day (2:00 PM stays 2:00 PM, DST crossings included). Cards with no
+ * appointment are updated exactly as before — `custom_fields` is never written.
+ *
+ * This is the path used by drag-to-day, the snooze buttons (+1d / +1wk) and
+ * stack moves, so the time follows the card in all of them.
+ */
 export async function fileUnderDate(contactId: string, date: string): Promise<void> {
-  const { error } = await (await sb())
+  const client = await sb();
+
+  // Fetch-modify-write: the browser client can't do a server-side jsonb_set, so
+  // read the current custom_fields and rewrite the whole object (spread, so no
+  // sibling key — linkedin, stack, lead_source … — is dropped).
+  const { data: existing, error: readError } = await client
     .from('crm_contacts')
-    .update({ next_action_date: date, is_active: true, bucket: 'active' })
+    .select('custom_fields')
+    .eq('id', contactId)
+    .single();
+  if (readError) throw readError;
+
+  const customFields = (existing?.custom_fields ?? null) as Record<string, unknown> | null;
+  const appt = customFields ? appointmentOf({ custom_fields: customFields }) : null;
+
+  const patch: Record<string, unknown> = { next_action_date: date, is_active: true, bucket: 'active' };
+  if (appt && customFields) {
+    patch.custom_fields = { ...customFields, appointment: appointmentMovedToDate(appt, date) };
+  }
+
+  const { error } = await client.from('crm_contacts').update(patch).eq('id', contactId);
+  if (error) throw error;
+}
+
+/**
+ * Drop the scheduled appointment from a card, leaving every other custom field
+ * intact. After this `appointmentOf()` returns null, so no time badge renders.
+ * Returns the new custom_fields so the caller can keep local state in sync.
+ */
+export async function clearAppointment(contactId: string): Promise<Record<string, unknown>> {
+  const client = await sb();
+
+  const { data: existing, error: readError } = await client
+    .from('crm_contacts')
+    .select('custom_fields')
+    .eq('id', contactId)
+    .single();
+  if (readError) throw readError;
+
+  const customFields = { ...((existing?.custom_fields ?? {}) as Record<string, unknown>) };
+  delete customFields.appointment;
+
+  const { error } = await client
+    .from('crm_contacts')
+    .update({ custom_fields: customFields })
     .eq('id', contactId);
   if (error) throw error;
+  return customFields;
 }
 
 export async function pullToActive(contactId: string): Promise<void> {

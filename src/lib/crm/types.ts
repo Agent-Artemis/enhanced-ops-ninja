@@ -211,7 +211,10 @@ export interface Appointment {
   event_title?: string;
 }
 
-export function appointmentOf(c: Contact): Appointment | null {
+/** The business timezone. All appointment wall-clock times are expressed in it. */
+export const BUSINESS_TZ = 'America/Denver';
+
+export function appointmentOf(c: Pick<Contact, 'custom_fields'>): Appointment | null {
   const a = c.custom_fields?.['appointment'];
   return a && typeof a === 'object' && !Array.isArray(a) && (a as Appointment).start_time
     ? (a as Appointment) : null;
@@ -221,7 +224,7 @@ export function appointmentOf(c: Contact): Appointment | null {
 export function appointmentTimeLabel(a: Appointment): string {
   const d = new Date(a.start_time);
   if (Number.isNaN(d.getTime())) return '';
-  return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Denver' });
+  return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: BUSINESS_TZ });
 }
 
 /** YYYY-MM-DD of the appointment in the business timezone (to match next_action_date). */
@@ -229,6 +232,60 @@ export function appointmentDateString(a: Appointment): string {
   const d = new Date(a.start_time);
   if (Number.isNaN(d.getTime())) return '';
   return new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'America/Denver', year: 'numeric', month: '2-digit', day: '2-digit',
+    timeZone: BUSINESS_TZ, year: 'numeric', month: '2-digit', day: '2-digit',
   }).format(d);
+}
+
+// ── Business-timezone wall-clock conversion ────────────────────────────────────
+// The stored `start_time` is an absolute instant (ISO/UTC), but users think in
+// Denver wall-clock time. These two functions are exact inverses of each other
+// and resolve the UTC offset from the instant itself, so they stay correct
+// across DST boundaries (MDT −06:00 in summer, MST −07:00 in winter).
+
+/**
+ * Convert a wall-clock date + time in the business timezone to an ISO timestamp,
+ * independent of the runtime's own timezone.
+ * `denverWallClockToISO('2026-07-15', '14:00')` → the instant that is 2:00 PM in Denver.
+ */
+export function denverWallClockToISO(dateStr: string, timeStr: string): string {
+  const [Y, M, D] = dateStr.split('-').map(Number);
+  const [h, m] = timeStr.split(':').map(Number);
+  const guessUTC = Date.UTC(Y, M - 1, D, h, m);
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: BUSINESS_TZ, hourCycle: 'h23',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+    }).formatToParts(new Date(guessUTC)).map(p => [p.type, p.value]),
+  );
+  const asIfUTC = Date.UTC(+parts.year, +parts.month - 1, +parts.day, +parts.hour, +parts.minute, +parts.second);
+  const offsetMs = asIfUTC - guessUTC; // how far Denver is ahead of UTC (negative)
+  return new Date(guessUTC - offsetMs).toISOString();
+}
+
+/**
+ * The wall-clock time-of-day ("HH:MM", 24h) of an ISO instant in the business
+ * timezone — the inverse of `denverWallClockToISO`. Returns '' for a bad timestamp.
+ */
+export function denverTimeOfDay(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: BUSINESS_TZ, hourCycle: 'h23', hour: '2-digit', minute: '2-digit',
+    }).formatToParts(d).map(p => [p.type, p.value]),
+  );
+  return `${parts.hour}:${parts.minute}`;
+}
+
+/**
+ * The same appointment moved onto `date` (YYYY-MM-DD), keeping its Denver
+ * wall-clock time-of-day. A 2:00 PM appointment stays 2:00 PM on the new day
+ * even when the move crosses a DST boundary. Every other key is preserved.
+ * Returns the appointment untouched if its `start_time` can't be read.
+ */
+export function appointmentMovedToDate(a: Appointment, date: string): Appointment {
+  const timeOfDay = denverTimeOfDay(a.start_time);
+  if (!timeOfDay) return a;
+  return { ...a, start_time: denverWallClockToISO(date, timeOfDay) };
 }
