@@ -31,6 +31,17 @@ const METRIC_COLS = METRICS.map(m => m.col) as MetricCol[];
 // The two "APPTS Kept" sub-columns, grouped under a bracketed KEPT header.
 const KEPT_COLS: readonly MetricCol[] = ['appts_kept_initial', 'appts_kept_closing'];
 
+// ── Tally strip: which columns get tap-to-count +/− buttons ──────────────────
+// "Calls through Closed" only. Amount (money) and the social columns stay
+// keyboard-entry — their tally cells render empty so the grid stays aligned.
+const TALLY_COLS = [
+  'phone_calls', 'texts', 'appts_made', 'appts_kept_initial', 'appts_kept_closing', 'closed',
+] as const;
+type TallyCol = (typeof TALLY_COLS)[number];
+function isTallyCol(c: MetricCol): c is TallyCol {
+  return (TALLY_COLS as readonly MetricCol[]).includes(c);
+}
+
 // Week starts MONDAY (ISO week). Flip this to 0 to make weeks start Sunday.
 const WEEK_START_DOW = 1;
 
@@ -122,6 +133,31 @@ const th: React.CSSProperties = {
 const td: React.CSSProperties = {
   padding: '6px 6px', fontSize: 13, color: D.text, textAlign: 'center', borderBottom: `1px solid ${D.border}`, whiteSpace: 'nowrap',
 };
+
+// Tally-strip cell: opaque tinted background (must be opaque — the Date cell is
+// position:sticky and would otherwise show the scrolled content behind it) plus
+// a hairline rule so the strip reads as a control bar, not a data row.
+const TALLY_BG = '#1a1f27';
+const tallyTd: React.CSSProperties = {
+  padding: '4px 6px', textAlign: 'center', whiteSpace: 'nowrap',
+  background: TALLY_BG, borderBottom: `1px solid ${D.border}`,
+};
+// Hover/active states need real CSS pseudo-classes, which inline styles can't do.
+const TALLY_CSS = `
+.eon-tally-btn {
+  width: 21px; height: 21px; padding: 0; line-height: 1; box-sizing: border-box;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 5px; font-size: 13px; font-weight: 700; cursor: pointer;
+  user-select: none; -webkit-user-select: none;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+.eon-tally-plus { background: rgba(26,107,249,0.16); border: 1px solid ${D.blue}; color: #bfdbfe; }
+.eon-tally-plus:hover { background: rgba(26,107,249,0.34); color: #ffffff; }
+.eon-tally-plus:active { background: ${D.blue}; color: #ffffff; transform: translateY(1px); }
+.eon-tally-minus { background: transparent; border: 1px solid #374151; color: ${D.textMut}; }
+.eon-tally-minus:hover { background: rgba(255,255,255,0.05); border-color: ${D.faint}; color: ${D.textSec}; }
+.eon-tally-minus:active { background: rgba(255,255,255,0.09); transform: translateY(1px); }
+`;
 
 // ── Main component ───────────────────────────────────────────────────────────
 export function DailyActivityLog() {
@@ -293,6 +329,29 @@ export function DailyActivityLog() {
     }
   }, []);
 
+  // ── Tally strip: tap +/− to count a metric for a single day ─────────────────
+  /**
+   * Bump one count column by ±1 and persist immediately.
+   *
+   * The ref is written SYNCHRONOUSLY (not from inside the setRows updater, which
+   * React may defer to the render phase) because saveDay reads rowsRef.current in
+   * its synchronous prologue — this is what makes a rapid burst of taps safe:
+   *   • every tap accumulates off the ref, so no increment is lost;
+   *   • saveDay's existing inFlight/pending guard coalesces the burst — extra taps
+   *     while a write is in flight just set the pending flag, and the trailing
+   *     re-save re-reads the ref, so the FINAL value is what lands in the DB.
+   * setRows() gives the optimistic UI update, so the number moves on tap with no
+   * wait on the network.
+   */
+  const bumpTally = useCallback((date: string, col: TallyCol, delta: 1 | -1) => {
+    const base = rowsRef.current[date] ?? zeroRow(date);
+    const nextVal = Math.max(0, base[col] + delta); // − floors at 0, never negative
+    const updated: RowMap = { ...rowsRef.current, [date]: { ...base, [col]: nextVal } };
+    rowsRef.current = updated;
+    setRows(updated);
+    saveDay(date);
+  }, [saveDay]);
+
   function editCell(date: string, col: MetricCol, raw: string) {
     const n = raw === '' ? 0 : Math.max(0, Math.floor(Number(raw)) || 0);
     setRows(r => {
@@ -442,6 +501,7 @@ export function DailyActivityLog() {
 
   return (
     <div style={{ background: D.card, border: `1px solid ${D.border}`, borderRadius: 12, padding: '20px 24px', marginBottom: 24 }}>
+      <style>{TALLY_CSS}</style>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 4 }}>
         <h2 style={{ color: D.text, fontSize: 20, fontWeight: 700, margin: 0 }}>Daily Activity Log</h2>
         {/* Grouping toggle */}
@@ -537,7 +597,47 @@ export function DailyActivityLog() {
                 const dObj = parseLocalISO(date);
                 const dateLabel = `${MONTHS_SHORT[dObj.getMonth()]} ${dObj.getDate()}`;
                 return (
-                  <tr key={date}>
+                  <Fragment key={date}>
+                  {/* ── Tally strip — sits directly ABOVE today's row. Only rendered in
+                      Day grouping (this map only runs then) and only when TODAY is in
+                      the selected range (dayList only contains today when from ≤ today ≤ to).
+                      Cell count MUST match a body row: Date + 11 metrics + Amount + Day Total = 14.
+                      The KEPT pair is two separate body cells, so it gets two cells here too. */}
+                  {isToday && (
+                    <tr>
+                      <td style={{ ...tallyTd, textAlign: 'left', position: 'sticky', left: 0, background: TALLY_BG }}>
+                        <span style={{ color: D.textMut, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                          Tap to count
+                        </span>
+                      </td>
+                      {METRIC_COLS.map(col => {
+                        const label = METRICS.find(m => m.col === col)!.label;
+                        const cell = (
+                          <td key={col} style={tallyTd}>
+                            {isTallyCol(col) && (
+                              <div style={{ display: 'flex', gap: 4, alignItems: 'center', justifyContent: 'center' }}>
+                                <button
+                                  type="button" className="eon-tally-btn eon-tally-minus"
+                                  onClick={() => bumpTally(date, col, -1)}
+                                  aria-label={`Subtract one from ${label}`} title={`−1 ${label}`}
+                                >−</button>
+                                <button
+                                  type="button" className="eon-tally-btn eon-tally-plus"
+                                  onClick={() => bumpTally(date, col, 1)}
+                                  aria-label={`Add one to ${label}`} title={`+1 ${label}`}
+                                >+</button>
+                              </div>
+                            )}
+                          </td>
+                        );
+                        // Amount (money) has no buttons, but its cell must exist to hold alignment.
+                        if (col === 'closed') return <Fragment key={col}>{cell}<td style={tallyTd} /></Fragment>;
+                        return cell;
+                      })}
+                      <td style={tallyTd} />
+                    </tr>
+                  )}
+                  <tr>
                     <td style={{ ...td, textAlign: 'left', color: isToday ? D.blue : D.text, fontWeight: isToday ? 700 : 400, position: 'sticky', left: 0, background: D.card }}>
                       {dateLabel}{isToday ? ' · Today' : ''}
                       {saving && <span style={{ color: D.textMut, fontSize: 10, marginLeft: 6 }}>saving…</span>}
@@ -626,6 +726,7 @@ export function DailyActivityLog() {
                     })}
                     <td style={{ ...td, fontWeight: 700, color: D.text }}>{resolvedRowTotal(date, row)}</td>
                   </tr>
+                  </Fragment>
                 );
               })}
 
