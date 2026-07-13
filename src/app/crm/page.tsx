@@ -295,6 +295,7 @@ export default function CrmPage() {
         team={team} sequences={sequences}
         onClose={() => { setDrawerOpen(false); setDrawerContact(null); }}
         onSaved={async () => { await refresh(); setDrawerOpen(false); setDrawerContact(null); }}
+        onRefresh={refresh}
       />
       {quickLogOpen && (
         <QuickLogActivity onClose={() => setQuickLogOpen(false)} onLogged={refresh} />

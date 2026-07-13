@@ -14,6 +14,8 @@ interface Props {
   sequences: Sequence[];
   onClose: () => void;
   onSaved: () => void;
+  /** Refresh the board WITHOUT closing the drawer (onSaved closes it). */
+  onRefresh?: () => void | Promise<void>;
 }
 
 const EMPTY: Partial<Contact> = {
@@ -62,7 +64,7 @@ function formatPhone(raw: string): string {
   return raw;
 }
 
-export function ContactDrawer({ open, contact, stages, team, sequences, onClose, onSaved }: Props) {
+export function ContactDrawer({ open, contact, stages, team, sequences, onClose, onSaved, onRefresh }: Props) {
   const [form, setForm]         = useState<Partial<Contact>>(EMPTY);
   const [notes, setNotes]       = useState<Note[]>([]);
   const [newNote, setNewNote]   = useState('');
@@ -162,7 +164,12 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
     if (!contact?.id) return;  // unsaved new card — nothing persisted to clean up yet
     setClearingAppt(true);
     setError('');
-    try { await clearAppointment(contact.id); }
+    try {
+      await clearAppointment(contact.id);
+      // Refresh the board so the card's time badge disappears immediately —
+      // without onRefresh the drawer's only refresh hook (onSaved) would close it.
+      await onRefresh?.();
+    }
     catch (e) { setError(e instanceof Error ? e.message : 'Could not clear the appointment'); }
     finally { setClearingAppt(false); }
   }
