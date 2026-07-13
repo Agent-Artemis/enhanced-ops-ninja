@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import type { Contact, Stage, TeamMember, Sequence, Note } from '@/lib/crm/types';
-import { appointmentOf } from '@/lib/crm/types';
-import { upsertContact, deleteContact, addNote, deleteNote, updateNote, fetchAffiliateContacts } from '@/lib/crm/data';
+import { appointmentOf, denverWallClockToISO, denverTimeOfDay } from '@/lib/crm/types';
+import { upsertContact, deleteContact, addNote, deleteNote, updateNote, fetchAffiliateContacts, clearAppointment } from '@/lib/crm/data';
 import { QuickLogActivity } from './QuickLogActivity';
 
 interface Props {
@@ -14,6 +14,8 @@ interface Props {
   sequences: Sequence[];
   onClose: () => void;
   onSaved: () => void;
+  /** Refresh the board WITHOUT closing the drawer (onSaved closes it). */
+  onRefresh?: () => void | Promise<void>;
 }
 
 const EMPTY: Partial<Contact> = {
@@ -62,25 +64,7 @@ function formatPhone(raw: string): string {
   return raw;
 }
 
-// Convert a wall-clock date + time in America/Denver to an ISO timestamp,
-// independent of the browser's own timezone (the app displays times in Denver).
-function denverWallClockToISO(dateStr: string, timeStr: string): string {
-  const [Y, M, D] = dateStr.split('-').map(Number);
-  const [h, m] = timeStr.split(':').map(Number);
-  const guessUTC = Date.UTC(Y, M - 1, D, h, m);
-  const parts = Object.fromEntries(
-    new Intl.DateTimeFormat('en-US', {
-      timeZone: 'America/Denver', hour12: false,
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit', second: '2-digit',
-    }).formatToParts(new Date(guessUTC)).map(p => [p.type, p.value]),
-  );
-  const asIfUTC = Date.UTC(+parts.year, +parts.month - 1, +parts.day, +parts.hour, +parts.minute, +parts.second);
-  const offsetMs = asIfUTC - guessUTC; // how far Denver is ahead of UTC (negative)
-  return new Date(guessUTC - offsetMs).toISOString();
-}
-
-export function ContactDrawer({ open, contact, stages, team, sequences, onClose, onSaved }: Props) {
+export function ContactDrawer({ open, contact, stages, team, sequences, onClose, onSaved, onRefresh }: Props) {
   const [form, setForm]         = useState<Partial<Contact>>(EMPTY);
   const [notes, setNotes]       = useState<Note[]>([]);
   const [newNote, setNewNote]   = useState('');
@@ -99,6 +83,8 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
   const [affiliateId, setAffiliateId] = useState('');
   // Scheduled appointment time (HH:MM, business timezone) — stored in custom_fields.appointment
   const [apptTime, setApptTime]       = useState('');
+  const [clearingAppt, setClearingAppt] = useState(false);
+  const [clearApptHover, setClearApptHover] = useState(false);
   const [affiliates, setAffiliates]   = useState<{ id: string; name: string; code: string; contact_name?: string }[]>([]);
 
   useEffect(() => {
@@ -112,13 +98,7 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
         setReferredBy((cf.referred_by as string) ?? '');
         setAffiliateId((cf.affiliate_id as string) ?? '');
         const appt = appointmentOf(contact);
-        setApptTime(
-          appt
-            ? new Date(appt.start_time).toLocaleTimeString('en-GB', {
-                timeZone: 'America/Denver', hour: '2-digit', minute: '2-digit',
-              })
-            : '',
-        );
+        setApptTime(appt ? denverTimeOfDay(appt.start_time) : '');
       } else {
         setForm(EMPTY);
         setNotes([]);
@@ -129,6 +109,7 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
       }
       setNewNote('');
       setError('');
+      setClearApptHover(false);
       // Load affiliates (contacts tagged 'affiliate')
       fetchAffiliateContacts().then(setAffiliates).catch(() => setAffiliates([]));
     }
@@ -168,6 +149,29 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
     }
     catch (e) { setError(e instanceof Error ? e.message : 'Save failed'); }
     finally { setSaving(false); }
+  }
+
+  // Drop the appointment entirely (the × beside the time field). Clears the input
+  // and persists immediately, so the time badge is gone even if the drawer is
+  // closed without saving. `save()` deletes the key too whenever apptTime is
+  // empty, so the two paths agree rather than fighting each other.
+  async function clearAppt() {
+    setApptTime('');
+    setClearApptHover(false);
+    const stripped = { ...(form.custom_fields ?? {}) } as Record<string, unknown>;
+    delete stripped.appointment;
+    setForm(p => ({ ...p, custom_fields: stripped }));
+    if (!contact?.id) return;  // unsaved new card — nothing persisted to clean up yet
+    setClearingAppt(true);
+    setError('');
+    try {
+      await clearAppointment(contact.id);
+      // Refresh the board so the card's time badge disappears immediately —
+      // without onRefresh the drawer's only refresh hook (onSaved) would close it.
+      await onRefresh?.();
+    }
+    catch (e) { setError(e instanceof Error ? e.message : 'Could not clear the appointment'); }
+    finally { setClearingAppt(false); }
   }
 
   async function handleDelete() {
@@ -392,7 +396,26 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
                 style={{ ...inputStyle, colorScheme: 'dark' }} />
             </div>
             <div>
-              <label style={labelStyle}>Appointment Time</label>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5 }}>
+                <label style={{ ...labelStyle, marginBottom: 0 }}>Appointment Time</label>
+                {/* Clear the appointment — only offered when a time is actually set. */}
+                {apptTime && (
+                  <button type="button" onClick={clearAppt} disabled={clearingAppt}
+                    title="Clear appointment time" aria-label="Clear appointment time"
+                    onMouseEnter={() => setClearApptHover(true)}
+                    onMouseLeave={() => setClearApptHover(false)}
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      width: 16, height: 16, padding: 0, lineHeight: 1,
+                      background: 'transparent', border: 'none', borderRadius: 4,
+                      fontSize: 14, color: clearApptHover ? D.text : D.textMut,
+                      opacity: clearingAppt ? 0.4 : 1,
+                      cursor: clearingAppt ? 'default' : 'pointer',
+                    }}>
+                    ×
+                  </button>
+                )}
+              </div>
               <input type="time" value={apptTime} onChange={e => setApptTime(e.target.value)}
                 disabled={!form.next_action_date}
                 style={{ ...inputStyle, colorScheme: 'dark', opacity: form.next_action_date ? 1 : 0.5,
