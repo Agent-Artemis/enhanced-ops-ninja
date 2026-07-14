@@ -1,0 +1,5 @@
+{
+  "crons": [
+    { "path": "/api/crm/ingest-granola", "schedule": "17 14,17,20,23 * * *" }
+  ]
+}
