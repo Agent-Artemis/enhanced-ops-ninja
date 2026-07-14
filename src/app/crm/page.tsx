@@ -6,6 +6,7 @@ import { CrmShell } from '@/components/crm/CrmShell';
 import { OneCardView } from '@/components/crm/OneCardView';
 import { KanbanView } from '@/components/crm/KanbanView';
 import { ListView } from '@/components/crm/ListView';
+import { ActionItemsView } from '@/components/crm/ActionItemsView';
 import { SocialView } from '@/components/crm/SocialView';
 import { ReportsView } from '@/components/crm/ReportsView';
 import { QuickLogActivity } from '@/components/crm/QuickLogActivity';
@@ -287,6 +288,7 @@ export default function CrmPage() {
         {view === 'onecard' && <OneCardView contacts={visibleContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onRefresh={refresh} />}
         {view === 'kanban'  && <KanbanView  contacts={visibleContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onRefresh={refresh} />}
         {view === 'list'    && <ListView    contacts={visibleContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} />}
+        {view === 'actions' && <ActionItemsView team={team} contacts={contacts} />}
         {view === 'social'  && <SocialView contacts={contacts} onRefresh={refresh} />}
         {view === 'reports' && <ReportsView />}
       </main>

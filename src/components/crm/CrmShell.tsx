@@ -18,6 +18,7 @@ const TABS: { id: CrmView; label: string }[] = [
   { id: 'onecard', label: 'One Card' },
   { id: 'kanban',  label: 'Kanban' },
   { id: 'list',    label: 'List' },
+  { id: 'actions', label: 'Action Items' },
   { id: 'social',  label: 'Social' },
   { id: 'reports', label: 'Reports' },
 ];

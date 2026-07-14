@@ -2,6 +2,7 @@ import { getCrmClient } from './client';
 import type {
   Contact, Note, Stage, TeamMember, Sequence, VoiceAgent,
   Activity, ActivityKind, ActivityPlatform, MeetingOutcome,
+  ActionItem,
 } from './types';
 import { pendingBookingOf, stackOf, stackMemberIds, appointmentOf, appointmentMovedToDate } from './types';
 
@@ -73,6 +74,70 @@ export async function fetchActivitiesForContact(contactId: string): Promise<Acti
     .order('occurred_at', { ascending: false });
   if (error) throw error;
   return (data ?? []) as Activity[];
+}
+
+// ── Meeting action items (crm_action_items) ───────────────────────────────────
+// Single source of truth. The Action Items tab and the contact card both read
+// and write these same rows — nothing is ever copied between them.
+
+/** Every action item, newest meeting first, insertion order within a meeting. */
+export async function fetchActionItems(): Promise<ActionItem[]> {
+  const { data, error } = await (await sb())
+    .from('crm_action_items')
+    .select('*')
+    .order('meeting_date', { ascending: false, nullsFirst: false })
+    .order('created_at', { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as ActionItem[];
+}
+
+/** The still-open items belonging to one contact card. */
+export async function fetchOpenActionItemsForContact(contactId: string): Promise<ActionItem[]> {
+  const { data, error } = await (await sb())
+    .from('crm_action_items')
+    .select('*')
+    .eq('contact_id', contactId)
+    .eq('status', 'open')
+    .order('created_at', { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as ActionItem[];
+}
+
+async function updateActionItem(id: string, patch: Partial<ActionItem>): Promise<ActionItem> {
+  const { data, error } = await (await sb())
+    .from('crm_action_items')
+    .update(patch)
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data as ActionItem;
+}
+
+/**
+ * Tick / untick an action item. Ticking stamps `completed_at`; unticking reverts
+ * to 'open' and clears it. Called from BOTH the Action Items tab and the contact
+ * card — same row, so it's done in both places at once.
+ */
+export async function setActionItemDone(id: string, done: boolean): Promise<ActionItem> {
+  return updateActionItem(id, {
+    status: done ? 'done' : 'open',
+    completed_at: done ? new Date().toISOString() : null,
+  });
+}
+
+/** Skip an item, optionally recording why. */
+export async function skipActionItem(id: string, reason: string | null): Promise<ActionItem> {
+  return updateActionItem(id, {
+    status: 'skipped',
+    skip_reason: reason && reason.trim() ? reason.trim() : null,
+    completed_at: null,
+  });
+}
+
+/** Assign to a team member id, the literal 'artemis', or null to clear. */
+export async function assignActionItem(id: string, assignee: string | null): Promise<ActionItem> {
+  return updateActionItem(id, { assigned_to: assignee });
 }
 
 export async function addNote(contactId: string, body: string): Promise<Note> {
