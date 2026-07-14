@@ -67,7 +67,7 @@ async function granola<T>(path: string, key: string): Promise<T> {
  * leak in. Format (from Granola): `- **Title** (Owner)` then an indented
  * description paragraph.
  */
-export function extractActionItems(md: string): ParsedItem[] {
+function extractActionItems(md: string): ParsedItem[] {
   if (!md) return [];
   const lines = md.split(/\r?\n/);
 
