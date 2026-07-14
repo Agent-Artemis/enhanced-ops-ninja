@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import type { Contact, Stage, TeamMember, Sequence, Note, ActionItem } from '@/lib/crm/types';
 import { appointmentOf, denverWallClockToISO, denverTimeOfDay, projectOf, PROJECT_COLORS } from '@/lib/crm/types';
-import { upsertContact, deleteContact, addNote, deleteNote, updateNote, fetchAffiliateContacts, clearAppointment, fetchOpenActionItemsForContact, setActionItemDone } from '@/lib/crm/data';
+import { upsertContact, deleteContact, addNote, deleteNote, updateNote, fetchAffiliateContacts, clearAppointment, fetchCardActionItemsForContact, setActionItemDone } from '@/lib/crm/data';
 import { QuickLogActivity } from './QuickLogActivity';
 
 interface Props {
@@ -125,11 +125,13 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
       setClearApptHover(false);
       // Load affiliates (contacts tagged 'affiliate')
       fetchAffiliateContacts().then(setAffiliates).catch(() => setAffiliates([]));
-      // Open action items linked to this card (single source of truth: crm_action_items)
+      // Open AND done action items for this card (single source of truth:
+      // crm_action_items). Done items stay on the card struck through as a record;
+      // skipped items are excluded by the fetch.
       setActionItems([]);
       setActionBusyId(null);
       if (contact?.id) {
-        fetchOpenActionItemsForContact(contact.id).then(setActionItems).catch(() => setActionItems([]));
+        fetchCardActionItemsForContact(contact.id).then(setActionItems).catch(() => setActionItems([]));
       }
     }
   }, [open, contact]);
@@ -583,12 +585,26 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
                 Action Items
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                {actionItems.map(a => {
+                {actionItems.map((a, i) => {
                   const done = a.status === 'done';
                   const overdue = !done && !!a.due_date
                     && a.due_date < new Date().toLocaleDateString('en-CA');
+                  // Items are open-first, then done. Mark where the completed group
+                  // starts (only when there are open items above it) so the record
+                  // reads as its own quiet section.
+                  const firstDone = done && i > 0 && actionItems[i - 1].status !== 'done';
                   return (
-                    <div key={a.id} style={{
+                    <div key={a.id} style={{ display: 'contents' }}>
+                    {firstDone && (
+                      <div style={{
+                        fontSize: 9, fontWeight: 700, color: D.textMut,
+                        letterSpacing: '0.08em', textTransform: 'uppercase',
+                        marginTop: 4, paddingTop: 8, borderTop: `1px solid ${D.border}`,
+                      }}>
+                        Completed
+                      </div>
+                    )}
+                    <div style={{
                       display: 'flex', alignItems: 'center', gap: 9,
                       background: D.noteBg, border: `1px solid ${D.border}`,
                       borderRadius: 8, padding: '8px 12px',
@@ -622,6 +638,7 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
                           {new Date(`${a.due_date}T12:00:00`).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                         </span>
                       )}
+                    </div>
                     </div>
                   );
                 })}

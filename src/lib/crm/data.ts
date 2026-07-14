@@ -91,13 +91,20 @@ export async function fetchActionItems(): Promise<ActionItem[]> {
   return (data ?? []) as ActionItem[];
 }
 
-/** The still-open items belonging to one contact card. */
-export async function fetchOpenActionItemsForContact(contactId: string): Promise<ActionItem[]> {
+/**
+ * Items to render on one contact card: open AND done, so completed items stay on
+ * the card as a struck-through historical record. Skipped items are excluded — a
+ * skip means "won't do", not a record worth keeping in front of the client.
+ * Ordered open-first (status desc: 'open' > 'done'), then by creation for a
+ * stable order within each group.
+ */
+export async function fetchCardActionItemsForContact(contactId: string): Promise<ActionItem[]> {
   const { data, error } = await (await sb())
     .from('crm_action_items')
     .select('*')
     .eq('contact_id', contactId)
-    .eq('status', 'open')
+    .in('status', ['open', 'done'])
+    .order('status', { ascending: false })
     .order('created_at', { ascending: true });
   if (error) throw error;
   return (data ?? []) as ActionItem[];
