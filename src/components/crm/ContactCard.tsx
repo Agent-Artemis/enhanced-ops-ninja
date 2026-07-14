@@ -1,7 +1,16 @@
 'use client';
 
 import type { Contact, Stage } from '@/lib/crm/types';
-import { appointmentOf, appointmentTimeLabel, appointmentDateString } from '@/lib/crm/types';
+import { appointmentOf, appointmentTimeLabel, appointmentDateString, projectOf } from '@/lib/crm/types';
+
+/** #RRGGBB → rgba() at the given alpha, for a subtle project-color tint over cream. */
+function tint(hex: string, alpha: number): string {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
 interface Props {
   contact: Contact;
@@ -24,6 +33,10 @@ export function ContactCard({
   const stage      = stages.find(s => s.id === contact.stage_id);
   const lastNote   = contact.notes?.at(-1);
   const stageColor = stage?.color ?? '#1A6BF9';
+  // Project / company tag drives the card color. No project = default EON card
+  // (rendered exactly as before — the project color becomes the dominant signal).
+  const project    = projectOf(contact);
+  const accentColor = project ? project.color : stageColor;
 
   return (
     <div
@@ -33,10 +46,13 @@ export function ContactCard({
       onClick={isDragging ? undefined : onClick}
       onDoubleClick={isDragging ? undefined : onDoubleClick}
       style={{
-        // 3x5 index card — cream stock, pops against dark background
-        background: '#FFFEF7',
+        // 3x5 index card — cream stock, pops against dark background.
+        // A tagged card gets a subtle wash of its project color over the cream.
+        background: project
+          ? `linear-gradient(0deg, ${tint(project.color, 0.09)}, ${tint(project.color, 0.09)}), #FFFEF7`
+          : '#FFFEF7',
         border: `1px solid #D4CCAA`,
-        borderLeft: `4px solid ${stageColor}`,
+        borderLeft: `4px solid ${accentColor}`,
         borderRadius: 5,
         boxShadow: isDragging
           ? 'none'
@@ -65,6 +81,19 @@ export function ContactCard({
         }
       }}
     >
+      {/* Project band — only on tagged cards; the at-a-glance project signal */}
+      {project && (
+        <div style={{
+          background: project.color,
+          padding: '4px 11px',
+          fontSize: 9, fontWeight: 800, color: '#FFFFFF',
+          letterSpacing: '0.08em', textTransform: 'uppercase',
+          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+        }}>
+          {project.name}
+        </div>
+      )}
+
       {/* Header — stage badge + date */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
