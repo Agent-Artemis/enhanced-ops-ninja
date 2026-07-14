@@ -161,10 +161,10 @@ const TALLY_CSS = `
 
 // ── Main component ───────────────────────────────────────────────────────────
 export function DailyActivityLog() {
-  const initial = presetRange('month');
+  const initial = presetRange('week');
   const [from, setFrom] = useState(initial.from);
   const [to, setTo] = useState(initial.to);
-  const [preset, setPreset] = useState<PresetId>('month');
+  const [preset, setPreset] = useState<PresetId>('week');
   const [grouping, setGrouping] = useState<Grouping>('day');
 
   const [rows, setRows] = useState<RowMap>({});
