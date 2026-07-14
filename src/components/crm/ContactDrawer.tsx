@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { Contact, Stage, TeamMember, Sequence, Note } from '@/lib/crm/types';
+import type { Contact, Stage, TeamMember, Sequence, Note, ActionItem } from '@/lib/crm/types';
 import { appointmentOf, denverWallClockToISO, denverTimeOfDay } from '@/lib/crm/types';
-import { upsertContact, deleteContact, addNote, deleteNote, updateNote, fetchAffiliateContacts, clearAppointment } from '@/lib/crm/data';
+import { upsertContact, deleteContact, addNote, deleteNote, updateNote, fetchAffiliateContacts, clearAppointment, fetchOpenActionItemsForContact, setActionItemDone } from '@/lib/crm/data';
 import { QuickLogActivity } from './QuickLogActivity';
 
 interface Props {
@@ -86,6 +86,11 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
   const [clearingAppt, setClearingAppt] = useState(false);
   const [clearApptHover, setClearApptHover] = useState(false);
   const [affiliates, setAffiliates]   = useState<{ id: string; name: string; code: string; contact_name?: string }[]>([]);
+  // Meeting action items for THIS card. These are the same crm_action_items rows
+  // the Action Items tab renders — never copies. Ticking one here writes the row,
+  // so it shows as done in both places.
+  const [actionItems, setActionItems] = useState<ActionItem[]>([]);
+  const [actionBusyId, setActionBusyId] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -112,6 +117,12 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
       setClearApptHover(false);
       // Load affiliates (contacts tagged 'affiliate')
       fetchAffiliateContacts().then(setAffiliates).catch(() => setAffiliates([]));
+      // Open action items linked to this card (single source of truth: crm_action_items)
+      setActionItems([]);
+      setActionBusyId(null);
+      if (contact?.id) {
+        fetchOpenActionItemsForContact(contact.id).then(setActionItems).catch(() => setActionItems([]));
+      }
     }
   }, [open, contact]);
 
@@ -172,6 +183,28 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
     }
     catch (e) { setError(e instanceof Error ? e.message : 'Could not clear the appointment'); }
     finally { setClearingAppt(false); }
+  }
+
+  /**
+   * Tick / untick a meeting action item straight from the card. This updates the
+   * SAME crm_action_items row the Action Items tab renders — one record, two
+   * surfaces, no syncing. Optimistic, rolled back if the write fails.
+   */
+  async function toggleActionItem(item: ActionItem) {
+    const done = item.status !== 'done';
+    setActionBusyId(item.id);
+    setActionItems(p => p.map(x => x.id === item.id
+      ? { ...x, status: done ? 'done' : 'open', completed_at: done ? new Date().toISOString() : null }
+      : x));
+    try {
+      const saved = await setActionItemDone(item.id, done);
+      setActionItems(p => p.map(x => x.id === saved.id ? saved : x));
+    } catch (e) {
+      setActionItems(p => p.map(x => x.id === item.id ? item : x));
+      setError(e instanceof Error ? e.message : 'Could not update the action item');
+    } finally {
+      setActionBusyId(null);
+    }
   }
 
   async function handleDelete() {
@@ -449,6 +482,65 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
               >
                 + Log outreach / meeting
               </button>
+            </div>
+          )}
+
+          {/* Action Items — the same crm_action_items rows shown on the Action Items tab */}
+          {contact && actionItems.length > 0 && (
+            <div style={{ borderTop: `1px solid ${D.border}`, paddingTop: 16, marginBottom: 16 }}>
+              <div style={{
+                fontSize: 10, fontWeight: 700, color: D.textMut,
+                letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12,
+              }}>
+                Action Items
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {actionItems.map(a => {
+                  const done = a.status === 'done';
+                  const overdue = !done && !!a.due_date
+                    && a.due_date < new Date().toLocaleDateString('en-CA');
+                  return (
+                    <div key={a.id} style={{
+                      display: 'flex', alignItems: 'center', gap: 9,
+                      background: D.noteBg, border: `1px solid ${D.border}`,
+                      borderRadius: 8, padding: '8px 12px',
+                    }}>
+                      <input
+                        type="checkbox"
+                        checked={done}
+                        disabled={actionBusyId === a.id}
+                        onChange={() => toggleActionItem(a)}
+                        aria-label={done ? 'Mark as open' : 'Mark as done'}
+                        style={{
+                          width: 15, height: 15, accentColor: D.blue, flexShrink: 0,
+                          cursor: actionBusyId === a.id ? 'default' : 'pointer',
+                        }}
+                      />
+                      <span style={{
+                        flex: 1, fontSize: 13, lineHeight: 1.45,
+                        color: done ? D.textMut : D.text,
+                        textDecoration: done ? 'line-through' : 'none',
+                      }}>
+                        {a.item_text}
+                      </span>
+                      {a.due_date && (
+                        <span style={{
+                          fontSize: 11, fontWeight: 700, flexShrink: 0,
+                          color: overdue ? D.red : D.textMut,
+                          background: overdue ? 'rgba(239,68,68,0.12)' : 'rgba(255,255,255,0.04)',
+                          border: `1px solid ${overdue ? 'rgba(239,68,68,0.4)' : D.border}`,
+                          borderRadius: 5, padding: '2px 7px',
+                        }}>
+                          {new Date(`${a.due_date}T12:00:00`).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <p style={{ margin: '8px 0 0', fontSize: 11, color: D.textMut }}>
+                From your meeting notes — same items as the Action Items tab.
+              </p>
             </div>
           )}
 

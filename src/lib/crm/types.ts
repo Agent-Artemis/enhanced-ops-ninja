@@ -69,7 +69,44 @@ export interface Contact {
   notes?: Note[];
 }
 
-export type CrmView = 'onecard' | 'kanban' | 'list' | 'social' | 'reports';
+export type CrmView = 'onecard' | 'kanban' | 'list' | 'actions' | 'social' | 'reports';
+
+// ── Meeting action items (extracted from Granola notes) ────────────────────────
+// ONE row per action item — rendered in the Action Items tab AND on the matched
+// contact's card (ContactDrawer). Never copied; both surfaces write the same row.
+
+export type ActionItemStatus = 'open' | 'done' | 'skipped';
+export type MatchConfidence = 'matched' | 'unmatched' | 'ambiguous';
+
+/** The literal stored in `assigned_to` when an item is handed to Artemis. */
+export const ARTEMIS_ASSIGNEE = 'artemis';
+
+export interface ActionItem {
+  id: string;
+  source?: string | null;
+  granola_note_id?: string | null;
+  meeting_title: string;
+  meeting_date?: string | null;      // timestamptz — render in browser tz
+  attendees?: string[] | null;       // jsonb array of names
+  contact_id?: string | null;
+  match_confidence?: MatchConfidence | null;
+  item_text: string;
+  due_date?: string | null;          // date — YYYY-MM-DD, no time component
+  status: ActionItemStatus;
+  assigned_to?: string | null;       // crm_team_members.id, or ARTEMIS_ASSIGNEE
+  skip_reason?: string | null;
+  completed_at?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * Stable identity for the meeting an item came from. Granola gives us a note id;
+ * hand-entered rows fall back to title + date so they still group together.
+ */
+export function meetingKeyOf(a: ActionItem): string {
+  return a.granola_note_id ?? `${a.meeting_title}|${a.meeting_date ?? ''}`;
+}
 
 // ── Activity tracking (outreach + meetings) — feeds the Reports dashboard ───────
 export type ActivityKind = 'outreach' | 'meeting';
