@@ -71,6 +71,38 @@ export interface Contact {
 
 export type CrmView = 'onecard' | 'kanban' | 'list' | 'actions' | 'social' | 'reports';
 
+// ── Project / company color-coding (custom_fields.project) ─────────────────────
+// A card can optionally be tagged with a project/company name + a muted color so
+// Jeff can visually group cards that belong to a client build. No `project` key =
+// default EON card (rendered exactly as before). Muted palette only — nothing bright.
+
+export const PROJECT_COLORS = [
+  { name: 'Slate Blue',  value: '#4A6FA5' },
+  { name: 'Sage Green',  value: '#5B8A72' },
+  { name: 'Terracotta',  value: '#C0824E' },
+  { name: 'Slate Grey',  value: '#6B7280' },
+  { name: 'Dusty Teal',  value: '#4E8079' },
+  { name: 'Muted Plum',  value: '#7A6A9B' },
+  { name: 'Warm Sand',   value: '#A3894F' },
+] as const;
+
+export interface ProjectTag {
+  name: string;
+  color: string;
+}
+
+/** Read + validate custom_fields.project. Needs both a non-empty name and a color. */
+export function projectOf(c: Pick<Contact, 'custom_fields'>): ProjectTag | null {
+  const p = c.custom_fields?.['project'];
+  if (p && typeof p === 'object' && !Array.isArray(p)) {
+    const r = p as Partial<ProjectTag>;
+    if (typeof r.name === 'string' && r.name.trim() && typeof r.color === 'string' && r.color) {
+      return { name: r.name, color: r.color };
+    }
+  }
+  return null;
+}
+
 // ── Meeting action items (extracted from Granola notes) ────────────────────────
 // ONE row per action item — rendered in the Action Items tab AND on the matched
 // contact's card (ContactDrawer). Never copied; both surfaces write the same row.

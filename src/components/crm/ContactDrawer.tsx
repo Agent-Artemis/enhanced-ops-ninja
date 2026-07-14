@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { Contact, Stage, TeamMember, Sequence, Note, ActionItem } from '@/lib/crm/types';
-import { appointmentOf, denverWallClockToISO, denverTimeOfDay } from '@/lib/crm/types';
+import { appointmentOf, denverWallClockToISO, denverTimeOfDay, projectOf, PROJECT_COLORS } from '@/lib/crm/types';
 import { upsertContact, deleteContact, addNote, deleteNote, updateNote, fetchAffiliateContacts, clearAppointment, fetchOpenActionItemsForContact, setActionItemDone } from '@/lib/crm/data';
 import { QuickLogActivity } from './QuickLogActivity';
 
@@ -81,6 +81,9 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
   const [leadSource, setLeadSource]   = useState('');
   const [referredBy, setReferredBy]   = useState('');
   const [affiliateId, setAffiliateId] = useState('');
+  // Project / company tag (stored in custom_fields.project) — muted color-coding
+  const [projectName, setProjectName]   = useState('');
+  const [projectColor, setProjectColor] = useState('');
   // Scheduled appointment time (HH:MM, business timezone) — stored in custom_fields.appointment
   const [apptTime, setApptTime]       = useState('');
   const [clearingAppt, setClearingAppt] = useState(false);
@@ -104,6 +107,9 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
         setAffiliateId((cf.affiliate_id as string) ?? '');
         const appt = appointmentOf(contact);
         setApptTime(appt ? denverTimeOfDay(appt.start_time) : '');
+        const proj = projectOf(contact);
+        setProjectName(proj?.name ?? '');
+        setProjectColor(proj?.color ?? '');
       } else {
         setForm(EMPTY);
         setNotes([]);
@@ -111,6 +117,8 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
         setReferredBy('');
         setAffiliateId('');
         setApptTime('');
+        setProjectName('');
+        setProjectColor('');
       }
       setNewNote('');
       setError('');
@@ -130,6 +138,23 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
     setForm(p => ({ ...p, [key]: value }));
   }
 
+  // Project name change: typing a name with no color yet default-selects the
+  // first swatch; clearing the name clears the whole project (name + color).
+  function onProjectName(value: string) {
+    setProjectName(value);
+    if (value.trim()) {
+      if (!projectColor) setProjectColor(PROJECT_COLORS[0].value);
+    } else {
+      setProjectColor('');
+    }
+  }
+
+  // Remove the project entirely (the "None" swatch).
+  function clearProject() {
+    setProjectName('');
+    setProjectColor('');
+  }
+
   async function save() {
     if (!form.first_name?.trim()) { setError('First name required'); return; }
     setSaving(true); setError('');
@@ -147,6 +172,14 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
       };
     } else {
       delete customFields.appointment;
+    }
+    // Project / company tag — a project needs BOTH a name and a color to be
+    // meaningful. Otherwise clear it so the card falls back to the EON default.
+    const projName = projectName.trim();
+    if (projName && projectColor) {
+      customFields.project = { name: projName, color: projectColor };
+    } else {
+      delete customFields.project;
     }
     try {
       const saved = await upsertContact({ ...form, custom_fields: customFields });
@@ -309,6 +342,61 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
               {error}
             </div>
           )}
+
+          {/* Project / Company — muted color-coding. Blank = default EON card. */}
+          <div style={{
+            marginBottom: 18, paddingBottom: 16, borderBottom: `1px solid ${D.border}`,
+          }}>
+            <label style={labelStyle}>Project / Company</label>
+            <input
+              type="text"
+              value={projectName}
+              onChange={e => onProjectName(e.target.value)}
+              placeholder="Project or company — leave blank for EON"
+              style={inputStyle}
+            />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
+              {/* None / clear */}
+              <button
+                type="button"
+                onClick={clearProject}
+                title="No project — default EON card"
+                aria-label="No project — default EON card"
+                style={{
+                  width: 24, height: 24, padding: 0, borderRadius: 6, cursor: 'pointer',
+                  background: 'transparent',
+                  border: !projectColor ? `2px solid ${D.text}` : `1px solid ${D.inputBorder}`,
+                  color: D.textMut, fontSize: 13, lineHeight: 1,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >
+                ✕
+              </button>
+              {PROJECT_COLORS.map(c => {
+                const selected = projectColor === c.value;
+                return (
+                  <button
+                    key={c.value}
+                    type="button"
+                    onClick={() => {
+                      setProjectColor(c.value);
+                      // Picking a color with no name yet: seed a name so the tag is meaningful.
+                      if (!projectName.trim()) setProjectName(c.name);
+                    }}
+                    title={c.name}
+                    aria-label={c.name}
+                    aria-pressed={selected}
+                    style={{
+                      width: 24, height: 24, padding: 0, borderRadius: 6, cursor: 'pointer',
+                      background: c.value,
+                      border: selected ? '2px solid #FFFFFF' : `1px solid ${D.border}`,
+                      boxShadow: selected ? `0 0 0 2px ${c.value}` : 'none',
+                    }}
+                  />
+                );
+              })}
+            </div>
+          </div>
 
           {/* Name */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
