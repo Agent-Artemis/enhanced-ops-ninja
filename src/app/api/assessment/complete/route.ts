@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { Resend } from "resend";
 import { z } from "zod";
 
 import { persistFreeDeepDiveLead } from "@/lib/assessment/persist-deep-dive-lead";
@@ -8,6 +9,8 @@ import { assessmentConfigFilename, loadAssessmentConfig } from "@/lib/assessment
 import { ASSESSMENT_SESSION_COOKIE } from "@/lib/assessment/constants";
 import { computeScores, scoreBand } from "@/lib/scoring/compute";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/admin";
+import { enqueueNurtureSequence } from "@/lib/email/enqueue-nurture";
+import { buildResultsEmail } from "@/lib/email/nurture-templates";
 
 export const dynamic = "force-dynamic";
 
@@ -153,6 +156,56 @@ export async function POST(req: Request) {
     console.error("[assessment/complete] deep_dive_assessments insert failed:", deepDiveResult.error);
     return NextResponse.json({ error: deepDiveResult.error.message }, { status: 500 });
   }
+
+  // ── Nurture engine ────────────────────────────────────────────────────────
+  // Enqueue the full drip sequence (results + day 2, 5, 10).
+  // Step 0 is scheduled_at = now so the cron sends it within the hour,
+  // but we also fire the results email immediately here for instant delivery.
+  const firstName = parsed.data.name.split(" ")[0] ?? parsed.data.name;
+  const completedAt = new Date();
+
+  // Immediate results email (best-effort — never blocks completion)
+  try {
+    const resendKey = process.env.RESEND_API_KEY;
+    if (resendKey) {
+      const resend = new Resend(resendKey);
+      const { subject, html } = buildResultsEmail({
+        firstName,
+        overallScore: computed.overallScore,
+      });
+      const { error: sendError } = await resend.emails.send({
+        from: "jeff@enhancedops.ninja",
+        to: parsed.data.email,
+        subject,
+        html,
+      });
+      if (sendError) {
+        console.error("[assessment/complete] results email failed:", sendError.message);
+      }
+    }
+  } catch (err) {
+    console.error("[assessment/complete] results email error:", err);
+  }
+
+  // Enqueue drip (step 0 marked sent-immediately; steps 1-3 queued for cron)
+  try {
+    await enqueueNurtureSequence(admin, {
+      email: parsed.data.email,
+      firstName,
+      sessionId: session.id,
+      completedAt,
+    });
+    // Mark step 0 as sent since we just fired it above
+    await admin
+      .from("nurture_queue")
+      .update({ status: "sent", sent_at: completedAt.toISOString() })
+      .eq("email", parsed.data.email)
+      .eq("sequence", "free_assessment")
+      .eq("step", 0);
+  } catch (err) {
+    console.error("[assessment/complete] enqueue-nurture error:", err);
+  }
+  // ─────────────────────────────────────────────────────────────────────────
 
   return NextResponse.json({
     ok: true,

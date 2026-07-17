@@ -1,5 +1,6 @@
 {
   "crons": [
-    { "path": "/api/crm/ingest-granola", "schedule": "17 14,17,20,23 * * *" }
+    { "path": "/api/crm/ingest-granola", "schedule": "17 14,17,20,23 * * *" },
+    { "path": "/api/cron/nurture", "schedule": "0 * * * *" }
   ]
 }
