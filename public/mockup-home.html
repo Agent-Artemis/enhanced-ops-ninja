@@ -132,6 +132,9 @@
   .logo svg{width:20px;height:20px}
   .brand b{color:#fff}
   .brand span{color:var(--blue-glow)}
+  .brand-logo{height:30px;width:auto;display:block}
+  .foot-brand .brand-logo{height:36px}
+  @media(max-width:520px){.brand-logo{height:25px}}
   .nav-spacer{flex:1}
   .nav-links{display:flex;align-items:center;gap:4px}
   .nav-links a{
@@ -432,11 +435,8 @@
 <!-- ============ NAV ============ -->
 <header class="nav">
   <div class="wrap nav-inner">
-    <a class="brand" href="mockup-home.html" aria-label="EnhancedOps home">
-      <span class="logo" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M3 17l5-5 3.5 3.5L20 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20" cy="7" r="2" fill="#fff"/></svg>
-      </span>
-      <span><b>Enhanced</b><span>Ops</span></span>
+    <a class="brand" href="mockup-home.html" aria-label="Enhanced Ops Ninja home">
+      <img class="brand-logo" src="logo-transparent.png" alt="Enhanced Ops Ninja" />
     </a>
     <div class="nav-spacer"></div>
     <nav class="nav-links" aria-label="Primary">
@@ -448,25 +448,21 @@
         </a>
         <div class="drop-menu" role="menu">
           <div class="dm-head">Same command center · tuned to your world</div>
+          <a class="dm-item live" href="mockup-medspa.html" role="menuitem">
+            <span class="dm-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3v18M7 8c0-2 2-3 5-3s5 1 5 3M6 12h12M8 12v6M16 12v6"/></svg></span>
+            <span><b>Med Spa</b><small>Consults, memberships &amp; injector utilization</small></span>
+          </a>
           <a class="dm-item live" href="mockup-dental.html" role="menuitem">
             <span class="dm-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3c-2 0-3 1-4.5 1S5 3 4 4C2.5 5.5 3 9 4 13c.6 2.4 1 5 2 6s1.5-2 2-4c.3-1.2.8-2 2-2s1.7.8 2 2c.5 2 1 5 2 4s1.4-3.6 2-6c1-4 1.5-7.5 0-9-1-1-2-1-3.5-1S14 3 12 3Z"/></svg></span>
             <span><b>Dental</b><small>PMS + phones + booking, unified across offices</small></span>
           </a>
-          <a class="dm-item" href="#" role="menuitem">
+          <a class="dm-item live" href="mockup-vet.html" role="menuitem">
             <span class="dm-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M10 5a3 3 0 1 0-4 2.8V10a5 5 0 0 0 5 5v2a4 4 0 1 0 2 0v-2a5 5 0 0 0 5-5V7.8A3 3 0 1 0 14 5"/><circle cx="13" cy="20" r="2"/></svg></span>
-            <span><b>Veterinary</b><small>PIMS, boarding & multi-clinic capacity</small></span>
-          </a>
-          <a class="dm-item" href="#" role="menuitem">
-            <span class="dm-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3v18M7 8c0-2 2-3 5-3s5 1 5 3M6 12h12M8 12v6M16 12v6"/></svg></span>
-            <span><b>Med Spa</b><small>Bookings, memberships & injector utilization</small></span>
+            <span><b>Veterinary</b><small>PIMS, boarding &amp; multi-clinic capacity</small></span>
           </a>
           <a class="dm-item" href="#" role="menuitem">
             <span class="dm-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M3 21V9l9-6 9 6v12M9 21v-6h6v6"/></svg></span>
-            <span><b>Senior Living</b><small>Census, care hours & occupancy per community</small></span>
-          </a>
-          <a class="dm-item" href="#" role="menuitem">
-            <span class="dm-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 21s-7-4.5-7-10a7 7 0 0 1 14 0c0 5.5-7 10-7 10Z"/><path d="M9 11h6M12 8v6"/></svg></span>
-            <span><b>Home Health</b><small>Visits, EVV compliance & caseload by region</small></span>
+            <span><b>Senior Living</b><small>Census, care hours &amp; occupancy per community</small></span>
           </a>
         </div>
       </div>
@@ -489,7 +485,7 @@
         <span class="chip"><span class="dot"></span> Real-time visibility</span>
       </div>
       <h1>Your entire multi-location business on <span class="accent">one screen</span> — built for how <span class="accent">you</span> actually run it.</h1>
-      <p class="lead hero-sub">EnhancedOps wires your booking, phones, EHR, schedules, and team comms into a single command center — so you see every location in real time instead of swivel-chairing between six disconnected tools.</p>
+      <p class="lead hero-sub">EnhancedOps wires your booking, phones, EHR, schedules, and team comms into a single command center — so you see every location in real time instead of bouncing between six systems that don't talk to each other.</p>
       <div class="hero-cta">
         <a class="btn btn-primary btn-lg" href="#audit">Book your free Visibility Audit <svg class="arrow" width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         <a class="btn btn-ghost btn-lg" href="#command">See the command center</a>
@@ -615,7 +611,7 @@
             <div class="alerts">
               <div class="alert">
                 <span class="a-ic a-crit"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 9v4M12 17h.01M10.3 4l-7 12A2 2 0 0 0 5 19h14a2 2 0 0 0 1.7-3l-7-12a2 2 0 0 0-3.4 0Z" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                <span class="a-txt"><b>Westpark</b> missed 4 new-patient calls before 10am — routing to overflow.</span>
+                <span class="a-txt"><b>Westpark</b> no-show rate 14.8% vs 12% threshold — ≈$2,500/mo walking out the door. Routing to reminder + voice module.</span>
                 <span class="a-time">2m</span>
               </div>
               <div class="alert">
@@ -655,9 +651,9 @@
 <section class="band" id="problem">
   <div class="wrap">
     <div class="sec-head reveal">
-      <span class="eyebrow">The swivel-chair tax</span>
+      <span class="eyebrow">Are you walking the dog — or is the dog walking you?</span>
       <h2>You're running 4–6 systems that were never built to talk to each other.</h2>
-      <p class="lead">Every location has its own logins, its own tabs, its own version of the truth. To answer one simple question — <em>how did we actually do yesterday?</em> — you're swiveling between tools, exporting spreadsheets, and stitching it together by hand. Meanwhile you're flying blind across sites.</p>
+      <p class="lead">Every location has its own logins, its own tabs, its own version of the truth. To answer one simple question — <em>how did we actually do yesterday?</em> — someone exports spreadsheets and stitches it together by hand. That's not a software problem — that's tech fatigue: systems that don't talk to each other, and an owner flying blind across sites.</p>
     </div>
     <div class="swivel">
       <div class="tools-cloud reveal" aria-hidden="true">
@@ -675,13 +671,13 @@
         <div class="tool-node" style="top:168px;right:14px"><span class="td"></span>Spreadsheets</div>
         <div class="tool-node" style="bottom:34px;left:34px"><span class="td"></span>Scheduling</div>
         <div class="tool-node" style="bottom:34px;right:30px"><span class="td"></span>Group chat</div>
-        <div class="owner"><b>You</b><small>swivel-chairing<br>all day</small></div>
+        <div class="owner"><b>You</b><small>rebuilding<br>reports by hand</small></div>
       </div>
       <div class="reveal">
         <div class="stat-list">
           <div class="stat-item">
             <span class="stat-num" data-count="45" data-suffix="%">0%</span>
-            <p>of staff time can be lost <b>"swivel-chairing"</b> between disconnected tools — re-keying the same data, hunting for numbers, reconciling by hand.</p>
+            <p>of staff time can be lost bouncing between <b>systems that don't talk to each other</b> — re-keying the same data, hunting for numbers, reconciling by hand.</p>
           </div>
           <div class="stat-item">
             <span class="stat-num" data-count="6">0</span>
@@ -781,6 +777,60 @@
   </div>
 </section>
 
+<!-- ============ VALUATION PAYOFF ============ -->
+<section class="band" id="valuation">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Why owners actually do this</span>
+      <h2>Software you own doesn't just cut costs. It re-rates the business.</h2>
+      <p class="lead">Visibility is the wedge. This is the payoff. Most multi-location groups sell on a multiple of EBITDA — and a group running on someone else's software sells as a services business. A group that owns its own operating software, built around its workflows, with the data to prove it, sells as something else.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat reveal">
+        <div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M3 3v18h18M7 14l4-4 3 3 5-6"/></svg></div>
+        <h3>1&ndash;2x on the multiple</h3>
+        <p>Owned software and the IP behind it is what buyers pay up for. A $20M group at 3x is $60M &mdash; with owned software in the deal, closer to $80M.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <h3>Priced to match what you already pay</h3>
+        <p>Designed to land at or under your current software spend &mdash; not on top of it. You&rsquo;re redirecting a bill you already pay into an asset you keep.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M20 7L9 18l-5-5"/></svg></div>
+        <h3>Clean data at diligence</h3>
+        <p>When a buyer asks for three years of per-location performance, it&rsquo;s one export &mdash; not six systems and a quarter of cleanup.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOUNDING ACCESS / RISK REVERSAL ============ -->
+<section class="band" id="founding" style="border-top:1px solid var(--line);background:rgba(8,14,26,.32)">
+  <div class="wrap">
+    <div class="module reveal">
+      <div>
+        <span class="tag"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6 4.4 2.3 7.2-6.3-4.6-6.3 4.6L7.9 13.8 2 9.4h7.6L12 2Z" stroke-linejoin="round"/></svg> Founding access &middot; 20 clients</span>
+        <h2>&ldquo;You&rsquo;re new. Why would I bet my group on you?&rdquo;</h2>
+        <p>Fair. So let&rsquo;s say it plainly: we&rsquo;re building our first 20 clients, and we&rsquo;d rather earn you than oversell you. Here&rsquo;s what that actually buys you &mdash; and what protects you if we&rsquo;re wrong.</p>
+        <ul class="mod-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> <b style="color:#fff">Founding pricing</b> &mdash; roughly half of what this costs once the 20 are full</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> <b style="color:#fff">Money-back guarantee</b> &mdash; if the command center doesn&rsquo;t ship as scoped, you don&rsquo;t pay for it</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> <b style="color:#fff">Named build team</b> &mdash; 6&ndash;8 engineers, not a ticket queue and a chatbot</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> <b style="color:#fff">Your team co-designs it</b> &mdash; which is why it gets adopted instead of resented</li>
+        </ul>
+      </div>
+      <div class="audit-card">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg> What you risk vs. what you get</h3>
+        <div class="audit-step"><span class="as-no">&#10003;</span><p><b>You risk:</b> 45 minutes and an honest look at your systems. That&rsquo;s the whole ask.</p></div>
+        <div class="audit-step"><span class="as-no">&#10003;</span><p><b>You keep:</b> the systems map and the dollar figure &mdash; whether you ever hire us or not.</p></div>
+        <div class="audit-step"><span class="as-no">&#10003;</span><p><b>You gain:</b> founding pricing that doesn&rsquo;t come back, on software you end up owning.</p></div>
+        <p class="placeholder-note">Founding-cohort terms + case studies to be finalized with Jeff before publish.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ VOICE MODULE ============ -->
 <section class="band" id="voice" style="border-top:1px solid var(--line);background:rgba(8,14,26,.32)">
   <div class="wrap">
@@ -870,8 +920,7 @@
     <div class="foot-grid">
       <div class="foot-brand">
         <a class="brand" href="mockup-home.html">
-          <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3 17l5-5 3.5 3.5L20 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20" cy="7" r="2" fill="#fff"/></svg></span>
-          <span><b>Enhanced</b><span>Ops</span></span>
+          <img class="brand-logo" src="logo-transparent.png" alt="Enhanced Ops Ninja" />
         </a>
         <p>The owner's command center for fragmented, multi-location businesses. One screen for every location — built for your stack, not a template.</p>
       </div>
@@ -884,11 +933,10 @@
       </div>
       <div class="foot-col">
         <h4>Industries</h4>
+        <a href="mockup-medspa.html">Med Spa</a>
         <a href="mockup-dental.html">Dental</a>
-        <a href="#">Veterinary</a>
-        <a href="#">Med Spa</a>
+        <a href="mockup-vet.html">Veterinary</a>
         <a href="#">Senior Living</a>
-        <a href="#">Home Health</a>
       </div>
       <div class="foot-col">
         <h4>Company</h4>
