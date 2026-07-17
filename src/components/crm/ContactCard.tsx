@@ -1,7 +1,7 @@
 'use client';
 
 import type { Contact, Stage } from '@/lib/crm/types';
-import { appointmentOf, appointmentTimeLabel, appointmentDateString, projectOf } from '@/lib/crm/types';
+import { appointmentOf, appointmentTimeLabel, appointmentDateString, projectOf, partnerBadgesOf, titleOf } from '@/lib/crm/types';
 
 /** #RRGGBB → rgba() at the given alpha, for a subtle project-color tint over cream. */
 function tint(hex: string, alpha: number): string {
@@ -37,6 +37,8 @@ export function ContactCard({
   // (rendered exactly as before — the project color becomes the dominant signal).
   const project    = projectOf(contact);
   const accentColor = project ? project.color : stageColor;
+  const partnerBadges = partnerBadgesOf(contact);
+  const title      = titleOf(contact);
 
   return (
     <div
@@ -136,12 +138,31 @@ export function ContactCard({
         <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: '#1A1A1A', lineHeight: 1.2 }}>
           {contact.first_name} {contact.last_name ?? ''}
         </p>
+        {/* Partner badges — muted pills, one per partner tag; both can show at once */}
+        {partnerBadges.length > 0 && (
+          <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 6 }}>
+            {partnerBadges.map(b => (
+              <span key={b.label} style={{
+                fontSize: 9, fontWeight: 700, color: '#fff',
+                background: b.color, padding: '2px 7px', borderRadius: 10,
+                letterSpacing: '0.03em', textTransform: 'uppercase', whiteSpace: 'nowrap',
+              }}>
+                {b.label}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Company line */}
-      {contact.company && (
+      {/* Company line — with the job title beneath it (title omitted when empty) */}
+      {(contact.company || title) && (
         <div style={{ padding: '5px 11px', borderBottom: '1px solid #E2D9C0' }}>
-          <p style={{ margin: 0, fontSize: 12, color: '#3A3520' }}>{contact.company}</p>
+          {contact.company && <p style={{ margin: 0, fontSize: 12, color: '#3A3520' }}>{contact.company}</p>}
+          {title && (
+            <p style={{ margin: contact.company ? '2px 0 0' : 0, fontSize: 11, color: '#7A6A50' }}>
+              {title}
+            </p>
+          )}
         </div>
       )}
 

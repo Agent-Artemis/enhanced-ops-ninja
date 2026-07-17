@@ -103,6 +103,34 @@ export function projectOf(c: Pick<Contact, 'custom_fields'>): ProjectTag | null 
   return null;
 }
 
+// ── Partner tags + job title ──────────────────────────────────────────────────
+// Partner status is stored as plain membership in the existing `tags` array (no
+// schema change). The two partner types are INDEPENDENT of each other, of the
+// kanban stage, and of the `bucket` — a contact can sit in any pipeline stage,
+// be a client, AND be a referral and/or affiliate partner all at once.
+// Job title lives in custom_fields.title (a string).
+
+export const REFERRAL_PARTNER_TAG  = 'Referral Partner';
+export const AFFILIATE_PARTNER_TAG = 'Affiliate Partner';
+
+/** The two partner toggles, with the muted card-face badge color for each. */
+export const PARTNER_BADGES: { tag: string; label: string; color: string }[] = [
+  { tag: REFERRAL_PARTNER_TAG,  label: 'Referral Partner',  color: '#4A6FA5' }, // slate blue
+  { tag: AFFILIATE_PARTNER_TAG, label: 'Affiliate Partner', color: '#5B8A72' }, // sage green
+];
+
+/** Which partner badges to show for a contact, based on its `tags` membership. */
+export function partnerBadgesOf(c: Pick<Contact, 'tags'>): { label: string; color: string }[] {
+  const tags = c.tags ?? [];
+  return PARTNER_BADGES.filter(b => tags.includes(b.tag)).map(({ label, color }) => ({ label, color }));
+}
+
+/** Read custom_fields.title (job title). Empty string when unset. */
+export function titleOf(c: Pick<Contact, 'custom_fields'>): string {
+  const t = c.custom_fields?.['title'];
+  return typeof t === 'string' ? t : '';
+}
+
 // ── Meeting action items (extracted from Granola notes) ────────────────────────
 // ONE row per action item — rendered in the Action Items tab AND on the matched
 // contact's card (ContactDrawer). Never copied; both surfaces write the same row.

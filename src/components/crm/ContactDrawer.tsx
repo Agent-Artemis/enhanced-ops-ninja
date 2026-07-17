@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { Contact, Stage, TeamMember, Sequence, Note, ActionItem } from '@/lib/crm/types';
-import { appointmentOf, denverWallClockToISO, denverTimeOfDay, projectOf, PROJECT_COLORS } from '@/lib/crm/types';
+import { appointmentOf, denverWallClockToISO, denverTimeOfDay, projectOf, PROJECT_COLORS, PARTNER_BADGES } from '@/lib/crm/types';
 import { upsertContact, deleteContact, addNote, deleteNote, updateNote, fetchAffiliateContacts, clearAppointment, fetchCardActionItemsForContact, setActionItemDone } from '@/lib/crm/data';
 import { QuickLogActivity } from './QuickLogActivity';
 
@@ -77,6 +77,8 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
   const [error, setError]       = useState('');
   const [logOpen, setLogOpen]   = useState(false);
 
+  // Job title (stored in custom_fields.title)
+  const [title, setTitle]             = useState('');
   // Lead source fields (stored in custom_fields)
   const [leadSource, setLeadSource]   = useState('');
   const [referredBy, setReferredBy]   = useState('');
@@ -102,6 +104,7 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
         setForm(rest);
         setNotes(n ?? []);
         const cf = contact.custom_fields ?? {};
+        setTitle((cf.title as string) ?? '');
         setLeadSource((cf.lead_source as string) ?? '');
         setReferredBy((cf.referred_by as string) ?? '');
         setAffiliateId((cf.affiliate_id as string) ?? '');
@@ -113,6 +116,7 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
       } else {
         setForm(EMPTY);
         setNotes([]);
+        setTitle('');
         setLeadSource('');
         setReferredBy('');
         setAffiliateId('');
@@ -140,6 +144,22 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
     setForm(p => ({ ...p, [key]: value }));
   }
 
+  // Partner status = membership in the `tags` array. Each toggle is independent —
+  // both can be on at once — and independent of the stage/bucket. We add or remove
+  // exactly the one tag value, never touching any other tags already on the card.
+  function hasPartnerTag(tag: string): boolean {
+    return (form.tags ?? []).includes(tag);
+  }
+  function togglePartnerTag(tag: string) {
+    setForm(p => {
+      const current = p.tags ?? [];
+      const next = current.includes(tag)
+        ? current.filter(t => t !== tag)
+        : [...current, tag];
+      return { ...p, tags: next };
+    });
+  }
+
   // Project name change: typing a name with no color yet default-selects the
   // first swatch; clearing the name clears the whole project (name + color).
   function onProjectName(value: string) {
@@ -161,6 +181,9 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
     if (!form.first_name?.trim()) { setError('First name required'); return; }
     setSaving(true); setError('');
     const customFields: Record<string, unknown> = { ...(form.custom_fields ?? {}) };
+    // Job title → custom_fields.title (drop the key when cleared).
+    if (title.trim()) customFields.title = title.trim();
+    else delete customFields.title;
     if (leadSource) customFields.lead_source = leadSource;
     if (leadSource === 'referral' && referredBy) customFields.referred_by = referredBy;
     if (leadSource === 'affiliate' && affiliateId) customFields.affiliate_id = affiliateId;
@@ -418,6 +441,13 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
             <input type="text" value={form.company ?? ''} onChange={e => set('company', e.target.value)} style={inputStyle} />
           </div>
 
+          {/* Title (job title) — stored in custom_fields.title, shown under company on the card */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={labelStyle}>Title</label>
+            <input type="text" value={title} onChange={e => setTitle(e.target.value)}
+              placeholder="Job title" style={inputStyle} />
+          </div>
+
           {/* Phone / Email */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
             <div>
@@ -548,10 +578,36 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
           <p style={{ margin: '0 0 14px', fontSize: 11, color: D.textMut }}>
             Add a time for scheduled appointments — timed cards rise to the top of that day.
           </p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
             <input type="checkbox" id="is_active" checked={form.is_active ?? true} onChange={e => set('is_active', e.target.checked)}
               style={{ width: 16, height: 16, accentColor: D.blue, cursor: 'pointer' }} />
             <label htmlFor="is_active" style={{ fontSize: 14, color: D.textSec, cursor: 'pointer' }}>Active</label>
+          </div>
+
+          {/* Partner status — two INDEPENDENT toggles stored in tags[]. Both can be on
+              at once; neither is tied to the pipeline stage. A partner may also be a client. */}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+            {PARTNER_BADGES.map(({ tag, label }) => {
+              const on = hasPartnerTag(tag);
+              return (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => togglePartnerTag(tag)}
+                  aria-pressed={on}
+                  style={{
+                    padding: '7px 14px', fontSize: 13, fontWeight: 600,
+                    borderRadius: 8, cursor: 'pointer',
+                    background: on ? D.blue : 'transparent',
+                    color: on ? '#fff' : D.textSec,
+                    border: `1px solid ${on ? D.blue : D.inputBorder}`,
+                    transition: 'background 0.12s, color 0.12s',
+                  }}
+                >
+                  {label}
+                </button>
+              );
+            })}
           </div>
 
           {/* Activity — log outreach / meetings against this card */}
