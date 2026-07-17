@@ -285,7 +285,7 @@ export default function CrmPage() {
         <BookingsPanel contacts={contacts} onClose={() => setBookingsOpen(false)} onRefresh={refresh} />
       )}
       <main style={{ paddingTop: 88 }}>
-        {view === 'onecard' && <OneCardView contacts={visibleContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onRefresh={refresh} />}
+        {view === 'onecard' && <OneCardView contacts={visibleContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onNew={() => { setDrawerContact(null); setDrawerOpen(true); }} onRefresh={refresh} />}
         {view === 'kanban'  && <KanbanView  contacts={visibleContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onRefresh={refresh} />}
         {view === 'list'    && <ListView    contacts={visibleContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} />}
         {view === 'actions' && <ActionItemsView team={team} contacts={contacts} />}

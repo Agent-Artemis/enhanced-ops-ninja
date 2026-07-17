@@ -11,6 +11,8 @@ interface Props {
   contacts: Contact[];
   stages: Stage[];
   onOpen: (c: Contact) => void;
+  /** Open the ContactDrawer on a blank card — same create path as the header's "+ New Card". */
+  onNew: () => void;
   onRefresh: () => Promise<void>;
 }
 
@@ -106,7 +108,7 @@ function makeDate(name: string, year: number, day: number): string {
 
 
 // ── Main component ─────────────────────────────────────────────────────────────
-export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
+export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Props) {
   const MONTH_SLOTS = buildMonthSlots();
   const now = new Date();
   const currentMonthName = MONTH_NAMES[now.getMonth()];
@@ -640,12 +642,19 @@ export function OneCardView({ contacts, stages, onOpen, onRefresh }: Props) {
 
       {/* ── MAIN AREA ─────────────────────────────────────────────────────── */}
       <main style={{ flex: 1, overflowY: 'auto', padding: '20px 24px', background: T.pageBg }}>
+        {/* Panel header — label on the left, create affordance on the right. The
+            button opens the same blank ContactDrawer as the header's "+ New Card". */}
         <div style={{
-          fontSize: 10, fontWeight: 700, color: T.textMuted,
-          textTransform: 'uppercase', letterSpacing: '0.1em',
-          marginBottom: 16,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          gap: 12, marginBottom: 16,
         }}>
-          {panelLabel()}
+          <div style={{
+            fontSize: 10, fontWeight: 700, color: T.textMuted,
+            textTransform: 'uppercase', letterSpacing: '0.1em',
+          }}>
+            {panelLabel()}
+          </div>
+          <AddCardBtn onClick={onNew} />
         </div>
 
         {panel === 'alpha' ? (
@@ -1018,6 +1027,27 @@ function AlphaGrid({
         </div>
       ))}
     </div>
+  );
+}
+
+// ── Add a card button ──────────────────────────────────────────────────────────
+// Mirrors the header's "+ New Card" (same blue, same radius/weight), sized down
+// to sit on the panel header rule without competing with it.
+function AddCardBtn({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      title="Create a new card"
+      style={{
+        padding: '5px 12px', background: T.blue, color: '#fff',
+        border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 600,
+        cursor: 'pointer', flexShrink: 0, transition: 'opacity 0.1s',
+      }}
+      onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+      onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+    >
+      + Add a card
+    </button>
   );
 }
 

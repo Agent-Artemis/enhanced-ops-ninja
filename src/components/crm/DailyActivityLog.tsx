@@ -12,6 +12,8 @@ const D = {
 
 // ── Metric definitions: display label → db column (order = left→right) ────────
 const METRICS = [
+  // Referrals lead the funnel: a referral comes in, then it gets called.
+  { col: 'referrals', label: 'Referrals', abbr: 'Referrals' },
   { col: 'phone_calls', label: 'Phone Calls', abbr: 'Calls' },
   { col: 'texts', label: 'Text', abbr: 'Text' },
   { col: 'appts_made', label: 'APPTS Made', abbr: 'Made' },
@@ -32,10 +34,10 @@ const METRIC_COLS = METRICS.map(m => m.col) as MetricCol[];
 const KEPT_COLS: readonly MetricCol[] = ['appts_kept_initial', 'appts_kept_closing'];
 
 // ── Tally strip: which columns get tap-to-count +/− buttons ──────────────────
-// "Calls through Closed" only. Amount (money) and the social columns stay
+// "Referrals through Closed" only. Amount (money) and the social columns stay
 // keyboard-entry — their tally cells render empty so the grid stays aligned.
 const TALLY_COLS = [
-  'phone_calls', 'texts', 'appts_made', 'appts_kept_initial', 'appts_kept_closing', 'closed',
+  'referrals', 'phone_calls', 'texts', 'appts_made', 'appts_kept_initial', 'appts_kept_closing', 'closed',
 ] as const;
 type TallyCol = (typeof TALLY_COLS)[number];
 function isTallyCol(c: MetricCol): c is TallyCol {
@@ -293,6 +295,7 @@ export function DailyActivityLog() {
     const amountValue = amountAuto ? (autoAmountsRef.current[date] ?? 0) : (row.amount ?? 0);
     const payload = {
       activity_date: date,
+      referrals: row.referrals,
       phone_calls: row.phone_calls,
       texts: row.texts,
       appts_made: row.appts_made,
@@ -601,7 +604,7 @@ export function DailyActivityLog() {
                   {/* ── Tally strip — sits directly ABOVE today's row. Only rendered in
                       Day grouping (this map only runs then) and only when TODAY is in
                       the selected range (dayList only contains today when from ≤ today ≤ to).
-                      Cell count MUST match a body row: Date + 11 metrics + Amount + Day Total = 14.
+                      Cell count MUST match a body row: Date + 12 metrics + Amount + Day Total = 15.
                       The KEPT pair is two separate body cells, so it gets two cells here too. */}
                   {isToday && (
                     <tr>
