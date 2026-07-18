@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>EnhancedOps — The Owner's Command Center</title>
+<title>EnhancedOps for Senior Living — Audit-Ready by Default, Every Day</title>
 <style>
   /* ============ TOKENS ============ */
   :root{
@@ -58,7 +58,6 @@
   img{max-width:100%}
   ::selection{background:rgba(62,143,224,.32);color:#fff}
 
-  /* Ambient background field */
   body::before{
     content:"";position:fixed;inset:0;z-index:-2;
     background:
@@ -78,7 +77,6 @@
 
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
 
-  /* ============ TYPE ============ */
   h1,h2,h3{margin:0;text-wrap:balance;letter-spacing:-.02em;line-height:1.08;font-weight:800}
   h1{font-size:clamp(2.3rem,5.4vw,4rem)}
   h2{font-size:clamp(1.8rem,3.6vw,2.7rem)}
@@ -93,7 +91,6 @@
   .lead{font-size:clamp(1.02rem,1.5vw,1.22rem);color:var(--ink-soft);max-width:60ch}
   .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
 
-  /* ============ BUTTONS ============ */
   .btn{
     display:inline-flex;align-items:center;gap:.55em;justify-content:center;
     font:650 .95rem/1 var(--sans);letter-spacing:.01em;
@@ -110,11 +107,9 @@
   .btn-ghost{color:var(--ink);background:rgba(126,158,201,.06);border-color:var(--line-strong)}
   .btn-ghost:hover{background:rgba(126,158,201,.12);transform:translateY(-2px)}
   .btn-lg{padding:1.02em 1.7em;font-size:1.02rem}
-
   .arrow{transition:transform .2s ease}
   .btn:hover .arrow{transform:translateX(3px)}
 
-  /* ============ NAV ============ */
   header.nav{
     position:sticky;top:0;z-index:60;
     backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
@@ -132,9 +127,7 @@
   .logo svg{width:20px;height:20px}
   .brand b{color:#fff}
   .brand span{color:var(--blue-glow)}
-  .brand-logo{height:30px;width:auto;display:block}
-  .foot-brand .brand-logo{height:36px}
-  @media(max-width:520px){.brand-logo{height:25px}}
+  .brand .vertical{font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.08em;border-left:1px solid var(--line-strong);padding-left:11px;margin-left:2px}
   .nav-spacer{flex:1}
   .nav-links{display:flex;align-items:center;gap:4px}
   .nav-links a{
@@ -143,7 +136,6 @@
   }
   .nav-links a:hover{color:#fff;background:rgba(126,158,201,.08)}
 
-  /* dropdown */
   .drop{position:relative}
   .drop-btn{display:inline-flex;align-items:center;gap:.4em}
   .drop-btn .chev{width:12px;height:12px;transition:transform .2s ease}
@@ -157,21 +149,21 @@
   .drop-menu .dm-head{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);padding:8px 12px 6px}
   .dm-item{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:11px;transition:background .16s ease}
   .dm-item:hover{background:rgba(126,158,201,.09)}
+  .dm-item.active{background:rgba(62,143,224,.12);border:1px solid var(--line-strong)}
   .dm-ic{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;flex:none;background:rgba(62,143,224,.12);border:1px solid var(--line-strong)}
   .dm-ic svg{width:18px;height:18px;stroke:var(--blue-glow)}
   .dm-item b{display:block;font-size:.92rem;color:#fff;font-weight:650}
   .dm-item small{display:block;color:var(--muted);font-size:.78rem}
-  .dm-item.live b::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--good);margin-left:8px;vertical-align:middle;box-shadow:0 0 0 3px rgba(52,211,153,.18)}
+  .dm-item.active b::after{content:"● current";display:inline-block;font:600 .6rem var(--mono);color:var(--cyan);margin-left:8px;letter-spacing:.06em}
 
   .nav-cta{display:flex;align-items:center;gap:12px}
   .menu-toggle{display:none}
 
   @media(max-width:940px){
-    .nav-links,.nav-cta .btn-ghost{display:none}
+    .nav-links,.nav-cta .btn-ghost,.brand .vertical{display:none}
     .menu-toggle{display:inline-flex}
   }
 
-  /* ============ HERO ============ */
   .hero{position:relative;padding:64px 0 46px}
   .hero-grid{display:grid;grid-template-columns:1.02fr 1.28fr;gap:52px;align-items:center}
   @media(max-width:1000px){.hero-grid{grid-template-columns:1fr;gap:40px}}
@@ -191,7 +183,6 @@
   .hero-note{margin-top:18px;font-size:.85rem;color:var(--muted);display:flex;align-items:center;gap:8px}
   .hero-note svg{width:15px;height:15px;stroke:var(--good)}
 
-  /* ============ DASHBOARD MOCK ============ */
   .console{
     position:relative;border-radius:var(--radius-lg);
     background:linear-gradient(180deg,#0e1a2c,#0b1524);
@@ -215,7 +206,6 @@
 
   .console-body{padding:16px;display:grid;gap:14px}
 
-  /* KPI tiles */
   .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
   @media(max-width:520px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
   .kpi{
@@ -236,7 +226,6 @@
   .sub-head b{font-size:.82rem;color:#fff;font-weight:650}
   .sub-head small{font:600 .66rem var(--mono);color:var(--faint);letter-spacing:.08em;text-transform:uppercase}
 
-  /* Locations list */
   .loc{display:flex;align-items:center;gap:11px;padding:8px 0;border-bottom:1px dashed var(--line)}
   .loc:last-child{border-bottom:0;padding-bottom:0}
   .loc-status{width:9px;height:9px;border-radius:50%;flex:none}
@@ -248,13 +237,10 @@
   .loc-mini{width:64px;height:22px;flex:none}
   .loc-val{font:600 .8rem var(--mono);color:var(--ink-soft);width:44px;text-align:right;flex:none}
 
-  /* area chart */
   .chart-wrap{position:relative;height:118px;margin-top:4px}
   .chart-wrap svg{width:100%;height:100%;overflow:visible}
   .grid-line{stroke:var(--line);stroke-width:1}
-  .axis-tag{font:600 .58rem var(--mono);fill:var(--faint)}
 
-  /* alerts */
   .alerts{display:grid;gap:9px}
   .alert{display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border-radius:10px;background:rgba(126,158,201,.05);border:1px solid var(--line)}
   .alert .a-ic{width:22px;height:22px;border-radius:7px;flex:none;display:grid;place-items:center;margin-top:1px}
@@ -266,7 +252,6 @@
   .alert .a-txt b{color:#fff;font-weight:650}
   .alert .a-time{margin-left:auto;font:600 .64rem var(--mono);color:var(--faint);white-space:nowrap}
 
-  /* floating stat cards */
   .float{position:absolute;z-index:3;background:rgba(14,26,44,.86);backdrop-filter:blur(8px);
     border:1px solid var(--line-strong);border-radius:14px;padding:11px 13px;box-shadow:var(--shadow-soft)}
   .float .f-label{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
@@ -275,21 +260,18 @@
   .float-b{bottom:-20px;right:-22px}
   @media(max-width:1000px){.float{display:none}}
 
-  /* ============ SECTIONS ============ */
   section{position:relative}
   .band{padding:88px 0}
   .sec-head{max-width:720px;margin-bottom:44px}
   .sec-head.center{margin-left:auto;margin-right:auto;text-align:center}
   .sec-head p{margin-top:16px}
 
-  /* logos strip */
   .strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:26px 0;background:rgba(8,14,26,.4)}
   .strip-inner{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;color:var(--muted);font-size:.82rem}
   .strip-inner .pill{display:inline-flex;align-items:center;gap:8px;padding:.5em .9em;border-radius:999px;border:1px solid var(--line);background:rgba(126,158,201,.04);font-weight:600;color:var(--ink-soft)}
   .strip-inner .pill svg{width:16px;height:16px;stroke:var(--blue-glow);opacity:.9}
   .strip-lead{width:100%;text-align:center;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:16px;font-weight:600}
 
-  /* problem / swivel */
   .swivel{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
   @media(max-width:900px){.swivel{grid-template-columns:1fr;gap:36px}}
   .tools-cloud{position:relative;min-height:340px;border-radius:var(--radius-lg);border:1px solid var(--line);
@@ -311,13 +293,12 @@
   .stat-item p{color:var(--ink-soft);font-size:.96rem}
   .stat-item p b{color:#fff}
 
-  /* command center — feature grid */
   .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
   @media(max-width:900px){.feat-grid{grid-template-columns:1fr}}
   .feat{padding:26px 24px;border-radius:var(--radius);border:1px solid var(--line);position:relative;overflow:hidden;
     background:linear-gradient(180deg,var(--panel),rgba(16,27,45,.5));transition:transform .25s ease,border-color .25s ease}
   .feat:hover{transform:translateY(-4px);border-color:var(--line-strong)}
-  .feat::after{content:"";position:absolute;left:0;top:0;height:100%;width:3px;background:linear-gradient(180deg,var(--blue-bright),var(--cyan));opacity:.0;transition:opacity .25s ease}
+  .feat::after{content:"";position:absolute;left:0;top:0;height:100%;width:3px;background:linear-gradient(180deg,var(--blue-bright),var(--cyan));opacity:0;transition:opacity .25s ease}
   .feat:hover::after{opacity:1}
   .feat .f-ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;margin-bottom:16px;
     background:rgba(62,143,224,.1);border:1px solid var(--line-strong)}
@@ -327,15 +308,12 @@
   .feat-wide{grid-column:span 3}
   @media(max-width:900px){.feat-wide{grid-column:span 1}}
 
-  /* how it works */
   .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;counter-reset:step;position:relative}
   @media(max-width:900px){.steps{grid-template-columns:1fr}}
   .step{padding:26px 24px;border:1px solid var(--line);position:relative;background:linear-gradient(180deg,rgba(16,27,45,.6),transparent)}
   .steps .step:first-child{border-radius:var(--radius) 0 0 var(--radius)}
   .steps .step:last-child{border-radius:0 var(--radius) var(--radius) 0}
-  @media(max-width:900px){
-    .steps .step{border-radius:var(--radius)!important;margin-bottom:12px}
-  }
+  @media(max-width:900px){.steps .step{border-radius:var(--radius)!important;margin-bottom:12px}}
   .step .s-no{font:700 .78rem var(--mono);color:var(--blue-glow);letter-spacing:.1em;display:flex;align-items:center;gap:9px;margin-bottom:16px}
   .step .s-no::before{counter-increment:step;content:"0" counter(step);font-size:1.4rem;color:#fff;font-weight:800}
   .step h3{font-size:1.05rem;margin-bottom:8px}
@@ -343,7 +321,6 @@
   .step .s-arrow{position:absolute;right:-9px;top:34px;width:18px;height:18px;z-index:2;color:var(--blue-glow);background:var(--bg);border-radius:50%}
   @media(max-width:900px){.step .s-arrow{display:none}}
 
-  /* voice module */
   .module{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;
     border:1px solid var(--line);border-radius:var(--radius-lg);padding:38px;background:linear-gradient(120deg,var(--panel),rgba(11,21,36,.4))}
   @media(max-width:900px){.module{grid-template-columns:1fr;gap:30px;padding:28px}}
@@ -351,11 +328,10 @@
     padding:.4em .8em;border-radius:999px;border:1px solid rgba(56,225,208,.25);background:rgba(56,225,208,.06);margin-bottom:18px}
   .module h2{margin-bottom:14px}
   .module p{color:var(--ink-soft)}
-  .mod-list{display:grid;gap:12px;margin-top:20px}
+  .mod-list{display:grid;gap:12px;margin-top:20px;padding:0}
   .mod-list li{list-style:none;display:flex;gap:11px;align-items:flex-start;font-size:.92rem;color:var(--ink-soft)}
   .mod-list li svg{width:18px;height:18px;stroke:var(--cyan);flex:none;margin-top:2px}
 
-  /* voice transcript viz */
   .voice-card{background:linear-gradient(180deg,#0e1a2c,#0b1524);border:1px solid var(--line-strong);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-soft)}
   .vc-head{display:flex;align-items:center;gap:11px;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:14px}
   .vc-av{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(145deg,var(--cyan-dim),#0b6b63);flex:none}
@@ -371,7 +347,6 @@
   .vc-foot{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
   .vc-tag{font:600 .68rem var(--mono);color:var(--cyan);padding:.3em .6em;border-radius:7px;background:rgba(56,225,208,.08);border:1px solid rgba(56,225,208,.16)}
 
-  /* proof case study */
   .case{display:grid;grid-template-columns:1.1fr .9fr;gap:0;border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--line-strong);background:var(--panel)}
   @media(max-width:820px){.case{grid-template-columns:1fr}}
   .case-left{padding:40px;background:linear-gradient(160deg,rgba(26,110,204,.16),transparent 70%)}
@@ -387,7 +362,6 @@
   .case-metric small{color:var(--muted);font-size:.86rem}
   .placeholder-note{font-size:.7rem;color:var(--faint);letter-spacing:.06em;margin-top:6px}
 
-  /* CTA */
   .cta-band{position:relative;overflow:hidden;border-radius:26px;padding:56px;border:1px solid var(--line-strong);
     background:radial-gradient(700px 380px at 80% 10%,rgba(26,110,204,.28),transparent 65%),linear-gradient(160deg,var(--panel-2),#0a1424)}
   .cta-band::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
@@ -408,7 +382,6 @@
   .cta-actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:26px}
   .cta-fine{margin-top:16px;font-size:.8rem;color:var(--muted);display:flex;align-items:center;gap:8px}
 
-  /* ============ FOOTER ============ */
   footer{border-top:1px solid var(--line);margin-top:20px;padding:56px 0 40px;background:rgba(8,14,26,.5)}
   .foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:34px}
   @media(max-width:820px){.foot-grid{grid-template-columns:1fr 1fr;gap:28px}}
@@ -435,34 +408,38 @@
 <!-- ============ NAV ============ -->
 <header class="nav">
   <div class="wrap nav-inner">
-    <a class="brand" href="mockup-home.html" aria-label="Enhanced Ops Ninja home">
-      <img class="brand-logo" src="logo-transparent.png" alt="Enhanced Ops Ninja" />
+    <a class="brand" href="mockup-home.html" aria-label="EnhancedOps home">
+      <span class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 17l5-5 3.5 3.5L20 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20" cy="7" r="2" fill="#fff"/></svg>
+      </span>
+      <span><b>Enhanced</b><span>Ops</span></span>
+      <span class="vertical">for Senior Living</span>
     </a>
     <div class="nav-spacer"></div>
     <nav class="nav-links" aria-label="Primary">
       <a href="#command">Command Center</a>
-      <a href="#how">How it works</a>
+      <a href="#how">The Ninja Path</a>
       <div class="drop" tabindex="0">
         <a class="drop-btn" href="#" aria-haspopup="true">Industries
           <svg class="chev" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
         <div class="drop-menu" role="menu">
           <div class="dm-head">Same command center · tuned to your world</div>
-          <a class="dm-item live" href="mockup-medspa.html" role="menuitem">
+          <a class="dm-item" href="mockup-medspa.html" role="menuitem">
             <span class="dm-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3v18M7 8c0-2 2-3 5-3s5 1 5 3M6 12h12M8 12v6M16 12v6"/></svg></span>
             <span><b>Med Spa</b><small>Consults, memberships &amp; injector utilization</small></span>
           </a>
-          <a class="dm-item live" href="mockup-dental.html" role="menuitem">
+          <a class="dm-item" href="mockup-dental.html" role="menuitem">
             <span class="dm-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3c-2 0-3 1-4.5 1S5 3 4 4C2.5 5.5 3 9 4 13c.6 2.4 1 5 2 6s1.5-2 2-4c.3-1.2.8-2 2-2s1.7.8 2 2c.5 2 1 5 2 4s1.4-3.6 2-6c1-4 1.5-7.5 0-9-1-1-2-1-3.5-1S14 3 12 3Z"/></svg></span>
             <span><b>Dental</b><small>PMS + phones + booking, unified across offices</small></span>
           </a>
-          <a class="dm-item live" href="mockup-vet.html" role="menuitem">
+          <a class="dm-item" href="mockup-vet.html" role="menuitem">
             <span class="dm-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M10 5a3 3 0 1 0-4 2.8V10a5 5 0 0 0 5 5v2a4 4 0 1 0 2 0v-2a5 5 0 0 0 5-5V7.8A3 3 0 1 0 14 5"/><circle cx="13" cy="20" r="2"/></svg></span>
             <span><b>Veterinary</b><small>PIMS, boarding &amp; multi-clinic capacity</small></span>
           </a>
-          <a class="dm-item live" href="mockup-senior-living.html" role="menuitem">
+          <a class="dm-item active" href="mockup-senior-living.html" role="menuitem">
             <span class="dm-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M3 21V9l9-6 9 6v12M9 21v-6h6v6"/></svg></span>
-            <span><b>Senior Living</b><small>Census, care hours &amp; occupancy per community</small></span>
+            <span><b>Senior Living</b><small>Survey readiness, care plans &amp; staffing compliance</small></span>
           </a>
         </div>
       </div>
@@ -479,63 +456,62 @@
 <section class="hero">
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <span class="eyebrow">The Owner's Command Center</span>
+      <span class="eyebrow">The Owner's Command Center · Senior Living</span>
       <div class="badge-row">
-        <span class="chip"><span class="dot"></span> Multi-location operators</span>
-        <span class="chip"><span class="dot"></span> Real-time visibility</span>
+        <span class="chip"><span class="dot"></span> Multi-community senior living &amp; skilled nursing</span>
+        <span class="chip"><span class="dot"></span> Survey-ready — every single day</span>
       </div>
-      <h1>Your entire multi-location business on <span class="accent">one screen</span> — built for how <span class="accent">you</span> actually run it.</h1>
-      <p class="lead hero-sub">EnhancedOps wires your booking, phones, EHR, schedules, and team comms into a single command center — so you see every location in real time instead of bouncing between six systems that don't talk to each other.</p>
+      <h1>Every community <span class="accent">audit-ready</span> — every care plan, every <span class="accent">staffing ratio</span>.</h1>
+      <p class="lead hero-sub">Your EHR, your eMAR, your staffing schedule, your incident log and a binder of survey documents don't talk to each other. When the surveyor walks in, your team scrambles for a week. EnhancedOps wires the systems you already run into a single command center — so you see compliance status, care-plan documentation, staffing coverage and survey-prep readiness at every community, live. Catch the deficiency before the surveyor does.</p>
       <div class="hero-cta">
         <a class="btn btn-primary btn-lg" href="#audit">Book your free Visibility Audit <svg class="arrow" width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         <a class="btn btn-ghost btn-lg" href="#command">See the command center</a>
       </div>
       <p class="hero-note">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Built for your stack, not a template — we unify the tools you already use.
+        Works with PointClickCare, MatrixCare, American HealthTech &amp; more — we unify them, we don't replace them.
       </p>
     </div>
 
-    <!-- COMMAND CENTER DASHBOARD MOCK -->
+    <!-- SENIOR LIVING COMMAND CENTER MOCK -->
     <div class="hero-visual" style="position:relative">
       <div class="float float-a">
-        <div class="f-label">Time reclaimed / wk</div>
-        <div class="f-val" style="color:var(--good)">+41 hrs</div>
+        <div class="f-label">Care-plan gaps open</div>
+        <div class="f-val" style="color:var(--good)">0 <span style="font-size:.72rem;color:var(--muted)">closed today</span></div>
       </div>
       <div class="float float-b">
-        <div class="f-label">Tools unified</div>
-        <div class="f-val">6 → <span style="color:var(--cyan)">1</span></div>
+        <div class="f-label">Citation risk avoided</div>
+        <div class="f-val">$<span style="color:var(--cyan)">18k</span></div>
       </div>
 
-      <div class="console" role="img" aria-label="EnhancedOps command center dashboard showing KPI tiles, per-location status, revenue trend, and a live alerts feed across five locations">
+      <div class="console" role="img" aria-label="EnhancedOps senior living command center showing survey-readiness score, care-plan compliance, staffing coverage and open deficiency risks across four communities">
         <div class="console-bar">
           <span class="tl"><i></i><i></i><i></i></span>
-          <span class="console-title">Northside Group · Owner View</span>
+          <span class="console-title">Cedarwood Senior Living Group · Administrator View</span>
           <span class="console-live"><span class="live-dot"></span> LIVE</span>
         </div>
         <div class="console-body">
-          <!-- KPI ROW -->
           <div class="kpi-row">
             <div class="kpi">
-              <div class="k-label">Revenue MTD</div>
-              <div class="k-val" data-count="486200" data-prefix="$" data-money="1">$0</div>
-              <div class="k-delta up">▲ 12.4%</div>
+              <div class="k-label">Survey-readiness</div>
+              <div class="k-val" data-count="96" data-suffix="%">0%</div>
+              <div class="k-delta up">▲ 6 pts</div>
               <svg class="k-spark" viewBox="0 0 100 34" preserveAspectRatio="none"><polyline points="0,28 15,24 30,26 45,18 60,20 75,10 100,6" fill="none" stroke="var(--good)" stroke-width="2"/></svg>
             </div>
             <div class="kpi">
-              <div class="k-label">Calls answered</div>
-              <div class="k-val" data-count="94" data-suffix="%">0%</div>
-              <div class="k-delta up">▲ 6 pts</div>
+              <div class="k-label">Care-plan compliance</div>
+              <div class="k-val" data-count="98" data-suffix="%">0%</div>
+              <div class="k-delta up">▲ 3 pts</div>
               <svg class="k-spark" viewBox="0 0 100 34" preserveAspectRatio="none"><polyline points="0,22 20,24 40,16 60,18 80,9 100,7" fill="none" stroke="var(--cyan)" stroke-width="2"/></svg>
             </div>
             <div class="kpi">
-              <div class="k-label">Utilization</div>
-              <div class="k-val" data-count="87" data-suffix="%">0%</div>
+              <div class="k-label">Staffing coverage</div>
+              <div class="k-val" data-count="94" data-suffix="%">0%</div>
               <div class="k-delta flat">▲ 1.2%</div>
               <svg class="k-spark" viewBox="0 0 100 34" preserveAspectRatio="none"><polyline points="0,18 20,20 40,14 60,22 80,16 100,12" fill="none" stroke="var(--blue-bright)" stroke-width="2"/></svg>
             </div>
             <div class="kpi">
-              <div class="k-label">Open alerts</div>
+              <div class="k-label">Deficiency risks</div>
               <div class="k-val" data-count="3">0</div>
               <div class="k-delta down">2 need action</div>
               <svg class="k-spark" viewBox="0 0 100 34" preserveAspectRatio="none"><polyline points="0,10 20,16 40,12 60,20 80,14 100,22" fill="none" stroke="var(--warn)" stroke-width="2"/></svg>
@@ -543,44 +519,37 @@
           </div>
 
           <div class="panel-split">
-            <!-- LOCATIONS -->
             <div class="sub">
-              <div class="sub-head"><b>Locations</b><small>5 sites · live</small></div>
+              <div class="sub-head"><b>Communities</b><small>4 sites · live</small></div>
               <div class="loc">
                 <span class="loc-status st-good"></span>
-                <span class="loc-name">Northside — Main St</span>
+                <span class="loc-name">Cedarwood Main — SNF, 120 beds</span>
                 <svg class="loc-mini" viewBox="0 0 64 22" preserveAspectRatio="none"><polyline points="0,16 12,12 24,14 36,7 48,9 64,4" fill="none" stroke="var(--good)" stroke-width="1.6"/></svg>
-                <span class="loc-val">98%</span>
+                <span class="loc-val">99%</span>
               </div>
               <div class="loc">
                 <span class="loc-status st-good"></span>
-                <span class="loc-name">Lakeview Center</span>
+                <span class="loc-name">Maple Grove — Assisted Living</span>
                 <svg class="loc-mini" viewBox="0 0 64 22" preserveAspectRatio="none"><polyline points="0,12 12,14 24,10 36,12 48,8 64,9" fill="none" stroke="var(--good)" stroke-width="1.6"/></svg>
-                <span class="loc-val">95%</span>
+                <span class="loc-val">97%</span>
               </div>
               <div class="loc">
                 <span class="loc-status st-warn"></span>
-                <span class="loc-name">Eastgate Plaza</span>
+                <span class="loc-name">Riverside — care-plan review overdue</span>
                 <svg class="loc-mini" viewBox="0 0 64 22" preserveAspectRatio="none"><polyline points="0,8 12,10 24,9 36,14 48,16 64,15" fill="none" stroke="var(--warn)" stroke-width="1.6"/></svg>
-                <span class="loc-val">81%</span>
-              </div>
-              <div class="loc">
-                <span class="loc-status st-good"></span>
-                <span class="loc-name">Riverside</span>
-                <svg class="loc-mini" viewBox="0 0 64 22" preserveAspectRatio="none"><polyline points="0,14 12,11 24,13 36,9 48,10 64,6" fill="none" stroke="var(--good)" stroke-width="1.6"/></svg>
-                <span class="loc-val">92%</span>
+                <span class="loc-val">84%</span>
               </div>
               <div class="loc">
                 <span class="loc-status st-crit"></span>
-                <span class="loc-name">Westpark — 2 staff out</span>
+                <span class="loc-name">Oakmont — night-shift ratio below min</span>
                 <svg class="loc-mini" viewBox="0 0 64 22" preserveAspectRatio="none"><polyline points="0,6 12,10 24,9 36,13 48,17 64,18" fill="none" stroke="var(--crit)" stroke-width="1.6"/></svg>
-                <span class="loc-val">67%</span>
+                <span class="loc-val">71%</span>
               </div>
+              <div style="margin-top:11px;font:600 .68rem var(--mono);color:var(--faint);letter-spacing:.06em">CROSS-COMMUNITY VIEW · one login</div>
             </div>
 
-            <!-- TREND CHART -->
             <div class="sub">
-              <div class="sub-head"><b>Group revenue</b><small>30d</small></div>
+              <div class="sub-head"><b>Deficiency-free days</b><small>90d</small></div>
               <div class="chart-wrap">
                 <svg viewBox="0 0 260 118" preserveAspectRatio="none" aria-hidden="true">
                   <defs>
@@ -592,36 +561,35 @@
                   <line class="grid-line" x1="0" y1="30" x2="260" y2="30"/>
                   <line class="grid-line" x1="0" y1="62" x2="260" y2="62"/>
                   <line class="grid-line" x1="0" y1="94" x2="260" y2="94"/>
-                  <path d="M0,86 C24,80 34,70 52,72 C74,74 84,54 104,58 C126,62 136,40 156,44 C178,48 190,30 208,26 C226,22 240,20 260,16 L260,118 L0,118 Z" fill="url(#areaFill)"/>
-                  <path class="area-stroke" d="M0,86 C24,80 34,70 52,72 C74,74 84,54 104,58 C126,62 136,40 156,44 C178,48 190,30 208,26 C226,22 240,20 260,16" fill="none" stroke="var(--blue-glow)" stroke-width="2.2" stroke-linecap="round"/>
-                  <circle cx="260" cy="16" r="3.6" fill="#fff" stroke="var(--blue-glow)" stroke-width="2"/>
+                  <path d="M0,88 C24,82 34,74 52,74 C74,74 84,56 104,60 C126,64 136,42 156,46 C178,50 190,30 208,28 C226,26 240,20 260,18 L260,118 L0,118 Z" fill="url(#areaFill)"/>
+                  <path class="area-stroke" d="M0,88 C24,82 34,74 52,74 C74,74 84,56 104,60 C126,64 136,42 156,46 C178,50 190,30 208,28 C226,26 240,20 260,18" fill="none" stroke="var(--blue-glow)" stroke-width="2.2" stroke-linecap="round"/>
+                  <circle cx="260" cy="18" r="3.6" fill="#fff" stroke="var(--blue-glow)" stroke-width="2"/>
                 </svg>
               </div>
               <div style="display:flex;justify-content:space-between;margin-top:8px">
-                <span class="mono" style="font-size:.7rem;color:var(--faint)">Jun 16</span>
-                <span class="mono" style="font-size:.7rem;color:var(--good)">+18.6%</span>
-                <span class="mono" style="font-size:.7rem;color:var(--faint)">Jul 16</span>
+                <span class="mono" style="font-size:.7rem;color:var(--faint)">Apr 18</span>
+                <span class="mono" style="font-size:.7rem;color:var(--good)">214 days clean</span>
+                <span class="mono" style="font-size:.7rem;color:var(--faint)">Jul 18</span>
               </div>
             </div>
           </div>
 
-          <!-- ALERTS -->
           <div class="sub">
-            <div class="sub-head"><b>Alerts feed</b><small>auto-routed</small></div>
+            <div class="sub-head"><b>Compliance alerts</b><small>auto-routed</small></div>
             <div class="alerts">
               <div class="alert">
                 <span class="a-ic a-crit"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 9v4M12 17h.01M10.3 4l-7 12A2 2 0 0 0 5 19h14a2 2 0 0 0 1.7-3l-7-12a2 2 0 0 0-3.4 0Z" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                <span class="a-txt"><b>Westpark</b> no-show rate 14.8% vs 12% threshold — ≈$2,500/mo walking out the door. Routing to reminder + voice module.</span>
-                <span class="a-time">2m</span>
+                <span class="a-txt"><b>Oakmont</b> night-shift nurse-to-resident ratio below state minimum for 2 shifts — potential <b>R432</b> staffing deficiency. Routing to scheduler now.</span>
+                <span class="a-time">4m</span>
               </div>
               <div class="alert">
                 <span class="a-ic a-warn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                <span class="a-txt"><b>Eastgate</b> schedule 81% booked for Thu — 6 gaps worth ~$2,400.</span>
-                <span class="a-time">14m</span>
+                <span class="a-txt"><b>Riverside</b> has 7 care plans past their 90-day review date — an <b>F-tag</b> waiting to be written if a surveyor pulls those charts.</span>
+                <span class="a-time">22m</span>
               </div>
               <div class="alert">
                 <span class="a-ic a-good"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                <span class="a-txt"><b>Group</b> hit 94% call-answer rate — best week this quarter.</span>
+                <span class="a-txt"><b>Cedarwood Main</b> closed all incident follow-ups within 24h this week — survey binder is current.</span>
                 <span class="a-time">1h</span>
               </div>
             </div>
@@ -635,25 +603,25 @@
 <!-- ============ STRIP ============ -->
 <div class="strip">
   <div class="wrap">
-    <div class="strip-lead">Unifies the systems you already run — we don't rip them out</div>
+    <div class="strip-lead">Unifies the senior living systems you already run — no rip-and-replace</div>
     <div class="strip-inner">
-      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg> Booking &amp; scheduling</span>
-      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg> Phone &amp; VoIP</span>
-      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 12h6M9 16h6M9 8h6M5 3h14a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/></svg> EHR / EMR</span>
-      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Staff schedules</span>
-      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg> Team comms</span>
-      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M3 3v18h18M7 14l4-4 3 3 5-6"/></svg> Reporting &amp; BI</span>
+      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> EHR (PointClickCare · MatrixCare · American HealthTech)</span>
+      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Care plans &amp; MDS</span>
+      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg> eMAR &amp; med pass</span>
+      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg> Staffing &amp; scheduling</span>
+      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.3 4l-7 12A2 2 0 0 0 5 19h14a2 2 0 0 0 1.7-3l-7-12a2 2 0 0 0-3.4 0Z"/></svg> Incident &amp; risk reporting</span>
+      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg> Survey &amp; compliance docs</span>
     </div>
   </div>
 </div>
 
-<!-- ============ PROBLEM / SWIVEL ============ -->
+<!-- ============ PROBLEM ============ -->
 <section class="band" id="problem">
   <div class="wrap">
     <div class="sec-head reveal">
-      <span class="eyebrow">Are you walking the dog — or is the dog walking you?</span>
-      <h2>You're running 4–6 systems that were never built to talk to each other.</h2>
-      <p class="lead">Every location has its own logins, its own tabs, its own version of the truth. To answer one simple question — <em>how did we actually do yesterday?</em> — someone exports spreadsheets and stitches it together by hand. That's not a software problem — that's tech fatigue: systems that don't talk to each other, and an owner flying blind across sites.</p>
+      <span class="eyebrow">Are you running the survey — or is the survey running you?</span>
+      <h2>Your EHR doesn't talk to your staffing system. Neither talks to your incident log.</h2>
+      <p class="lead">Every community runs its own EHR, its own staffing schedule, its own incident binder, its own stack of survey documents. To know whether you'd pass a survey today, someone pulls charts, cross-checks the schedule, and rebuilds a readiness picture by hand — one community at a time — and you still can't compare communities side by side. That's not a compliance-officer problem. That's tech fatigue: fragmented systems that hide the deficiency until the surveyor finds it.</p>
     </div>
     <div class="swivel">
       <div class="tools-cloud reveal" aria-hidden="true">
@@ -665,27 +633,27 @@
           <path d="M90,290 C150,240 175,200 200,170"/>
           <path d="M320,285 C255,240 225,200 200,170"/>
         </svg>
-        <div class="tool-node" style="top:36px;left:28px"><span class="td"></span>Booking</div>
-        <div class="tool-node" style="top:36px;right:28px"><span class="td"></span>Phone system</div>
-        <div class="tool-node" style="top:158px;left:14px"><span class="td"></span>EHR</div>
-        <div class="tool-node" style="top:168px;right:14px"><span class="td"></span>Spreadsheets</div>
-        <div class="tool-node" style="bottom:34px;left:34px"><span class="td"></span>Scheduling</div>
-        <div class="tool-node" style="bottom:34px;right:30px"><span class="td"></span>Group chat</div>
-        <div class="owner"><b>You</b><small>rebuilding<br>reports by hand</small></div>
+        <div class="tool-node" style="top:36px;left:28px"><span class="td"></span>EHR</div>
+        <div class="tool-node" style="top:36px;right:28px"><span class="td"></span>Staffing system</div>
+        <div class="tool-node" style="top:158px;left:14px"><span class="td"></span>Care plans</div>
+        <div class="tool-node" style="top:168px;right:14px"><span class="td"></span>Incident log</div>
+        <div class="tool-node" style="bottom:34px;left:34px"><span class="td"></span>eMAR</div>
+        <div class="tool-node" style="bottom:34px;right:30px"><span class="td"></span>Survey binder</div>
+        <div class="owner"><b>You</b><small>rebuilding<br>readiness by hand</small></div>
       </div>
       <div class="reveal">
         <div class="stat-list">
           <div class="stat-item">
+            <span class="stat-num" data-count="18000" data-prefix="$" data-money="1">$0</span>
+            <p>in civil monetary penalties can follow a <b>single scope-and-severity citation</b> at one community — before you count the reputational cost.</p>
+          </div>
+          <div class="stat-item">
             <span class="stat-num" data-count="45" data-suffix="%">0%</span>
-            <p>of staff time can be lost bouncing between <b>systems that don't talk to each other</b> — re-keying the same data, hunting for numbers, reconciling by hand.</p>
+            <p>of an administrator's or DON's week can vanish into <b>assembling survey binders and cross-checking charts</b> by hand — instead of on residents and staff.</p>
           </div>
           <div class="stat-item">
-            <span class="stat-num" data-count="6">0</span>
-            <p>separate systems is the norm for a multi-location owner — <b>none of them showing the whole picture</b> in one place.</p>
-          </div>
-          <div class="stat-item">
-            <span class="stat-num" data-count="95" data-suffix="%">0%</span>
-            <p>of owners who switch software say <b>"limited reporting &amp; analytics"</b> was the #1 reason — they couldn't see what mattered.</p>
+            <span class="stat-num" data-count="0" data-arrow="✕">0</span>
+            <p>cross-community compliance views. Ask <b>"which community would fail a survey today?"</b> and there's no single screen that can answer it.</p>
           </div>
         </div>
       </div>
@@ -697,44 +665,44 @@
 <section class="band" id="command" style="border-top:1px solid var(--line);background:rgba(8,14,26,.32)">
   <div class="wrap">
     <div class="sec-head reveal">
-      <span class="eyebrow">The command center</span>
-      <h2>One screen. Every location. Real time.</h2>
-      <p class="lead">We don't hand you another tool to check. We build the finished command center that pulls everything into a single owner's view — the numbers you actually run the business on, live across every site.</p>
+      <span class="eyebrow">The command center · senior living</span>
+      <h2>One screen for every community. Survey readiness, care plans, staffing — live.</h2>
+      <p class="lead">We build the finished command center for your group: every community side by side, pulling straight from the EHR, eMAR and staffing tools you already use. Audit-ready by default, every single day — not just the week before the surveyor arrives.</p>
     </div>
     <div class="feat-grid">
       <div class="feat reveal">
         <div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></div>
-        <h3>Every location at a glance</h3>
-        <p>Per-site status, revenue, utilization and call performance side by side — spot the location that's slipping before it costs you the month.</p>
+        <h3>Every community, side by side</h3>
+        <p>Survey-readiness score, care-plan compliance, staffing coverage and open deficiency risks for every community on one screen — spot the site that would fail before the surveyor does.</p>
       </div>
       <div class="feat reveal">
-        <div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></div>
-        <h3>The metrics you were flying blind on</h3>
-        <p>Missed calls, no-show rates, schedule gaps, staff coverage — surfaced automatically instead of buried in six different exports.</p>
+        <div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <h3>Catch the deficiency first</h3>
+        <p>Overdue care-plan reviews, missing MDS assessments and open incident follow-ups surface the moment they happen, per community — mapped to the F-tag or R432 code they'd trigger.</p>
       </div>
       <div class="feat reveal">
-        <div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/></svg></div>
-        <h3>Alerts that route themselves</h3>
-        <p>The system flags what needs you — a run of missed new-patient calls, a coverage gap, a location trending down — and sends it to the right person.</p>
+        <div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></div>
+        <h3>Staffing ratios that hold up</h3>
+        <p>Live nurse- and aide-to-resident ratios against your state minimums, shift by shift — flag a coverage gap before it becomes a staffing citation, not after.</p>
       </div>
       <div class="feat reveal feat-wide" style="display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:center">
         <div>
           <div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M20 7L9 18l-5-5"/><path d="M4 7h6M4 12h3"/></svg></div>
           <h3>Built for your stack, not a template</h3>
-          <p style="color:var(--ink-soft)">Rigid vertical SaaS forces you into <em>their</em> template. A $200/mo BI dashboard hands you a blank canvas and homework. We do the opposite: map your exact tools, wire them together, and deliver the finished screen — configured to how you already run.</p>
+          <p style="color:var(--ink-soft)">A rigid senior living platform makes you rip out PointClickCare and adopt theirs. A generic compliance dashboard hands you a blank canvas and a data-modeling project. We map your exact stack, wire it together, and deliver the finished screen — configured to how your communities actually document and staff.</p>
         </div>
         <div style="display:grid;gap:12px">
-          <div class="compare-row" style="display:flex;gap:12px;align-items:center;padding:13px 15px;border:1px solid var(--line);border-radius:12px;background:rgba(248,113,113,.05)">
+          <div style="display:flex;gap:12px;align-items:center;padding:13px 15px;border:1px solid var(--line);border-radius:12px;background:rgba(248,113,113,.05)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--crit)" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg>
-            <span style="font-size:.88rem;color:var(--ink-soft)"><b style="color:#fff">Rigid vertical SaaS</b> — rip out your tools, adopt theirs</span>
+            <span style="font-size:.88rem;color:var(--ink-soft)"><b style="color:#fff">Rigid senior living platform</b> — rip out your EHR, retrain every community</span>
           </div>
-          <div class="compare-row" style="display:flex;gap:12px;align-items:center;padding:13px 15px;border:1px solid var(--line);border-radius:12px;background:rgba(251,191,36,.05)">
+          <div style="display:flex;gap:12px;align-items:center;padding:13px 15px;border:1px solid var(--line);border-radius:12px;background:rgba(251,191,36,.05)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2"><path d="M12 8v4M12 16h.01M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z" stroke-linecap="round"/></svg>
-            <span style="font-size:.88rem;color:var(--ink-soft)"><b style="color:#fff">DIY BI dashboard</b> — blank canvas, and now it's your homework</span>
+            <span style="font-size:.88rem;color:var(--ink-soft)"><b style="color:#fff">DIY compliance dashboard</b> — blank canvas, now it's your homework</span>
           </div>
-          <div class="compare-row" style="display:flex;gap:12px;align-items:center;padding:13px 15px;border:1px solid rgba(56,225,208,.28);border-radius:12px;background:rgba(56,225,208,.06)">
+          <div style="display:flex;gap:12px;align-items:center;padding:13px 15px;border:1px solid rgba(56,225,208,.28);border-radius:12px;background:rgba(56,225,208,.06)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span style="font-size:.88rem;color:#fff"><b>EnhancedOps</b> — the finished command center, wired to your stack</span>
+            <span style="font-size:.88rem;color:#fff"><b>EnhancedOps</b> — finished command center, wired to your stack</span>
           </div>
         </div>
       </div>
@@ -742,122 +710,156 @@
   </div>
 </section>
 
-<!-- ============ HOW IT WORKS ============ -->
-<section class="band" id="how">
+<!-- ============ RED FLAG / SURVEY-READINESS REPORT ============ -->
+<section class="band" id="redflag">
+  <div class="wrap">
+    <div class="module reveal">
+      <div>
+        <span class="tag"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.3 4l-7 12A2 2 0 0 0 5 19h14a2 2 0 0 0 1.7-3l-7-12a2 2 0 0 0-3.4 0Z" stroke-linecap="round" stroke-linejoin="round"/></svg> The survey-readiness alert</span>
+        <h2>It doesn't just show you a score. It tells you where the citation is hiding.</h2>
+        <p>A dashboard shows you 84%. Your command center tells you <b style="color:#fff">Riverside has 7 care plans past their review date, that's an F-656 waiting to be written, and it's the difference between a clean survey and a scope-and-severity citation</b> — then routes it to the right nurse to fix before the window closes. That's the difference between a report you read and a report that protects your license.</p>
+        <ul class="mod-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Every risk carries the F-tag or R432 code it would trigger</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Every flag carries a deadline, not just a color</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Every flag routes to the nurse or manager who closes it</li>
+        </ul>
+      </div>
+      <div class="voice-card">
+        <div class="vc-head">
+          <span class="vc-av" style="background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.3)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke="var(--crit)"><path d="M12 9v4M12 17h.01M10.3 4l-7 12A2 2 0 0 0 5 19h14a2 2 0 0 0 1.7-3l-7-12a2 2 0 0 0-3.4 0Z" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span><b>Survey-readiness alert · Riverside</b><small>Auto-generated · today 7:02a</small></span>
+        </div>
+        <div class="bubble caller" style="border-left:3px solid var(--crit)"><b style="color:#fff">7 care plans past 90-day review</b><br>Readiness: 84% · Group average: 95%</div>
+        <div class="bubble ai"><b style="color:#fff">Risk: F-656 (comprehensive care plans)</b><br>Scope &amp; severity exposure if surveyed today. Est. penalty range in the tens of thousands.</div>
+        <div class="bubble caller">Recommended: assign to unit-manager RN, review + sign the 7 plans before Friday. Est. readiness recovery to 96%.</div>
+        <div class="vc-foot">
+          <span class="vc-tag">⚑ F-656 risk</span>
+          <span class="vc-tag">Due Fri</span>
+          <span class="vc-tag">Routed to RN</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE NINJA PATH ============ -->
+<section class="band" id="how" style="border-top:1px solid var(--line);background:rgba(8,14,26,.32)">
   <div class="wrap">
     <div class="sec-head reveal">
-      <span class="eyebrow">How it works</span>
-      <h2>From six tabs to one screen — without ripping anything out.</h2>
+      <span class="eyebrow">The Ninja Path</span>
+      <h2>Start with a free audit. End with software you own.</h2>
+      <p class="lead">You don't switch anything on day one. We start by showing you what you can't see — the deficiencies hiding across your communities today. Everything after that is your call.</p>
     </div>
     <div class="steps reveal">
       <div class="step">
-        <div class="s-no">Visibility Audit</div>
-        <h3>We map your systems</h3>
-        <p>We inventory every tool, every location, and every hand-off — and name the exact metrics you're flying blind on today.</p>
+        <div class="s-no">Free audit</div>
+        <h3>See the gaps</h3>
+        <p>We map your communities' systems and surface the care-plan, staffing and documentation gaps that would draw a citation today — before you spend anything.</p>
         <svg class="s-arrow" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <div class="step">
-        <div class="s-no">Build</div>
-        <h3>We wire it together</h3>
-        <p>We connect your booking, phones, EHR, schedules and comms into one pipeline — configured to your workflow, not a template.</p>
+        <div class="s-no">Phase 1</div>
+        <h3>Quick strikes</h3>
+        <p>Survey-readiness alerts and documentation automation — the week-before-survey scramble becomes a daily 5-minute review, and the front desk gets a voice module for family calls.</p>
         <svg class="s-arrow" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <div class="step">
-        <div class="s-no">Go live</div>
-        <h3>Your command center</h3>
-        <p>You get one screen for every location — real-time KPIs, per-site status, and alerts routed to the right people automatically.</p>
+        <div class="s-no">Phase 2</div>
+        <h3>Ninja OS — the command center</h3>
+        <p>One login for every community: live survey-readiness scoreboard, one-hour weekly compliance meeting that runs itself, SOP bible, org chart. The screen this page is built around.</p>
         <svg class="s-arrow" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <div class="step">
-        <div class="s-no">Ongoing</div>
-        <h3>We tune it with you</h3>
-        <p>As you add locations, tools or metrics, we evolve the command center — it stays wired to how you actually run, quarter after quarter.</p>
+        <div class="s-no">Phase 3</div>
+        <h3>Your own software</h3>
+        <p>Built from your team's actual survey-prep and care workflows — role-based views, readiness reports built in. <b style="color:#fff">You own the IP.</b> Not a license. An asset.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ VALUATION PAYOFF ============ -->
+<!-- ============ VALUATION CLOSE ============ -->
 <section class="band" id="valuation">
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="eyebrow">Why owners actually do this</span>
-      <h2>Software you own doesn't just cut costs. It re-rates the business.</h2>
-      <p class="lead">Visibility is the wedge. This is the payoff. Most multi-location groups sell on a multiple of EBITDA — and a group running on someone else's software sells as a services business. A group that owns its own operating software, built around its workflows, with the data to prove it, sells as something else.</p>
+      <h2>A clean survey history isn't just safer. It re-rates the business.</h2>
+      <p class="lead">Most senior living groups sell on a multiple of EBITDA — and a buyer's diligence lives or dies on your survey history and compliance data. A group that runs on someone else's software sells as a services business. A group that owns its own operating software — with a documented, defensible compliance record — sells as something else.</p>
     </div>
     <div class="feat-grid">
       <div class="feat reveal">
         <div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M3 3v18h18M7 14l4-4 3 3 5-6"/></svg></div>
-        <h3>1&ndash;2x on the multiple</h3>
-        <p>Owned software and the IP behind it is what buyers pay up for. A $20M group at 3x is $60M &mdash; with owned software in the deal, closer to $80M.</p>
+        <h3>1–2x on the multiple</h3>
+        <p>Owned software and a clean, provable compliance record are what buyers pay up for. A $30M group at 3x is $90M — with owned software and diligence-ready data in the deal, closer to $120M.</p>
       </div>
       <div class="feat reveal">
         <div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
         <h3>Priced to match what you already pay</h3>
-        <p>Designed to land at or under your current software spend &mdash; not on top of it. You&rsquo;re redirecting a bill you already pay into an asset you keep.</p>
+        <p>This is designed to land at or under your current software spend — not on top of it. You're redirecting a bill you already pay into an asset you keep.</p>
       </div>
       <div class="feat reveal">
         <div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M20 7L9 18l-5-5"/></svg></div>
         <h3>Clean data at diligence</h3>
-        <p>When a buyer asks for three years of per-location performance, it&rsquo;s one export &mdash; not six systems and a quarter of cleanup.</p>
+        <p>When a buyer asks for three years of survey history and per-community compliance, it's one export — not six systems, a stack of binders, and a quarter of cleanup.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ FOUNDING ACCESS / RISK REVERSAL ============ -->
+<!-- ============ FOUNDER CREDIBILITY / RISK REVERSAL ============ -->
 <section class="band" id="founding" style="border-top:1px solid var(--line);background:rgba(8,14,26,.32)">
   <div class="wrap">
     <div class="module reveal">
       <div>
-        <span class="tag"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6 4.4 2.3 7.2-6.3-4.6-6.3 4.6L7.9 13.8 2 9.4h7.6L12 2Z" stroke-linejoin="round"/></svg> Founding access &middot; 20 clients</span>
-        <h2>&ldquo;You&rsquo;re new. Why would I bet my group on you?&rdquo;</h2>
-        <p>Fair. So let&rsquo;s say it plainly: we&rsquo;re building our first 20 clients, and we&rsquo;d rather earn you than oversell you. Here&rsquo;s what that actually buys you &mdash; and what protects you if we&rsquo;re wrong.</p>
+        <span class="tag"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" stroke-linejoin="round"/></svg> Built by someone who's passed the survey</span>
+        <h2>"You're a software company. What do you know about my survey?"</h2>
+        <p>Fair question — and here's the honest answer. EnhancedOps was founded by <b style="color:#fff">Jeff Oldroyd, a former Licensed Nursing Home Administrator with 25+ years in senior living and skilled nursing operations</b>. He ran a CMS 5-Star skilled nursing facility to a <b style="color:#fff">zero-deficiency state survey</b> — the outcome every operator on this page is chasing. This command center is the tool he wishes he'd had in the building.</p>
         <ul class="mod-list">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> <b style="color:#fff">Founding pricing</b> &mdash; roughly half of what this costs once the 20 are full</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> <b style="color:#fff">Money-back guarantee</b> &mdash; if the command center doesn&rsquo;t ship as scoped, you don&rsquo;t pay for it</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> <b style="color:#fff">Named build team</b> &mdash; 6&ndash;8 engineers, not a ticket queue and a chatbot</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> <b style="color:#fff">Your team co-designs it</b> &mdash; which is why it gets adopted instead of resented</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> <b style="color:#fff">Zero-deficiency survey experience</b> — the workflows are built from a real clean survey, not a spec sheet</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> <b style="color:#fff">Founding pricing</b> — roughly half of what this costs once our first 20 clients are full</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> <b style="color:#fff">Money-back guarantee</b> — if the command center doesn't ship as scoped, you don't pay for it</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> <b style="color:#fff">Named build team</b> — 6–8 engineers, not a ticket queue and a chatbot</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> <b style="color:#fff">Your DON and administrators co-design it</b> — which is why it gets adopted instead of resented</li>
         </ul>
       </div>
       <div class="audit-card">
         <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg> What you risk vs. what you get</h3>
-        <div class="audit-step"><span class="as-no">&#10003;</span><p><b>You risk:</b> 45 minutes and an honest look at your systems. That&rsquo;s the whole ask.</p></div>
-        <div class="audit-step"><span class="as-no">&#10003;</span><p><b>You keep:</b> the systems map and the dollar figure &mdash; whether you ever hire us or not.</p></div>
-        <div class="audit-step"><span class="as-no">&#10003;</span><p><b>You gain:</b> founding pricing that doesn&rsquo;t come back, on software you end up owning.</p></div>
-        <p class="placeholder-note">Founding-cohort terms + case studies to be finalized with Jeff before publish.</p>
+        <div class="audit-step"><span class="as-no">✓</span><p><b>You risk:</b> 45 minutes and an honest look at your systems. That's the whole ask.</p></div>
+        <div class="audit-step"><span class="as-no">✓</span><p><b>You keep:</b> the systems map and the list of survey gaps — whether you ever hire us or not.</p></div>
+        <div class="audit-step"><span class="as-no">✓</span><p><b>You gain:</b> founding pricing that doesn't come back, on software you end up owning.</p></div>
+        <p class="placeholder-note">Founding-cohort terms + zero-deficiency case detail to be finalized with Jeff before publish.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ============ VOICE MODULE ============ -->
-<section class="band" id="voice" style="border-top:1px solid var(--line);background:rgba(8,14,26,.32)">
+<section class="band" id="voice">
   <div class="wrap">
     <div class="module reveal">
       <div>
         <span class="tag"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3ZM5 11a7 7 0 0 0 14 0M12 18v3"/></svg> One module, not the pitch</span>
-        <h2>Voice AI is a spoke — not the story.</h2>
-        <p>When a location can't pick up, our voice module answers, books, and routes — then logs every call straight into the same command center. It's one of many spokes you can switch on. The hub is the point: <b style="color:#fff">total visibility and unified operations</b> across every location.</p>
+        <h2>Voice AI catches the family calls your front desk can't.</h2>
+        <p>When a community is short-staffed or after-hours, the voice module answers, handles routine family and prospective-resident inquiries, books tours into the right community's calendar, and logs the call straight into your command center. It's one spoke of many — the hub is the point: <b style="color:#fff">total compliance visibility across every community</b>.</p>
         <ul class="mod-list">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Answers overflow &amp; after-hours calls so new patients never hit voicemail</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Books directly into the right location's schedule</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Every call is captured as data in your command center — nothing lost</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Answers overflow &amp; after-hours calls so families never hit voicemail</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Books tours straight into the correct community's calendar</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Every call captured as data in your command center — nothing lost</li>
         </ul>
       </div>
       <div class="voice-card">
         <div class="vc-head">
           <span class="vc-av"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3ZM5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span>
-          <span><b>Voice module · Westpark overflow</b><small>Live call · 00:12</small></span>
+          <span><b>Voice module · Maple Grove overflow</b><small>Live call · 00:15</small></span>
           <span class="vc-wave" aria-hidden="true"><i style="animation-delay:0s"></i><i style="animation-delay:.15s"></i><i style="animation-delay:.3s"></i><i style="animation-delay:.1s"></i><i style="animation-delay:.25s"></i><i style="animation-delay:.05s"></i></span>
         </div>
-        <div class="bubble caller">"Hi — do you have anything for a new patient this week?"</div>
-        <div class="bubble ai">"We do! I can get you in Thursday at 2:40 at our Westpark office. Can I grab your name and a good callback number?"</div>
-        <div class="bubble caller">"Perfect, that works."</div>
+        <div class="bubble caller">"Hi — I'm looking at assisted living for my mother. Could we come tour this week?"</div>
+        <div class="bubble ai">"Of course. I can get you in Thursday at 2:00 with our Maple Grove team. May I grab your name and a callback number?"</div>
+        <div class="bubble caller">"Yes — that's perfect."</div>
         <div class="vc-foot">
-          <span class="vc-tag">✓ Booked · Thu 2:40</span>
+          <span class="vc-tag">✓ Tour booked · Thu 2:00 · Maple Grove</span>
+          <span class="vc-tag">Family inquiry</span>
           <span class="vc-tag">Logged to command center</span>
-          <span class="vc-tag">New patient · ~$8k LTV</span>
         </div>
       </div>
     </div>
@@ -865,24 +867,24 @@
 </section>
 
 <!-- ============ PROOF ============ -->
-<section class="band" id="proof">
+<section class="band" id="proof" style="border-top:1px solid var(--line)">
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="eyebrow">Proof</span>
-      <h2>From six tools to one screen.</h2>
+      <h2>From six systems to one screen — and a clean survey.</h2>
     </div>
     <div class="case reveal">
       <div class="case-left">
         <div class="case-badge"><span class="live-dot" style="width:7px;height:7px"></span> Case study · placeholder</div>
-        <h3>How [Multi-Location Group] went from 6 tools to 1 screen.</h3>
-        <p>A regional owner running five sites was reconciling booking, phones, and EHR data by hand every Monday. We ran a Visibility Audit, wired their existing stack into one command center, and switched on the voice module for overflow calls.</p>
-        <p class="case-quote">"For the first time I can open one screen at 7am and know exactly how all five locations are doing. I stopped guessing."<br><span class="mono" style="font-size:.78rem;color:var(--muted);font-style:normal">— Owner &amp; Operator, [Group Name]</span></p>
-        <p class="placeholder-note">Placeholder — real case study to be added.</p>
+        <h3>How [Senior Living Group] stopped scrambling the week before every survey.</h3>
+        <p>A four-community group was rebuilding survey readiness by hand before every state visit, discovering overdue care plans only when a chart got pulled, and couldn't see that one community's night-shift staffing had drifted below the state minimum. We ran a Visibility Audit, wired their EHR, eMAR and staffing systems into one command center, and switched on survey-readiness alerts. Founder Jeff Oldroyd — a former Licensed Nursing Home Administrator who ran a facility to a zero-deficiency survey — built the workflows himself.</p>
+        <p class="case-quote">"I used to lose a week and a lot of sleep before every survey. Now I open one screen with my coffee and I already know exactly where we stand."<br><span class="mono" style="font-size:.78rem;color:var(--muted);font-style:normal">— Administrator, [Senior Living Group Name]</span></p>
+        <p class="placeholder-note">Placeholder — real senior living case study to be added (founding cohort, target 20).</p>
       </div>
       <div class="case-right">
-        <div class="case-metric"><span class="cm-num g" data-count="6" data-arrow="→1">6</span><small>separate tools consolidated into <b style="color:#fff">one owner's screen</b></small></div>
-        <div class="case-metric"><span class="cm-num g" data-count="41" data-suffix="hrs">0</span><small>of staff time reclaimed <b style="color:#fff">per week</b> across the group</small></div>
-        <div class="case-metric"><span class="cm-num" data-count="94" data-suffix="%">0%</span><small>call-answer rate, up from 72% — <b style="color:#fff">fewer lost new patients</b></small></div>
+        <div class="case-metric"><span class="cm-num g" data-count="6" data-arrow="→1">6</span><small>separate systems consolidated into <b style="color:#fff">one administrator's screen</b></small></div>
+        <div class="case-metric"><span class="cm-num g" data-count="0">0</span><small>deficiencies at the next state survey — <b style="color:#fff">the outcome Jeff has done before</b></small></div>
+        <div class="case-metric"><span class="cm-num" data-count="96" data-suffix="%">0%</span><small>survey-readiness across the group, up from 78% — <b style="color:#fff">visible every day</b></small></div>
       </div>
     </div>
   </div>
@@ -894,20 +896,21 @@
     <div class="cta-band reveal">
       <div class="cta-grid">
         <div>
-          <span class="eyebrow">Free Visibility Audit</span>
-          <h2 style="margin-top:14px">See your future command center — before you commit to anything.</h2>
-          <p>In one working session we map your disconnected systems, name the exact metrics you're flying blind on, and mock up your future one-screen command center. No obligation, no rip-and-replace pitch.</p>
+          <span class="eyebrow">Free Visibility Audit · Senior Living</span>
+          <h2 style="margin-top:14px">See your group's survey-readiness command center — before you change a thing.</h2>
+          <p>In one working session we map every community's disconnected systems, surface the care-plan, staffing and documentation gaps that would draw a citation today, and mock up your future one-screen command center. No rip-and-replace, no obligation, no software to buy at the end of the call.</p>
           <div class="cta-actions">
             <a class="btn btn-primary btn-lg" href="#">Book your Visibility Audit <svg class="arrow" width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-            <a class="btn btn-ghost btn-lg" href="mockup-dental.html">See a dental example</a>
+            <a class="btn btn-ghost btn-lg" href="mockup-home.html">See all industries</a>
           </div>
-          <p class="cta-fine"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--good)" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Typically 45 minutes · you keep the systems map either way</p>
+          <p class="cta-fine"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--good)" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Typically 45 minutes · you keep the systems map and survey-gap list either way</p>
         </div>
         <div class="audit-card">
           <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> What you walk away with</h3>
-          <div class="audit-step"><span class="as-no">1</span><p><b>A systems map</b> — every tool, login, and hand-off across your locations, on one page.</p></div>
-          <div class="audit-step"><span class="as-no">2</span><p><b>Your blind-spot list</b> — the metrics you can't currently see, and what they're costing you.</p></div>
-          <div class="audit-step"><span class="as-no">3</span><p><b>A mockup</b> of your future one-screen command center, built around your real stack.</p></div>
+          <div class="audit-step"><span class="as-no">1</span><p><b>A systems map</b> — every EHR, eMAR, staffing tool, incident log and survey binder across your communities, on one page.</p></div>
+          <div class="audit-step"><span class="as-no">2</span><p><b>Your survey-gap list</b> — the care-plan, documentation and staffing gaps that would draw a citation today, mapped to their F-tags.</p></div>
+          <div class="audit-step"><span class="as-no">3</span><p><b>A mockup</b> of your future one-screen survey-readiness command center, built around your real stack.</p></div>
+          <p class="placeholder-note">Penalty and savings figures pending Benny's senior-living compliance model — placeholder until then.</p>
         </div>
       </div>
     </div>
@@ -920,14 +923,16 @@
     <div class="foot-grid">
       <div class="foot-brand">
         <a class="brand" href="mockup-home.html">
-          <img class="brand-logo" src="logo-transparent.png" alt="Enhanced Ops Ninja" />
+          <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3 17l5-5 3.5 3.5L20 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20" cy="7" r="2" fill="#fff"/></svg></span>
+          <span><b>Enhanced</b><span>Ops</span></span>
+          <span class="vertical">for Senior Living</span>
         </a>
-        <p>The owner's command center for fragmented, multi-location businesses. One screen for every location — built for your stack, not a template.</p>
+        <p>The owner's command center for multi-community senior living groups. Audit-ready by default, every day — wired to your stack, not a template.</p>
       </div>
       <div class="foot-col">
         <h4>Platform</h4>
         <a href="#command">Command Center</a>
-        <a href="#how">How it works</a>
+        <a href="#how">The Ninja Path</a>
         <a href="#voice">Voice module</a>
         <a href="#proof">Results</a>
       </div>
@@ -941,13 +946,13 @@
       <div class="foot-col">
         <h4>Company</h4>
         <a href="#audit">Book a Visibility Audit</a>
-        <a href="#">About</a>
+        <a href="mockup-home.html">About</a>
         <a href="#">Contact</a>
         <a href="#">Privacy</a>
       </div>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 EnhancedOps.ninja — Owner's Command Center. All rights reserved.</span>
+      <span>© 2026 EnhancedOps.ninja — Owner's Command Center for Senior Living. All rights reserved.</span>
       <span class="mono">Built for your stack, not a template.</span>
     </div>
   </div>
@@ -957,7 +962,6 @@
 (function(){
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Count-up animation
   function fmt(v, money){ return money ? Math.round(v).toLocaleString('en-US') : Math.round(v); }
   function animateCount(el){
     var target = parseFloat(el.getAttribute('data-count'));
@@ -978,7 +982,6 @@
     requestAnimationFrame(step);
   }
 
-  // Reveal on scroll + trigger counts.
   // CONTENT IS VISIBLE BY DEFAULT. We only arm the hidden start state (.pre-reveal)
   // after we've confirmed JS runs and IntersectionObserver exists — and we ALWAYS
   // reveal everything via a guaranteed fallback, so the page can never render blank.
@@ -1016,14 +1019,12 @@
     setTimeout(revealAll, 1500);
   }
 
-  // KPI counts in hero fire on load
   window.addEventListener('load', function(){
     document.querySelectorAll('.console [data-count]').forEach(function(c){
       if(!c.dataset.done){ c.dataset.done='1'; animateCount(c); }
     });
   });
 
-  // Animate the trend line drawing
   var line = document.querySelector('.area-stroke');
   if(line && !reduce){
     try{
