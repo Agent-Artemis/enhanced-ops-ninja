@@ -254,11 +254,16 @@ export interface LinkedInLead {
   msg2_asset?: string;     // optional suggested asset to mention with msg2
   msg3_asset?: string;     // optional suggested asset to mention with msg3
   accepted?: boolean;      // true when LinkedIn connection was accepted
+  accepted_at?: string;    // ISO — when the connection was accepted
+  parked?: boolean;        // lead is parked/paused — excluded from the meeting-invite queue
   starred?: boolean;       // Jeff flagged this lead as a strong option
   accepted_msg?: string;   // warm acceptance response: welcome + value drop + one-pager + 30-min link
   msg1_sent_at?: string;
   msg2_sent_at?: string;
   msg3_sent_at?: string;
+  // Meeting-invite queue — surfaced once a connection is accepted, independent of the msg1/2/3 sequence
+  meeting_invite_sent_at?: string;     // ISO — Jeff sent the meeting invite (removes from queue)
+  meeting_invite_skipped_at?: string;  // ISO — Jeff skipped sending a meeting invite (removes from queue)
 }
 
 export function linkedinOf(c: Contact): LinkedInLead | null {

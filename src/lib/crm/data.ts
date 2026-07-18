@@ -587,6 +587,42 @@ export async function advanceLinkedIn(
 }
 
 /**
+ * Mark the post-acceptance meeting invite as sent for an accepted lead.
+ * Stamps custom_fields.linkedin.meeting_invite_sent_at = now (ISO), which removes
+ * the lead from the Meeting Invite queue. Spreads custom_fields and the linkedin
+ * object so no other key is lost, and touches ONLY meeting_invite_sent_at.
+ */
+export async function markMeetingInviteSent(contact: Contact): Promise<void> {
+  const cf = { ...(contact.custom_fields ?? {}) };
+  const li = { ...(cf['linkedin'] as Record<string, unknown> ?? {}) };
+  li['meeting_invite_sent_at'] = new Date().toISOString();
+  cf['linkedin'] = li;
+  const { error } = await (await sb())
+    .from('crm_contacts')
+    .update({ custom_fields: cf })
+    .eq('id', contact.id);
+  if (error) throw error;
+}
+
+/**
+ * Skip the post-acceptance meeting invite for an accepted lead.
+ * Stamps custom_fields.linkedin.meeting_invite_skipped_at = now (ISO), which
+ * removes the lead from the Meeting Invite queue without recording it as sent.
+ * Spreads custom_fields and the linkedin object so no other key is lost.
+ */
+export async function skipMeetingInvite(contact: Contact): Promise<void> {
+  const cf = { ...(contact.custom_fields ?? {}) };
+  const li = { ...(cf['linkedin'] as Record<string, unknown> ?? {}) };
+  li['meeting_invite_skipped_at'] = new Date().toISOString();
+  cf['linkedin'] = li;
+  const { error } = await (await sb())
+    .from('crm_contacts')
+    .update({ custom_fields: cf })
+    .eq('id', contact.id);
+  if (error) throw error;
+}
+
+/**
  * Skip a sequence step WITHOUT recording it as sent.
  * Stamps {step}_skipped_at (durable audit marker) and advances the cadence
  * exactly like advanceLinkedIn so the lead leaves today's list — but does NOT

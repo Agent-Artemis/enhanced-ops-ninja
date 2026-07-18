@@ -3,7 +3,10 @@
 import { useState, type ReactNode } from 'react';
 import type { Contact, LeadStatus } from '@/lib/crm/types';
 import { linkedinOf, pendingBookingOf } from '@/lib/crm/types';
-import { setLeadStatus, advanceLinkedIn, skipLinkedIn, moveLinkedInToToday, setLeadStarred, deleteContact, addNote } from '@/lib/crm/data';
+import { setLeadStatus, advanceLinkedIn, skipLinkedIn, moveLinkedInToToday, setLeadStarred, deleteContact, addNote, markMeetingInviteSent, skipMeetingInvite } from '@/lib/crm/data';
+
+const MEETING_INVITE_PLACEHOLDER =
+  'No pre-written acceptance message yet — open their profile and send a short, personal note proposing a quick call. Booking link: https://cal.com/enhancedopsninja/30-min';
 
 const CONTENT_CALENDAR_URL =
   'https://docs.google.com/spreadsheets/d/17xf0GmuVqj1_7DEPAWnLyK6Uf-q4iSk57z2hOvwEVzM/edit';
@@ -517,6 +520,138 @@ function DateGroup({ date, items, busy, isToday, onMarkSent, onSkip, onMoveToday
   );
 }
 
+// ── MeetingInviteRow ──────────────────────────────────────────────────────────
+// A lead who ACCEPTED the connection and has not yet been sent a meeting invite.
+// Surfaced independently of the msg1/msg2/msg3 sequence (including step 'done').
+
+interface MeetingInviteRowProps {
+  contact: Contact;
+  message: string;
+  isPlaceholder: boolean;
+  busy: boolean;
+  onMarkSent: (contact: Contact) => Promise<void>;
+  onSkip: (contact: Contact) => Promise<void>;
+}
+
+function MeetingInviteRow({ contact, message, isPlaceholder, busy, onMarkSent, onSkip }: MeetingInviteRowProps) {
+  const [copied, setCopied] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [skipped, setSkipped] = useState(false);
+  const li = linkedinOf(contact)!;
+  const name = `${contact.first_name ?? ''} ${contact.last_name ?? ''}`.trim();
+
+  function copy() {
+    navigator.clipboard.writeText(message).catch(() => {/* blocked */});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 3000);
+  }
+
+  async function markSent() { setSent(true); await onMarkSent(contact); }
+  async function skip()     { setSkipped(true); await onSkip(contact); }
+
+  return (
+    <div style={{
+      background: '#141414',
+      border: '1px solid rgba(34,197,94,0.25)',
+      borderLeft: '3px solid #22c55e',
+      borderRadius: 8,
+      marginBottom: 8,
+      overflow: 'hidden',
+    }}>
+      {/* Header row */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 14, fontWeight: 700, color: '#fff', flexShrink: 0 }}>{name}</span>
+        <span style={{
+          fontSize: 11, fontWeight: 700, color: '#22c55e',
+          background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.35)',
+          borderRadius: 5, padding: '2px 7px', flexShrink: 0,
+        }}>
+          Accepted — send meeting invite
+        </span>
+        {(li.title || li.company) && (
+          <span style={{ fontSize: 12, color: '#6b7280', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {[li.title, li.company].filter(Boolean).join(' · ')}
+          </span>
+        )}
+      </div>
+
+      {/* Message to send */}
+      <div style={{ padding: '0 14px 12px' }}>
+        <div style={{
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(255,255,255,0.07)',
+          borderRadius: 6, padding: '10px 12px',
+          fontSize: 13, color: isPlaceholder ? '#9ca3af' : '#d1d5db', lineHeight: 1.65,
+          fontStyle: isPlaceholder ? 'italic' : 'normal',
+          whiteSpace: 'pre-wrap', wordBreak: 'break-word', marginBottom: 8,
+        }}>
+          {linkify(message)}
+        </div>
+
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+          <button
+            onClick={copy}
+            style={{
+              padding: '6px 14px', fontSize: 13, fontWeight: 600,
+              background: copied ? 'rgba(34,197,94,0.15)' : '#1A6BF9',
+              color: copied ? '#22c55e' : '#fff',
+              border: copied ? '1px solid rgba(34,197,94,0.4)' : 'none',
+              borderRadius: 6, cursor: 'pointer', transition: 'all 0.2s', flexShrink: 0,
+            }}
+          >
+            {copied ? '✓ Copied' : 'Copy'}
+          </button>
+
+          <a
+            href={li.profile_url} target="_blank" rel="noopener noreferrer"
+            style={{
+              padding: '6px 14px', fontSize: 13, fontWeight: 600,
+              color: '#6B9CF9', textDecoration: 'none',
+              background: 'rgba(107,156,249,0.08)', border: '1px solid rgba(107,156,249,0.25)',
+              borderRadius: 6, flexShrink: 0, whiteSpace: 'nowrap',
+            }}
+          >
+            Profile ↗
+          </a>
+
+          <button
+            onClick={markSent}
+            disabled={busy || sent}
+            style={{
+              padding: '6px 14px', fontSize: 13, fontWeight: 600,
+              background: sent ? 'rgba(34,197,94,0.15)' : 'transparent',
+              color: sent ? '#22c55e' : '#22c55e',
+              border: `1px solid ${sent ? 'rgba(34,197,94,0.4)' : 'rgba(34,197,94,0.35)'}`,
+              borderRadius: 6,
+              cursor: busy || sent ? 'default' : 'pointer',
+              opacity: busy ? 0.5 : 1, transition: 'all 0.2s', flexShrink: 0,
+            }}
+          >
+            {sent ? '✓ Invite sent' : busy ? 'Saving…' : 'Mark meeting invite sent'}
+          </button>
+
+          <button
+            onClick={skip}
+            disabled={busy || sent || skipped}
+            title="Remove from this queue without recording a meeting invite"
+            style={{
+              padding: '6px 14px', fontSize: 13, fontWeight: 600,
+              background: 'transparent',
+              color: skipped ? '#f59e0b' : '#9ca3af',
+              border: `1px solid ${skipped ? 'rgba(245,158,11,0.4)' : 'rgba(255,255,255,0.1)'}`,
+              borderRadius: 6,
+              cursor: busy || sent || skipped ? 'default' : 'pointer',
+              opacity: busy ? 0.5 : 1, transition: 'all 0.2s', flexShrink: 0,
+            }}
+          >
+            {skipped ? '⤼ Skipped' : busy ? 'Saving…' : 'Skip'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── SocialView ────────────────────────────────────────────────────────────────
 
 interface Props {
@@ -541,6 +676,22 @@ export function SocialView({ contacts, onRefresh }: Props) {
   for (const { li } of leads) counts[li.status] = (counts[li.status] ?? 0) + 1;
   const booked = leads.filter(({ contact, li }) =>
     li.status === 'booked' || pendingBookingOf(contact)?.source === 'linkedin-dm').length;
+
+  // ── Meeting-invite queue ────────────────────────────────────────────────────
+  // Accepted leads that still need a meeting invite — surfaced REGARDLESS of
+  // sequence_step (including 'done') and sequence_due. This is the whole point:
+  // finished/accepted leads otherwise vanish from the sequence list. Filter:
+  //   accepted === true  &&  no meeting_invite_sent_at  &&  parked !== true.
+  const meetingInvites = leads
+    .filter(({ li }) =>
+      li.accepted === true &&
+      !li.meeting_invite_sent_at &&
+      li.parked !== true)
+    .sort((a, b) => {
+      const na = `${a.contact.first_name ?? ''} ${a.contact.last_name ?? ''}`;
+      const nb = `${b.contact.first_name ?? ''} ${b.contact.last_name ?? ''}`;
+      return na.localeCompare(nb);
+    });
 
   // ── Build dated work queue ──────────────────────────────────────────────────
 
@@ -608,6 +759,16 @@ export function SocialView({ contacts, onRefresh }: Props) {
     try { await moveLinkedInToToday(contact); onRefresh(); } finally { setBusy(null); }
   }
 
+  async function handleMarkMeetingInviteSent(contact: Contact) {
+    setBusy(contact.id);
+    try { await markMeetingInviteSent(contact); onRefresh(); } finally { setBusy(null); }
+  }
+
+  async function handleSkipMeetingInvite(contact: Contact) {
+    setBusy(contact.id);
+    try { await skipMeetingInvite(contact); onRefresh(); } finally { setBusy(null); }
+  }
+
   async function changeStatus(contact: Contact, status: string) {
     setBusy(contact.id);
     try { await setLeadStatus(contact, status); onRefresh(); } finally { setBusy(null); }
@@ -659,6 +820,42 @@ export function SocialView({ contacts, onRefresh }: Props) {
           </a>
         ))}
       </div>
+
+      {/* ── Meeting Invite queue ──────────────────────────────────────────── */}
+      {/* Accepted leads awaiting a meeting invite — shown regardless of where */}
+      {/* they sit in the msg1/2/3 sequence (including 'done'). Additive: this */}
+      {/* is a separate queue and does not touch the daily-sequence logic.     */}
+      {meetingInvites.length > 0 && (
+        <div style={{
+          border: '1px solid rgba(34,197,94,0.25)',
+          background: 'rgba(34,197,94,0.04)',
+          borderRadius: 10, padding: '16px 18px', marginBottom: 28,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+            <span style={{ fontSize: 18 }}>🤝</span>
+            <span style={{ fontSize: 15, fontWeight: 700, color: '#22c55e' }}>
+              {meetingInvites.length} meeting {meetingInvites.length === 1 ? 'invite' : 'invites'} to send
+            </span>
+            <span style={{ fontSize: 12, color: '#6b7280', flex: 1, minWidth: 0 }}>
+              These connections accepted — send the meeting invite.
+            </span>
+          </div>
+          {meetingInvites.map(({ contact, li }) => {
+            const raw = li.accepted_msg?.trim();
+            return (
+              <MeetingInviteRow
+                key={contact.id}
+                contact={contact}
+                message={raw || MEETING_INVITE_PLACEHOLDER}
+                isPlaceholder={!raw}
+                busy={busy === contact.id}
+                onMarkSent={handleMarkMeetingInviteSent}
+                onSkip={handleSkipMeetingInvite}
+              />
+            );
+          })}
+        </div>
+      )}
 
       {/* ── Today's queue ─────────────────────────────────────────────────── */}
       <div style={{ marginBottom: 24 }}>
