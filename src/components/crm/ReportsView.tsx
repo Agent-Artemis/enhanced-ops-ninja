@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { getCrmClient } from '@/lib/crm/client';
 import { ACTIVITY_PLATFORMS, platformLabel } from '@/lib/crm/types';
 import { DailyActivityLog } from './DailyActivityLog';
@@ -68,6 +68,211 @@ function Section({ title, children, note }: { title: string; children: React.Rea
       {!note && <div style={{ height: 12 }} />}
       {children}
     </div>
+  );
+}
+
+// ── Daily Reports ────────────────────────────────────────────────────────────────
+interface DailyReport {
+  id: string;
+  report_date: string;   // YYYY-MM-DD
+  slug: string;
+  title: string;
+  body_markdown: string;
+  created_at: string;
+}
+
+/** Format a YYYY-MM-DD report date as e.g. "Sat, Jul 18" (parsed as a LOCAL day). */
+function fmtReportDate(ymd: string): string {
+  const [y, m, d] = ymd.split('-').map(Number);
+  if (!y || !m || !d) return ymd;
+  const dt = new Date(y, m - 1, d);
+  return dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
+const mdCode: React.CSSProperties = {
+  background: D.panel, border: `1px solid ${D.border}`, borderRadius: 4,
+  padding: '1px 5px', fontSize: '0.9em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', color: '#e5e7eb',
+};
+
+/**
+ * Render inline markdown (**bold**, `code`) inside one line as React nodes.
+ * Text is emitted as React text children — React escapes it, so no HTML injection
+ * is possible even though reports are trusted (written by our own job).
+ */
+function renderInline(text: string, keyBase: string): React.ReactNode[] {
+  const nodes: React.ReactNode[] = [];
+  const re = /(`[^`]+`)|(\*\*[^*]+\*\*)/g;
+  let last = 0;
+  let i = 0;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(text)) !== null) {
+    if (match.index > last) nodes.push(text.slice(last, match.index));
+    if (match[1]) {
+      nodes.push(<code key={`${keyBase}-c${i}`} style={mdCode}>{match[1].slice(1, -1)}</code>);
+    } else if (match[2]) {
+      nodes.push(<strong key={`${keyBase}-b${i}`} style={{ color: D.text, fontWeight: 700 }}>{match[2].slice(2, -2)}</strong>);
+    }
+    last = re.lastIndex;
+    i++;
+  }
+  if (last < text.length) nodes.push(text.slice(last));
+  return nodes;
+}
+
+/**
+ * Render a concise markdown report as React elements. Handles #/##/### headings,
+ * **bold**, `code`, - / * bullet lists, blank-line paragraphs, and line breaks.
+ * Everything is built from React nodes (no dangerouslySetInnerHTML) so report text
+ * is always escaped.
+ */
+function renderMarkdown(md: string): React.ReactNode {
+  const lines = md.replace(/\r\n/g, '\n').split('\n');
+  const blocks: React.ReactNode[] = [];
+  let i = 0;
+  let key = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    if (line.trim() === '') { i++; continue; }
+
+    // Heading
+    const h = /^(#{1,3})\s+(.*)$/.exec(line);
+    if (h) {
+      const level = h[1].length;
+      const size = level === 1 ? 16 : level === 2 ? 14 : 13;
+      blocks.push(
+        <div key={`h${key++}`} style={{ color: D.text, fontSize: size, fontWeight: 700, margin: blocks.length ? '14px 0 6px' : '0 0 6px' }}>
+          {renderInline(h[2], `h${key}`)}
+        </div>,
+      );
+      i++;
+      continue;
+    }
+
+    // Bullet list
+    if (/^\s*[-*]\s+/.test(line)) {
+      const items: React.ReactNode[] = [];
+      let li = 0;
+      while (i < lines.length && /^\s*[-*]\s+/.test(lines[i])) {
+        const item = lines[i].replace(/^\s*[-*]\s+/, '');
+        items.push(<li key={`li${li++}`} style={{ margin: '3px 0' }}>{renderInline(item, `li${key}-${li}`)}</li>);
+        i++;
+      }
+      blocks.push(
+        <ul key={`ul${key++}`} style={{ color: D.textSec, fontSize: 13, lineHeight: 1.6, margin: '6px 0', paddingLeft: 20 }}>
+          {items}
+        </ul>,
+      );
+      continue;
+    }
+
+    // Paragraph — gather consecutive non-blank, non-special lines; join with <br/>.
+    const para: string[] = [];
+    while (
+      i < lines.length &&
+      lines[i].trim() !== '' &&
+      !/^(#{1,3})\s+/.test(lines[i]) &&
+      !/^\s*[-*]\s+/.test(lines[i])
+    ) {
+      para.push(lines[i]);
+      i++;
+    }
+    blocks.push(
+      <p key={`p${key++}`} style={{ color: D.textSec, fontSize: 13, lineHeight: 1.6, margin: '6px 0' }}>
+        {para.map((pl, idx) => (
+          <Fragment key={idx}>
+            {idx > 0 && <br />}
+            {renderInline(pl, `p${key}-${idx}`)}
+          </Fragment>
+        ))}
+      </p>,
+    );
+  }
+  return <>{blocks}</>;
+}
+
+function DailyReportsSection() {
+  const [reports, setReports] = useState<DailyReport[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true); setError('');
+      try {
+        const client = getCrmClient();
+        const { data } = await client.auth.getSession();
+        const token = data.session?.access_token;
+        const res = await fetch('/api/crm/daily-reports', {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (!res.ok) throw new Error(`Daily reports request failed (${res.status})`);
+        const json = (await res.json()) as { reports: DailyReport[] };
+        if (cancelled) return;
+        setReports(json.reports);
+        // Newest report defaults to expanded.
+        if (json.reports.length > 0) setExpanded({ [json.reports[0].id]: true });
+      } catch (e) {
+        if (!cancelled) setError(e instanceof Error ? e.message : 'Failed to load daily reports');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  return (
+    <Section title="Daily Reports" note="Concise morning reports posted by the automated LinkedIn accept-catcher. Tap a report to expand it.">
+      {loading && <div style={{ color: D.textMut, fontSize: 13, padding: '10px 0' }}>Loading daily reports…</div>}
+
+      {error && !loading && (
+        <div style={{ color: '#fca5a5', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 8, padding: '12px 14px', fontSize: 13 }}>
+          {error}
+        </div>
+      )}
+
+      {!loading && !error && reports && reports.length === 0 && (
+        <p style={{ color: D.textMut, fontSize: 13, fontStyle: 'italic', margin: 0 }}>
+          No daily reports yet. The morning LinkedIn accept-catcher will post here.
+        </p>
+      )}
+
+      {!loading && !error && reports && reports.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {reports.map(r => {
+            const open = !!expanded[r.id];
+            return (
+              <div key={r.id} style={{ background: D.panel, border: `1px solid ${D.border}`, borderRadius: 10, overflow: 'hidden' }}>
+                <button
+                  type="button"
+                  onClick={() => setExpanded(e => ({ ...e, [r.id]: !e[r.id] }))}
+                  aria-expanded={open}
+                  style={{
+                    width: '100%', minHeight: 44, display: 'flex', alignItems: 'center', gap: 10,
+                    padding: '10px 14px', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left',
+                  }}
+                >
+                  <span style={{ color: D.textMut, fontSize: 12, transform: open ? 'rotate(90deg)' : 'none', transition: 'transform 0.15s ease', flexShrink: 0, lineHeight: 1 }}>▶</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ color: D.text, fontSize: 14, fontWeight: 600, lineHeight: 1.3 }}>{r.title}</div>
+                    <div style={{ color: D.textMut, fontSize: 12, marginTop: 2 }}>{fmtReportDate(r.report_date)}</div>
+                  </div>
+                  <span style={{ flexShrink: 0, background: D.card, border: `1px solid ${D.border}`, borderRadius: 999, padding: '3px 10px', fontSize: 11, color: D.textSec, whiteSpace: 'nowrap' }}>
+                    {r.slug}
+                  </span>
+                </button>
+                {open && (
+                  <div style={{ padding: '4px 16px 16px', borderTop: `1px solid ${D.border}` }}>
+                    {renderMarkdown(r.body_markdown)}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </Section>
   );
 }
 
@@ -162,6 +367,11 @@ export function ReportsView() {
     <div style={{ maxWidth: 1080, margin: '0 auto', padding: '28px 24px 80px' }}>
       {/* Manual daily activity log — independent of the auto-metrics report below */}
       <DailyActivityLog />
+
+      {/* Auto-posted daily markdown reports (morning job) */}
+      <div style={{ marginBottom: 24 }}>
+        <DailyReportsSection />
+      </div>
 
       {/* Header + range */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
