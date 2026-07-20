@@ -190,11 +190,42 @@ function renderMarkdown(md: string): React.ReactNode {
   return <>{blocks}</>;
 }
 
+function DailyReportRow({ r, open, onToggle }: { r: DailyReport; open: boolean; onToggle: () => void }) {
+  return (
+    <div style={{ background: D.panel, border: `1px solid ${D.border}`, borderRadius: 10, overflow: 'hidden' }}>
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        style={{
+          width: '100%', minHeight: 44, display: 'flex', alignItems: 'center', gap: 10,
+          padding: '10px 14px', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left',
+        }}
+      >
+        <span style={{ color: D.textMut, fontSize: 12, transform: open ? 'rotate(90deg)' : 'none', transition: 'transform 0.15s ease', flexShrink: 0, lineHeight: 1 }}>▶</span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ color: D.text, fontSize: 14, fontWeight: 600, lineHeight: 1.3 }}>{r.title}</div>
+          <div style={{ color: D.textMut, fontSize: 12, marginTop: 2 }}>{fmtReportDate(r.report_date)}</div>
+        </div>
+        <span style={{ flexShrink: 0, background: D.card, border: `1px solid ${D.border}`, borderRadius: 999, padding: '3px 10px', fontSize: 11, color: D.textSec, whiteSpace: 'nowrap' }}>
+          {r.slug}
+        </span>
+      </button>
+      {open && (
+        <div style={{ padding: '4px 16px 16px', borderTop: `1px solid ${D.border}` }}>
+          {renderMarkdown(r.body_markdown)}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function DailyReportsSection() {
   const [reports, setReports] = useState<DailyReport[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [showArchive, setShowArchive] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -223,7 +254,7 @@ function DailyReportsSection() {
   }, []);
 
   return (
-    <Section title="Daily Reports" note="Concise morning reports posted by the automated LinkedIn accept-catcher. Tap a report to expand it.">
+    <Section title="Daily Reports" note="The last week of automated morning reports — tap one to expand. Older reports live in the archive.">
       {loading && <div style={{ color: D.textMut, fontSize: 13, padding: '10px 0' }}>Loading daily reports…</div>}
 
       {error && !loading && (
@@ -240,36 +271,34 @@ function DailyReportsSection() {
 
       {!loading && !error && reports && reports.length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {reports.map(r => {
-            const open = !!expanded[r.id];
-            return (
-              <div key={r.id} style={{ background: D.panel, border: `1px solid ${D.border}`, borderRadius: 10, overflow: 'hidden' }}>
-                <button
-                  type="button"
-                  onClick={() => setExpanded(e => ({ ...e, [r.id]: !e[r.id] }))}
-                  aria-expanded={open}
-                  style={{
-                    width: '100%', minHeight: 44, display: 'flex', alignItems: 'center', gap: 10,
-                    padding: '10px 14px', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left',
-                  }}
-                >
-                  <span style={{ color: D.textMut, fontSize: 12, transform: open ? 'rotate(90deg)' : 'none', transition: 'transform 0.15s ease', flexShrink: 0, lineHeight: 1 }}>▶</span>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ color: D.text, fontSize: 14, fontWeight: 600, lineHeight: 1.3 }}>{r.title}</div>
-                    <div style={{ color: D.textMut, fontSize: 12, marginTop: 2 }}>{fmtReportDate(r.report_date)}</div>
-                  </div>
-                  <span style={{ flexShrink: 0, background: D.card, border: `1px solid ${D.border}`, borderRadius: 999, padding: '3px 10px', fontSize: 11, color: D.textSec, whiteSpace: 'nowrap' }}>
-                    {r.slug}
-                  </span>
-                </button>
-                {open && (
-                  <div style={{ padding: '4px 16px 16px', borderTop: `1px solid ${D.border}` }}>
-                    {renderMarkdown(r.body_markdown)}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          {/* The last 7 daily reports, expandable inline. */}
+          {reports.slice(0, 7).map(r => (
+            <DailyReportRow key={r.id} r={r} open={!!expanded[r.id]}
+              onToggle={() => setExpanded(e => ({ ...e, [r.id]: !e[r.id] }))} />
+          ))}
+
+          {/* Everything older than a week is tucked behind the Archive button. */}
+          {reports.length > 7 && (
+            <>
+              <button
+                type="button"
+                onClick={() => setShowArchive(s => !s)}
+                aria-expanded={showArchive}
+                style={{
+                  marginTop: 4, alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: 8,
+                  padding: '9px 15px', minHeight: 40, background: D.panel, color: D.textSec,
+                  border: `1px solid ${D.border}`, borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                }}
+              >
+                <span style={{ fontSize: 11 }}>{showArchive ? '▾' : '▸'}</span>
+                {showArchive ? 'Hide archive' : `Archive — ${reports.length - 7} older report${reports.length - 7 === 1 ? '' : 's'}`}
+              </button>
+              {showArchive && reports.slice(7).map(r => (
+                <DailyReportRow key={r.id} r={r} open={!!expanded[r.id]}
+                  onToggle={() => setExpanded(e => ({ ...e, [r.id]: !e[r.id] }))} />
+              ))}
+            </>
+          )}
         </div>
       )}
     </Section>
