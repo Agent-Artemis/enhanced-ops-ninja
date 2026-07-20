@@ -33,12 +33,17 @@
 
   /* Header band */
   header.band{
+    position:relative;overflow:hidden;
     background:
       radial-gradient(1100px 380px at 15% -10%, rgba(26,110,204,.20), transparent 60%),
       linear-gradient(180deg,#0C1322,#0A0F1A);
     border-bottom:1px solid var(--line);
     padding:34px 0 44px;
   }
+  header.band .wrap{position:relative}
+  .ninja{position:absolute;top:14px;right:2px;height:216px;width:auto;pointer-events:none;
+    filter:drop-shadow(0 16px 28px rgba(0,0,0,.5))}
+  @media(max-width:820px){.ninja{display:none}}
   .logo{height:46px;width:auto;max-width:78%;display:block;margin-bottom:30px}
   .eyebrow{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--blue-light);font-weight:600;margin:0 0 14px}
   h1{
@@ -114,6 +119,7 @@
 <body>
   <header class="band">
     <div class="wrap">
+      <img class="ninja" src="/Ninja_Transparent.png" alt="" onerror="this.style.display='none'">
       <img class="logo" src="/logo-transparent.png" alt="EnhancedOps.ninja">
       <p class="eyebrow">Operations Field Note</p>
       <h1>The 5 Operational Gaps <span class="accent">quietly costing you.</span></h1>
