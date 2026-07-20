@@ -264,6 +264,10 @@ export interface LinkedInLead {
   // Meeting-invite queue — surfaced once a connection is accepted, independent of the msg1/2/3 sequence
   meeting_invite_sent_at?: string;     // ISO — Jeff sent the meeting invite (removes from queue)
   meeting_invite_skipped_at?: string;  // ISO — Jeff skipped sending a meeting invite (removes from queue)
+  // Inbound-reply priority flag — surfaces this lead at the TOP of the daily queue as "respond first"
+  replied_at?: string;                 // ISO — a lead replied (LinkedIn DM or email); pending while replied_handled_at is null
+  reply_source?: string;               // 'linkedin' | 'email' — how the reply arrived
+  replied_handled_at?: string;         // ISO — Jeff handled the reply (clears the priority flag)
 }
 
 export function linkedinOf(c: Contact): LinkedInLead | null {

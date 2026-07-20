@@ -605,6 +605,24 @@ export async function markMeetingInviteSent(contact: Contact): Promise<void> {
 }
 
 /**
+ * Mark an inbound reply as handled for a matched lead.
+ * Stamps custom_fields.linkedin.replied_handled_at = now (ISO), which removes the
+ * lead from the "⚡ Replies — respond first" priority block. Spreads custom_fields
+ * and the linkedin object so no other key is lost, and touches ONLY replied_handled_at.
+ */
+export async function markReplyHandled(contact: Contact): Promise<void> {
+  const cf = { ...(contact.custom_fields ?? {}) };
+  const li = { ...(cf['linkedin'] as Record<string, unknown> ?? {}) };
+  li['replied_handled_at'] = new Date().toISOString();
+  cf['linkedin'] = li;
+  const { error } = await (await sb())
+    .from('crm_contacts')
+    .update({ custom_fields: cf })
+    .eq('id', contact.id);
+  if (error) throw error;
+}
+
+/**
  * Skip the post-acceptance meeting invite for an accepted lead.
  * Stamps custom_fields.linkedin.meeting_invite_skipped_at = now (ISO), which
  * removes the lead from the Meeting Invite queue without recording it as sent.

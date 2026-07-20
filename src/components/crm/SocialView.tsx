@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import type { Contact, LeadStatus } from '@/lib/crm/types';
 import { linkedinOf, pendingBookingOf } from '@/lib/crm/types';
-import { setLeadStatus, advanceLinkedIn, skipLinkedIn, moveLinkedInToToday, setLeadStarred, deleteContact, addNote, markMeetingInviteSent, skipMeetingInvite } from '@/lib/crm/data';
+import { getCrmClient } from '@/lib/crm/client';
+import { setLeadStatus, advanceLinkedIn, skipLinkedIn, moveLinkedInToToday, setLeadStarred, deleteContact, addNote, markMeetingInviteSent, skipMeetingInvite, markReplyHandled } from '@/lib/crm/data';
 
 const ONE_PAGER_URL = 'https://enhancedops.ninja/operational-gaps.html';
 // The post-accept follow-up is now a low-friction ONE-PAGER OFFER, not a meeting ask.
@@ -679,6 +680,93 @@ function MeetingInviteRow({ contact, message, isPlaceholder, busy, onMarkSent, o
   );
 }
 
+// ── Replies — respond first ─────────────────────────────────────────────────
+// A lead who REPLIED (LinkedIn DM detected via notification email, or an email
+// reply) and hasn't been handled yet. These jump to the TOP of the daily queue
+// as priority "respond first" items. Two kinds of row: a matched lead card
+// (ReplyLeadRow) and an unmatched inbound reply we couldn't tie to a card.
+
+/** An unmatched inbound reply from GET /api/crm/inbound-replies. */
+interface InboundReply {
+  id: string;
+  name: string;
+  source: string;
+  snippet?: string | null;
+  received_at: string;
+}
+
+interface ReplyLeadRowProps {
+  contact: Contact;
+  busy: boolean;
+  onMarkHandled: (contact: Contact) => Promise<void>;
+}
+
+function ReplyLeadRow({ contact, busy, onMarkHandled }: ReplyLeadRowProps) {
+  const [handled, setHandled] = useState(false);
+  const li = linkedinOf(contact)!;
+  const name = `${contact.first_name ?? ''} ${contact.last_name ?? ''}`.trim();
+  const viaEmail = li.reply_source === 'email';
+
+  async function markHandled() { setHandled(true); await onMarkHandled(contact); }
+
+  return (
+    <div style={{
+      background: '#141414',
+      border: '1px solid rgba(245,179,1,0.25)',
+      borderLeft: '3px solid #F5B301',
+      borderRadius: 8,
+      marginBottom: 8,
+      overflow: 'hidden',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 14, fontWeight: 700, color: '#fff', flexShrink: 0 }}>{name}</span>
+        <span style={{
+          fontSize: 11, fontWeight: 700, color: '#F5B301',
+          background: 'rgba(245,179,1,0.12)', border: '1px solid rgba(245,179,1,0.35)',
+          borderRadius: 5, padding: '2px 7px', flexShrink: 0,
+        }}>
+          {viaEmail ? 'Replied via Email' : 'Replied via LinkedIn'}
+        </span>
+        {(li.title || li.company) && (
+          <span style={{ fontSize: 12, color: '#6b7280', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {[li.title, li.company].filter(Boolean).join(' · ')}
+          </span>
+        )}
+      </div>
+
+      <div style={{ padding: '0 14px 12px', display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+        <a
+          href={li.profile_url} target="_blank" rel="noopener noreferrer"
+          style={{
+            padding: '6px 14px', fontSize: 13, fontWeight: 600,
+            color: '#6B9CF9', textDecoration: 'none',
+            background: 'rgba(107,156,249,0.08)', border: '1px solid rgba(107,156,249,0.25)',
+            borderRadius: 6, flexShrink: 0, whiteSpace: 'nowrap',
+          }}
+        >
+          Profile ↗
+        </a>
+
+        <button
+          onClick={markHandled}
+          disabled={busy || handled}
+          style={{
+            padding: '6px 14px', fontSize: 13, fontWeight: 600,
+            background: handled ? 'rgba(34,197,94,0.15)' : 'transparent',
+            color: handled ? '#22c55e' : '#F5B301',
+            border: `1px solid ${handled ? 'rgba(34,197,94,0.4)' : 'rgba(245,179,1,0.35)'}`,
+            borderRadius: 6,
+            cursor: busy || handled ? 'default' : 'pointer',
+            opacity: busy ? 0.5 : 1, transition: 'all 0.2s', flexShrink: 0,
+          }}
+        >
+          {handled ? '✓ Handled' : busy ? 'Saving…' : 'Mark handled'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ── SocialView ────────────────────────────────────────────────────────────────
 
 interface Props {
@@ -691,7 +779,27 @@ export function SocialView({ contacts, onRefresh }: Props) {
   const [statusFilter, setStatusFilter] = useState<LeadStatus | 'all'>('all');
   const [busy, setBusy] = useState<string | null>(null);
   const [showFunnel, setShowFunnel] = useState(false);
+  const [inboundReplies, setInboundReplies] = useState<InboundReply[]>([]);
   const active = PLATFORMS.find(p => p.id === platform)!;
+
+  // ── Unmatched inbound replies (fetched from the CRM API on mount) ────────────
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const client = getCrmClient();
+        const { data } = await client.auth.getSession();
+        const token = data.session?.access_token;
+        const res = await fetch('/api/crm/inbound-replies', {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (!res.ok) return; // graceful — still render matched leads
+        const json = await res.json() as { replies?: InboundReply[] };
+        if (!cancelled) setInboundReplies(json.replies ?? []);
+      } catch { /* graceful — still render matched leads */ }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const leads = contacts
     .map(c => ({ contact: c, li: linkedinOf(c) }))
@@ -703,6 +811,14 @@ export function SocialView({ contacts, onRefresh }: Props) {
   for (const { li } of leads) counts[li.status] = (counts[li.status] ?? 0) + 1;
   const booked = leads.filter(({ contact, li }) =>
     li.status === 'booked' || pendingBookingOf(contact)?.source === 'linkedin-dm').length;
+
+  // ── Replies — respond first ─────────────────────────────────────────────────
+  // Matched leads that replied and haven't been handled yet, newest reply first.
+  const repliedLeads = leads
+    .filter(({ li }) => li.replied_at && !li.replied_handled_at)
+    .sort((a, b) => (b.li.replied_at ?? '').localeCompare(a.li.replied_at ?? ''));
+
+  const replyCount = repliedLeads.length + inboundReplies.length;
 
   // ── Meeting-invite queue ────────────────────────────────────────────────────
   // Accepted leads that still need a meeting invite — surfaced REGARDLESS of
@@ -796,6 +912,29 @@ export function SocialView({ contacts, onRefresh }: Props) {
     try { await skipMeetingInvite(contact); onRefresh(); } finally { setBusy(null); }
   }
 
+  async function handleMarkReplyHandled(contact: Contact) {
+    setBusy(contact.id);
+    try { await markReplyHandled(contact); onRefresh(); } finally { setBusy(null); }
+  }
+
+  async function handleMarkInboundHandled(reply: InboundReply) {
+    setBusy(reply.id);
+    try {
+      const client = getCrmClient();
+      const { data } = await client.auth.getSession();
+      const token = data.session?.access_token;
+      const res = await fetch('/api/crm/inbound-replies', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ id: reply.id }),
+      });
+      if (res.ok) setInboundReplies(prev => prev.filter(r => r.id !== reply.id));
+    } finally { setBusy(null); }
+  }
+
   async function changeStatus(contact: Contact, status: string) {
     setBusy(contact.id);
     try { await setLeadStatus(contact, status); onRefresh(); } finally { setBusy(null); }
@@ -847,6 +986,71 @@ export function SocialView({ contacts, onRefresh }: Props) {
           </a>
         ))}
       </div>
+
+      {/* ── Replies — respond first ───────────────────────────────────────── */}
+      {/* Priority block: leads who replied (matched cards) + unmatched inbound */}
+      {/* replies. Rendered ABOVE every other queue so Jeff responds first.     */}
+      {replyCount > 0 && (
+        <div style={{
+          border: '1px solid rgba(245,179,1,0.3)',
+          background: 'rgba(245,179,1,0.05)',
+          borderRadius: 10, padding: '16px 18px', marginBottom: 28,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+            <span style={{ fontSize: 18 }}>⚡</span>
+            <span style={{ fontSize: 15, fontWeight: 700, color: '#F5B301' }}>
+              Replies — respond first ({replyCount})
+            </span>
+            <span style={{ fontSize: 12, color: '#6b7280', flex: 1, minWidth: 0 }}>
+              These people replied — get back to them before anything else.
+            </span>
+          </div>
+
+          {repliedLeads.map(({ contact }) => (
+            <ReplyLeadRow
+              key={contact.id}
+              contact={contact}
+              busy={busy === contact.id}
+              onMarkHandled={handleMarkReplyHandled}
+            />
+          ))}
+
+          {inboundReplies.map(reply => (
+            <div key={reply.id} style={{
+              display: 'flex', alignItems: 'center', gap: 10,
+              background: '#141414',
+              border: '1px solid rgba(245,179,1,0.18)',
+              borderLeft: '3px solid #F5B301',
+              borderRadius: 8, marginBottom: 8, padding: '10px 14px', flexWrap: 'wrap',
+            }}>
+              <span style={{ fontSize: 13, color: '#d1d5db', flex: 1, minWidth: 0 }}>
+                <span style={{ fontWeight: 700, color: '#fff' }}>📨 {reply.name}</span>{' '}
+                messaged you — reply on LinkedIn
+              </span>
+              <span style={{
+                fontSize: 10, fontWeight: 700, color: '#F5B301',
+                background: 'rgba(245,179,1,0.12)', border: '1px solid rgba(245,179,1,0.3)',
+                borderRadius: 5, padding: '2px 6px', flexShrink: 0, textTransform: 'capitalize',
+              }}>
+                {reply.source}
+              </span>
+              <button
+                onClick={() => handleMarkInboundHandled(reply)}
+                disabled={busy === reply.id}
+                style={{
+                  padding: '5px 12px', fontSize: 12, fontWeight: 600,
+                  background: 'transparent', color: '#F5B301',
+                  border: '1px solid rgba(245,179,1,0.35)',
+                  borderRadius: 6, cursor: busy === reply.id ? 'default' : 'pointer',
+                  opacity: busy === reply.id ? 0.5 : 1, transition: 'all 0.2s', flexShrink: 0,
+                }}
+              >
+                {busy === reply.id ? 'Saving…' : 'Mark handled'}
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* ── Meeting Invite queue ──────────────────────────────────────────── */}
       {/* Accepted leads awaiting a meeting invite — shown regardless of where */}
