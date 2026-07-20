@@ -220,6 +220,105 @@ function DailyReportRow({ r, open, onToggle }: { r: DailyReport; open: boolean; 
   );
 }
 
+// ── One-Pager Funnel ───────────────────────────────────────────────────────────
+interface OnePagerStats {
+  page: string;
+  offersSent: number;
+  opens: { people: number; total: number; recent: { name: string; openedAt: string; contactId: string | null }[] };
+  booked: number;
+  bookedFromOpeners: number;
+}
+
+/** e.g. "Jul 20, 9:14 AM" */
+function fmtOpenTime(iso: string): string {
+  const dt = new Date(iso);
+  if (isNaN(dt.getTime())) return iso;
+  return dt.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+}
+
+function OnePagerFunnelSection() {
+  const [stats, setStats] = useState<OnePagerStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true); setError('');
+      try {
+        const client = getCrmClient();
+        const { data } = await client.auth.getSession();
+        const token = data.session?.access_token;
+        const res = await fetch('/api/crm/one-pager-stats', {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (!res.ok) throw new Error(`One-pager stats request failed (${res.status})`);
+        const json = (await res.json()) as OnePagerStats;
+        if (!cancelled) setStats(json);
+      } catch (e) {
+        if (!cancelled) setError(e instanceof Error ? e.message : 'Failed to load one-pager funnel');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const tiles = stats ? [
+    { label: 'Offers sent', value: fmtNum(stats.offersSent), sub: 'one-pager link offered', color: D.blue },
+    { label: 'Opened', value: fmtNum(stats.opens.people), sub: `${fmtNum(stats.opens.total)} total opens`, color: D.sky },
+    { label: 'Appointments booked', value: fmtNum(stats.booked), sub: 'via Cal.com', color: D.green },
+    { label: 'Conversion', value: fmtNum(stats.bookedFromOpeners), sub: `${fmtNum(stats.bookedFromOpeners)} of openers booked`, color: D.violet },
+  ] : [];
+
+  return (
+    <Section title="One-Pager Funnel" note="Offers sent → opened → booked for the operational-gaps one-pager. Tag the link from the Social tab to attribute opens.">
+      {loading && <div style={{ color: D.textMut, fontSize: 13, padding: '10px 0' }}>Loading one-pager funnel…</div>}
+
+      {error && !loading && (
+        <div style={{ color: '#fca5a5', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 8, padding: '12px 14px', fontSize: 13 }}>
+          {error}
+        </div>
+      )}
+
+      {!loading && !error && stats && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+          {/* Funnel tiles */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+            {tiles.map(t => (
+              <div key={t.label} style={{ flex: '1 1 150px', background: D.panel, border: `1px solid ${D.border}`, borderRadius: 10, padding: '16px 18px', minWidth: 0 }}>
+                <div style={{ color: D.textMut, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t.label}</div>
+                <div style={{ color: t.color, fontSize: 26, fontWeight: 700, marginTop: 6 }}>{t.value}</div>
+                <div style={{ color: D.faint, fontSize: 12, marginTop: 4 }}>{t.sub}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Recent opens */}
+          <div>
+            <div style={{ color: D.textSec, fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Recent opens</div>
+            {stats.opens.recent.length === 0 ? (
+              <p style={{ color: D.textMut, fontSize: 13, fontStyle: 'italic', margin: 0 }}>
+                No opens yet — send the tagged link from the Social tab.
+              </p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {stats.opens.recent.map((o, i) => (
+                  <div key={`${o.contactId ?? 'anon'}-${o.openedAt}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13 }}>
+                    <span style={{ color: D.text, fontWeight: 600 }}>{o.name}</span>
+                    <span style={{ color: D.faint }}>·</span>
+                    <span style={{ color: D.textMut }}>{fmtOpenTime(o.openedAt)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </Section>
+  );
+}
+
 function DailyReportsSection() {
   const [reports, setReports] = useState<DailyReport[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -396,6 +495,11 @@ export function ReportsView() {
     <div style={{ maxWidth: 1080, margin: '0 auto', padding: '28px 24px 80px' }}>
       {/* Manual daily activity log — independent of the auto-metrics report below */}
       <DailyActivityLog />
+
+      {/* One-pager open-tracking funnel — sits with the daily LinkedIn report near the top */}
+      <div style={{ marginBottom: 24 }}>
+        <OnePagerFunnelSection />
+      </div>
 
       {/* Auto-posted daily markdown reports (morning job) */}
       <div style={{ marginBottom: 24 }}>

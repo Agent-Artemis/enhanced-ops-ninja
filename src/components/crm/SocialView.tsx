@@ -540,6 +540,7 @@ interface MeetingInviteRowProps {
 
 function MeetingInviteRow({ contact, message, isPlaceholder, busy, onMarkSent, onSkip }: MeetingInviteRowProps) {
   const [copied, setCopied] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const [sent, setSent] = useState(false);
   const [skipped, setSkipped] = useState(false);
   const li = linkedinOf(contact)!;
@@ -549,6 +550,13 @@ function MeetingInviteRow({ contact, message, isPlaceholder, busy, onMarkSent, o
     navigator.clipboard.writeText(message).catch(() => {/* blocked */});
     setCopied(true);
     setTimeout(() => setCopied(false), 3000);
+  }
+
+  function copyLink() {
+    const url = `https://enhancedops.ninja/operational-gaps.html?c=${contact.id}`;
+    navigator.clipboard.writeText(url).catch(() => {/* blocked */});
+    setLinkCopied(true);
+    setTimeout(() => setLinkCopied(false), 3000);
   }
 
   async function markSent() { setSent(true); await onMarkSent(contact); }
@@ -605,6 +613,20 @@ function MeetingInviteRow({ contact, message, isPlaceholder, busy, onMarkSent, o
             }}
           >
             {copied ? '✓ Copied' : 'Copy'}
+          </button>
+
+          <button
+            onClick={copyLink}
+            title="Copy the one-pager link, tagged to this contact for open-tracking"
+            style={{
+              padding: '6px 14px', fontSize: 13, fontWeight: 600,
+              background: linkCopied ? 'rgba(34,197,94,0.15)' : 'transparent',
+              color: linkCopied ? '#22c55e' : '#6B9CF9',
+              border: `1px solid ${linkCopied ? 'rgba(34,197,94,0.4)' : 'rgba(107,156,249,0.25)'}`,
+              borderRadius: 6, cursor: 'pointer', transition: 'all 0.2s', flexShrink: 0, whiteSpace: 'nowrap',
+            }}
+          >
+            {linkCopied ? '✓ Link copied' : 'Copy link'}
           </button>
 
           <a
