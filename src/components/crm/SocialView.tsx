@@ -5,8 +5,13 @@ import type { Contact, LeadStatus } from '@/lib/crm/types';
 import { linkedinOf, pendingBookingOf } from '@/lib/crm/types';
 import { setLeadStatus, advanceLinkedIn, skipLinkedIn, moveLinkedInToToday, setLeadStarred, deleteContact, addNote, markMeetingInviteSent, skipMeetingInvite } from '@/lib/crm/data';
 
-const MEETING_INVITE_PLACEHOLDER =
-  'No pre-written acceptance message yet — open their profile and send a short, personal note proposing a quick call. Booking link: https://cal.com/enhancedopsninja/30-min';
+const ONE_PAGER_URL = 'https://enhancedops.ninja/operational-gaps.html';
+// The post-accept follow-up is now a low-friction ONE-PAGER OFFER, not a meeting ask.
+// It offers to send the 5-ops-gaps one-pager; the meeting comes only AFTER they reply.
+function onePagerOffer(firstName?: string | null): string {
+  const first = (firstName ?? '').trim() || 'there';
+  return `Hi ${first} — most multi-location operators I talk to are quietly losing margin in the same 5 operational gaps. I put together a one-pager that maps them out, with what each one typically costs. Want me to send it over?`;
+}
 
 const CONTENT_CALENDAR_URL =
   'https://docs.google.com/spreadsheets/d/17xf0GmuVqj1_7DEPAWnLyK6Uf-q4iSk57z2hOvwEVzM/edit';
@@ -566,7 +571,7 @@ function MeetingInviteRow({ contact, message, isPlaceholder, busy, onMarkSent, o
           background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.35)',
           borderRadius: 5, padding: '2px 7px', flexShrink: 0,
         }}>
-          Accepted — send meeting invite
+          Accepted — offer the one-pager
         </span>
         {(li.title || li.company) && (
           <span style={{ fontSize: 12, color: '#6b7280', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -627,13 +632,13 @@ function MeetingInviteRow({ contact, message, isPlaceholder, busy, onMarkSent, o
               opacity: busy ? 0.5 : 1, transition: 'all 0.2s', flexShrink: 0,
             }}
           >
-            {sent ? '✓ Invite sent' : busy ? 'Saving…' : 'Mark meeting invite sent'}
+            {sent ? '✓ Offer sent' : busy ? 'Saving…' : 'Mark offer sent'}
           </button>
 
           <button
             onClick={skip}
             disabled={busy || sent || skipped}
-            title="Remove from this queue without recording a meeting invite"
+            title="Remove from this queue without recording an offer"
             style={{
               padding: '6px 14px', fontSize: 13, fontWeight: 600,
               background: 'transparent',
@@ -831,23 +836,22 @@ export function SocialView({ contacts, onRefresh }: Props) {
           background: 'rgba(34,197,94,0.04)',
           borderRadius: 10, padding: '16px 18px', marginBottom: 28,
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-            <span style={{ fontSize: 18 }}>🤝</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: 18 }}>📄</span>
             <span style={{ fontSize: 15, fontWeight: 700, color: '#22c55e' }}>
-              {meetingInvites.length} meeting {meetingInvites.length === 1 ? 'invite' : 'invites'} to send
+              {meetingInvites.length} one-pager {meetingInvites.length === 1 ? 'offer' : 'offers'} to send
             </span>
-            <span style={{ fontSize: 12, color: '#6b7280', flex: 1, minWidth: 0 }}>
-              These connections accepted — send the meeting invite.
+            <span style={{ fontSize: 12, color: '#6b7280', flex: 1, minWidth: 180 }}>
+              These connections accepted — offer them the one-pager. When they reply, send it → {ONE_PAGER_URL.replace('https://', '')}
             </span>
           </div>
-          {meetingInvites.map(({ contact, li }) => {
-            const raw = li.accepted_msg?.trim();
+          {meetingInvites.map(({ contact }) => {
             return (
               <MeetingInviteRow
                 key={contact.id}
                 contact={contact}
-                message={raw || MEETING_INVITE_PLACEHOLDER}
-                isPlaceholder={!raw}
+                message={onePagerOffer(contact.first_name)}
+                isPlaceholder={false}
                 busy={busy === contact.id}
                 onMarkSent={handleMarkMeetingInviteSent}
                 onSkip={handleSkipMeetingInvite}
