@@ -121,6 +121,7 @@ function LeadRow({ contact, step, message, asset, busy, isToday, onMarkSent, onS
   const [copied, setCopied] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [skipped, setSkipped] = useState(false);
+  const [removed, setRemoved] = useState(false);
   const [movedToday, setMovedToday] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
   const [noteText, setNoteText] = useState('');
@@ -153,6 +154,7 @@ function LeadRow({ contact, step, message, asset, busy, isToday, onMarkSent, onS
 
   async function skip() {
     setSkipped(true);
+    setRemoved(true);
     await onSkip(contact, step);
   }
 
@@ -160,6 +162,8 @@ function LeadRow({ contact, step, message, asset, busy, isToday, onMarkSent, onS
     setMovedToday(true);
     await onMoveToday(contact);
   }
+
+  if (removed) return null;
 
   return (
     <div style={{
@@ -544,8 +548,21 @@ function MeetingInviteRow({ contact, message, isPlaceholder, busy, onMarkSent, o
   const [linkCopied, setLinkCopied] = useState(false);
   const [sent, setSent] = useState(false);
   const [skipped, setSkipped] = useState(false);
+  const [removed, setRemoved] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [noteText, setNoteText] = useState('');
+  const [noteSaved, setNoteSaved] = useState(false);
   const li = linkedinOf(contact)!;
   const name = `${contact.first_name ?? ''} ${contact.last_name ?? ''}`.trim();
+
+  async function saveNote() {
+    const body = noteText.trim();
+    if (!body) return;
+    await addNote(contact.id, body);
+    setNoteSaved(true);
+    setNoteText('');
+    setTimeout(() => { setNoteSaved(false); setNoteOpen(false); }, 1500);
+  }
 
   function copy() {
     navigator.clipboard.writeText(message).catch(() => {/* blocked */});
@@ -561,7 +578,9 @@ function MeetingInviteRow({ contact, message, isPlaceholder, busy, onMarkSent, o
   }
 
   async function markSent() { setSent(true); await onMarkSent(contact); }
-  async function skip()     { setSkipped(true); await onSkip(contact); }
+  async function skip()     { setSkipped(true); setRemoved(true); await onSkip(contact); }
+
+  if (removed) return null;
 
   return (
     <div style={{
@@ -674,7 +693,58 @@ function MeetingInviteRow({ contact, message, isPlaceholder, busy, onMarkSent, o
           >
             {skipped ? '⤼ Skipped' : busy ? 'Saving…' : 'Skip'}
           </button>
+
+          <button
+            onClick={() => setNoteOpen(o => !o)}
+            style={{
+              padding: '6px 14px', fontSize: 13, fontWeight: 600,
+              background: noteOpen ? 'rgba(255,255,255,0.06)' : 'transparent',
+              color: '#9ca3af',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: 6, cursor: 'pointer', transition: 'all 0.2s', flexShrink: 0,
+            }}
+          >
+            📝 Note
+          </button>
         </div>
+
+        {/* Note editor */}
+        {noteOpen && (
+          <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <textarea
+              value={noteText}
+              onChange={e => setNoteText(e.target.value)}
+              placeholder="Add a note about this lead…"
+              rows={3}
+              style={{
+                width: '100%', resize: 'vertical', boxSizing: 'border-box',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: 6, padding: '8px 10px',
+                fontSize: 13, color: '#d1d5db', lineHeight: 1.5,
+                fontFamily: 'inherit',
+              }}
+            />
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <button
+                onClick={saveNote}
+                disabled={noteSaved || !noteText.trim()}
+                style={{
+                  padding: '6px 14px', fontSize: 13, fontWeight: 600,
+                  background: noteSaved ? 'rgba(34,197,94,0.15)' : '#1A6BF9',
+                  color: noteSaved ? '#22c55e' : '#fff',
+                  border: noteSaved ? '1px solid rgba(34,197,94,0.4)' : 'none',
+                  borderRadius: 6,
+                  cursor: noteSaved || !noteText.trim() ? 'default' : 'pointer',
+                  opacity: !noteText.trim() && !noteSaved ? 0.5 : 1,
+                  transition: 'all 0.2s', flexShrink: 0,
+                }}
+              >
+                {noteSaved ? '✓ Saved' : 'Save'}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -703,11 +773,23 @@ interface ReplyLeadRowProps {
 
 function ReplyLeadRow({ contact, busy, onMarkHandled }: ReplyLeadRowProps) {
   const [handled, setHandled] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [noteText, setNoteText] = useState('');
+  const [noteSaved, setNoteSaved] = useState(false);
   const li = linkedinOf(contact)!;
   const name = `${contact.first_name ?? ''} ${contact.last_name ?? ''}`.trim();
   const viaEmail = li.reply_source === 'email';
 
   async function markHandled() { setHandled(true); await onMarkHandled(contact); }
+
+  async function saveNote() {
+    const body = noteText.trim();
+    if (!body) return;
+    await addNote(contact.id, body);
+    setNoteSaved(true);
+    setNoteText('');
+    setTimeout(() => { setNoteSaved(false); setNoteOpen(false); }, 1500);
+  }
 
   return (
     <div style={{
@@ -734,34 +816,87 @@ function ReplyLeadRow({ contact, busy, onMarkHandled }: ReplyLeadRowProps) {
         )}
       </div>
 
-      <div style={{ padding: '0 14px 12px', display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-        <a
-          href={li.profile_url} target="_blank" rel="noopener noreferrer"
-          style={{
-            padding: '6px 14px', fontSize: 13, fontWeight: 600,
-            color: '#6B9CF9', textDecoration: 'none',
-            background: 'rgba(107,156,249,0.08)', border: '1px solid rgba(107,156,249,0.25)',
-            borderRadius: 6, flexShrink: 0, whiteSpace: 'nowrap',
-          }}
-        >
-          Profile ↗
-        </a>
+      <div style={{ padding: '0 14px 12px' }}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+          <a
+            href={li.profile_url} target="_blank" rel="noopener noreferrer"
+            style={{
+              padding: '6px 14px', fontSize: 13, fontWeight: 600,
+              color: '#6B9CF9', textDecoration: 'none',
+              background: 'rgba(107,156,249,0.08)', border: '1px solid rgba(107,156,249,0.25)',
+              borderRadius: 6, flexShrink: 0, whiteSpace: 'nowrap',
+            }}
+          >
+            Profile ↗
+          </a>
 
-        <button
-          onClick={markHandled}
-          disabled={busy || handled}
-          style={{
-            padding: '6px 14px', fontSize: 13, fontWeight: 600,
-            background: handled ? 'rgba(34,197,94,0.15)' : 'transparent',
-            color: handled ? '#22c55e' : '#F5B301',
-            border: `1px solid ${handled ? 'rgba(34,197,94,0.4)' : 'rgba(245,179,1,0.35)'}`,
-            borderRadius: 6,
-            cursor: busy || handled ? 'default' : 'pointer',
-            opacity: busy ? 0.5 : 1, transition: 'all 0.2s', flexShrink: 0,
-          }}
-        >
-          {handled ? '✓ Handled' : busy ? 'Saving…' : 'Mark handled'}
-        </button>
+          <button
+            onClick={markHandled}
+            disabled={busy || handled}
+            style={{
+              padding: '6px 14px', fontSize: 13, fontWeight: 600,
+              background: handled ? 'rgba(34,197,94,0.15)' : 'transparent',
+              color: handled ? '#22c55e' : '#F5B301',
+              border: `1px solid ${handled ? 'rgba(34,197,94,0.4)' : 'rgba(245,179,1,0.35)'}`,
+              borderRadius: 6,
+              cursor: busy || handled ? 'default' : 'pointer',
+              opacity: busy ? 0.5 : 1, transition: 'all 0.2s', flexShrink: 0,
+            }}
+          >
+            {handled ? '✓ Handled' : busy ? 'Saving…' : 'Mark handled'}
+          </button>
+
+          <button
+            onClick={() => setNoteOpen(o => !o)}
+            style={{
+              padding: '6px 14px', fontSize: 13, fontWeight: 600,
+              background: noteOpen ? 'rgba(255,255,255,0.06)' : 'transparent',
+              color: '#9ca3af',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: 6, cursor: 'pointer', transition: 'all 0.2s', flexShrink: 0,
+            }}
+          >
+            📝 Note
+          </button>
+        </div>
+
+        {/* Note editor */}
+        {noteOpen && (
+          <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <textarea
+              value={noteText}
+              onChange={e => setNoteText(e.target.value)}
+              placeholder="Add a note about this lead…"
+              rows={3}
+              style={{
+                width: '100%', resize: 'vertical', boxSizing: 'border-box',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: 6, padding: '8px 10px',
+                fontSize: 13, color: '#d1d5db', lineHeight: 1.5,
+                fontFamily: 'inherit',
+              }}
+            />
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <button
+                onClick={saveNote}
+                disabled={noteSaved || !noteText.trim()}
+                style={{
+                  padding: '6px 14px', fontSize: 13, fontWeight: 600,
+                  background: noteSaved ? 'rgba(34,197,94,0.15)' : '#1A6BF9',
+                  color: noteSaved ? '#22c55e' : '#fff',
+                  border: noteSaved ? '1px solid rgba(34,197,94,0.4)' : 'none',
+                  borderRadius: 6,
+                  cursor: noteSaved || !noteText.trim() ? 'default' : 'pointer',
+                  opacity: !noteText.trim() && !noteSaved ? 0.5 : 1,
+                  transition: 'all 0.2s', flexShrink: 0,
+                }}
+              >
+                {noteSaved ? '✓ Saved' : 'Save'}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
