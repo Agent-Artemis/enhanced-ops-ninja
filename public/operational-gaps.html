@@ -77,6 +77,16 @@
   .tag.fixed{background:var(--blue-tint);color:var(--blue-light)}
   .rows p{margin:0;color:var(--ink-soft)}
   .rows p strong{color:#fff;font-weight:600}
+  .stat{grid-column:1/-1;margin:13px 0 0;display:flex;gap:13px;align-items:baseline;background:var(--panel-soft);border:1px solid var(--line);border-radius:11px;padding:12px 15px}
+  .stat .fig{font-family:Fraunces,Georgia,serif;font-weight:700;font-size:1.55rem;color:var(--gold);line-height:1;flex:none;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .stat .txt{font-size:.92rem;color:var(--ink-soft);line-height:1.5}
+  .stat sup{color:var(--ink-faint);font-size:.62em}
+
+  /* Sources */
+  .sources{margin:6px 0 0;padding:18px 20px;background:var(--panel-soft);border:1px solid var(--line);border-radius:14px}
+  .src-h{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;margin:0 0 9px}
+  .sources ol{margin:0;padding-left:1.25em;color:var(--ink-faint);font-size:.78rem;line-height:1.65}
+  .sources li{margin:0 0 3px}
 
   /* CTA */
   .cta{background:linear-gradient(135deg,var(--blue-deep),var(--blue));color:#fff;border-radius:20px;padding:38px 32px;margin:34px 0 20px;text-align:center;box-shadow:var(--shadow)}
@@ -126,6 +136,7 @@
           <span class="tag symptom">Symptom</span><p>Every home or clinic runs on its own spreadsheets, tools, and someone's memory — and care notes, med passes, records, and intake are still captured by hand, then re-typed somewhere else.</p>
           <span class="tag cost">What it costs</span><p><strong>You become the integration layer, and your team burns hours on double-entry.</strong> Answering "how are we <em>actually</em> doing?" means stitching five sources together, and blind spots stay hidden until they get expensive.</p>
           <span class="tag fixed">Closed</span><p>Census, care, cash, and compliance across every location in one operational view — captured once, structured, and current at a glance.</p>
+          <div class="stat"><span class="fig">~20 hrs</span><span class="txt">a week is what clinicians now spend on documentation and admin — nearly as much as they spend with patients.<sup>1</sup></span></div>
         </div>
       </article>
 
@@ -135,6 +146,7 @@
           <span class="tag symptom">Symptom</span><p>Survey or audit readiness is a scramble — an assisted-living home reconstructing records the week before a state survey, or a practice pulling charts together the moment a payer or Medicare audit lands.</p>
           <span class="tag cost">What it costs</span><p><strong>One bad survey or audit means deficiency tags, fines, clawbacks, and license risk</strong> — the kind of hit that can undo a year of growth in a single visit.</p>
           <span class="tag fixed">Closed</span><p>Documentation structured and defensible by default, so you're survey- and audit-ready <em>every</em> day — not just the week you're forced to be.</p>
+          <div class="stat"><span class="fig">77%</span><span class="txt">of Medicaid improper payments trace to <em>insufficient documentation</em> — a paperwork gap, not fraud. It's exactly what audit-readiness closes.<sup>2</sup></span></div>
         </div>
       </article>
 
@@ -144,6 +156,7 @@
           <span class="tag symptom">Symptom</span><p>Move-in-to-bill lag, rate changes that never got captured, vacancies that linger a week too long, memberships that churned before anyone noticed.</p>
           <span class="tag cost">What it costs</span><p><strong>Thousands a month walking out the door</strong> — invisible, because nothing is watching for it.</p>
           <span class="tag fixed">Closed</span><p>Census, billing, and renewals tracked automatically, with leaks flagged early — before they compound into a quarter you can't explain.</p>
+          <div class="stat"><span class="fig">48%</span><span class="txt">of practices name denials and appeals their single biggest source of revenue-cycle leakage.<sup>3</sup></span></div>
         </div>
       </article>
 
@@ -153,6 +166,7 @@
           <span class="tag symptom">Symptom</span><p>Scheduling by text and spreadsheet, overtime you find out about on payday, no clean view of labor cost per site.</p>
           <span class="tag cost">What it costs</span><p><strong>Your single largest expense is the one you can see the least</strong> — so it drifts, and margin goes with it.</p>
           <span class="tag fixed">Closed</span><p>Scheduling, coverage, and labor cost visible per location in real time — you catch the overtime before it happens, not after.</p>
+          <div class="stat"><span class="fig">60%+</span><span class="txt">of a senior-living community's operating cost is labor — with front-line turnover still running 40–44%.<sup>4</sup></span></div>
         </div>
       </article>
 
@@ -162,6 +176,7 @@
           <span class="tag symptom">Symptom</span><p>Every new home — or every hundred new members — means more manual work, more fires, and more of <em>you</em> in the middle of all of it.</p>
           <span class="tag cost">What it costs</span><p><strong>The systems that got you here won't scale</strong>, so growth starts to feel like risk instead of momentum.</p>
           <span class="tag fixed">Closed</span><p>Operations built to scale with you, so the next site runs like the last one — without you as the glue holding it together.</p>
+          <div class="stat"><span class="fig">15–30%</span><span class="txt">of U.S. health-care spending goes to administration — and roughly half of that is waste.<sup>5</sup></span></div>
         </div>
       </article>
 
@@ -174,6 +189,19 @@
       <p>Grab 30 minutes with me. Tell me about your operation and I'll tell you exactly what I'd do in your seat — no pitch, just the operator's read.</p>
       <a class="btn" href="https://cal.com/enhancedopsninja/30-min" target="_blank" rel="noopener">Book 30 minutes with Jeff →</a>
       <p class="sig">Rule your day. — Jeff</p>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="sources">
+      <p class="src-h">Sources</p>
+      <ol>
+        <li>AMA "Organizational Biopsy" physician time study, 2024 (U.S. physicians).</li>
+        <li>CMS FY2025 Improper Payments Fact Sheet — Medicaid; improper payments are documentation errors, not fraud.</li>
+        <li>MGMA Stat poll, January 2026 (medical practices).</li>
+        <li>Argentum, "Wage Trends in Senior Living," 2024; front-line turnover: LeadingAge &amp; AHCA/NCAL, 2024–25.</li>
+        <li>Health Affairs, "Administrative Costs in U.S. Health Care," 2022.</li>
+      </ol>
     </div>
   </section>
 
