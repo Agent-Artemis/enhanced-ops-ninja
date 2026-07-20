@@ -578,34 +578,23 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
           <p style={{ margin: '0 0 14px', fontSize: 11, color: D.textMut }}>
             Add a time for scheduled appointments — timed cards rise to the top of that day.
           </p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-            <input type="checkbox" id="is_active" checked={form.is_active ?? true} onChange={e => set('is_active', e.target.checked)}
-              style={{ width: 16, height: 16, accentColor: D.blue, cursor: 'pointer' }} />
-            <label htmlFor="is_active" style={{ fontSize: 14, color: D.textSec, cursor: 'pointer' }}>Active</label>
-          </div>
-
-          {/* Partner status — two INDEPENDENT toggles stored in tags[]. Both can be on
-              at once; neither is tied to the pipeline stage. A partner may also be a client. */}
-          <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+          {/* Active + the two partner toggles, all on one line as matching checkboxes.
+              Partner status = INDEPENDENT membership in tags[]; both can be on at once,
+              neither is tied to the pipeline stage. A partner may also be a client. */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 16, flexWrap: 'wrap' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+              <input type="checkbox" checked={form.is_active ?? true} onChange={e => set('is_active', e.target.checked)}
+                style={{ width: 16, height: 16, accentColor: D.blue, cursor: 'pointer' }} />
+              <span style={{ fontSize: 14, color: D.textSec }}>Active</span>
+            </label>
             {PARTNER_BADGES.map(({ tag, label }) => {
               const on = hasPartnerTag(tag);
               return (
-                <button
-                  key={tag}
-                  type="button"
-                  onClick={() => togglePartnerTag(tag)}
-                  aria-pressed={on}
-                  style={{
-                    padding: '7px 14px', fontSize: 13, fontWeight: 600,
-                    borderRadius: 8, cursor: 'pointer',
-                    background: on ? D.blue : 'transparent',
-                    color: on ? '#fff' : D.textSec,
-                    border: `1px solid ${on ? D.blue : D.inputBorder}`,
-                    transition: 'background 0.12s, color 0.12s',
-                  }}
-                >
-                  {label}
-                </button>
+                <label key={tag} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                  <input type="checkbox" checked={on} onChange={() => togglePartnerTag(tag)}
+                    style={{ width: 16, height: 16, accentColor: D.blue, cursor: 'pointer' }} />
+                  <span style={{ fontSize: 14, color: D.textSec }}>{label}</span>
+                </label>
               );
             })}
           </div>
