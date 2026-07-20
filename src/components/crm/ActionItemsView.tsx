@@ -181,6 +181,7 @@ function ActionItemRow({ item, team, busy, onToggle, onSkip, onAssign }: RowProp
   const done = item.status === 'done';
   const skipped = item.status === 'skipped';
   const overdue = isOverdue(item);
+  const [confirming, setConfirming] = useState(false);
 
   return (
     <div style={{
@@ -229,9 +230,9 @@ function ActionItemRow({ item, team, busy, onToggle, onSkip, onAssign }: RowProp
         </span>
       )}
 
-      {!skipped && (
+      {!skipped && !confirming && (
         <button
-          onClick={() => onSkip(item)}
+          onClick={() => setConfirming(true)}
           disabled={busy}
           title="Skip this item"
           style={{
@@ -243,6 +244,36 @@ function ActionItemRow({ item, team, busy, onToggle, onSkip, onAssign }: RowProp
         >
           Skip
         </button>
+      )}
+
+      {!skipped && confirming && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+          <span style={{ fontSize: 11, fontWeight: 700, color: T.textSec }}>Are you sure?</span>
+          <button
+            onClick={() => { setConfirming(false); onSkip(item); }}
+            disabled={busy}
+            style={{
+              padding: '3px 11px', fontSize: 11, fontWeight: 700,
+              background: 'rgba(245,158,11,0.15)', color: T.amber,
+              border: '1px solid rgba(245,158,11,0.4)', borderRadius: 5,
+              cursor: busy ? 'default' : 'pointer', opacity: busy ? 0.5 : 1,
+            }}
+          >
+            Yes
+          </button>
+          <button
+            onClick={() => setConfirming(false)}
+            disabled={busy}
+            style={{
+              padding: '3px 11px', fontSize: 11, fontWeight: 700,
+              background: 'transparent', color: T.textFaint,
+              border: '1px solid rgba(255,255,255,0.1)', borderRadius: 5,
+              cursor: busy ? 'default' : 'pointer',
+            }}
+          >
+            No
+          </button>
+        </div>
       )}
 
       <AssignMenu
@@ -333,12 +364,11 @@ export function ActionItemsView({ team, contacts }: Props) {
   }, [persist]);
 
   const handleSkip = useCallback((item: ActionItem) => {
-    const reason = window.prompt('Skip this item — why? (optional)') ?? '';
-    const trimmed = reason.trim() || null;
+    // Confirmation ("Are you sure?") happens inline in the row now — no reason prompt.
     void persist(
       item,
-      { status: 'skipped', skip_reason: trimmed, completed_at: null },
-      () => skipActionItem(item.id, trimmed),
+      { status: 'skipped', skip_reason: null, completed_at: null },
+      () => skipActionItem(item.id, null),
     );
   }, [persist]);
 
