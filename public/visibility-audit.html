@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The 3-Question Visibility Audit — EnhancedOps.ninja</title>
+<meta name="description" content="Three questions to find out whether your numbers actually agree — and what the gap is costing you.">
+<meta property="og:title" content="The 3-Question Visibility Audit">
+<meta property="og:description" content="Do your numbers agree with each other? Three questions, one honest score.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0F1A; --panel:#111A2B; --panel-soft:#0E1523; --line:#22304C;
+    --ink:#FFFFFF; --ink-soft:#C4D2E6; --ink-faint:#8095B3;
+    --blue:#1A6ECC; --blue-light:#5AA0EA; --blue-deep:#124E92; --gold:#F5B301;
+    --blue-tint:rgba(26,110,204,.16); --gold-tint:rgba(245,179,1,.12);
+    --green:#2ec26a; --amber:#F5B301; --red:#e0603a;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 18px 40px -18px rgba(0,0,0,.6);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px}
+  a{color:inherit}
+
+  header.band{position:relative;overflow:hidden;background:radial-gradient(1100px 380px at 15% -10%,rgba(26,110,204,.20),transparent 60%),linear-gradient(180deg,#0C1322,#0A0F1A);border-bottom:1px solid var(--line);padding:32px 0 40px}
+  header.band .wrap{position:relative}
+  .logo{height:42px;width:auto;max-width:72%;display:block;margin-bottom:26px}
+  .ninja{position:absolute;top:12px;right:2px;height:190px;width:auto;pointer-events:none;filter:drop-shadow(0 16px 28px rgba(0,0,0,.5))}
+  @media(max-width:820px){.ninja{display:none}}
+  .eyebrow{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--blue-light);font-weight:600;margin:0 0 12px}
+  h1{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(2rem,6vw,3rem);line-height:1.05;letter-spacing:-.015em;margin:0;text-wrap:balance;color:#fff}
+  h1 .accent{color:var(--blue-light);font-style:italic}
+  .subhead{margin:16px 0 0;font-size:clamp(1rem,2.4vw,1.14rem);color:var(--ink-soft);max-width:34em}
+
+  .quiz{padding:34px 0 10px}
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px 22px 18px;margin-bottom:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .q::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue)}
+  .q .qnum{font-family:Fraunces,Georgia,serif;font-weight:600;color:var(--gold);font-size:.95rem;letter-spacing:.02em}
+  .q .qtitle{font-family:Fraunces,Georgia,serif;font-size:1.28rem;font-weight:600;line-height:1.2;margin:4px 0 16px;color:#fff}
+  .opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--panel-soft);border:1px solid var(--line);border-radius:11px;padding:13px 15px;margin-bottom:9px;color:var(--ink-soft);font:inherit;font-size:.98rem;cursor:pointer;transition:border-color .12s,background .12s}
+  .opt:hover{border-color:var(--blue-light)}
+  .opt .dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--ink-faint);flex:none;transition:all .12s}
+  .opt.sel{border-color:var(--blue);background:var(--blue-tint);color:#fff}
+  .opt.sel .dot{border-color:var(--blue);background:var(--blue);box-shadow:inset 0 0 0 3px var(--panel-soft)}
+
+  .cta-wrap{text-align:center;padding:14px 0 8px}
+  .btn{background:var(--blue);color:#fff;border:none;font:inherit;font-weight:700;font-size:1.02rem;padding:15px 30px;border-radius:12px;cursor:pointer;text-decoration:none;display:inline-block;box-shadow:0 10px 26px -12px rgba(26,110,204,.9);transition:transform .12s,opacity .12s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn[disabled]{opacity:.4;cursor:not-allowed;transform:none}
+  .btn-ghost{background:transparent;color:var(--ink-soft);border:1px solid var(--line);box-shadow:none;font-weight:600}
+
+  /* Result */
+  #result{display:none;padding:8px 0 8px}
+  .result-card{background:linear-gradient(180deg,var(--panel),var(--panel-soft));border:1px solid var(--line);border-radius:20px;padding:34px 30px;text-align:center;box-shadow:var(--shadow)}
+  .score-badge{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;padding:7px 16px;border-radius:999px;margin-bottom:16px}
+  .result-card h2{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(1.5rem,4vw,2rem);margin:0 0 12px;line-height:1.15;color:#fff;text-wrap:balance}
+  .result-card p{color:var(--ink-soft);font-size:1.04rem;margin:0 auto 8px;max-width:32em}
+  .result-cta{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:24px}
+  .sig{margin:22px 0 0;font-family:Fraunces,Georgia,serif;font-style:italic;font-size:1.02rem;color:#EAF2FC}
+
+  footer{padding:18px 0 54px;text-align:center;color:var(--ink-faint);font-size:.82rem}
+  footer a{color:var(--blue-light);text-decoration:none;font-weight:500}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+  <header class="band">
+    <div class="wrap">
+      <img class="ninja" src="/Ninja_Transparent.png" alt="" onerror="this.style.display='none'">
+      <img class="logo" src="/logo-transparent.png" alt="EnhancedOps.ninja">
+      <p class="eyebrow">The 3-Question Visibility Audit</p>
+      <h1>Do your numbers <span class="accent">actually agree?</span></h1>
+      <p class="subhead">If your team spends meetings arguing about whose number is right, you've got a visibility gap. Three honest questions to find out how big — and what it's costing you.</p>
+    </div>
+  </header>
+
+  <section class="quiz">
+    <div class="wrap">
+
+      <div class="q" data-q="0">
+        <span class="qnum">Question 1 · One source of truth</span>
+        <p class="qtitle">When you want to know "how are we <em>actually</em> doing?" right now, how do you get the answer?</p>
+        <button class="opt" data-v="0"><span class="dot"></span>One screen shows it all — census/cash/ops, current.</button>
+        <button class="opt" data-v="1"><span class="dot"></span>I pull from a few systems and piece it together.</button>
+        <button class="opt" data-v="2"><span class="dot"></span>I ask someone and wait for a report.</button>
+      </div>
+
+      <div class="q" data-q="1">
+        <span class="qnum">Question 2 · Locked definitions</span>
+        <p class="qtitle">Does a core metric like "revenue" mean the same thing to every team?</p>
+        <button class="opt" data-v="0"><span class="dot"></span>Yes — one locked definition everyone uses.</button>
+        <button class="opt" data-v="1"><span class="dot"></span>Mostly, but the numbers sometimes don't match.</button>
+        <button class="opt" data-v="2"><span class="dot"></span>No — finance, sales &amp; ops each have their own number.</button>
+      </div>
+
+      <div class="q" data-q="2">
+        <span class="qnum">Question 3 · Manual reporting</span>
+        <p class="qtitle">How is your weekly / monthly reporting built?</p>
+        <button class="opt" data-v="0"><span class="dot"></span>Automatic — it's always current.</button>
+        <button class="opt" data-v="1"><span class="dot"></span>Half automated, half rebuilt by hand.</button>
+        <button class="opt" data-v="2"><span class="dot"></span>By hand every time — and stale by the time I see it.</button>
+      </div>
+
+      <div class="cta-wrap">
+        <button class="btn" id="seeResult" disabled>See my visibility score →</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" id="result">
+    <div class="result-card">
+      <span class="score-badge" id="badge"></span>
+      <h2 id="rtitle"></h2>
+      <p id="rbody"></p>
+      <p id="rcost"></p>
+      <div class="result-cta">
+        <a class="btn" href="https://cal.com/enhancedopsninja/15-min" target="_blank" rel="noopener">Book a 15-min visibility review →</a>
+        <a class="btn btn-ghost" href="https://enhancedops.ninja/operational-gaps.html" target="_blank" rel="noopener">See the 5 Ops Gaps</a>
+      </div>
+      <p class="sig">Rule your day. — Jeff 🥷</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">EnhancedOps.ninja &nbsp;·&nbsp; Augeo LLC &nbsp;·&nbsp; <a href="https://enhancedops.ninja">enhancedops.ninja</a></div>
+  </footer>
+
+<script>
+(function(){
+  var answers={}, seen=document.getElementById('seeResult');
+  document.querySelectorAll('.q').forEach(function(q){
+    q.querySelectorAll('.opt').forEach(function(o){
+      o.addEventListener('click',function(){
+        q.querySelectorAll('.opt').forEach(function(x){x.classList.remove('sel')});
+        o.classList.add('sel');
+        answers[q.dataset.q]=parseInt(o.dataset.v,10);
+        if(Object.keys(answers).length===3){seen.disabled=false;}
+      });
+    });
+  });
+  seen.addEventListener('click',function(){
+    var s=(answers[0]||0)+(answers[1]||0)+(answers[2]||0);
+    var badge=document.getElementById('badge'),color,label,title,body,cost;
+    if(s<=1){color='var(--green)';label='Clear view';title="You've got real visibility — that's rare.";
+      body="Your numbers agree and you can see the whole picture. The risk now is losing that as you add locations. Let's make sure it scales with you.";
+      cost="Most owners aren't here. Protect it.";}
+    else if(s<=4){color='var(--amber)';title="You've got a visibility gap — and it's quietly costing you.";label='Visibility gap';
+      body="Your numbers mostly work, but the seams are showing: some stitching between systems, some definitions that drift, some reporting still by hand. That's hours a week and decisions made on stale data.";
+      cost="Left alone, gaps like this compound as you grow.";}
+    else{color='var(--red)';title="Your numbers are fighting each other.";label='High risk';
+      body="Disconnected systems, definitions nobody's locked, and hand-built reports — your team is reconciling data instead of running the business. This is real time and real margin, every single week.";
+      cost="This is the exact pattern we fix first.";}
+    badge.style.color=color;badge.style.background='color-mix(in srgb,'+color+' 14%,transparent)';badge.style.border='1px solid color-mix(in srgb,'+color+' 40%,transparent)';
+    badge.textContent=label+' · '+s+'/6';
+    document.getElementById('rtitle').textContent=title;
+    document.getElementById('rbody').textContent=body;
+    document.getElementById('rcost').textContent=cost;
+    var r=document.getElementById('result');r.style.display='block';
+    r.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  // Per-lead open tracking (tagged link ?c=<contact>)
+  try{var c=new URLSearchParams(location.search).get('c')||'';var i=new Image();i.src='/api/track/open?p=visibility-audit'+(c?('&c='+encodeURIComponent(c)):'')+'&t='+Date.now();}catch(e){}
+})();
+</script>
+</body>
+</html>
