@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Labor Visibility Check — EnhancedOps.ninja</title>
+<meta name="description" content="Four questions to find out whether you run labor in real time — or only find out on payday.">
+<meta property="og:title" content="The Labor Visibility Check">
+<meta property="og:description" content="Do you manage your biggest expense live, or react to it after payroll? Four questions, one honest score.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0F1A; --panel:#111A2B; --panel-soft:#0E1523; --line:#22304C;
+    --ink:#FFFFFF; --ink-soft:#C4D2E6; --ink-faint:#8095B3;
+    --blue:#1A6ECC; --blue-light:#5AA0EA; --blue-deep:#124E92; --gold:#F5B301;
+    --blue-tint:rgba(26,110,204,.16); --gold-tint:rgba(245,179,1,.12);
+    --green:#2ec26a; --amber:#F5B301; --red:#e0603a;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 18px 40px -18px rgba(0,0,0,.6);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px}
+  a{color:inherit}
+
+  header.band{position:relative;overflow:hidden;background:radial-gradient(1100px 380px at 15% -10%,rgba(26,110,204,.20),transparent 60%),linear-gradient(180deg,#0C1322,#0A0F1A);border-bottom:1px solid var(--line);padding:32px 0 40px}
+  header.band .wrap{position:relative}
+  .logo{height:42px;width:auto;max-width:72%;display:block;margin-bottom:26px}
+  .ninja{position:absolute;top:12px;right:2px;height:190px;width:auto;pointer-events:none;filter:drop-shadow(0 16px 28px rgba(0,0,0,.5))}
+  @media(max-width:820px){.ninja{display:none}}
+  .eyebrow{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--blue-light);font-weight:600;margin:0 0 12px}
+  h1{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(2rem,6vw,3rem);line-height:1.05;letter-spacing:-.015em;margin:0;text-wrap:balance;color:#fff}
+  h1 .accent{color:var(--blue-light);font-style:italic}
+  .subhead{margin:16px 0 0;font-size:clamp(1rem,2.4vw,1.14rem);color:var(--ink-soft);max-width:34em}
+
+  .quiz{padding:34px 0 10px}
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px 22px 18px;margin-bottom:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .q::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue)}
+  .q .qnum{font-family:Fraunces,Georgia,serif;font-weight:600;color:var(--gold);font-size:.95rem;letter-spacing:.02em}
+  .q .qtitle{font-family:Fraunces,Georgia,serif;font-size:1.28rem;font-weight:600;line-height:1.2;margin:4px 0 16px;color:#fff}
+  .opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--panel-soft);border:1px solid var(--line);border-radius:11px;padding:13px 15px;margin-bottom:9px;color:var(--ink-soft);font:inherit;font-size:.98rem;cursor:pointer;transition:border-color .12s,background .12s}
+  .opt:hover{border-color:var(--blue-light)}
+  .opt .dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--ink-faint);flex:none;transition:all .12s}
+  .opt.sel{border-color:var(--blue);background:var(--blue-tint);color:#fff}
+  .opt.sel .dot{border-color:var(--blue);background:var(--blue);box-shadow:inset 0 0 0 3px var(--panel-soft)}
+
+  .cta-wrap{text-align:center;padding:14px 0 8px}
+  .btn{background:var(--blue);color:#fff;border:none;font:inherit;font-weight:700;font-size:1.02rem;padding:15px 30px;border-radius:12px;cursor:pointer;text-decoration:none;display:inline-block;box-shadow:0 10px 26px -12px rgba(26,110,204,.9);transition:transform .12s,opacity .12s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn[disabled]{opacity:.4;cursor:not-allowed;transform:none}
+  .btn-ghost{background:transparent;color:var(--ink-soft);border:1px solid var(--line);box-shadow:none;font-weight:600}
+
+  /* Result */
+  #result{display:none;padding:8px 0 8px}
+  .result-card{background:linear-gradient(180deg,var(--panel),var(--panel-soft));border:1px solid var(--line);border-radius:20px;padding:34px 30px;text-align:center;box-shadow:var(--shadow)}
+  .score-badge{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;padding:7px 16px;border-radius:999px;margin-bottom:16px}
+  .result-card h2{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(1.5rem,4vw,2rem);margin:0 0 12px;line-height:1.15;color:#fff;text-wrap:balance}
+  .result-card p{color:var(--ink-soft);font-size:1.04rem;margin:0 auto 8px;max-width:32em}
+  .result-cta{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:24px}
+  .sig{margin:22px 0 0;font-family:Fraunces,Georgia,serif;font-style:italic;font-size:1.02rem;color:#EAF2FC}
+
+  footer{padding:18px 0 54px;text-align:center;color:var(--ink-faint);font-size:.82rem}
+  footer a{color:var(--blue-light);text-decoration:none;font-weight:500}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+  /* Operator Brief opt-in */
+  .opbrief{background:linear-gradient(180deg,var(--panel),var(--panel-soft));border:1px solid var(--line);border-radius:20px;padding:32px 30px;margin:24px 0 20px;box-shadow:var(--shadow);text-align:center}
+  .opbrief-eyebrow{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:1.35rem;color:#fff;margin:0 0 8px;line-height:1.2}
+  .opbrief-sub{color:var(--ink-soft);font-size:1rem;margin:0 auto 22px;max-width:32em}
+  .opbrief-form{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:34em;margin:0 auto}
+  .opbrief-input{flex:1 1 240px;min-width:0;background:var(--panel-soft);border:1px solid var(--line);border-radius:11px;padding:14px 15px;color:#fff;font:inherit;font-size:1rem}
+  .opbrief-input::placeholder{color:var(--ink-faint)}
+  .opbrief-input:focus{outline:none;border-color:var(--blue-light)}
+  .opbrief-btn{background:var(--blue);color:#fff;border:none;font:inherit;font-weight:700;font-size:1rem;padding:14px 26px;border-radius:11px;cursor:pointer;white-space:nowrap;box-shadow:0 10px 26px -12px rgba(26,110,204,.9);transition:transform .12s,opacity .12s}
+  .opbrief-btn:hover{transform:translateY(-1px)}
+  .opbrief-btn[disabled]{opacity:.5;cursor:not-allowed;transform:none}
+  .opbrief-msg{margin:14px 0 0;font-size:.92rem;min-height:1.2em}
+  .opbrief-msg.err{color:var(--red)}
+  .opbrief-ok{margin:6px 0 0;font-family:Fraunces,Georgia,serif;font-style:italic;font-size:1.1rem;color:#fff}
+</style>
+</head>
+<body>
+  <header class="band">
+    <div class="wrap">
+      <img class="ninja" src="/Ninja_Transparent.png" alt="" onerror="this.style.display='none'">
+      <img class="logo" src="/logo-transparent.png" alt="EnhancedOps.ninja">
+      <p class="eyebrow">The Labor Visibility Check</p>
+      <h1>Do you run labor <span class="accent">live — or on payday?</span></h1>
+      <p class="subhead">Labor is your biggest expense, yet most owners only see it after payroll runs. Four honest questions to find out whether you manage it in real time or react to it after the fact.</p>
+    </div>
+  </header>
+
+  <section class="quiz">
+    <div class="wrap">
+
+      <div class="q" data-q="0">
+        <span class="qnum">Question 1 · Labor as % of revenue</span>
+        <p class="qtitle">Can you see labor cost as a % of revenue, per location, live — or only after payroll runs?</p>
+        <button class="opt" data-v="0"><span class="dot"></span>Live — it's on a dashboard, per location, right now.</button>
+        <button class="opt" data-v="1"><span class="dot"></span>Sort of — I can calculate it, but not in real time.</button>
+        <button class="opt" data-v="2"><span class="dot"></span>Only after payroll — I see it when the run closes.</button>
+      </div>
+
+      <div class="q" data-q="1">
+        <span class="qnum">Question 2 · Overtime alerts</span>
+        <p class="qtitle">Do you get alerted to overtime as it builds, or discover it on payday?</p>
+        <button class="opt" data-v="0"><span class="dot"></span>Alerted as it builds — I can act before it lands.</button>
+        <button class="opt" data-v="1"><span class="dot"></span>Sometimes — a manager might flag it mid-week.</button>
+        <button class="opt" data-v="2"><span class="dot"></span>On payday — it's a surprise in the numbers.</button>
+      </div>
+
+      <div class="q" data-q="2">
+        <span class="qnum">Question 3 · Staffing balance</span>
+        <p class="qtitle">Can you tell which location is overstaffed vs. understaffed right now?</p>
+        <button class="opt" data-v="0"><span class="dot"></span>Yes — I can see staffing vs. demand across locations live.</button>
+        <button class="opt" data-v="1"><span class="dot"></span>Roughly — I'd have to ask managers to be sure.</button>
+        <button class="opt" data-v="2"><span class="dot"></span>No — I find out when someone complains or quits.</button>
+      </div>
+
+      <div class="q" data-q="3">
+        <span class="qnum">Question 4 · Manage vs. react</span>
+        <p class="qtitle">Is your biggest expense — labor — something you manage in real time, or react to after the fact?</p>
+        <button class="opt" data-v="0"><span class="dot"></span>Manage — I adjust staffing and hours as the week unfolds.</button>
+        <button class="opt" data-v="1"><span class="dot"></span>A bit of both — I steer some, react to the rest.</button>
+        <button class="opt" data-v="2"><span class="dot"></span>React — I mostly clean it up after payroll.</button>
+      </div>
+
+      <div class="cta-wrap">
+        <button class="btn" id="seeResult" disabled>See my labor visibility score →</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" id="result">
+    <div class="result-card">
+      <span class="score-badge" id="badge"></span>
+      <h2 id="rtitle"></h2>
+      <p id="rbody"></p>
+      <p id="rcost"></p>
+      <div class="result-cta">
+        <a class="btn" href="https://cal.com/enhancedopsninja/15-min" target="_blank" rel="noopener">Let's put labor on a live dashboard — free 15 minutes →</a>
+        <a class="btn btn-ghost" href="https://enhancedops.ninja/operational-gaps.html" target="_blank" rel="noopener">← See the 5 Ops Gaps</a>
+      </div>
+      <p class="sig">Rule your day. — Jeff 🥷</p>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="opbrief">
+      <p class="opbrief-eyebrow">📬 Get the Operator Brief</p>
+      <p class="opbrief-sub">One practical ops fix a week — plus first access to every new tool I build. Operator to operator, no fluff.</p>
+      <form class="opbrief-form" id="opbrief-form-lc" novalidate>
+        <div style="position:absolute;left:-9999px" aria-hidden="true">
+          <label>Leave this empty<input type="text" name="website" id="opbrief-website-lc" tabindex="-1" autocomplete="off"></label>
+        </div>
+        <input type="email" required placeholder="you@yourpractice.com" id="opbrief-email-lc" class="opbrief-input" autocomplete="email" aria-label="Email address">
+        <button type="submit" class="opbrief-btn" id="opbrief-submit-lc">Send it to me →</button>
+      </form>
+      <p class="opbrief-msg" id="opbrief-msg-lc" role="alert"></p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">EnhancedOps.ninja &nbsp;·&nbsp; Augeo LLC &nbsp;·&nbsp; <a href="https://enhancedops.ninja">enhancedops.ninja</a></div>
+  </footer>
+
+<script>
+(function(){
+  var answers={}, seen=document.getElementById('seeResult');
+  document.querySelectorAll('.q').forEach(function(q){
+    q.querySelectorAll('.opt').forEach(function(o){
+      o.addEventListener('click',function(){
+        q.querySelectorAll('.opt').forEach(function(x){x.classList.remove('sel')});
+        o.classList.add('sel');
+        answers[q.dataset.q]=parseInt(o.dataset.v,10);
+        if(Object.keys(answers).length===4){seen.disabled=false;}
+      });
+    });
+  });
+  seen.addEventListener('click',function(){
+    var s=(answers[0]||0)+(answers[1]||0)+(answers[2]||0)+(answers[3]||0);
+    var badge=document.getElementById('badge'),color,label,title,body,cost;
+    if(s<=2){color='var(--green)';label='Real-time control';title="You run labor in real time.";
+      body="Labor-to-revenue is live, overtime gets caught before it lands, and you can balance staffing across locations as the week moves. That's real control of your biggest cost — keep it as you scale.";
+      cost="Most owners aren't here. Protect it.";}
+    else if(s<=5){color='var(--amber)';label='Reacting late';title="You're reacting to labor after the fact.";
+      body="You've got partial visibility, but the important moments happen too late: overtime you catch mid-week if you're lucky, staffing you confirm by asking around. Small drifts across locations quietly add up on every run.";
+      cost="Left alone, that lag costs more as you grow.";}
+    else{color='var(--red)';label='Payday surprise';title="Your biggest expense is a black box until payday.";
+      body="Labor-to-revenue, overtime, and staffing balance all show up only after payroll closes. You're paying for decisions you couldn't influence — every single run, across every location.";
+      cost="This is the exact pattern we fix first.";}
+    badge.style.color=color;badge.style.background='color-mix(in srgb,'+color+' 14%,transparent)';badge.style.border='1px solid color-mix(in srgb,'+color+' 40%,transparent)';
+    badge.textContent=label+' · '+s+'/8';
+    document.getElementById('rtitle').textContent=title;
+    document.getElementById('rbody').textContent=body;
+    document.getElementById('rcost').textContent=cost;
+    var r=document.getElementById('result');r.style.display='block';
+    r.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  // Per-lead open tracking (tagged link ?c=<contact>)
+  try{var c=new URLSearchParams(location.search).get('c')||'';var i=new Image();i.src='/api/track/open?p=labor-cost'+(c?('&c='+encodeURIComponent(c)):'')+'&t='+Date.now();}catch(e){}
+})();
+</script>
+<script>
+(function(){
+  var form=document.getElementById('opbrief-form-lc');
+  if(!form)return;
+  var email=document.getElementById('opbrief-email-lc');
+  var hp=document.getElementById('opbrief-website-lc');
+  var btn=document.getElementById('opbrief-submit-lc');
+  var msg=document.getElementById('opbrief-msg-lc');
+  var busy=false;
+  var re=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    if(busy)return;
+    var val=(email.value||'').trim();
+    if(!re.test(val)){msg.className='opbrief-msg err';msg.textContent='Please enter a valid email.';return;}
+    busy=true;btn.disabled=true;msg.className='opbrief-msg';msg.textContent='';
+    var src='';try{src=new URLSearchParams(location.search).get('src')||'';}catch(e2){}
+    if(!src)src='labor-cost';
+    fetch('/api/leads/capture',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:val,source:src,page:'labor-cost',website:hp?hp.value:''})})
+      .then(function(res){
+        if(res.ok){form.innerHTML='<p class="opbrief-ok">You\'re in. Watch your inbox. 🥷</p>';}
+        else{throw new Error('bad');}
+      })
+      .catch(function(){busy=false;btn.disabled=false;msg.className='opbrief-msg err';msg.textContent='Something went wrong — please try again.';});
+  });
+})();
+</script>
+</body>
+</html>
