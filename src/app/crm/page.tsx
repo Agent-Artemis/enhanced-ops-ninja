@@ -292,7 +292,7 @@ export default function CrmPage() {
         {view === 'actions' && <ActionItemsView team={team} contacts={contacts} />}
         {view === 'social'  && <SocialView contacts={contacts} onRefresh={refresh} />}
         {view === 'reports' && <ReportsView />}
-        {view === 'calllists' && <CallListsView onRefresh={refresh} />}
+        {view === 'calllists' && <CallListsView />}
       </main>
       <ContactDrawer
         open={drawerOpen} contact={drawerContact} stages={stages}
