@@ -42,7 +42,8 @@
  .dnote:focus{outline:none;border-color:var(--blue)}
  .ocsbtn{margin-left:10px;padding:3px 9px;font-size:11px;font-weight:800;letter-spacing:.03em;border-radius:6px;border:1px solid var(--blue);background:transparent;color:var(--blue2);cursor:pointer;vertical-align:middle}
  .ocsbtn:hover{background:rgba(26,110,204,.15)}
- .ocsbtn.on{border-color:var(--green);color:var(--green);background:rgba(70,196,106,.12);cursor:default}
+ .ocsbtn.on{border-color:var(--green);color:var(--green);background:rgba(70,196,106,.12);cursor:pointer}
+ .ocsbtn.on:hover{background:rgba(224,85,107,.15);border-color:#e0556b;color:#e0556b}
  .act{white-space:nowrap;text-align:right}
  .actbtn{padding:5px 8px;font-size:14px;line-height:1;border-radius:6px;border:1px solid var(--line2);background:var(--panel2);cursor:pointer;margin-left:6px}
  .actbtn:hover{border-color:var(--blue)}
@@ -76,12 +77,14 @@
  function saveNote(i,v){var k='note:'+key(cur()[i]);if(v)localStorage.setItem(k,v);else localStorage.removeItem(k);var d=document.getElementById('nd'+i);if(d)d.className='actbtn note'+(v?' has':'');}
  function toggleNote(i){var k=key(cur()[i]);openKey=(openKey===k)?null:k;render();}
  function ocsDone(row){return localStorage.getItem('ocs:'+key(row))==='1';}
- function createOCS(i){var r=cur()[i];var k=key(r);var btn=document.getElementById('ocs'+i);if(btn){btn.textContent='…';btn.disabled=true;}
-   var payload={list:'ut-snf-al',tab:tab,key:k,name:(tab==='al'?r.a:r.f),phone:r.p,facility:r.f,city:r.c};
+ function createOCS(i){var r=cur()[i];var k=key(r);var on=ocsDone(r);var btn=document.getElementById('ocs'+i);
+   if(on&&!confirm('Remove '+((tab==='al'?r.a:r.f)||'this person')+' from the CRM?'))return;
+   if(btn){btn.textContent='…';btn.disabled=true;}
+   var payload=on?{action:'remove',key:k}:{list:'ut-snf-al',tab:tab,key:k,name:(tab==='al'?r.a:r.f),phone:r.p,facility:r.f,city:r.c};
    fetch('/api/crm/call-list-card',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
      .then(function(res){return res.json().catch(function(){return {};}).then(function(j){return {ok:res.ok,j:j};});})
-     .then(function(o){if(o.ok&&o.j&&o.j.ok){localStorage.setItem('ocs:'+k,'1');render();}else{alert('Could not create the OCS card: '+((o.j&&o.j.error)||'server error'));if(btn){btn.textContent='OCS';btn.disabled=false;}}})
-     .catch(function(){alert('Network error creating the OCS card. Check your connection and try again.');if(btn){btn.textContent='OCS';btn.disabled=false;}});
+     .then(function(o){if(o.ok&&o.j&&o.j.ok){if(on)localStorage.removeItem('ocs:'+k);else localStorage.setItem('ocs:'+k,'1');render();}else{alert('Could not update the OCS card: '+((o.j&&o.j.error)||'server error'));if(btn){btn.textContent=on?'✓ OCS':'OCS';btn.disabled=false;}}})
+     .catch(function(){alert('Network error. Check your connection and try again.');if(btn){btn.textContent=on?'✓ OCS':'OCS';btn.disabled=false;}});
  }
  function isHidden(row){return localStorage.getItem('hidden:'+key(row))==='1';}
  function hideRow(i){var r=cur()[i];if(!confirm('Remove '+((tab==='al'?r.a:r.f)||'this person')+' from the list?'))return;localStorage.setItem('hidden:'+key(r),'1');if(openKey===key(r))openKey=null;render();}
@@ -109,7 +112,7 @@
      var cv=calledVal(r);
      var badge=(cv&&cv!=='1')?'<span class="cbadge">✓ '+fmtShort(cv)+'</span>':(cv==='1'?'<span class="cbadge">✓</span>':'');
      var od=ocsDone(r);
-     var ocs='<button class="ocsbtn'+(od?' on':'')+'" id="ocs'+i+'" '+(od?'disabled':'onclick="createOCS('+i+')"')+'>'+(od?'✓ OCS':'OCS')+'</button>';
+     var ocs='<button class="ocsbtn'+(od?' on':'')+'" id="ocs'+i+'" title="'+(od?'In CRM — click to remove':'Add to CRM (Action Needed)')+'" onclick="createOCS('+i+')">'+(od?'✓ OCS':'OCS')+'</button>';
      var nmVal=(tab==='al')?esc(r.a):esc(r.f);
      var nm='<td class="nm">'+nmVal+badge+ocs+'</td>';
      var acts=showHidden

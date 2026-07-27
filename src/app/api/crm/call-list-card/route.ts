@@ -29,6 +29,25 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "bad json" }, { status: 400 });
   }
 
+  // ── Remove (un-OCS): delete the card this list previously created ──────────
+  if (body.action === "remove") {
+    const key = String(body.key ?? "").trim().slice(0, 160);
+    if (!key) {
+      return NextResponse.json({ error: "key required" }, { status: 400 });
+    }
+    const admin = getSupabaseAdmin();
+    // Scoped to call-list cards only, so we can never delete a real contact.
+    const { error } = await admin
+      .from("crm_contacts")
+      .delete()
+      .eq("custom_fields->>call_list_key", key)
+      .eq("custom_fields->>source", "call-list");
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    return NextResponse.json({ ok: true, removed: true });
+  }
+
   const name = String(body.name ?? "").trim();
   const phoneRaw = String(body.phone ?? "").trim();
   const facility = String(body.facility ?? "").trim();

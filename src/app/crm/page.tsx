@@ -244,6 +244,19 @@ export default function CrmPage() {
     if (authed) refresh().finally(() => setDataLoading(false));
   }, [authed, refresh]);
 
+  // Re-fetch when the tab regains focus, so cards added elsewhere (e.g. the
+  // "OCS" button on a call-list page in another tab) show up without a reload.
+  useEffect(() => {
+    if (!authed) return;
+    const onVisible = () => { if (document.visibilityState === 'visible') refresh(); };
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', onVisible);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', onVisible);
+    };
+  }, [authed, refresh]);
+
   if (!authed) return <LoginScreen />;
   if (dataLoading) return <Spinner />;
 
