@@ -9,18 +9,18 @@ const C = {
   cardBg: '#1A1A1A',
   border: '#2d2d2d',
   blue: '#1A6BF9',
+  blue2: '#3F8AE0',
   gold: '#F5B301',
-  green: '#16a34a',
+  green: '#4ade80',
   red: '#ef4444',
   text: '#FFFFFF',
   textSec: '#9ca3af',
-  textMuted: '#6b7280',
-  inputBg: '#1f2937',
 };
 
-/* ─── The call lists ─────────────────────────────────────────────────────────
+/*
  * A growing set of prospecting lists. Add an entry here each time a new list is
- * built. `url` opens the tap-to-call sheet; the note is saved locally per list.
+ * built. `url` opens the hosted tap-to-call sheet (per-person called/notes live
+ * inside that page). Titles link to the same place.
  */
 interface CallList {
   id: string;
@@ -36,37 +36,14 @@ const LISTS: CallList[] = [
     title: 'Utah — SNF & AL Administrators',
     blurb:
       '224 assisted-living administrators (name + phone) plus 97 skilled-nursing facilities. ' +
-      'Tap a number to call, check people off as you go.',
+      'Tap a number to dial; tap a name to log the call and jot a note on that person.',
     count: '321 contacts',
-    url: 'https://claude.ai/public/artifacts/f1df90ca-a05b-4883-886f-0cb4e47bd396',
+    url: 'https://enhancedops.ninja/lists/ut-snf-al.html',
   },
 ];
 
-/* ─── Notes (persist locally per list) ──────────────────────────────────────── */
-function useNote(listId: string): [string, (v: string) => void] {
-  const key = `calllist_note_${listId}`;
-  const [value, setValue] = useState<string>(() => {
-    if (typeof window === 'undefined') return '';
-    try {
-      return window.localStorage.getItem(key) || '';
-    } catch {
-      return '';
-    }
-  });
-  const update = (v: string) => {
-    setValue(v);
-    try {
-      window.localStorage.setItem(key, v);
-    } catch {
-      /* private mode — ignore */
-    }
-  };
-  return [value, update];
-}
-
 /* ─── One list card ─────────────────────────────────────────────────────────── */
 function ListCard({ list, onRefresh }: { list: CallList; onRefresh?: () => void }) {
-  const [note, setNote] = useNote(list.id);
   const [status, setStatus] = useState<'idle' | 'saving' | 'done' | 'error'>('idle');
   const [errMsg, setErrMsg] = useState<string | null>(null);
 
@@ -75,7 +52,7 @@ function ListCard({ list, onRefresh }: { list: CallList; onRefresh?: () => void 
     setErrMsg(null);
     try {
       // is_active + no next_action_date → lands in the "Action Needed" section
-      // (see OneCardView: actionNeeded = contacts.filter(c => c.is_active && !c.next_action_date)).
+      // (OneCardView: actionNeeded = contacts.filter(c => c.is_active && !c.next_action_date)).
       const card = await upsertContact({
         first_name: `📞 Call list: ${list.title}`,
         company: 'Call List',
@@ -84,10 +61,7 @@ function ListCard({ list, onRefresh }: { list: CallList; onRefresh?: () => void 
         tags: ['call-list'],
         custom_fields: { call_list_url: list.url, call_list_id: list.id },
       });
-      const body =
-        `Call list — work these prospects.\nList: ${list.url}` +
-        (note.trim() ? `\n\nNotes:\n${note.trim()}` : '');
-      await addNote(card.id, body);
+      await addNote(card.id, `Call list — work these prospects.\nList: ${list.url}`);
       setStatus('done');
       onRefresh?.();
     } catch (e) {
@@ -110,8 +84,22 @@ function ListCard({ list, onRefresh }: { list: CallList; onRefresh?: () => void 
     >
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
         <div>
-          <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: C.text }}>{list.title}</h3>
-          <p style={{ margin: '6px 0 0', fontSize: 14, lineHeight: 1.5, color: C.textSec }}>{list.blurb}</p>
+          <a
+            href={list.url}
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              fontSize: 17,
+              fontWeight: 700,
+              color: C.blue2,
+              textDecoration: 'none',
+              borderBottom: `1px solid rgba(63,138,224,0.4)`,
+              paddingBottom: 1,
+            }}
+          >
+            {list.title}
+          </a>
+          <p style={{ margin: '8px 0 0', fontSize: 14, lineHeight: 1.5, color: C.textSec }}>{list.blurb}</p>
         </div>
         <span
           style={{
@@ -127,41 +115,6 @@ function ListCard({ list, onRefresh }: { list: CallList; onRefresh?: () => void 
         >
           {list.count}
         </span>
-      </div>
-
-      <div>
-        <label
-          style={{
-            display: 'block',
-            fontSize: 12,
-            fontWeight: 600,
-            color: C.textMuted,
-            textTransform: 'uppercase',
-            letterSpacing: '0.04em',
-            marginBottom: 6,
-          }}
-        >
-          Notes
-        </label>
-        <textarea
-          value={note}
-          onChange={e => setNote(e.target.value)}
-          placeholder="Who you reached, follow-ups, hot leads…"
-          rows={3}
-          style={{
-            width: '100%',
-            padding: '10px 12px',
-            background: C.inputBg,
-            border: `1px solid ${C.border}`,
-            borderRadius: 8,
-            fontSize: 14,
-            fontFamily: 'inherit',
-            resize: 'vertical',
-            outline: 'none',
-            boxSizing: 'border-box',
-            color: C.text,
-          }}
-        />
       </div>
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
@@ -194,8 +147,8 @@ function ListCard({ list, onRefresh }: { list: CallList; onRefresh?: () => void 
             padding: '0 18px',
             borderRadius: 8,
             border: 'none',
-            background: status === 'done' ? 'rgba(22,163,74,0.15)' : C.gold,
-            color: status === 'done' ? '#4ade80' : '#1a1a1a',
+            background: status === 'done' ? 'rgba(74,222,128,0.15)' : C.gold,
+            color: status === 'done' ? C.green : '#1a1a1a',
             fontSize: 14,
             fontWeight: 700,
             cursor: status === 'saving' || status === 'done' ? 'default' : 'pointer',
@@ -209,8 +162,8 @@ function ListCard({ list, onRefresh }: { list: CallList; onRefresh?: () => void 
         </button>
 
         {status === 'done' && (
-          <span style={{ fontSize: 13, color: '#4ade80', fontWeight: 500 }}>
-            Dropped into the One Card → Action Needed section.
+          <span style={{ fontSize: 13, color: C.green, fontWeight: 500 }}>
+            Dropped into One Card → Action Needed.
           </span>
         )}
         {status === 'error' && (
@@ -229,7 +182,7 @@ export function CallListsView({ onRefresh }: { onRefresh?: () => void }) {
         <div style={{ marginBottom: 22 }}>
           <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: C.text }}>Call Lists</h1>
           <p style={{ margin: '8px 0 0', fontSize: 15, lineHeight: 1.5, color: C.textSec }}>
-            Prospecting lists to work. Open one to tap-to-call and jot notes as you go, then hit{' '}
+            Prospecting lists to work. Open one to tap-to-call and log each person as you go, then hit{' '}
             <strong style={{ color: C.text }}>Create OCS card</strong> to drop it into your{' '}
             <strong style={{ color: C.text }}>Action Needed</strong> section.
           </p>
