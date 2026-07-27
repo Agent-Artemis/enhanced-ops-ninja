@@ -69,7 +69,7 @@ export interface Contact {
   notes?: Note[];
 }
 
-export type CrmView = 'onecard' | 'kanban' | 'list' | 'actions' | 'social' | 'reports';
+export type CrmView = 'onecard' | 'kanban' | 'list' | 'actions' | 'social' | 'reports' | 'calllists';
 
 // ── Project / company color-coding (custom_fields.project) ─────────────────────
 // A card can optionally be tagged with a project/company name + a muted color so

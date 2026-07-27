@@ -9,6 +9,7 @@ import { ListView } from '@/components/crm/ListView';
 import { ActionItemsView } from '@/components/crm/ActionItemsView';
 import { SocialView } from '@/components/crm/SocialView';
 import { ReportsView } from '@/components/crm/ReportsView';
+import { CallListsView } from '@/components/crm/CallListsView';
 import { QuickLogActivity } from '@/components/crm/QuickLogActivity';
 import { BookingsPanel } from '@/components/crm/BookingsPanel';
 import { pendingBookingOf, linkedinOf } from '@/lib/crm/types';
@@ -291,6 +292,7 @@ export default function CrmPage() {
         {view === 'actions' && <ActionItemsView team={team} contacts={contacts} />}
         {view === 'social'  && <SocialView contacts={contacts} onRefresh={refresh} />}
         {view === 'reports' && <ReportsView />}
+        {view === 'calllists' && <CallListsView onRefresh={refresh} />}
       </main>
       <ContactDrawer
         open={drawerOpen} contact={drawerContact} stages={stages}
