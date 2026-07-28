@@ -144,10 +144,23 @@ export async function POST(req: Request) {
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
 
-      // Compliance product purchase (subscription) → provision the SNF/AL login.
-      if (session.mode === "subscription") {
-        await provisionComplianceAccount(stripe, supabase, session);
-        return NextResponse.json({ received: true, provisioned: true });
+      // Compliance product purchase — monthly/annual (subscription) OR "OWN IT" (one-time).
+      // Detect via our payment link's vert/plan metadata so it works for any mode and
+      // does NOT catch the ops-assessment checkout (which comes from no such link).
+      const plId =
+        typeof session.payment_link === "string" ? session.payment_link : session.payment_link?.id ?? null;
+      if (plId) {
+        let plMeta: Record<string, string> = {};
+        try {
+          const pl = await stripe.paymentLinks.retrieve(plId);
+          plMeta = (pl.metadata as Record<string, string>) ?? {};
+        } catch {
+          /* ignore */
+        }
+        if (plMeta.vert && plMeta.plan) {
+          await provisionComplianceAccount(stripe, supabase, session);
+          return NextResponse.json({ received: true, provisioned: true });
+        }
       }
 
       const opsSessionId = session.client_reference_id ?? session.metadata?.ops_session_id;
