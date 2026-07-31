@@ -2,6 +2,7 @@
   "crons": [
     { "path": "/api/crm/ingest-granola", "schedule": "17 14,17,20,23 * * *" },
     { "path": "/api/cron/nurture", "schedule": "0 * * * *" },
-    { "path": "/api/cron/accept-catcher-heartbeat", "schedule": "30 14 * * *" }
+    { "path": "/api/cron/accept-catcher-heartbeat", "schedule": "30 14 * * *" },
+    { "path": "/api/cron/call-list-loader", "schedule": "0 13 * * *" }
   ]
 }
