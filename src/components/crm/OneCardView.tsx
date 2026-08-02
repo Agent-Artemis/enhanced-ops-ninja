@@ -19,6 +19,7 @@ interface Props {
 // ── Panel type ─────────────────────────────────────────────────────────────────
 type Panel =
   | 'action-needed'
+  | 'overdue'
   | 'alpha'
   | { month: string; year: number }
   | { month: string; year: number; day: number };
@@ -212,11 +213,35 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
   }
   const ALL_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
+  // Browser-LOCAL "today" as YYYY-MM-DD — never UTC — so a card is "overdue"
+  // strictly relative to Jeff's own calendar day.
+  const pad2 = (n: number) => String(n).padStart(2, '0');
+  const todayLocalStr = `${nowYearIdx}-${pad2(nowMonthIdx + 1)}-${pad2(now.getDate())}`;
+
+  // Stack members render as peeks under their primary — hidden from flat lists.
+  const notMember = (c: Contact) => stackOf(c)?.role !== 'member';
+
+  // ── OVERDUE bucket ──────────────────────────────────────────────────────────────
+  // The safety net: EVERY active card whose next_action_date is before today (across
+  // ANY past month), so a card Jeff never manually moved forward can't silently drop
+  // off the forward-rolling board. Sorted oldest-first (most overdue on top).
+  const overdueList  = chronological(
+    contacts.filter(c => c.is_active && c.next_action_date != null && c.next_action_date < todayLocalStr)
+  );
+  const overdueCards = overdueList.filter(notMember);
+
+  // On the default "today" view? Overdue is pinned above it so an un-moved card is
+  // never out of sight — Jeff never has to hunt month by month.
+  const isTodayPanel =
+    typeof panel === 'object' && 'day' in panel &&
+    panel.year === nowYearIdx && MONTH_NAMES.indexOf(panel.month) === nowMonthIdx &&
+    panel.day === now.getDate();
+
   function getPanelCards(): Contact[] {
     // Members of a stack are hidden from the list — they render as offset peeks
     // under their primary. Only primaries and standalone cards appear.
-    const notMember = (c: Contact) => stackOf(c)?.role !== 'member';
     if (panel === 'action-needed') return actionNeeded.filter(notMember);
+    if (panel === 'overdue')       return overdueCards;
     if (panel === 'alpha')         return alphaList.filter(notMember);
     if ('day' in panel)   return chronological(contactsForDay(contacts, panel.month, panel.year, panel.day)).filter(notMember);
     if ('month' in panel) return chronological(contactsForMonth(contacts, panel.month, panel.year)).filter(notMember);
@@ -225,6 +250,7 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
 
   function panelLabel(): string {
     if (panel === 'action-needed') return `Action Needed — ${actionNeeded.length}`;
+    if (panel === 'overdue')       return `Overdue — ${overdueList.length}`;
     if (panel === 'alpha')         return `A–Z — ${alphaList.length}`;
     if ('day' in panel)   return `${panel.month} ${panel.day}, ${panel.year}`;
     if ('month' in panel) return `${panel.month} ${panel.year}`;
@@ -397,7 +423,9 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
   function snooze(contact: Contact, days: number) {
     const d = new Date();
     d.setDate(d.getDate() + days);
-    fileUnderDate(contact.id, d.toISOString().slice(0, 10)).then(onRefresh);
+    // Browser-LOCAL YYYY-MM-DD (not toISOString/UTC — that can land on the wrong day)
+    const local = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+    fileUnderDate(contact.id, local).then(onRefresh);
   }
 
   function quickActions(contact: Contact) {
@@ -406,6 +434,20 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
         <QuickBtn label="+1d"   onClick={() => snooze(contact, 1)} />
         <QuickBtn label="+1wk"  onClick={() => snooze(contact, 7)} />
         <QuickBtn label="A–Z"   onClick={() => sendToAlpha(contact.id).then(onRefresh)} />
+      </div>
+    );
+  }
+
+  // Overdue cards must be easy to CLEAR: bump to today, +1d/+1wk, pick an exact
+  // date, or send to A–Z. Nothing here fires automatically — Jeff drives every move.
+  function overdueActions(contact: Contact) {
+    return (
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+        <QuickBtn label="→ Today" onClick={() => snooze(contact, 0)} blue />
+        <QuickBtn label="+1d"     onClick={() => snooze(contact, 1)} />
+        <QuickBtn label="+1wk"    onClick={() => snooze(contact, 7)} />
+        <DatePick min={todayLocalStr} onPick={d => fileUnderDate(contact.id, d).then(onRefresh)} />
+        <QuickBtn label="A–Z"     onClick={() => sendToAlpha(contact.id).then(onRefresh)} />
       </div>
     );
   }
@@ -426,6 +468,141 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
 
   const panelCards = getPanelCards();
   const isDragging = dragCardId !== null;
+
+  // ── Card list renderer ──────────────────────────────────────────────────────────
+  // Shared by every panel and by the pinned Overdue section. `readOnly` strips all
+  // mutating affordances (quick-actions, drag-filing, (un)stacking) for history
+  // browsing; `actionsFor` supplies the per-card action row for actionable panels.
+  function renderCardList(
+    cards: Contact[],
+    readOnly: boolean,
+    agenda: boolean,
+    actionsFor: (c: Contact) => React.ReactNode,
+  ) {
+    const Wrapper = agenda ? CardStack : CardGrid;
+    return (
+      <Wrapper>
+        {cards.map(c => {
+          const members = stackMemberIds(c, contacts)
+            .map(id => contacts.find(x => x.id === id))
+            .filter((x): x is Contact => Boolean(x));
+          const hasStack = members.length > 0;
+          const stackId  = stackOf(c)?.id ?? null;
+          const expanded = hasStack && stackId !== null && expandedStacks.has(stackId);
+
+          // +N badge — a real button that fans the stack open / collapses it.
+          const badge = hasStack && stackId && (
+            <button
+              onClick={e => { e.stopPropagation(); toggleStack(stackId); }}
+              onMouseDown={e => e.stopPropagation()}
+              draggable={false}
+              title={expanded ? 'Collapse stack' : `Expand stack (${members.length})`}
+              style={{
+                position: 'absolute', top: -7, right: -7, zIndex: 3,
+                background: T.blue, color: '#fff',
+                fontSize: 11, fontWeight: 800,
+                minWidth: 22, height: 22, borderRadius: 11,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                padding: '0 6px', border: 'none',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.5)',
+                cursor: 'pointer',
+              }}
+            >
+              {expanded ? '×' : `+${members.length}`}
+            </button>
+          );
+
+          // The primary card — drop target for stacking, draggable to move the stack.
+          const primaryBlock = (
+            <div
+              style={{ position: 'relative', zIndex: 1, flexShrink: 0, width: '100%', maxWidth: expanded ? 260 : undefined }}
+              onDragOver={readOnly ? undefined : onCardDragOverCard}
+              onDrop={readOnly ? undefined : e => onCardDropOnCard(e, c)}
+            >
+              <ContactCard
+                contact={c} stages={stages}
+                onDoubleClick={() => onOpen(c)}
+                draggable={!readOnly}
+                onDragStart={readOnly ? undefined : e => onCardDragStart(e, c)}
+                onDragEnd={readOnly ? undefined : onCardDragEnd}
+                isDragging={dragCardId === c.id}
+                justDropped={justDropped === c.id}
+                actions={readOnly ? undefined : actionsFor(c)}
+              />
+              {badge}
+            </div>
+          );
+
+          if (expanded) {
+            // Fanned open: primary | member | member … in a readable, scrollable row.
+            return (
+              <CardSlot key={c.id} isDragging={dragCardId === c.id}>
+                <div style={{
+                  display: 'flex', gap: 12, alignItems: 'flex-start',
+                  overflowX: 'auto', paddingBottom: 4,
+                  border: `1px dashed ${T.border}`, borderRadius: 8,
+                  padding: 10, background: 'rgba(26,107,249,0.04)',
+                }}>
+                  {primaryBlock}
+                  {members.map(m => (
+                    <div key={m.id} style={{ position: 'relative', flexShrink: 0, width: 240 }}>
+                      <ContactCard contact={m} stages={stages} onDoubleClick={() => onOpen(m)} />
+                      {!readOnly && (
+                      <button
+                        onClick={e => { e.stopPropagation(); separateMember(m); }}
+                        title="Separate from stack"
+                        style={{
+                          position: 'absolute', top: -7, right: -7, zIndex: 3,
+                          background: T.red, color: '#fff',
+                          fontSize: 10, fontWeight: 800,
+                          height: 22, borderRadius: 11, padding: '0 9px',
+                          border: 'none', cursor: 'pointer',
+                          boxShadow: '0 2px 6px rgba(0,0,0,0.5)',
+                          display: 'flex', alignItems: 'center', gap: 3,
+                        }}
+                      >
+                        ⤴ Separate
+                      </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </CardSlot>
+            );
+          }
+
+          // Collapsed: offset-peek look behind the primary, with the +N badge.
+          return (
+            <CardSlot key={c.id} isDragging={dragCardId === c.id}>
+              <div style={{ position: 'relative' }}>
+                {/* Member peeks — offset down-right behind the primary, each grabbable */}
+                {members.map((m, i) => (
+                  <div
+                    key={m.id}
+                    draggable={!readOnly}
+                    onDragStart={readOnly ? undefined : e => onMemberDragStart(e, m)}
+                    title={readOnly ? cardName(m) : `${cardName(m)} — drag to separate`}
+                    style={{
+                      position: 'absolute', top: 0, left: 0, right: 0,
+                      transform: `translate(${(i + 1) * 10}px, ${(i + 1) * 10}px) scale(${1 - (i + 1) * 0.02})`,
+                      transformOrigin: 'top left',
+                      zIndex: -(i + 1),
+                      opacity: 0.85,
+                      cursor: readOnly ? 'default' : 'grab',
+                      filter: 'brightness(0.97)',
+                    }}
+                  >
+                    <ContactCard contact={m} stages={stages} />
+                  </div>
+                ))}
+                {primaryBlock}
+              </div>
+            </CardSlot>
+          );
+        })}
+      </Wrapper>
+    );
+  }
 
   // ── Render ────────────────────────────────────────────────────────────────────
   return (
@@ -456,6 +633,23 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
           onDrop={e => onZoneDrop(e, 'action-needed')}
           dz={dzStyle('action-needed')}
         />
+
+        {/* Overdue — the safety net. Every active card past its date, across any past
+            month, so an un-moved card can never silently fall off the board. Not a
+            drop target (it's derived from dates); clicking opens the actionable list. */}
+        {overdueList.length > 0 && (
+          <SbItem
+            label="Overdue"
+            count={overdueList.length}
+            countColor={T.red}
+            active={panel === 'overdue'}
+            prefix="⚠"
+            onClick={() => setPanel('overdue')}
+            onDragOver={() => {}}
+            onDragLeave={() => {}}
+            onDrop={() => {}}
+          />
+        )}
 
         {/* Section label */}
         <div style={{
@@ -718,6 +912,15 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
           <AddCardBtn onClick={onNew} />
         </div>
 
+        {/* OVERDUE — pinned above today's agenda so a card Jeff never moved forward
+            is never out of sight. Fully actionable: reschedule / snooze / A–Z. */}
+        {isTodayPanel && overdueCards.length > 0 && (
+          <div style={{ marginBottom: 26 }}>
+            <OverdueBanner count={overdueList.length} onReviewAll={() => setPanel('overdue')} />
+            {renderCardList(overdueCards, false, true, overdueActions)}
+          </div>
+        )}
+
         {panel === 'alpha' ? (
           <AlphaGrid
             contacts={alphaList} stages={stages} onOpen={onOpen}
@@ -725,135 +928,20 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
             onCardDragStart={onCardDragStart} onCardDragEnd={onCardDragEnd}
             onSnooze={snooze} focusLetter={focusLetter}
           />
+        ) : panel === 'overdue' ? (
+          overdueCards.length === 0 ? (
+            <p style={{ color: T.textMuted, fontSize: 13 }}>🎉 Nothing overdue — you&apos;re all caught up.</p>
+          ) : renderCardList(overdueCards, false, true, overdueActions)
         ) : panelCards.length === 0 ? (
           <p style={{ color: T.textMuted, fontSize: 13 }}>Nothing filed here.</p>
-        ) : (() => {
-          // Dated panels read like a calendar agenda: single column, time order
-          const isAgenda = typeof panel === 'object' && ('day' in panel || 'month' in panel);
-          const Wrapper = isAgenda ? CardStack : CardGrid;
-          return (
-            <Wrapper>
-              {panelCards.map(c => {
-                const members = stackMemberIds(c, contacts)
-                  .map(id => contacts.find(x => x.id === id))
-                  .filter((x): x is Contact => Boolean(x));
-                const hasStack = members.length > 0;
-                const stackId  = stackOf(c)?.id ?? null;
-                const expanded = hasStack && stackId !== null && expandedStacks.has(stackId);
-
-                // +N badge — a real button that fans the stack open / collapses it.
-                const badge = hasStack && stackId && (
-                  <button
-                    onClick={e => { e.stopPropagation(); toggleStack(stackId); }}
-                    onMouseDown={e => e.stopPropagation()}
-                    draggable={false}
-                    title={expanded ? 'Collapse stack' : `Expand stack (${members.length})`}
-                    style={{
-                      position: 'absolute', top: -7, right: -7, zIndex: 3,
-                      background: T.blue, color: '#fff',
-                      fontSize: 11, fontWeight: 800,
-                      minWidth: 22, height: 22, borderRadius: 11,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      padding: '0 6px', border: 'none',
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.5)',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {expanded ? '×' : `+${members.length}`}
-                  </button>
-                );
-
-                // The primary card — drop target for stacking, draggable to move the stack.
-                const primaryBlock = (
-                  <div
-                    style={{ position: 'relative', zIndex: 1, flexShrink: 0, width: '100%', maxWidth: expanded ? 260 : undefined }}
-                    onDragOver={isReadOnly ? undefined : onCardDragOverCard}
-                    onDrop={isReadOnly ? undefined : e => onCardDropOnCard(e, c)}
-                  >
-                    <ContactCard
-                      contact={c} stages={stages}
-                      onDoubleClick={() => onOpen(c)}
-                      draggable={!isReadOnly}
-                      onDragStart={isReadOnly ? undefined : e => onCardDragStart(e, c)}
-                      onDragEnd={isReadOnly ? undefined : onCardDragEnd}
-                      isDragging={dragCardId === c.id}
-                      justDropped={justDropped === c.id}
-                      actions={isReadOnly ? undefined : quickActions(c)}
-                    />
-                    {badge}
-                  </div>
-                );
-
-                if (expanded) {
-                  // Fanned open: primary | member | member … in a readable, scrollable row.
-                  return (
-                    <CardSlot key={c.id} isDragging={dragCardId === c.id}>
-                      <div style={{
-                        display: 'flex', gap: 12, alignItems: 'flex-start',
-                        overflowX: 'auto', paddingBottom: 4,
-                        border: `1px dashed ${T.border}`, borderRadius: 8,
-                        padding: 10, background: 'rgba(26,107,249,0.04)',
-                      }}>
-                        {primaryBlock}
-                        {members.map(m => (
-                          <div key={m.id} style={{ position: 'relative', flexShrink: 0, width: 240 }}>
-                            <ContactCard contact={m} stages={stages} onDoubleClick={() => onOpen(m)} />
-                            {!isReadOnly && (
-                            <button
-                              onClick={e => { e.stopPropagation(); separateMember(m); }}
-                              title="Separate from stack"
-                              style={{
-                                position: 'absolute', top: -7, right: -7, zIndex: 3,
-                                background: T.red, color: '#fff',
-                                fontSize: 10, fontWeight: 800,
-                                height: 22, borderRadius: 11, padding: '0 9px',
-                                border: 'none', cursor: 'pointer',
-                                boxShadow: '0 2px 6px rgba(0,0,0,0.5)',
-                                display: 'flex', alignItems: 'center', gap: 3,
-                              }}
-                            >
-                              ⤴ Separate
-                            </button>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </CardSlot>
-                  );
-                }
-
-                // Collapsed: offset-peek look behind the primary, with the +N badge.
-                return (
-                  <CardSlot key={c.id} isDragging={dragCardId === c.id}>
-                    <div style={{ position: 'relative' }}>
-                      {/* Member peeks — offset down-right behind the primary, each grabbable */}
-                      {members.map((m, i) => (
-                        <div
-                          key={m.id}
-                          draggable={!isReadOnly}
-                          onDragStart={isReadOnly ? undefined : e => onMemberDragStart(e, m)}
-                          title={isReadOnly ? cardName(m) : `${cardName(m)} — drag to separate`}
-                          style={{
-                            position: 'absolute', top: 0, left: 0, right: 0,
-                            transform: `translate(${(i + 1) * 10}px, ${(i + 1) * 10}px) scale(${1 - (i + 1) * 0.02})`,
-                            transformOrigin: 'top left',
-                            zIndex: -(i + 1),
-                            opacity: 0.85,
-                            cursor: isReadOnly ? 'default' : 'grab',
-                            filter: 'brightness(0.97)',
-                          }}
-                        >
-                          <ContactCard contact={m} stages={stages} />
-                        </div>
-                      ))}
-                      {primaryBlock}
-                    </div>
-                  </CardSlot>
-                );
-              })}
-            </Wrapper>
-          );
-        })()}
+        ) : (
+          renderCardList(
+            panelCards,
+            isReadOnly,
+            typeof panel === 'object' && ('day' in panel || 'month' in panel),
+            quickActions,
+          )
+        )}
       </main>
 
       <style>{`
@@ -1022,6 +1110,51 @@ function CardStack({ children }: { children: React.ReactNode }) {
 // ── Card slot — card stays visible (faded) while the ghost follows cursor ──────
 function CardSlot({ children }: { isDragging: boolean; children: React.ReactNode }) {
   return <>{children}</>;
+}
+
+// ── Overdue banner — red alert pinned above today's agenda ─────────────────────
+function OverdueBanner({ count, onReviewAll }: { count: number; onReviewAll: () => void }) {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      gap: 10, marginBottom: 12, padding: '8px 12px', borderRadius: 8,
+      background: 'rgba(239,68,68,0.10)', border: '1px solid rgba(239,68,68,0.4)',
+    }}>
+      <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 700, color: '#F87171' }}>
+        <span style={{ fontSize: 13 }}>⚠</span>
+        {count} overdue {count === 1 ? 'card' : 'cards'} — reschedule or work these so nothing is lost
+      </span>
+      <button
+        onClick={onReviewAll}
+        style={{
+          fontSize: 11, fontWeight: 700, color: '#F87171',
+          background: 'transparent', border: '1px solid rgba(239,68,68,0.45)',
+          borderRadius: 6, padding: '4px 10px', cursor: 'pointer', flexShrink: 0,
+        }}
+      >
+        Review all ›
+      </button>
+    </div>
+  );
+}
+
+// ── Date picker — reschedule a card to an exact day (browser-local YYYY-MM-DD) ──
+function DatePick({ min, onPick }: { min?: string; onPick: (d: string) => void }) {
+  return (
+    <input
+      type="date"
+      min={min}
+      onClick={e => e.stopPropagation()}
+      onChange={e => { if (e.target.value) onPick(e.target.value); }}
+      title="Reschedule to a specific date"
+      style={{
+        fontSize: 10, padding: '1px 5px', height: 22,
+        border: '1px solid #D6CAAD', borderRadius: 4,
+        background: 'transparent', color: '#5A5040', cursor: 'pointer',
+        fontFamily: 'system-ui, sans-serif',
+      }}
+    />
+  );
 }
 
 // ── Alpha grid ────────────────────────────────────────────────────────────────
