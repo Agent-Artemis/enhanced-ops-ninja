@@ -153,6 +153,50 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
     });
   }
 
+  // ── Month navigator (history) ─────────────────────────────────────────────────
+  // Lets Jeff page back through EARLIER months of the current year and return to
+  // today. Every boundary here is the browser's LOCAL month (new Date()/getMonth /
+  // getFullYear) — never UTC — matching how contactsForMonth files cards by their
+  // local next_action_date. No UTC conversion happens anywhere in this path.
+  const nowYearIdx   = now.getFullYear();
+  const nowMonthIdx   = now.getMonth();
+  const curYM         = nowYearIdx * 12 + nowMonthIdx;   // current month, as a sortable ordinal
+  const janCurYearYM  = nowYearIdx * 12;                 // January of the current year (earliest reachable)
+
+  // Which month/year is the panel currently showing? Dated panels carry it;
+  // Action Needed / A–Z default the navigator to the current month.
+  const viewedYear     = (typeof panel === 'object' && 'year' in panel) ? panel.year : nowYearIdx;
+  const viewedMonthIdx = (typeof panel === 'object' && 'month' in panel)
+    ? MONTH_NAMES.indexOf(panel.month) : nowMonthIdx;
+  const viewedYM = viewedYear * 12 + viewedMonthIdx;
+
+  // Read-only history: a dated panel strictly before the current month. Viewing it
+  // must not let stale quick-actions or drag-filing fire — we just show the month.
+  const isDatedPanel = typeof panel === 'object' && ('month' in panel || 'day' in panel);
+  const isReadOnly   = isDatedPanel && viewedYM < curYM;
+
+  const canPrevMonth = viewedYM > janCurYearYM;  // stop at January of this year
+  const canNextMonth = viewedYM < curYM;         // never page past the current month
+
+  function goToMonth(mIdx: number, yr: number) {
+    // Landing on the current month opens today's day worklist (the default view);
+    // any earlier month opens that whole month, read-only.
+    if (yr === nowYearIdx && mIdx === nowMonthIdx) {
+      setPanel({ month: MONTH_NAMES[mIdx], year: yr, day: now.getDate() });
+    } else {
+      setPanel({ month: MONTH_NAMES[mIdx], year: yr });
+    }
+  }
+  function stepMonth(delta: number) {
+    let m = viewedMonthIdx + delta, y = viewedYear;
+    if (m < 0)  { m = 11; y -= 1; }
+    if (m > 11) { m = 0;  y += 1; }
+    goToMonth(m, y);
+  }
+  function goToday() {
+    setPanel({ month: currentMonthName, year: nowYearIdx, day: now.getDate() });
+  }
+
   // ── Computed ──────────────────────────────────────────────────────────────────
   // Action Needed = active contacts with NO specific date (unfiled hot leads)
   // Cards with dates live in the calendar slots — even today's date stays there
@@ -646,13 +690,30 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
             button opens the same blank ContactDrawer as the header's "+ New Card". */}
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          gap: 12, marginBottom: 16,
+          gap: 12, marginBottom: 16, flexWrap: 'wrap',
         }}>
-          <div style={{
-            fontSize: 10, fontWeight: 700, color: T.textMuted,
-            textTransform: 'uppercase', letterSpacing: '0.1em',
-          }}>
-            {panelLabel()}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+            <div style={{
+              fontSize: 10, fontWeight: 700, color: T.textMuted,
+              textTransform: 'uppercase', letterSpacing: '0.1em',
+            }}>
+              {panelLabel()}
+            </div>
+            {/* Month navigator — page back through earlier months of this year, then return to today */}
+            <MonthNav
+              label={`${MONTH_NAMES[viewedMonthIdx]} ${viewedYear}`}
+              canPrev={canPrevMonth}
+              canNext={canNextMonth}
+              isPast={isReadOnly}
+              atToday={
+                typeof panel === 'object' && 'day' in panel &&
+                panel.year === nowYearIdx && MONTH_NAMES.indexOf(panel.month) === nowMonthIdx &&
+                panel.day === now.getDate()
+              }
+              onPrev={() => stepMonth(-1)}
+              onNext={() => stepMonth(1)}
+              onToday={goToday}
+            />
           </div>
           <AddCardBtn onClick={onNew} />
         </div>
@@ -706,18 +767,18 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
                 const primaryBlock = (
                   <div
                     style={{ position: 'relative', zIndex: 1, flexShrink: 0, width: '100%', maxWidth: expanded ? 260 : undefined }}
-                    onDragOver={onCardDragOverCard}
-                    onDrop={e => onCardDropOnCard(e, c)}
+                    onDragOver={isReadOnly ? undefined : onCardDragOverCard}
+                    onDrop={isReadOnly ? undefined : e => onCardDropOnCard(e, c)}
                   >
                     <ContactCard
                       contact={c} stages={stages}
                       onDoubleClick={() => onOpen(c)}
-                      draggable
-                      onDragStart={e => onCardDragStart(e, c)}
-                      onDragEnd={onCardDragEnd}
+                      draggable={!isReadOnly}
+                      onDragStart={isReadOnly ? undefined : e => onCardDragStart(e, c)}
+                      onDragEnd={isReadOnly ? undefined : onCardDragEnd}
                       isDragging={dragCardId === c.id}
                       justDropped={justDropped === c.id}
-                      actions={quickActions(c)}
+                      actions={isReadOnly ? undefined : quickActions(c)}
                     />
                     {badge}
                   </div>
@@ -737,6 +798,7 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
                         {members.map(m => (
                           <div key={m.id} style={{ position: 'relative', flexShrink: 0, width: 240 }}>
                             <ContactCard contact={m} stages={stages} onDoubleClick={() => onOpen(m)} />
+                            {!isReadOnly && (
                             <button
                               onClick={e => { e.stopPropagation(); separateMember(m); }}
                               title="Separate from stack"
@@ -752,6 +814,7 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
                             >
                               ⤴ Separate
                             </button>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -767,16 +830,16 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
                       {members.map((m, i) => (
                         <div
                           key={m.id}
-                          draggable
-                          onDragStart={e => onMemberDragStart(e, m)}
-                          title={`${cardName(m)} — drag to separate`}
+                          draggable={!isReadOnly}
+                          onDragStart={isReadOnly ? undefined : e => onMemberDragStart(e, m)}
+                          title={isReadOnly ? cardName(m) : `${cardName(m)} — drag to separate`}
                           style={{
                             position: 'absolute', top: 0, left: 0, right: 0,
                             transform: `translate(${(i + 1) * 10}px, ${(i + 1) * 10}px) scale(${1 - (i + 1) * 0.02})`,
                             transformOrigin: 'top left',
                             zIndex: -(i + 1),
                             opacity: 0.85,
-                            cursor: 'grab',
+                            cursor: isReadOnly ? 'default' : 'grab',
                             filter: 'brightness(0.97)',
                           }}
                         >
@@ -1026,6 +1089,77 @@ function AlphaGrid({
           </CardGrid>
         </div>
       ))}
+    </div>
+  );
+}
+
+// ── Month navigator ────────────────────────────────────────────────────────────
+// Compact "‹ Month Year ›" pager for stepping back through earlier months of the
+// current year and returning to today. "Next" is disabled at the current month so
+// history browsing never runs past today; "Prev" stops at January of this year.
+function MonthNav({
+  label, canPrev, canNext, isPast, atToday, onPrev, onNext, onToday,
+}: {
+  label: string; canPrev: boolean; canNext: boolean;
+  isPast: boolean; atToday: boolean;
+  onPrev: () => void; onNext: () => void; onToday: () => void;
+}) {
+  const arrowBtn = (dir: '‹' | '›', enabled: boolean, onClick: () => void, title: string): React.ReactNode => (
+    <button
+      onClick={enabled ? onClick : undefined}
+      disabled={!enabled}
+      title={title}
+      style={{
+        width: 26, height: 26, borderRadius: 6, flexShrink: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: enabled ? 'rgba(26,107,249,0.12)' : 'transparent',
+        color: enabled ? '#6B9CF9' : T.textMuted,
+        border: `1px solid ${enabled ? 'rgba(26,107,249,0.35)' : T.border}`,
+        cursor: enabled ? 'pointer' : 'default',
+        fontSize: 15, fontWeight: 700, lineHeight: 1,
+        opacity: enabled ? 1 : 0.4, transition: 'opacity 0.1s, background 0.1s',
+      }}
+    >
+      {dir}
+    </button>
+  );
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      {arrowBtn('‹', canPrev, onPrev, 'Previous month')}
+      <span style={{
+        fontSize: 12, fontWeight: 700, color: isPast ? '#6B9CF9' : T.text,
+        minWidth: 74, textAlign: 'center', letterSpacing: '0.02em',
+      }}>
+        {label}
+      </span>
+      {arrowBtn('›', canNext, onNext, 'Next month')}
+      {isPast && (
+        <span style={{
+          fontSize: 9, fontWeight: 700, color: '#6B9CF9',
+          background: 'rgba(26,107,249,0.12)', border: '1px solid rgba(26,107,249,0.3)',
+          borderRadius: 4, padding: '2px 6px', letterSpacing: '0.06em',
+          textTransform: 'uppercase',
+        }}>
+          History
+        </span>
+      )}
+      {!atToday && (
+        <button
+          onClick={onToday}
+          title="Jump back to today"
+          style={{
+            fontSize: 11, fontWeight: 600, color: '#6B9CF9',
+            background: 'transparent', border: `1px solid rgba(26,107,249,0.35)`,
+            borderRadius: 6, padding: '4px 10px', cursor: 'pointer',
+            transition: 'opacity 0.1s',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.opacity = '0.7')}
+          onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+        >
+          Today
+        </button>
+      )}
     </div>
   );
 }
