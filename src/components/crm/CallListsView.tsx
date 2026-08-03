@@ -283,6 +283,7 @@ interface FacilityRow {
   facility_type: 'SNF' | 'AL';
   name: string | null;
   phone: string | null;
+  administrator: string | null;
   address: string | null;
   city: string | null;
   state: string | null;
@@ -355,6 +356,9 @@ function FacilityCard({ row, onSaved }: { row: FacilityRow; onSaved: () => void 
             <span style={{ fontSize: 15, fontWeight: 700, color: C.text }}>{row.name ?? 'Unknown facility'}</span>
             <span style={{ fontSize: 10, fontWeight: 800, color: row.facility_type === 'SNF' ? C.blue2 : C.amber, background: row.facility_type === 'SNF' ? 'rgba(63,138,224,0.15)' : 'rgba(245,179,1,0.15)', border: `1px solid ${row.facility_type === 'SNF' ? 'rgba(63,138,224,0.4)' : 'rgba(245,179,1,0.4)'}`, borderRadius: 5, padding: '1px 6px' }}>{row.facility_type}</span>
           </div>
+          {row.administrator && (
+            <div style={{ fontSize: 12.5, color: C.text, fontWeight: 600, marginTop: 3 }}>👤 {row.administrator}</div>
+          )}
           {addr && <div style={{ fontSize: 12, color: C.textSec, marginTop: 3 }}>{addr}</div>}
         </div>
         {row.phone ? (
