@@ -288,6 +288,7 @@ interface FacilityRow {
   city: string | null;
   state: string | null;
   zip: string | null;
+  beds: number | null;
   note: string | null;
   outcome: string | null;
   note_updated_at: string | null;
@@ -355,6 +356,9 @@ function FacilityCard({ row, onSaved }: { row: FacilityRow; onSaved: () => void 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <span style={{ fontSize: 15, fontWeight: 700, color: C.text }}>{row.name ?? 'Unknown facility'}</span>
             <span style={{ fontSize: 10, fontWeight: 800, color: row.facility_type === 'SNF' ? C.blue2 : C.amber, background: row.facility_type === 'SNF' ? 'rgba(63,138,224,0.15)' : 'rgba(245,179,1,0.15)', border: `1px solid ${row.facility_type === 'SNF' ? 'rgba(63,138,224,0.4)' : 'rgba(245,179,1,0.4)'}`, borderRadius: 5, padding: '1px 6px' }}>{row.facility_type}</span>
+            {row.beds ? (
+              <span style={{ fontSize: 10, fontWeight: 700, color: C.textSec, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 5, padding: '1px 6px', whiteSpace: 'nowrap' }}>🛏 {row.beds} beds</span>
+            ) : null}
           </div>
           {row.administrator && (
             <div style={{ fontSize: 12.5, color: C.text, fontWeight: 600, marginTop: 3 }}>👤 {row.administrator}</div>

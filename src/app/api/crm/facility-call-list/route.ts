@@ -72,7 +72,7 @@ export async function GET(req: Request) {
 
   let query = admin!
     .from("facility_call_list")
-    .select("id, facility_source, facility_type, name, phone, administrator, address, city, state, zip", { count: "exact" });
+    .select("id, facility_source, facility_type, name, phone, administrator, address, city, state, zip, beds", { count: "exact" });
 
   if (type === "snf" || type === "al") query = query.eq("facility_source", type);
   if (state !== "ALL" && /^[A-Z]{2}$/.test(state)) query = query.eq("state", state);
