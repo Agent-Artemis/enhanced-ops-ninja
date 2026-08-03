@@ -73,8 +73,14 @@
  function setTab(t){tab=t;openKey=null;showHidden=false;document.getElementById('tAL').classList.toggle('on',t==='al');document.getElementById('tSNF').classList.toggle('on',t==='snf');render();}
  function resetCalled(){if(!confirm('Clear all checkmarks for this list? (Your notes are kept.)'))return;cur().forEach(function(r){localStorage.removeItem('called:'+key(r));});render();}
  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
- function getNote(row){return localStorage.getItem('note:'+key(row))||'';}
- function saveNote(i,v){var k='note:'+key(cur()[i]);if(v)localStorage.setItem(k,v);else localStorage.removeItem(k);var d=document.getElementById('nd'+i);if(d)d.className='actbtn note'+(v?' has':'');}
+ var LIST='ut-snf-al';
+ var NOTES={};            // person_key -> note text (server is source of truth once hydrated)
+ var noteTimers={};       // per-key debounce timers so different people don't collide
+ function getNote(row){var k=key(row);if(NOTES.hasOwnProperty(k))return NOTES[k]||'';return localStorage.getItem('note:'+k)||'';}
+ function sendNote(k,v){fetch('/api/crm/call-list-note',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({list:LIST,key:k,note:v})}).catch(function(){/* localStorage already holds it; retry on blur */});}
+ function pushNote(k,v){if(noteTimers[k])clearTimeout(noteTimers[k]);noteTimers[k]=setTimeout(function(){noteTimers[k]=null;sendNote(k,v);},600);}
+ function flushNote(i){var k=key(cur()[i]);if(noteTimers[k]){clearTimeout(noteTimers[k]);noteTimers[k]=null;}sendNote(k,getNote(cur()[i]));}
+ function saveNote(i,v){var k=key(cur()[i]);if(v){NOTES[k]=v;try{localStorage.setItem('note:'+k,v);}catch(e){}}else{delete NOTES[k];try{localStorage.removeItem('note:'+k);}catch(e){}}var d=document.getElementById('nd'+i);if(d)d.className='actbtn note'+(v?' has':'');pushNote(k,v);}
  function toggleNote(i){var k=key(cur()[i]);openKey=(openKey===k)?null:k;render();}
  function ocsDone(row){return localStorage.getItem('ocs:'+key(row))==='1';}
  function createOCS(i){var r=cur()[i];var k=key(r);var on=ocsDone(r);var btn=document.getElementById('ocs'+i);
@@ -125,7 +131,7 @@
      if(k===openKey){
        var cl=(cv&&cv!=='1')?('Called '+fmtFull(cv)):(cv==='1'?'Called':'Not called yet');
        main+='<tr class="detail"><td colspan="7"><div class="dwrap"><div class="dcall">'+cl+'</div>'
-           +'<textarea class="dnote" placeholder="Notes for this person — who you spoke with, follow-up, best time to reach…" oninput="saveNote('+i+',this.value)">'+esc(getNote(r))+'</textarea></div></td></tr>';
+           +'<textarea class="dnote" placeholder="Notes for this person — who you spoke with, follow-up, best time to reach…" oninput="saveNote('+i+',this.value)" onblur="flushNote('+i+')">'+esc(getNote(r))+'</textarea></div></td></tr>';
      }
      return main;
    }).join('');
@@ -133,5 +139,34 @@
  }
  var openKey=null;
  var showHidden=false;
- render();
+ render();          // instant render from localStorage (works offline, before the fetch resolves)
+ hydrateNotes();    // then pull server notes (canonical) and migrate any local-only notes up
+ function hydrateNotes(){
+   fetch('/api/crm/call-list-note?list='+encodeURIComponent(LIST))
+     .then(function(res){return res.json();})
+     .then(function(j){
+       var server=(j&&j.ok&&j.notes)?j.notes:{};
+       for(var sk in server){if(Object.prototype.hasOwnProperty.call(server,sk)){NOTES[sk]=server[sk];try{localStorage.setItem('note:'+sk,server[sk]);}catch(e){}}}
+       migrateLocalNotes(server);   // one-time: push this browser's local-only notes to the server
+       render();
+     })
+     .catch(function(){/* offline: localStorage already drives the UI */});
+ }
+ var migrated=false;
+ function migrateLocalNotes(server){
+   if(migrated)return;migrated=true;
+   try{
+     for(var i=0;i<localStorage.length;i++){
+       var lk=localStorage.key(i);
+       if(!lk||lk.indexOf('note:')!==0)continue;
+       var pk=lk.slice(5);
+       if(!pk)continue;
+       var lv=localStorage.getItem(lk)||'';
+       if(!lv.trim())continue;
+       if(server&&server[pk]&&String(server[pk]).trim())continue;  // server wins when it already has a note
+       NOTES[pk]=lv;
+       sendNote(pk,lv);
+     }
+   }catch(e){/* ignore malformed keys / storage errors */}
+ }
 </script>
