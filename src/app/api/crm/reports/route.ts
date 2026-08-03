@@ -57,13 +57,18 @@ export async function GET(req: Request) {
   // ── Activities (outreach + meetings) in range ───────────────────────────────
   const { data: activities } = await admin
     .from("crm_activities")
-    .select("kind, platform, outcome, occurred_at")
+    .select("kind, platform, outcome, occurred_at, author_id")
     .gte("occurred_at", fromISO);
 
   const outreachByPlatform: Record<string, number> = {};
   const meetingsByOutcome: Record<string, number> = {};
   let outreachTotal = 0;
   let meetingsTotal = 0;
+  // Phone "Calling & Scheduling" cut, broken out per team member.
+  const callingByAuthor: Record<string, { calls: number; meetings: number; booked: number }> = {};
+  let callingCalls = 0;
+  let callingMeetings = 0;
+  let callingBooked = 0;
   for (const a of activities ?? []) {
     if (a.kind === "outreach") {
       outreachTotal++;
@@ -73,7 +78,30 @@ export async function GET(req: Request) {
       const o = a.outcome ?? "booked";
       meetingsByOutcome[o] = (meetingsByOutcome[o] ?? 0) + 1;
     }
+    if (a.platform === "phone") {
+      const key = a.author_id ?? "unassigned";
+      const bucket = (callingByAuthor[key] ??= { calls: 0, meetings: 0, booked: 0 });
+      if (a.kind === "meeting") {
+        bucket.meetings++;
+        callingMeetings++;
+        if ((a.outcome ?? "booked") === "booked") {
+          bucket.booked++;
+          callingBooked++;
+        }
+      } else {
+        bucket.calls++;
+        callingCalls++;
+      }
+    }
   }
+
+  // Resolve team-member names for the calling cut.
+  const { data: team } = await admin.from("crm_team_members").select("id, name");
+  const nameById: Record<string, string> = {};
+  for (const m of team ?? []) nameById[String(m.id)] = String(m.name ?? "Unknown");
+  const callingByMember = Object.entries(callingByAuthor)
+    .map(([id, v]) => ({ name: id === "unassigned" ? "Unassigned" : nameById[id] ?? "Unknown", ...v }))
+    .sort((a, b) => b.calls + b.meetings - (a.calls + a.meetings));
 
   // ── Contacts: LinkedIn lead statuses + Cal.com appointments in range ─────────
   const { data: contacts } = await admin
@@ -139,6 +167,12 @@ export async function GET(req: Request) {
     range: { fromISO, toISO: nowISO, days },
     outreach: { total: outreachTotal, byPlatform: outreachByPlatform },
     meetings: { total: meetingsTotal, byOutcome: meetingsByOutcome, calcomBookedInRange },
+    calling: {
+      calls: callingCalls,
+      meetings: callingMeetings,
+      booked: callingBooked,
+      byMember: callingByMember,
+    },
     linkedin: { byStatus: linkedinByStatus },
     pipeline: {
       signedClients,
