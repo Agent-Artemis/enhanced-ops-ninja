@@ -10,6 +10,12 @@ interface ReportData {
   range: { fromISO: string; toISO: string; days: number };
   outreach: { total: number; byPlatform: Record<string, number> };
   meetings: { total: number; byOutcome: Record<string, number>; calcomBookedInRange: number };
+  calling: {
+    calls: number;
+    meetings: number;
+    booked: number;
+    byMember: { name: string; calls: number; meetings: number; booked: number }[];
+  };
   linkedin: { byStatus: Record<string, number> };
   pipeline: {
     signedClients: number;
@@ -558,6 +564,54 @@ export function ReportsView() {
                 ))}
               </div>
             )}
+          </Section>
+
+          {/* Calling & Scheduling — phone activity (Jason works the National Call List) */}
+          <Section title="Calling & Scheduling" note={`Phone calls placed and meetings booked from the call lists in the last ${days} days — broken out per caller.`}>
+            {(() => {
+              const calling = data.calling ?? { calls: 0, meetings: 0, booked: 0, byMember: [] };
+              const active = (calling.byMember ?? []).filter(m => m.calls + m.meetings > 0);
+              if (calling.calls + calling.meetings === 0) {
+                return (
+                  <p style={{ color: D.textMut, fontSize: 13, fontStyle: 'italic', margin: 0 }}>
+                    No calls logged yet in this window. Work the National Call List on the Call Lists tab — each logged call and booking lands here.
+                  </p>
+                );
+              }
+              return (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+                    {[
+                      { label: 'Calls logged', value: calling.calls, color: D.blue },
+                      { label: 'Meetings from calls', value: calling.meetings, color: D.sky },
+                      { label: 'Booked', value: calling.booked, color: D.green },
+                    ].map(t => (
+                      <div key={t.label} style={{ flex: '1 1 150px', background: D.panel, border: `1px solid ${D.border}`, borderRadius: 10, padding: '16px 18px', minWidth: 0 }}>
+                        <div style={{ color: D.textMut, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t.label}</div>
+                        <div style={{ color: t.color, fontSize: 26, fontWeight: 700, marginTop: 6 }}>{fmtNum(t.value)}</div>
+                      </div>
+                    ))}
+                  </div>
+                  {active.length > 0 && (
+                    <div>
+                      <div style={{ color: D.textSec, fontSize: 12, fontWeight: 600, marginBottom: 8 }}>By caller</div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        {active.map(m => (
+                          <div key={m.name} style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 13, flexWrap: 'wrap' }}>
+                            <span style={{ color: D.text, fontWeight: 600, minWidth: 120 }}>{m.name}</span>
+                            <span style={{ color: D.textSec }}>{fmtNum(m.calls)} calls</span>
+                            <span style={{ color: D.faint }}>·</span>
+                            <span style={{ color: D.textSec }}>{fmtNum(m.meetings)} meetings</span>
+                            <span style={{ color: D.faint }}>·</span>
+                            <span style={{ color: D.green }}>{fmtNum(m.booked)} booked</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
           </Section>
 
           {/* Funnel */}
