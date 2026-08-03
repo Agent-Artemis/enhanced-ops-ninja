@@ -49,16 +49,26 @@ const T = {
   dayBg:             '#111111',
 };
 
-// ── Rolling tickler: 12 months starting from current month, in chronological order ─
+// ── Tickler slots: the CURRENT year in full (Jan–Dec) plus the forward tickler
+// horizon into next year, in chronological order. Everything is browser-LOCAL
+// (getMonth/getFullYear) — never UTC — matching how cards file by local date.
+//
+// Start at January of the current year so Jeff can open EARLIER months of this
+// year (they open read-only via isReadOnly/goToMonth and still show per-month
+// counts) and check for cards left there. End at the same forward horizon the old
+// rolling window reached — current month + 11 — so filing forward into next year
+// keeps working. Result: current year = Jan–Dec; next year = its leading months.
 function buildMonthSlots(): { name: string; year: number }[] {
   const today = new Date();
   const curr  = today.getMonth();
   const yr    = today.getFullYear();
-  return Array.from({ length: 12 }, (_, i) => {
-    const monthIdx = (curr + i) % 12;
-    const year     = yr + Math.floor((curr + i) / 12);
-    return { name: MONTH_NAMES[monthIdx], year };
-  });
+  const startYM = yr * 12;                 // January of the current year (earliest slot)
+  const endYM   = yr * 12 + curr + 11;     // forward horizon: current month + 11
+  const slots: { name: string; year: number }[] = [];
+  for (let ym = startYM; ym <= endYM; ym++) {
+    slots.push({ name: MONTH_NAMES[ym % 12], year: Math.floor(ym / 12) });
+  }
+  return slots;
 }
 
 function daysInMonthFor(name: string, year: number): number {
