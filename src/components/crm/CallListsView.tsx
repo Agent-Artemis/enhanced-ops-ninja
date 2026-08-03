@@ -430,7 +430,29 @@ function NationalCallList() {
   const [facets, setFacets] = useState<StateFacet[]>([]);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [open, setOpen] = useState(false); // collapsed by default; hydrated from localStorage below
   const LIMIT = 50;
+
+  // Restore the open/closed choice (default collapsed when unset)
+  useEffect(() => {
+    try {
+      setOpen(localStorage.getItem('ocs_national_calllist_open') === '1');
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const toggleOpen = useCallback(() => {
+    setOpen((o) => {
+      const next = !o;
+      try {
+        localStorage.setItem('ocs_national_calllist_open', next ? '1' : '0');
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  }, []);
 
   // Debounce search
   useEffect(() => {
@@ -484,9 +506,28 @@ function NationalCallList() {
 
   return (
     <div style={{ background: C.cardBg, border: `1px solid ${C.border}`, borderRadius: 14, padding: 20, marginBottom: 16 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 6 }}>
+      {/* Collapsible header — click to expand/collapse. Default collapsed keeps the Jason queue + Utah card in view. */}
+      <button
+        onClick={toggleOpen}
+        aria-expanded={open}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+          width: '100%', background: 'transparent', border: 'none', padding: 0,
+          cursor: 'pointer', textAlign: 'left',
+        }}
+      >
+        <span style={{ fontSize: 14, color: C.textSec, width: 12, display: 'inline-block', flexShrink: 0 }}>{open ? '▾' : '▸'}</span>
         <span style={{ fontSize: 17, fontWeight: 800, color: C.text }}>🇺🇸 National Call List — SNF &amp; AL</span>
-      </div>
+        {data && (
+          <span style={{ fontSize: 12, fontWeight: 700, color: C.blue, background: 'rgba(26,107,249,0.12)', border: '1px solid rgba(26,107,249,0.35)', borderRadius: 999, padding: '3px 10px', whiteSpace: 'nowrap' }}>
+            {data.total.toLocaleString()}
+          </span>
+        )}
+        <span style={{ fontSize: 12, color: C.textSec }}>{open ? '· click to collapse' : '· click to expand'}</span>
+      </button>
+
+      {open && (
+      <div style={{ marginTop: 14 }}>
       <p style={{ margin: '0 0 14px', fontSize: 13, lineHeight: 1.5, color: C.textSec }}>
         Every skilled-nursing &amp; assisted-living facility we&apos;ve loaded, nationwide. Pick a state, tap a number to
         dial, jot a note, and log the outcome — each logged call flows straight into your Reports.
@@ -561,6 +602,8 @@ function NationalCallList() {
         >
           Load more ({(data.total - rows.length).toLocaleString()} left)
         </button>
+      )}
+      </div>
       )}
     </div>
   );
