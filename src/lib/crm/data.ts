@@ -25,9 +25,16 @@ export async function fetchContacts(): Promise<Contact[]> {
 }
 
 export async function upsertContact(contact: Partial<Contact> & { id?: string }): Promise<Contact> {
+  // Blank form fields arrive as '' — coerce to SQL NULL so Postgres doesn't reject
+  // them (e.g. next_action_date '' → "invalid input syntax for type date"). This is
+  // what lets a dateless card save from the Action Needed section.
+  const payload: Record<string, unknown> = { ...contact };
+  for (const k of ['next_action_date', 'date_entered', 'stage_id', 'assigned_to', 'sequence_id', 'voice_agent_id']) {
+    if (payload[k] === '') payload[k] = null;
+  }
   const { data, error } = await (await sb())
     .from('crm_contacts')
-    .upsert(contact)
+    .upsert(payload)
     .select()
     .single();
   if (error) throw error;
