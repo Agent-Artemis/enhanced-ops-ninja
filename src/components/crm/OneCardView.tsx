@@ -19,7 +19,6 @@ interface Props {
 // ── Panel type ─────────────────────────────────────────────────────────────────
 type Panel =
   | 'action-needed'
-  | 'overdue'
   | 'alpha'
   | { month: string; year: number }
   | { month: string; year: number; day: number };
@@ -199,9 +198,22 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
   }
 
   // ── Computed ──────────────────────────────────────────────────────────────────
-  // Action Needed = active contacts with NO specific date (unfiled hot leads)
-  // Cards with dates live in the calendar slots — even today's date stays there
-  const actionNeeded = contacts.filter(c => c.is_active && !c.next_action_date);
+  // Browser-LOCAL boundaries — never UTC.
+  const pad2 = (n: number) => String(n).padStart(2, '0');
+  // "today" as YYYY-MM-DD, used as the floor for the reschedule date-picker.
+  const todayLocalStr = `${nowYearIdx}-${pad2(nowMonthIdx + 1)}-${pad2(now.getDate())}`;
+  // First day of the CURRENT local month — the Action-Needed cutoff. A card only
+  // rolls into Action Needed once its date falls in a PRIOR month, so a card placed
+  // on the 3rd stays scheduled all month even after the 3rd passes.
+  const firstOfMonthLocalStr = `${nowYearIdx}-${pad2(nowMonthIdx + 1)}-01`;
+
+  // Action Needed = the single "needs placing" queue: active cards that are either
+  // unfiled (no date) OR whose date lapsed into a prior month. Sorted oldest-first
+  // so the most stale surface on top; unfiled (null date) sort last. This is a
+  // VIEW/filter only — a card keeps its stored date until Jeff re-places it.
+  const actionNeeded = chronological(
+    contacts.filter(c => c.is_active && (!c.next_action_date || c.next_action_date < firstOfMonthLocalStr))
+  );
   // A-Z = inactive contacts only
   const alphaList    = contacts.filter(c => !c.is_active);
 
@@ -213,35 +225,13 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
   }
   const ALL_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  // Browser-LOCAL "today" as YYYY-MM-DD — never UTC — so a card is "overdue"
-  // strictly relative to Jeff's own calendar day.
-  const pad2 = (n: number) => String(n).padStart(2, '0');
-  const todayLocalStr = `${nowYearIdx}-${pad2(nowMonthIdx + 1)}-${pad2(now.getDate())}`;
-
   // Stack members render as peeks under their primary — hidden from flat lists.
   const notMember = (c: Contact) => stackOf(c)?.role !== 'member';
-
-  // ── OVERDUE bucket ──────────────────────────────────────────────────────────────
-  // The safety net: EVERY active card whose next_action_date is before today (across
-  // ANY past month), so a card Jeff never manually moved forward can't silently drop
-  // off the forward-rolling board. Sorted oldest-first (most overdue on top).
-  const overdueList  = chronological(
-    contacts.filter(c => c.is_active && c.next_action_date != null && c.next_action_date < todayLocalStr)
-  );
-  const overdueCards = overdueList.filter(notMember);
-
-  // On the default "today" view? Overdue is pinned above it so an un-moved card is
-  // never out of sight — Jeff never has to hunt month by month.
-  const isTodayPanel =
-    typeof panel === 'object' && 'day' in panel &&
-    panel.year === nowYearIdx && MONTH_NAMES.indexOf(panel.month) === nowMonthIdx &&
-    panel.day === now.getDate();
 
   function getPanelCards(): Contact[] {
     // Members of a stack are hidden from the list — they render as offset peeks
     // under their primary. Only primaries and standalone cards appear.
     if (panel === 'action-needed') return actionNeeded.filter(notMember);
-    if (panel === 'overdue')       return overdueCards;
     if (panel === 'alpha')         return alphaList.filter(notMember);
     if ('day' in panel)   return chronological(contactsForDay(contacts, panel.month, panel.year, panel.day)).filter(notMember);
     if ('month' in panel) return chronological(contactsForMonth(contacts, panel.month, panel.year)).filter(notMember);
@@ -250,7 +240,6 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
 
   function panelLabel(): string {
     if (panel === 'action-needed') return `Action Needed — ${actionNeeded.length}`;
-    if (panel === 'overdue')       return `Overdue — ${overdueList.length}`;
     if (panel === 'alpha')         return `A–Z — ${alphaList.length}`;
     if ('day' in panel)   return `${panel.month} ${panel.day}, ${panel.year}`;
     if ('month' in panel) return `${panel.month} ${panel.year}`;
@@ -438,9 +427,10 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
     );
   }
 
-  // Overdue cards must be easy to CLEAR: bump to today, +1d/+1wk, pick an exact
-  // date, or send to A–Z. Nothing here fires automatically — Jeff drives every move.
-  function overdueActions(contact: Contact) {
+  // Action-Needed cards must be easy to PLACE: bump to today, +1d/+1wk, pick an
+  // exact date, or send to A–Z. Nothing here fires automatically — Jeff drives
+  // every move. (Dragging a card onto a date also files it via the existing paths.)
+  function placeActions(contact: Contact) {
     return (
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
         <QuickBtn label="→ Today" onClick={() => snooze(contact, 0)} blue />
@@ -470,7 +460,7 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
   const isDragging = dragCardId !== null;
 
   // ── Card list renderer ──────────────────────────────────────────────────────────
-  // Shared by every panel and by the pinned Overdue section. `readOnly` strips all
+  // Shared by every panel. `readOnly` strips all
   // mutating affordances (quick-actions, drag-filing, (un)stacking) for history
   // browsing; `actionsFor` supplies the per-card action row for actionable panels.
   function renderCardList(
@@ -633,23 +623,6 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
           onDrop={e => onZoneDrop(e, 'action-needed')}
           dz={dzStyle('action-needed')}
         />
-
-        {/* Overdue — the safety net. Every active card past its date, across any past
-            month, so an un-moved card can never silently fall off the board. Not a
-            drop target (it's derived from dates); clicking opens the actionable list. */}
-        {overdueList.length > 0 && (
-          <SbItem
-            label="Overdue"
-            count={overdueList.length}
-            countColor={T.red}
-            active={panel === 'overdue'}
-            prefix="⚠"
-            onClick={() => setPanel('overdue')}
-            onDragOver={() => {}}
-            onDragLeave={() => {}}
-            onDrop={() => {}}
-          />
-        )}
 
         {/* Section label */}
         <div style={{
@@ -912,15 +885,6 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
           <AddCardBtn onClick={onNew} />
         </div>
 
-        {/* OVERDUE — pinned above today's agenda so a card Jeff never moved forward
-            is never out of sight. Fully actionable: reschedule / snooze / A–Z. */}
-        {isTodayPanel && overdueCards.length > 0 && (
-          <div style={{ marginBottom: 26 }}>
-            <OverdueBanner count={overdueList.length} onReviewAll={() => setPanel('overdue')} />
-            {renderCardList(overdueCards, false, true, overdueActions)}
-          </div>
-        )}
-
         {panel === 'alpha' ? (
           <AlphaGrid
             contacts={alphaList} stages={stages} onOpen={onOpen}
@@ -928,12 +892,17 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
             onCardDragStart={onCardDragStart} onCardDragEnd={onCardDragEnd}
             onSnooze={snooze} focusLetter={focusLetter}
           />
-        ) : panel === 'overdue' ? (
-          overdueCards.length === 0 ? (
-            <p style={{ color: T.textMuted, fontSize: 13 }}>🎉 Nothing overdue — you&apos;re all caught up.</p>
-          ) : renderCardList(overdueCards, false, true, overdueActions)
         ) : panelCards.length === 0 ? (
-          <p style={{ color: T.textMuted, fontSize: 13 }}>Nothing filed here.</p>
+          <p style={{ color: T.textMuted, fontSize: 13 }}>
+            {panel === 'action-needed'
+              ? '🎉 Nothing to place — every active card is scheduled.'
+              : 'Nothing filed here.'}
+          </p>
+        ) : panel === 'action-needed' ? (
+          // The "needs placing" queue: unfiled + lapsed cards, each with full
+          // placement controls (→ Today / +1d / +1wk / pick a date / A–Z) so Jeff
+          // can assign every card to its proper day at the start of the month.
+          renderCardList(panelCards, false, true, placeActions)
         ) : (
           renderCardList(
             panelCards,
@@ -1110,32 +1079,6 @@ function CardStack({ children }: { children: React.ReactNode }) {
 // ── Card slot — card stays visible (faded) while the ghost follows cursor ──────
 function CardSlot({ children }: { isDragging: boolean; children: React.ReactNode }) {
   return <>{children}</>;
-}
-
-// ── Overdue banner — red alert pinned above today's agenda ─────────────────────
-function OverdueBanner({ count, onReviewAll }: { count: number; onReviewAll: () => void }) {
-  return (
-    <div style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      gap: 10, marginBottom: 12, padding: '8px 12px', borderRadius: 8,
-      background: 'rgba(239,68,68,0.10)', border: '1px solid rgba(239,68,68,0.4)',
-    }}>
-      <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 700, color: '#F87171' }}>
-        <span style={{ fontSize: 13 }}>⚠</span>
-        {count} overdue {count === 1 ? 'card' : 'cards'} — reschedule or work these so nothing is lost
-      </span>
-      <button
-        onClick={onReviewAll}
-        style={{
-          fontSize: 11, fontWeight: 700, color: '#F87171',
-          background: 'transparent', border: '1px solid rgba(239,68,68,0.45)',
-          borderRadius: 6, padding: '4px 10px', cursor: 'pointer', flexShrink: 0,
-        }}
-      >
-        Review all ›
-      </button>
-    </div>
-  );
 }
 
 // ── Date picker — reschedule a card to an exact day (browser-local YYYY-MM-DD) ──
