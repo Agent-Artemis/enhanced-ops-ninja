@@ -229,8 +229,9 @@ npx playwright test e2e/paid-assessment-live.spec.ts  # real DB + email
 - **Cal.com** (account `jeff@enhancedops.ninja`, username `enhancedopsninja`, TZ America/Denver):
   - `secret-mission-briefing` — 60 min, HIDDEN, assessment-checkout funnel (id 6204896)
   - `1-hour` — "1 Hour with Jeff", general link (id 6204897)
-  - `30-min` — "30 Min with Jeff", LinkedIn DM outreach (id 5185711)
-  - `45-min` — legacy ops review link (still live, used by LinkedIn post CTAs)
+  - `30-min` — "30 Min with Jeff", LinkedIn DM outreach (id **6546833**; original was accidentally deleted 2026-08-03 then recreated and the slug restored to `30-min`, so cal.com/enhancedopsninja/30-min still works — old id 5185711 is dead)
+  - `15-min` — "15 Min with Jeff" (id 6385355)
+  - `45-min` — legacy ops review link, "45 Min with Enhanced Ops Ninja" (id 5700126; still live, used by LinkedIn post CTAs)
   - Webhook `fa6de199…` → `https://enhancedops.ninja/api/cal-webhook` on BOOKING_CREATED + BOOKING_RESCHEDULED (all event types) → Bookings review panel in /crm
 - **Email from:** `jeff@enhancedops.ninja`
 
