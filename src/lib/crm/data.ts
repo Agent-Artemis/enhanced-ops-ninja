@@ -262,6 +262,38 @@ export async function sendToAlpha(contactId: string): Promise<void> {
   if (error) throw error;
 }
 
+/**
+ * Add or remove one partner tag on a contact, leaving every other tag intact.
+ *
+ * Partner status is plain membership in `tags` (see PARTNER_BADGES), and it is
+ * INDEPENDENT of the pipeline — this deliberately touches nothing but `tags`, so
+ * a card keeps its bucket, is_active and next_action_date. Dropping a card onto
+ * Referral Partners must not pull it out of wherever it already lives.
+ *
+ * Fetch-modify-write, same reason as fileUnderDate: the browser client can't do
+ * a server-side array append, so read the current tags and rewrite the whole
+ * array rather than clobbering it.
+ */
+export async function setPartnerTag(contactId: string, tag: string, on: boolean): Promise<void> {
+  const client = await sb();
+
+  const { data: existing, error: readError } = await client
+    .from('crm_contacts')
+    .select('tags')
+    .eq('id', contactId)
+    .single();
+  if (readError) throw readError;
+
+  const current: string[] = Array.isArray(existing?.tags) ? (existing!.tags as string[]) : [];
+  const has = current.includes(tag);
+  if (has === on) return; // already in the wanted state — no write
+
+  const next = on ? [...current, tag] : current.filter(t => t !== tag);
+
+  const { error } = await client.from('crm_contacts').update({ tags: next }).eq('id', contactId);
+  if (error) throw error;
+}
+
 export async function fetchAffiliateContacts(): Promise<{ id: string; name: string; code: string; contact_name?: string }[]> {
   try {
     const { data } = await (await sb())
