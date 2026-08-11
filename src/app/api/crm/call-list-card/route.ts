@@ -52,6 +52,11 @@ export async function POST(req: Request) {
   const phoneRaw = String(body.phone ?? "").trim();
   const facility = String(body.facility ?? "").trim();
   const city = String(body.city ?? "").trim();
+  // Optional, used by the operator-exec list (people-first rows carry an email
+  // and a job title). Older lists omit both, so they stay null.
+  const emailRaw = String(body.email ?? "").trim().slice(0, 200);
+  const email = /^[^@\s]+@[^@\s.]+\.[^@\s]+$/.test(emailRaw) ? emailRaw.toLowerCase() : "";
+  const title = String(body.title ?? "").trim().slice(0, 160);
   const tab = body.tab === "snf" ? "snf" : "al";
   const listId = String(body.list ?? "call-list").trim().slice(0, 60);
   const key = String(body.key ?? "").trim().slice(0, 160);
@@ -86,6 +91,7 @@ export async function POST(req: Request) {
       last_name: lastName,
       company: facility || null,
       phone: phoneRaw || null,
+      email: email || null,
       is_active: true, // → Action Needed
       bucket: "active",
       next_action_date: null,
@@ -96,6 +102,7 @@ export async function POST(req: Request) {
         call_list_tab: tab,
         call_list_key: key,
         city,
+        ...(title ? { title } : {}),
       },
     })
     .select("id")
@@ -106,7 +113,13 @@ export async function POST(req: Request) {
   }
 
   if (created?.id) {
-    const bits = [facility && `Facility: ${facility}`, city && `City: ${city}`, phoneRaw && `Phone: ${phoneRaw}`]
+    const bits = [
+      title && `Title: ${title}`,
+      facility && `${title ? "Operator" : "Facility"}: ${facility}`,
+      city && `City: ${city}`,
+      phoneRaw && `Phone: ${phoneRaw}`,
+      email && `Email: ${email}`,
+    ]
       .filter(Boolean)
       .join(" · ");
     await admin.from("crm_notes").insert({
