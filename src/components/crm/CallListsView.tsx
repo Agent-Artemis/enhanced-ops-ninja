@@ -40,6 +40,17 @@ const LISTS: CallList[] = [
     count: '321 contacts',
     url: 'https://enhancedops.ninja/lists/ut-snf-al.html',
   },
+  {
+    id: 'ut-operator-execs',
+    title: 'Utah/MW — SNF & AL Operator Executives',
+    blurb:
+      'The C-suite (CEO/COO/CMO/owners) of the operators BEHIND the facilities — 82 executives ' +
+      'across 21 operators, sorted by portfolio size. 44 on the SNF side, 38 on the AL side. ' +
+      'Numbers are corporate main lines: ask for the executive by name. Same controls — OCS adds ' +
+      'them to your Action Needed, 📝 logs a note, 🗑 removes them.',
+    count: '82 executives',
+    url: 'https://enhancedops.ninja/lists/ut-operator-execs.html',
+  },
 ];
 
 /* ─── AI Call List (Jason) ──────────────────────────────────────────────────── */
