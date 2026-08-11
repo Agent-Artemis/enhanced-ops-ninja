@@ -147,6 +147,7 @@ export function ContactCard({
                 background: b.color, padding: '2px 7px', borderRadius: 10,
                 letterSpacing: '0.03em', textTransform: 'uppercase', whiteSpace: 'nowrap',
               }}>
+                <span style={{ marginRight: 3, opacity: 0.9 }}>{b.glyph}</span>
                 {b.label}
               </span>
             ))}

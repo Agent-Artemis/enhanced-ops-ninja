@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import type { Contact, Stage } from '@/lib/crm/types';
-import { appointmentOf, stackOf, stackMemberIds, REFERRAL_PARTNER_TAG } from '@/lib/crm/types';
+import { appointmentOf, stackOf, stackMemberIds, REFERRAL_PARTNER_TAG, AFFILIATE_PARTNER_TAG } from '@/lib/crm/types';
 import { ContactCard } from './ContactCard';
 import { fileUnderDate, pullToActive, sendToAlpha, setPartnerTag, stackCards, unstackCard } from '@/lib/crm/data';
 import { MONTH_NAMES, contactsForMonth } from '@/lib/crm/filing';
@@ -21,6 +21,7 @@ type Panel =
   | 'action-needed'
   | 'alpha'
   | 'referrals'
+  | 'affiliates'
   | { month: string; year: number }
   | { month: string; year: number; day: number };
 
@@ -28,6 +29,7 @@ type DropZone =
   | 'action-needed'
   | 'alpha'
   | 'referrals'
+  | 'affiliates'
   | `month:${string}:${number}`
   | `day:${string}:${number}:${number}`;
 
@@ -133,6 +135,7 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
   const [daysOpen, setDaysOpen]       = useState(true);
   const [alphaOpen, setAlphaOpen]     = useState(false);
   const [referralsOpen, setReferralsOpen] = useState(false);
+  const [affiliatesOpen, setAffiliatesOpen] = useState(false);
   const [focusLetter, setFocusLetter] = useState<string | null>(null);
 
   // Which stacks are fanned open (keyed by stack id). Clicking a primary's +N
@@ -232,6 +235,10 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
   // Referral Partners = tag membership, independent of pipeline state. A partner
   // is a relationship, not a bucket, so active and inactive cards both appear.
   const referralList = contacts.filter(c => (c.tags ?? []).includes(REFERRAL_PARTNER_TAG));
+  // Affiliates are a DIFFERENT relationship, not a sub-type: an affiliate earns a
+  // commission, a referral partner just sends referrals. The tags are independent,
+  // so a contact can be both and will appear in both sections.
+  const affiliateList = contacts.filter(c => (c.tags ?? []).includes(AFFILIATE_PARTNER_TAG));
 
   // Letter counts for sidebar
   const letterCounts: Record<string, number> = {};
@@ -250,6 +257,7 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
     if (panel === 'action-needed') return actionNeeded.filter(notMember);
     if (panel === 'alpha')         return alphaList.filter(notMember);
     if (panel === 'referrals')     return referralList.filter(notMember);
+    if (panel === 'affiliates')    return affiliateList.filter(notMember);
     if ('day' in panel)   return chronological(contactsForDay(contacts, panel.month, panel.year, panel.day)).filter(notMember);
     if ('month' in panel) return chronological(contactsForMonth(contacts, panel.month, panel.year)).filter(notMember);
     return [];
@@ -259,6 +267,7 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
     if (panel === 'action-needed') return `Action Needed — ${actionNeeded.length}`;
     if (panel === 'alpha')         return `A–Z — ${alphaList.length}`;
     if (panel === 'referrals')     return `Referral Partners — ${referralList.length}`;
+    if (panel === 'affiliates')    return `Affiliate Partners — ${affiliateList.length}`;
     if ('day' in panel)   return `${panel.month} ${panel.day}, ${panel.year}`;
     if ('month' in panel) return `${panel.month} ${panel.year}`;
     return '';
@@ -271,8 +280,13 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
     // it already lives. Stack members are NOT tagged along with their primary
     // either: being stacked says these cards are related, not that everyone in
     // the stack is personally a referral partner.
-    if (zone === 'referrals') {
-      await setPartnerTag(cardId, REFERRAL_PARTNER_TAG, true);
+    const partnerTagForZone: Partial<Record<DropZone, string>> = {
+      referrals:  REFERRAL_PARTNER_TAG,
+      affiliates: AFFILIATE_PARTNER_TAG,
+    };
+    const partnerTag = partnerTagForZone[zone];
+    if (partnerTag) {
+      await setPartnerTag(cardId, partnerTag, true);
       setJustDropped(cardId);
       setTimeout(() => setJustDropped(null), 400);
       await onRefresh();
@@ -448,21 +462,25 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
     fileUnderDate(contact.id, local).then(onRefresh);
   }
 
-  // Referral cards keep their normal snooze/file controls, plus the way OUT of
-  // the section: stripping the tag only, so the card stays exactly where it is
-  // in the pipeline.
-  function referralActions(contact: Contact) {
-    return (
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-        <QuickBtn label="+1d"  onClick={() => snooze(contact, 1)} />
-        <QuickBtn label="+1wk" onClick={() => snooze(contact, 7)} />
-        <QuickBtn
-          label="Remove partner"
-          onClick={() => setPartnerTag(contact.id, REFERRAL_PARTNER_TAG, false).then(onRefresh)}
-        />
-      </div>
-    );
+  // Partner cards keep their normal snooze/file controls, plus the way OUT of the
+  // section: stripping that ONE tag, so the card stays exactly where it is in the
+  // pipeline and keeps any other partner tag it holds.
+  function partnerActions(tag: string, removeLabel: string) {
+    return function actions(contact: Contact) {
+      return (
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <QuickBtn label="+1d"  onClick={() => snooze(contact, 1)} />
+          <QuickBtn label="+1wk" onClick={() => snooze(contact, 7)} />
+          <QuickBtn
+            label={removeLabel}
+            onClick={() => setPartnerTag(contact.id, tag, false).then(onRefresh)}
+          />
+        </div>
+      );
+    };
   }
+  const referralActions  = partnerActions(REFERRAL_PARTNER_TAG,  'Remove partner');
+  const affiliateActions = partnerActions(AFFILIATE_PARTNER_TAG, 'Remove affiliate');
 
   function quickActions(contact: Contact) {
     return (
@@ -485,6 +503,87 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
         <QuickBtn label="+1wk"    onClick={() => snooze(contact, 7)} />
         <DatePick min={todayLocalStr} onPick={d => fileUnderDate(contact.id, d).then(onRefresh)} />
         <QuickBtn label="A–Z"     onClick={() => sendToAlpha(contact.id).then(onRefresh)} />
+      </div>
+    );
+  }
+
+  // One collapsible partner list in the sidebar. Both partner types render through
+  // this so the two can never drift apart visually.
+  function partnerSection(opts: {
+    // Narrowed to the two tag-only zones: these are the only DropZone values that
+    // are also valid Panel values, so no cast is needed to select the panel.
+    zone: 'referrals' | 'affiliates';
+    icon: string;
+    label: string;
+    list: Contact[];
+    open: boolean;
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    emptyHint: string;
+  }) {
+    const { zone, icon, label, list, open, setOpen, emptyHint } = opts;
+    const selected = panel === zone;
+    return (
+      <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 8 }}>
+        <button
+          onClick={() => { setPanel(zone); setOpen(o => !o); }}
+          onDragOver={e => onZoneDragOver(e, zone)}
+          onDragLeave={onZoneDragLeave}
+          onDrop={e => onZoneDrop(e, zone)}
+          style={{
+            width: '100%', display: 'flex', alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '9px 12px', paddingLeft: 11,
+            background: selected ? T.sidebarActive : 'transparent',
+            color: selected ? T.sidebarActiveText : T.sidebarInactive,
+            borderTop: 'none', borderRight: 'none', borderBottom: 'none',
+            borderLeft: `3px solid ${selected ? T.sidebarActiveBorder : 'transparent'}`,
+            cursor: 'pointer', fontSize: 13,
+            fontWeight: selected ? 600 : 400,
+            textAlign: 'left', transition: 'color 0.15s, background 0.15s',
+            ...dzStyle(zone),
+          }}
+        >
+          <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+            <span style={{ fontSize: 11, opacity: 0.8 }}>{icon}</span>
+            {label}
+          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            {list.length > 0 && (
+              <span style={{
+                fontSize: 10, fontWeight: 700,
+                padding: '1px 6px', borderRadius: 10, minWidth: 18, textAlign: 'center',
+                background: 'rgba(26,107,249,0.25)', color: '#6B9CF9',
+              }}>
+                {list.length}
+              </span>
+            )}
+            <span style={{ fontSize: 9, opacity: 0.6 }}>{open ? '▼' : '▶'}</span>
+          </div>
+        </button>
+
+        {open && list.map(c => (
+          <button
+            key={c.id}
+            onClick={() => { setPanel(zone); onOpen(c); }}
+            style={{
+              width: '100%', display: 'flex', alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '4px 12px 4px 28px',
+              background: 'transparent', color: T.sidebarInactive,
+              border: 'none', borderLeft: '3px solid transparent',
+              cursor: 'pointer', fontSize: 12, textAlign: 'left',
+            }}
+          >
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {[c.first_name, c.last_name].filter(Boolean).join(' ') || '(no name)'}
+            </span>
+          </button>
+        ))}
+        {open && list.length === 0 && (
+          <div style={{ padding: '6px 12px 8px 28px', fontSize: 11, color: T.textMuted }}>
+            {emptyHint}
+          </div>
+        )}
       </div>
     );
   }
@@ -897,71 +996,21 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
           })}
         </div>
 
-        {/* Referral Partners — same collapsible pattern as A–Z, directly beneath it.
-            Drop target: tags the card, without moving it out of its bucket. */}
-        <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 8 }}>
-          <button
-            onClick={() => { setPanel('referrals'); setReferralsOpen(o => !o); }}
-            onDragOver={e => onZoneDragOver(e, 'referrals')}
-            onDragLeave={onZoneDragLeave}
-            onDrop={e => onZoneDrop(e, 'referrals')}
-            style={{
-              width: '100%', display: 'flex', alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '9px 12px', paddingLeft: 11,
-              background: panel === 'referrals' ? T.sidebarActive : 'transparent',
-              color: panel === 'referrals' ? T.sidebarActiveText : T.sidebarInactive,
-              borderTop: 'none', borderRight: 'none', borderBottom: 'none',
-              borderLeft: `3px solid ${panel === 'referrals' ? T.sidebarActiveBorder : 'transparent'}`,
-              cursor: 'pointer', fontSize: 13,
-              fontWeight: panel === 'referrals' ? 600 : 400,
-              textAlign: 'left', transition: 'color 0.15s, background 0.15s',
-              ...dzStyle('referrals'),
-            }}
-          >
-            <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-              <span style={{ fontSize: 11, opacity: 0.8 }}>🤝</span>
-              Referral Partners
-            </span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              {referralList.length > 0 && (
-                <span style={{
-                  fontSize: 10, fontWeight: 700,
-                  padding: '1px 6px', borderRadius: 10, minWidth: 18, textAlign: 'center',
-                  background: 'rgba(26,107,249,0.25)', color: '#6B9CF9',
-                }}>
-                  {referralList.length}
-                </span>
-              )}
-              <span style={{ fontSize: 9, opacity: 0.6 }}>{referralsOpen ? '▼' : '▶'}</span>
-            </div>
-          </button>
-
-          {/* Expanded: the partners themselves, click to jump straight to a card. */}
-          {referralsOpen && referralList.map(c => (
-            <button
-              key={c.id}
-              onClick={() => { setPanel('referrals'); onOpen(c); }}
-              style={{
-                width: '100%', display: 'flex', alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '4px 12px 4px 28px',
-                background: 'transparent', color: T.sidebarInactive,
-                border: 'none', borderLeft: '3px solid transparent',
-                cursor: 'pointer', fontSize: 12, textAlign: 'left',
-              }}
-            >
-              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {[c.first_name, c.last_name].filter(Boolean).join(' ') || '(no name)'}
-              </span>
-            </button>
-          ))}
-          {referralsOpen && referralList.length === 0 && (
-            <div style={{ padding: '6px 12px 8px 28px', fontSize: 11, color: T.textMuted }}>
-              Drop a card here to make it a referral partner.
-            </div>
-          )}
-        </div>
+        {/* Partner sections — same collapsible pattern as A–Z, directly beneath it.
+            Each is a drop zone that TAGS the card without moving it. The two are
+            separate relationships (a referral partner sends referrals; an affiliate
+            earns a commission), and the tags are independent, so a contact can sit
+            in both lists at once. */}
+        {partnerSection({
+          zone: 'referrals', icon: '🤝', label: 'Referral Partners',
+          list: referralList, open: referralsOpen, setOpen: setReferralsOpen,
+          emptyHint: 'Drop a card here to make it a referral partner.',
+        })}
+        {partnerSection({
+          zone: 'affiliates', icon: '💰', label: 'Affiliate Partners',
+          list: affiliateList, open: affiliatesOpen, setOpen: setAffiliatesOpen,
+          emptyHint: 'Drop a card here to make it an affiliate partner.',
+        })}
       </aside>
 
       {/* ── MAIN AREA ─────────────────────────────────────────────────────── */}
@@ -1011,10 +1060,14 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
               ? '🎉 Nothing to place — every active card is scheduled.'
               : panel === 'referrals'
                 ? 'No referral partners yet — drag a card onto Referral Partners to add one.'
-                : 'Nothing filed here.'}
+                : panel === 'affiliates'
+                  ? 'No affiliate partners yet — drag a card onto Affiliate Partners to add one.'
+                  : 'Nothing filed here.'}
           </p>
         ) : panel === 'referrals' ? (
           renderCardList(panelCards, false, false, referralActions)
+        ) : panel === 'affiliates' ? (
+          renderCardList(panelCards, false, false, affiliateActions)
         ) : panel === 'action-needed' ? (
           // The "needs placing" queue: unfiled + lapsed cards, each with full
           // placement controls (→ Today / +1d / +1wk / pick a date / A–Z) so Jeff

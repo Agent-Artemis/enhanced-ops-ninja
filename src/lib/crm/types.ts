@@ -113,16 +113,20 @@ export function projectOf(c: Pick<Contact, 'custom_fields'>): ProjectTag | null 
 export const REFERRAL_PARTNER_TAG  = 'Referral Partner';
 export const AFFILIATE_PARTNER_TAG = 'Affiliate Partner';
 
-/** The two partner toggles, with the muted card-face badge color for each. */
-export const PARTNER_BADGES: { tag: string; label: string; color: string }[] = [
-  { tag: REFERRAL_PARTNER_TAG,  label: 'Referral Partner',  color: '#4A6FA5' }, // slate blue
-  { tag: AFFILIATE_PARTNER_TAG, label: 'Affiliate Partner', color: '#5B8A72' }, // sage green
+/** The two partner toggles, with the muted card-face badge color for each.
+ *  The glyph carries the actual difference between them at a glance: an
+ *  affiliate earns a commission, a referral partner just sends referrals. */
+export const PARTNER_BADGES: { tag: string; label: string; color: string; glyph: string }[] = [
+  { tag: REFERRAL_PARTNER_TAG,  label: 'Referral Partner',  color: '#4A6FA5', glyph: '↗' }, // slate blue
+  { tag: AFFILIATE_PARTNER_TAG, label: 'Affiliate Partner', color: '#5B8A72', glyph: '$' }, // sage green
 ];
 
-/** Which partner badges to show for a contact, based on its `tags` membership. */
-export function partnerBadgesOf(c: Pick<Contact, 'tags'>): { label: string; color: string }[] {
+/** Which partner badges to show for a contact, based on its `tags` membership.
+ *  The two are independent — a contact can carry both and gets both badges. */
+export function partnerBadgesOf(c: Pick<Contact, 'tags'>): { label: string; color: string; glyph: string }[] {
   const tags = c.tags ?? [];
-  return PARTNER_BADGES.filter(b => tags.includes(b.tag)).map(({ label, color }) => ({ label, color }));
+  return PARTNER_BADGES.filter(b => tags.includes(b.tag))
+    .map(({ label, color, glyph }) => ({ label, color, glyph }));
 }
 
 /** Read custom_fields.title (job title). Empty string when unset. */
