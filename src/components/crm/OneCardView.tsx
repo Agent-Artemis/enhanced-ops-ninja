@@ -79,15 +79,24 @@ function daysInMonthFor(name: string, year: number): number {
   return new Date(year, MONTH_NAMES.indexOf(name) + 1, 0).getDate();
 }
 
+// A stack member never renders as its own card — it appears as a peek under its
+// primary. Counts must therefore exclude members too, or the sidebar/calendar
+// advertises cards the panel cannot show. This lived only in the component as
+// `notMember`, so every count disagreed with its own list: a member dated the
+// 11th put a dot on the 11th while the day panel (which drops members) came up
+// empty. Keeping the rule inside the count functions makes them agree by
+// construction rather than by remembering to add a .filter() at each call site.
+const isStackMember = (c: Contact) => stackOf(c)?.role === 'member';
+
 function countForMonth(contacts: Contact[], name: string, year: number): number {
-  return contactsForMonth(contacts, name, year).length;
+  return contactsForMonth(contacts, name, year).filter(c => !isStackMember(c)).length;
 }
 
 function perDayCounts(contacts: Contact[], name: string, year: number): Record<number, number> {
   const mIdx = MONTH_NAMES.indexOf(name);
   const counts: Record<number, number> = {};
   for (const c of contacts) {
-    if (!c.is_active || !c.next_action_date) continue;
+    if (!c.is_active || !c.next_action_date || isStackMember(c)) continue;
     const d = new Date(c.next_action_date + 'T00:00:00');
     if (d.getFullYear() === year && d.getMonth() === mIdx) {
       counts[d.getDate()] = (counts[d.getDate()] ?? 0) + 1;
@@ -99,7 +108,7 @@ function perDayCounts(contacts: Contact[], name: string, year: number): Record<n
 function contactsForDay(contacts: Contact[], name: string, year: number, day: number): Contact[] {
   const mIdx = MONTH_NAMES.indexOf(name);
   const target = `${year}-${String(mIdx + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-  return contacts.filter(c => c.is_active && c.next_action_date === target);
+  return contacts.filter(c => c.is_active && c.next_action_date === target && !isStackMember(c));
 }
 
 // Calendar order: by filed date, then appointment time (timed cards first), then name
@@ -227,18 +236,23 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
   // unfiled (no date) OR whose date lapsed into a prior month. Sorted oldest-first
   // so the most stale surface on top; unfiled (null date) sort last. This is a
   // VIEW/filter only — a card keeps its stored date until Jeff re-places it.
+  // Stack members are excluded up-front so each section's COUNT and its rendered
+  // list are derived from the same array — previously the label counted members
+  // that the panel then filtered out.
+  const visible = contacts.filter(c => !isStackMember(c));
+
   const actionNeeded = chronological(
-    contacts.filter(c => c.is_active && (!c.next_action_date || c.next_action_date < firstOfMonthLocalStr))
+    visible.filter(c => c.is_active && (!c.next_action_date || c.next_action_date < firstOfMonthLocalStr))
   );
   // A-Z = inactive contacts only
-  const alphaList    = contacts.filter(c => !c.is_active);
+  const alphaList    = visible.filter(c => !c.is_active);
   // Referral Partners = tag membership, independent of pipeline state. A partner
   // is a relationship, not a bucket, so active and inactive cards both appear.
-  const referralList = contacts.filter(c => (c.tags ?? []).includes(REFERRAL_PARTNER_TAG));
+  const referralList = visible.filter(c => (c.tags ?? []).includes(REFERRAL_PARTNER_TAG));
   // Affiliates are a DIFFERENT relationship, not a sub-type: an affiliate earns a
   // commission, a referral partner just sends referrals. The tags are independent,
   // so a contact can be both and will appear in both sections.
-  const affiliateList = contacts.filter(c => (c.tags ?? []).includes(AFFILIATE_PARTNER_TAG));
+  const affiliateList = visible.filter(c => (c.tags ?? []).includes(AFFILIATE_PARTNER_TAG));
 
   // Letter counts for sidebar
   const letterCounts: Record<string, number> = {};
@@ -249,7 +263,9 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
   const ALL_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
   // Stack members render as peeks under their primary — hidden from flat lists.
-  const notMember = (c: Contact) => stackOf(c)?.role !== 'member';
+  // The section lists above are already built from `visible`, so these filters are
+  // belt-and-braces for the day/month panels; both delegate to the one predicate.
+  const notMember = (c: Contact) => !isStackMember(c);
 
   function getPanelCards(): Contact[] {
     // Members of a stack are hidden from the list — they render as offset peeks

@@ -24,6 +24,21 @@ const EMPTY: Partial<Contact> = {
   next_action_date: '', is_active: true,
 };
 
+/**
+ * Saved notes read newest-first: the note added today sits on top, the oldest
+ * at the bottom. Ties (same created_at, e.g. two notes saved in the same second)
+ * fall back to id so the order stays stable across re-renders instead of
+ * flickering. Sorts a copy — never mutates the caller's array.
+ */
+function newestFirst(list: Note[]): Note[] {
+  return [...list].sort((a, b) => {
+    const ta = Date.parse(a.created_at), tb = Date.parse(b.created_at);
+    const va = Number.isNaN(ta) ? 0 : ta, vb = Number.isNaN(tb) ? 0 : tb;
+    if (va !== vb) return vb - va;
+    return (b.id ?? '').localeCompare(a.id ?? '');
+  });
+}
+
 // Dark theme tokens (matching dojo)
 const D = {
   drawer:   '#1A1A1A',
@@ -102,7 +117,10 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
       if (contact) {
         const { notes: n, ...rest } = contact;
         setForm(rest);
-        setNotes(n ?? []);
+        // Newest note on top, oldest at the bottom. The embedded crm_notes select
+        // has no ORDER BY, so PostgREST returns them in arbitrary order — sort here
+        // rather than relying on the row order the API happens to hand back.
+        setNotes(newestFirst(n ?? []));
         const cf = contact.custom_fields ?? {};
         setTitle((cf.title as string) ?? '');
         setLeadSource((cf.lead_source as string) ?? '');
