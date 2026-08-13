@@ -51,6 +51,18 @@ const LISTS: CallList[] = [
     count: '82 executives',
     url: 'https://enhancedops.ninja/lists/ut-operator-execs.html',
   },
+  {
+    id: 'state-associations',
+    title: 'State Healthcare Associations — All 50 States',
+    blurb:
+      'The associations themselves, not the operators — one call reaches the whole membership. 189 listings ' +
+      'across 5 tabs: General/Hospital (52), SNF (30), Assisted Living (33), Home Health & Hospice (37), ' +
+      'Nonprofit Senior Living (37). 128 direct phone numbers; the 37 home-health/hospice rows carry the ' +
+      'executive by name. Each card shows what member types that association represents. Same controls — ' +
+      'OCS adds them to your Action Needed, 📝 logs a note, 🗑 removes them.',
+    count: '189 associations · 52 states',
+    url: 'https://enhancedops.ninja/lists/state-associations.html',
+  },
 ];
 
 /* ─── AI Call List (Jason) ──────────────────────────────────────────────────── */
