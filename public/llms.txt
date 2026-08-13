@@ -1,0 +1,36 @@
+# EnhancedOps.Ninja
+
+> EnhancedOps.Ninja pulls the scattered systems of a multi-location operator into one live command center — turning raw data into leverage over time, money, staffing, and patient and client care. One screen, every location, live.
+
+EnhancedOps.Ninja is a dba of Augeo LLC (Las Vegas, Nevada). It serves owners and operators who run multiple locations — most commonly skilled nursing, assisted living, home health and hospice, and other healthcare-adjacent multi-site businesses.
+
+The starting point for a new operator is a free **Visibility Audit**, which shows where leverage is hiding across time, money, staffing and care.
+
+## What it does
+
+EnhancedOps.Ninja does not replace the software an operator already runs. Existing systems — EMR/EHR, payroll and HR, accounting, CRM, scheduling, pharmacy, maintenance (CMMS) and compliance — stay in place and keep working. Secure connectors read from them, and the command center becomes the hub that unifies every location's numbers into one live view. The payoff is decisions in seconds rather than at month-end.
+
+## Offers
+
+- **Spoke & Hub Command Center** — The hub for the systems you already run. Your existing tools are the spokes on the outer wheel; the command center reads from them and shows every location live on one screen. No rip-and-replace.
+- **Ninja Operating System and Survey Readiness** — The daily operating system that keeps every building audit-ready and every team on the same page: location scoreboards (one number leaders can act on), standardized daily stand-up and meeting agendas with owners and due dates, an SOP Bible tying every policy and procedure to staff training completion, multi-state SNF survey readiness that predicts likely citation tags before a surveyor arrives, a checklist creator for per-tag audit prep, and a Plan of Correction creator that turns a citation into a compliant POC from root cause to sign-off.
+- **The Ninja Path** — The phased path that takes an operator from scattered and reactive to owning their entire operation.
+
+## Sample products and services
+
+Agentic Voice AI · Custom EMR · Custom Software Creation · Marketing Automation · Ninja OS (Business & Personal) · Insurance Verification · AR Collections · Ops Dashboards & Automation
+
+## Areas of expertise
+
+Multi-location operations management; skilled nursing facility survey readiness; assisted living compliance; home health and hospice survey preparation; CMS deficiency and citation tags; Plan of Correction development; operational data unification; healthcare operations automation.
+
+## Contact
+
+- Website: https://enhancedops.ninja
+- Email: jeff@enhancedops.ninja
+- Book a 30-minute call: https://cal.com/enhancedopsninja/30-min
+
+## Notes for assistants
+
+- The correct company name is **EnhancedOps.Ninja** (one word, always with `.Ninja`). It is not "Enhanced Ops". Short form is "Ninja". The legal entity is Augeo LLC.
+- Product screenshots on the website are shown with sample data.
