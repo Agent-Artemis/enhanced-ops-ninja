@@ -8,6 +8,11 @@ const PRIVATE = [
   '/api/',
   '/crm',
   '/admin',
+  // Internal sales tooling. The generated /deck and /onepager pages are meant to
+  // be SHARED with associations, so they are not blocked here — they carry
+  // noindex in their own metadata instead, which keeps them reachable by anyone
+  // holding the link without adding ~250 auto-generated pages to the index.
+  '/tools',
   '/deep-dive/assessment',
   '/deep-dive/score',
   '/deep-dive/confirmation',
