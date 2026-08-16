@@ -32,16 +32,69 @@
  .actbtn.li{border-color:#0A66C2;color:#4a9eea}
  .actbtn.li.ok{background:#0A66C2;color:#fff;border-color:#0A66C2}
  .lin{color:var(--gold);font-size:11.5px;margin-top:5px;line-height:1.35}
+ .pbtn{appearance:none;border:1px solid var(--line2);background:#0b1220;color:var(--blue2);font-size:13px;font-weight:700;padding:9px 14px;border-radius:8px;cursor:pointer;margin:4px 0 8px;min-height:40px}
+ .pbtn:hover{border-color:var(--blue)}
  .nowrap{color:var(--mut);font-size:12px;font-style:italic;padding:9px 0}
  .notebox{width:100%;margin-top:8px;background:#0b1220;border:1px solid var(--line2);border-radius:8px;color:var(--text);padding:9px 11px;font-size:14px;font-family:inherit;min-height:64px}
  .empty{text-align:center;color:var(--mut);padding:44px 0}
  .foot{margin-top:26px;color:var(--mut);font-size:11.5px;border-top:1px solid var(--line);padding-top:14px;line-height:1.6}
+
+/* ── PRINT ──────────────────────────────────────────────────────────────────
+   Paper + phone, no computer. Everything interactive is stripped, the dark
+   theme is inverted to save ink and stay readable, and each row gets a tick
+   box and a ruled line because on paper you cannot tap a note button.
+   Rows are kept off page breaks so a number is never split across sheets. */
+@media print {
+  @page { margin: 12mm 10mm; }
+  html, body { background:#fff !important; color:#000 !important; }
+  body { font-size: 10.5pt; }
+  .wrap { max-width:none !important; padding:0 !important; }
+
+  /* interactive chrome has no meaning on paper */
+  .bar, .tabs, .acts, .meta, .notebox, .foot, #q, .chips, .controls,
+  button, .actbtn, .tag { display:none !important; }
+
+  img.logo { width:150px !important; filter:grayscale(1) contrast(2); margin-bottom:6pt !important; }
+  h1 { font-size:15pt !important; margin:0 0 2pt !important; color:#000 !important; }
+  .sub { font-size:8.5pt !important; color:#333 !important; margin-bottom:8pt !important; }
+
+  .row {
+    background:#fff !important; border:0 !important; border-bottom:1px solid #bbb !important;
+    border-radius:0 !important; box-shadow:none !important;
+    padding:5pt 0 !important; margin:0 !important;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .row.done { opacity:1 !important; }
+  .row.done .nm { text-decoration: line-through; }
+
+  .nm { font-size:11.5pt !important; font-weight:700 !important; color:#000 !important; display:inline; }
+  .ti, .og { font-size:9pt !important; color:#222 !important; display:inline; }
+  .ti::before, .og::before { content:" — "; }
+  .mb, .lin { display:none !important; }
+
+  /* the phone number is the point of the page — make it the biggest thing */
+  .row::after {
+    content: "☐  " attr(data-phone) "                                                        ";
+    display:block; margin-top:3pt;
+    font-size:13pt; font-weight:700; letter-spacing:.02em;
+    border-bottom:1px solid #999; padding-bottom:2pt;
+  }
+  .row[data-phone=""]::after { content:"☐  (no phone — use website)"; border-bottom:1px solid #999; }
+
+  .state h2 { font-size:12pt !important; color:#000 !important; border-bottom:2px solid #000 !important;
+              margin:10pt 0 4pt !important; break-after:avoid; page-break-after:avoid; }
+  a { color:#000 !important; text-decoration:none !important; }
+  .printhdr { display:block !important; }
+}
+.printhdr { display:none; }
 </style>
 <div class="wrap">
 <img class="logo" src="https://enhancedops.ninja/ninja-logo.png" alt="EnhancedOps.ninja">
 <h1>State Healthcare Associations</h1>
 <p class="sub">Association leadership by state. Tap a number to dial. <b>OCS</b> adds them to Action Needed, <b>&#128221;</b> logs a note, <b>&#128465;</b> hides the row.<br><b style="color:#4a9eea">in \u2713 Profile</b> = verified LinkedIn profile. <b style="color:#4a9eea">in Find</b> = pre-filled LinkedIn search \u2014 we never guess a profile URL.</p>
 <div class="tabs" id="tabs"></div>
+<div class="printhdr" id="printhdr"></div>
+<button id="printBtn" class="pbtn">\ud83d\udda8 Print this tab</button>
 <div class="bar"><input class="q" id="q" type="search" placeholder="Search state, association, or person&hellip;" autocomplete="off">
 <div class="meta"><span id="cnt"></span><a id="showHid"></a><a id="reset">Clear checkmarks</a></div></div>
 <div id="list"></div>
@@ -134,7 +187,7 @@ function render(){
     acts.push('<button class="actbtn note'+(note?' has':'')+'" id="nd'+i+'" onclick="toggleNote('+i+')">\ud83d\udcdd</button>');
     acts.push(hidden?'<button class="actbtn" onclick="restoreRow('+i+')">Restore</button>'
                     :'<button class="actbtn" onclick="hideRow('+i+')">\ud83d\uddd1</button>');
-    return '<div class="row'+(isDone(r)?' done':'')+'">'
+    return '<div class="row'+(isDone(r)?' done':'')+'" data-phone="'+esc(r.p||'')+'">'
       +'<span class="st">'+esc(r.st)+'</span>'
       +'<div class="nm">'+esc(r.n)+'</div>'
       +(r.t&&r.t!=='Association'?'<div class="ti">'+esc(r.t)+'</div>':'')
@@ -149,5 +202,11 @@ function setTab(t){tab=t;openKey=null;showHidden=false;render();}
 document.getElementById('q').addEventListener('input',function(e){q=e.target.value.trim();render();});
 document.getElementById('showHid').addEventListener('click',function(){showHidden=!showHidden;render();});
 document.getElementById('reset').addEventListener('click',resetCalled);
+document.getElementById('printBtn').addEventListener('click',function(){
+  var t=TABS.filter(function(x){return x.k===tab;})[0];
+  document.getElementById('printhdr').textContent=
+    'State Healthcare Associations \u2014 '+(t?t.l:'')+'  \u00b7  printed '+new Date().toLocaleDateString();
+  window.print();
+});
 render();hydrateNotes();
 </script>

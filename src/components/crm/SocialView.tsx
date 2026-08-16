@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, type ReactNode } from 'react';
-import type { Contact, LeadStatus } from '@/lib/crm/types';
+import type { Contact, LeadStatus, LinkedInLead } from '@/lib/crm/types';
 import { linkedinOf, pendingBookingOf } from '@/lib/crm/types';
 import { getCrmClient } from '@/lib/crm/client';
 import { setLeadStatus, advanceLinkedIn, skipLinkedIn, moveLinkedInToToday, setLeadStarred, deleteContact, addNote, markMeetingInviteSent, skipMeetingInvite, markReplyHandled } from '@/lib/crm/data';
@@ -56,6 +56,56 @@ const STEP_META: Record<string, { label: string; color: string }> = {
 };
 
 // ── helpers ───────────────────────────────────────────────────────────────────
+
+/**
+ * Portfolio size stated in the company or title string — "(AL, 14 props)",
+ * "70+ loc", "RAL, 32 homes", "5 clinics". Multi-location operators ARE the
+ * ICP, so a stated count is the single best fit signal we hold on a lead, and
+ * a 32-home operator is a materially bigger deal than a single site.
+ * Returns 0 when no count is stated — absence is not evidence of small.
+ */
+function portfolioSize(li: Pick<LinkedInLead, 'company' | 'title'>, company?: string | null): number {
+  const hay = `${company ?? ''} ${li.company ?? ''} ${li.title ?? ''}`;
+  let best = 0;
+  const re = /(\d{1,4})\s*\+?\s*(propert|prop\b|home|location|loc\b|clinic|site|communit|facilit|practice|building|bed)/gi;
+  for (const m of hay.matchAll(re)) best = Math.max(best, parseInt(m[1], 10) || 0);
+  return best;
+}
+
+function daysBetween(fromISO: string, toISO: string): number {
+  const a = Date.parse(fromISO + 'T00:00:00');
+  const b = Date.parse(toISO + 'T00:00:00');
+  if (Number.isNaN(a) || Number.isNaN(b)) return 0;
+  return Math.max(0, Math.round((b - a) / 86400000));
+}
+
+/**
+ * Ranks the day's work by what is most likely to produce a booked meeting,
+ * rather than by date or alphabetically. Order of the weights is the argument:
+ *
+ *   replied      — they are already talking to you. Nothing outranks that.
+ *   accepted     — connected, so the next message is a conversation not a pitch.
+ *   starred      — Jeff's own manual judgement beats any heuristic of mine.
+ *   portfolio    — ICP fit. A 32-home operator outranks a single site.
+ *   days overdue — a warm lead going cold is more urgent than a fresh one.
+ *   step         — further through the sequence means more invested already.
+ */
+function priorityScore(
+  li: LinkedInLead,
+  company: string | null | undefined,
+  step: string,
+  today: string,
+): number {
+  let s = 0;
+  if (li.replied_at && !li.replied_handled_at) s += 100_000;
+  if (li.accepted === true) s += 10_000;
+  if (li.starred) s += 5_000;
+  s += Math.min(portfolioSize(li, company), 300) * 20;
+  const due = typeof li.sequence_due === 'string' ? li.sequence_due : '';
+  if (due) s += Math.min(daysBetween(due, today), 120) * 3;
+  s += step === 'msg3' ? 200 : step === 'msg2' ? 100 : 0;
+  return s;
+}
 
 function todayStr(): string {
   const d = new Date();
@@ -451,12 +501,10 @@ interface DateGroupProps {
 }
 
 function DateGroup({ date, items, busy, isToday, onMarkSent, onSkip, onMoveToday, onStar, onDelete }: DateGroupProps) {
+  // Keep the incoming order — `items` arrives already ranked by priorityScore.
+  // Re-sorting here by step would throw that away and bury the best leads.
   const newItems      = items.filter(i => i.isNew);
-  const followUpItems = items.filter(i => !i.isNew).sort((a, b) => {
-    // msg2 before msg3
-    if (a.step !== b.step) return a.step < b.step ? -1 : 1;
-    return 0;
-  });
+  const followUpItems = items.filter(i => !i.isNew);
 
   return (
     <div style={{ marginBottom: 28 }}>
@@ -1002,9 +1050,16 @@ export function SocialView({ contacts, onRefresh }: Props) {
     }
   }
 
-  // Sort today: new (msg1) first, then msg2, then msg3; within each group alphabetical
+  // Rank today's work by likelihood of producing a booked meeting — replied,
+  // then accepted, then starred, then ICP fit by portfolio size, then how long
+  // it has been going cold. Previously this sorted by step and then
+  // alphabetically, which buried a 32-home operator who had already accepted
+  // beneath an unanswered cold request to a single site.
   todayItems.sort((a, b) => {
-    if (a.step !== b.step) return a.step < b.step ? -1 : 1;
+    const la = linkedinOf(a.contact)!, lb = linkedinOf(b.contact)!;
+    const pa = priorityScore(la, a.contact.company, a.step, today);
+    const pb = priorityScore(lb, b.contact.company, b.step, today);
+    if (pa !== pb) return pb - pa;
     const na = `${a.contact.first_name} ${a.contact.last_name ?? ''}`;
     const nb = `${b.contact.first_name} ${b.contact.last_name ?? ''}`;
     return na.localeCompare(nb);
