@@ -1258,15 +1258,20 @@ export function SocialView({ contacts, onRefresh }: Props) {
               {meetingInvites.length} one-pager {meetingInvites.length === 1 ? 'offer' : 'offers'} to send
             </span>
             <span style={{ fontSize: 12, color: '#6b7280', flex: 1, minWidth: 180 }}>
-              These connections accepted — offer them the one-pager. When they reply, send it → {ONE_PAGER_URL.replace('https://', '')}
+              These connections accepted. Openers are written per person — paste as-is. When they reply, send → {ONE_PAGER_URL.replace('https://', '')}
             </span>
           </div>
-          {meetingInvites.map(({ contact }) => {
+          {meetingInvites.map(({ contact, li }) => {
+            // A researched, per-person opener beats the generic template every
+            // time — these reference the person's actual business and ask one
+            // answerable question. Fall back to the template only when no
+            // opener has been written for that lead.
+            const opener = (li.reengage_msg ?? '').trim();
             return (
               <MeetingInviteRow
                 key={contact.id}
                 contact={contact}
-                message={onePagerOffer(contact.first_name)}
+                message={opener || onePagerOffer(contact.first_name)}
                 isPlaceholder={false}
                 busy={busy === contact.id}
                 onMarkSent={handleMarkMeetingInviteSent}

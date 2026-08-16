@@ -261,7 +261,10 @@ export interface LinkedInLead {
   accepted_at?: string;    // ISO — when the connection was accepted
   parked?: boolean;        // lead is parked/paused — excluded from the meeting-invite queue
   starred?: boolean;       // Jeff flagged this lead as a strong option
-  accepted_msg?: string;   // warm acceptance response: welcome + value drop + one-pager + 30-min link
+  accepted_msg?: string;
+  /** Hand-written, researched opener for a lead who accepted but went cold.
+   *  Preferred over the generic template in the accepted-lead queue. */
+  reengage_msg?: string;   // warm acceptance response: welcome + value drop + one-pager + 30-min link
   msg1_sent_at?: string;
   msg2_sent_at?: string;
   msg3_sent_at?: string;
