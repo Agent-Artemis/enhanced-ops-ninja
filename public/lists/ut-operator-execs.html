@@ -89,8 +89,9 @@
   tbody tr td:first-child::before { content:"\2610  "; font-size:11pt; }
   thead tr::after { content:"NOTES"; display:table-cell; border-bottom:1.5pt solid #000;
                     font-size:7.5pt; padding:3pt 4pt; width:34%; }
-  tbody tr::after { content:""; display:table-cell; border-bottom:1px solid #ccc;
-                    border-left:1px solid #ddd; width:34%; }
+  tbody tr::after { content: attr(data-note); display:table-cell; border-bottom:1px solid #ccc;
+                    border-left:1px solid #ddd; width:34%; font-size:8.5pt; padding:4pt;
+                    white-space:pre-wrap; vertical-align:top; }
   .printhdr { display:block !important; font-size:8pt; color:#333; margin-bottom:6pt; }
 }
 .printhdr { display:none; }
@@ -187,7 +188,7 @@
        ? '<button class="actbtn" title="Put back" onclick="restoreRow('+i+')">↩</button>'
        : '<button class="actbtn note'+(getNote(r)?' has':'')+'" id="nd'+i+'" title="Notes" onclick="toggleNote('+i+')">📝</button><button class="actbtn trash" title="Remove" onclick="hideRow('+i+')">🗑</button>';
      var act='<td class="act">'+acts+'</td>';
-     var main='<tr'+dn+'><td>'+ck+'</td>'+nm+'<td class="sub">'+esc(r.t)+'</td><td>'+tel+'</td><td>'+esc(r.o)+'</td><td>'+mail+'</td>'+act+'</tr>';
+     var main='<tr'+dn+' data-note="'+esc(getNote(r)||'')+'"><td>'+ck+'</td>'+nm+'<td class="sub">'+esc(r.t)+'</td><td>'+tel+'</td><td>'+esc(r.o)+'</td><td>'+mail+'</td>'+act+'</tr>';
      if(k===openKey){
        var cl=(cv&&cv!=='1')?('Called '+fmtFull(cv)):(cv==='1'?'Called':'Not called yet');
        var meta='';
