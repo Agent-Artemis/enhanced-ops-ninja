@@ -133,6 +133,30 @@ export function CrmShell({ view, onViewChange, onNewCard, bookingsCount = 0, onT
         </button>
       )}
 
+      {/* Print the current view. Lives in the shell so EVERY list is
+          printable, including ones added later. Stamps a dated header first so
+          a photographed page can be identified. */}
+      <button
+        data-print="hide"
+        onClick={() => {
+          const el = document.getElementById('crmPrintHeader');
+          const tab = TABS.find(t => t.id === view)?.label ?? 'CRM';
+          if (el) {
+            el.textContent = `${tab} — printed ${new Date().toLocaleDateString()}`;
+            el.setAttribute('style', 'font-size:11pt;font-weight:700;margin-bottom:8pt;color:#000');
+          }
+          window.print();
+        }}
+        title="Print this list"
+        style={{
+          padding: '6px 12px', background: 'transparent', color: '#d1d5db',
+          border: '1px solid rgba(255,255,255,0.2)', borderRadius: 6,
+          fontSize: 13, fontWeight: 600, cursor: 'pointer',
+        }}
+      >
+        🖨 Print
+      </button>
+
       <button
         onClick={onNewCard}
         style={{

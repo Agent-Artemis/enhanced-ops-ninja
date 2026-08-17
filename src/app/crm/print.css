@@ -1,0 +1,111 @@
+/* ============================================================================
+ * CRM PRINT STYLESHEET — applies to EVERY view, current and future.
+ *
+ * Standing requirement from Jeff: any list in the CRM must be printable. He
+ * works from paper and a phone, away from the computer, so he isn't distracted.
+ * This lives at the layout level rather than per-view so a new list inherits it
+ * automatically — nobody has to remember to make the next one printable.
+ *
+ * What paper needs that a screen does not:
+ *   · black on white — the dark theme is unreadable and drinks ink
+ *   · no interactive chrome — buttons, filters, search boxes mean nothing
+ *   · a tick box and a ruled line, because you cannot tap a note field
+ *   · rows that never split across a page break
+ *   · previously-saved notes VISIBLE, since that is the context for the call
+ * ==========================================================================*/
+
+@media print {
+  @page { margin: 12mm 10mm; }
+
+  html, body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  body { font-size: 10.5pt !important; }
+
+  /* ── strip the app chrome ────────────────────────────────────────────── */
+  header,
+  nav,
+  [data-print="hide"],
+  button,
+  input,
+  select,
+  textarea,
+  .crm-tabs,
+  .crm-search {
+    display: none !important;
+  }
+
+  /* the fixed 88px header reserves space the paper doesn't need */
+  main, [data-crm-main] {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  /* ── invert the dark theme ───────────────────────────────────────────── */
+  /* Views set colours inline, so these have to be aggressive to win. */
+  div, span, p, td, th, li, h1, h2, h3, h4, section, article {
+    background-image: none !important;
+    color: #000 !important;
+    box-shadow: none !important;
+  }
+  [style*="background"] {
+    background: transparent !important;
+  }
+
+  /* ── cards and rows ──────────────────────────────────────────────────── */
+  [data-print="row"],
+  [data-print="card"] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border: 0 !important;
+    border-bottom: 1px solid #bbb !important;
+    border-radius: 0 !important;
+    padding: 5pt 0 !important;
+    margin: 0 !important;
+  }
+
+  /* tick box + ruled line for the call, added only on print */
+  [data-print="row"]::after,
+  [data-print="card"]::after {
+    content: "\2610" "                                                                      ";
+    display: block;
+    margin-top: 3pt;
+    padding-bottom: 2pt;
+    font-size: 12pt;
+    border-bottom: 1px solid #999;
+  }
+
+  /* previously-saved notes must always print — that is the point of paper */
+  [data-print="note"] {
+    display: block !important;
+    background: #f2f2f2 !important;
+    border-left: 2.5pt solid #000 !important;
+    padding: 3pt 5pt !important;
+    margin: 3pt 0 !important;
+    font-size: 9pt !important;
+    white-space: pre-wrap;
+  }
+
+  /* ── tables ──────────────────────────────────────────────────────────── */
+  table { width: 100% !important; border-collapse: collapse !important; font-size: 9pt !important; }
+  thead { display: table-header-group; }          /* repeat header each sheet */
+  tr { break-inside: avoid; page-break-inside: avoid; }
+  th {
+    background: #eee !important;
+    border-bottom: 1.5pt solid #000 !important;
+    padding: 3pt 4pt !important;
+    font-size: 7.5pt !important;
+    text-transform: uppercase;
+  }
+  td { border-bottom: 1px solid #ccc !important; padding: 4pt !important; vertical-align: top; }
+
+  /* ── links print as plain text; a URL on paper is noise ──────────────── */
+  a { color: #000 !important; text-decoration: none !important; }
+
+  /* ── print-only header stamped by the print button ───────────────────── */
+  #crmPrintHeader { display: block !important; }
+}
+
+/* Hidden on screen, revealed only on paper. */
+#crmPrintHeader { display: none; }

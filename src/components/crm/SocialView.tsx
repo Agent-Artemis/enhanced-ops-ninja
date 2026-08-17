@@ -216,7 +216,7 @@ function LeadRow({ contact, step, message, asset, busy, isToday, onMarkSent, onS
   if (removed) return null;
 
   return (
-    <div style={{
+    <div data-print="row" style={{
       background: '#141414',
       border: '1px solid rgba(255,255,255,0.07)',
       borderLeft: starred ? '3px solid #F5B301' : '1px solid rgba(255,255,255,0.07)',

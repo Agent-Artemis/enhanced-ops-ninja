@@ -42,6 +42,7 @@ export function ContactCard({
 
   return (
     <div
+      data-print="card"
       draggable={draggable}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
