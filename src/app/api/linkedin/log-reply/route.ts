@@ -8,7 +8,8 @@
  *     ...
  *   ]
  * }
- * Header: x-leads-secret must match LEADS_API_SECRET.
+ * Header: x-leads-secret must match LINKEDIN_CATCHER_SECRET (scoped, used by the
+ * cloud catcher routine) or LEADS_API_SECRET (admin). See lib/crm/catcher-auth.
  *
  * A daily routine parses LinkedIn notification emails ("X sent you a message")
  * and inbound email replies, then posts the sender names here. Matching mirrors
@@ -31,6 +32,7 @@
  * Per-item work is wrapped so one failure never aborts the batch.
  */
 import { NextResponse } from "next/server";
+import { authorizeCatcher } from "@/lib/crm/catcher-auth";
 import { z } from "zod";
 
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
@@ -86,8 +88,7 @@ function denverToday(): string {
 }
 
 export async function POST(req: Request) {
-  const secret = process.env.LEADS_API_SECRET;
-  if (!secret || req.headers.get("x-leads-secret") !== secret) {
+  if (!authorizeCatcher(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

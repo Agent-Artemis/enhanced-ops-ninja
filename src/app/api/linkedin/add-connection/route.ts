@@ -2,7 +2,8 @@
  * Ensure a LinkedIn connection exists in the CRM as an accepted contact.
  *
  * POST { connections: [{ name, profile_url?, company?, location?, title? }] }
- * Header: x-leads-secret must match LEADS_API_SECRET.
+ * Header: x-leads-secret must match LINKEDIN_CATCHER_SECRET (scoped, used by the
+ * cloud catcher routine) or LEADS_API_SECRET (admin). See lib/crm/catcher-auth.
  *
  * Jeff sends LinkedIn connection invites manually as he browses. When someone
  * accepts, a morning routine posts the accepted people here. For each one:
@@ -27,6 +28,7 @@
  * `already_accepted` — no duplicate is ever created.
  */
 import { NextResponse } from "next/server";
+import { authorizeCatcher } from "@/lib/crm/catcher-auth";
 import { z } from "zod";
 
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
@@ -196,8 +198,7 @@ function nextCalendarDay(ymd: string): string {
 }
 
 export async function POST(req: Request) {
-  const secret = process.env.LEADS_API_SECRET;
-  if (!secret || req.headers.get("x-leads-secret") !== secret) {
+  if (!authorizeCatcher(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
