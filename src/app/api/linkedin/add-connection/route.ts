@@ -131,6 +131,47 @@ function linkedInSearchUrl(name: string): string {
   return `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(name)}`;
 }
 
+/** True for the placeholder search link above — i.e. we never actually knew the profile. */
+function isPlaceholderProfile(v: unknown): boolean {
+  return typeof v === "string" && v.includes("/search/results/people/");
+}
+
+/**
+ * Fill in profile_url / company / title / location on an EXISTING contact when the
+ * caller supplies them and we don't already hold something better.
+ *
+ * A name-only record is not a usable lead — nobody can write an opener or open the
+ * profile from it. The accept emails carry the headline and the real /in/ URL, so
+ * when a later call brings them we upgrade in place.
+ *
+ * Strictly additive: a real stored value is never overwritten, and the placeholder
+ * search link is treated as "unknown" so a real /in/ URL can replace it.
+ * Returns the list of field names actually changed.
+ */
+function enrichLinkedIn(
+  li: Record<string, unknown>,
+  conn: { profile_url?: string; company?: string; title?: string; location?: string },
+): string[] {
+  const changed: string[] = [];
+
+  const url = conn.profile_url?.trim();
+  if (url && (!li.profile_url || isPlaceholderProfile(li.profile_url))) {
+    li.profile_url = url;
+    changed.push("profile_url");
+  }
+
+  for (const key of ["company", "title", "location"] as const) {
+    const val = conn[key]?.trim();
+    const cur = li[key];
+    if (val && (typeof cur !== "string" || cur.trim() === "")) {
+      li[key] = val;
+      changed.push(key);
+    }
+  }
+
+  return changed;
+}
+
 // ── Business-timezone date helpers (mirrors mark-accepted) ──────────────────────
 
 /** Business timezone. Due dates are calendar days in Denver, not the server's UTC. */
@@ -253,6 +294,7 @@ export async function POST(req: Request) {
   const created: string[] = [];
   const marked: string[] = [];
   const alreadyAccepted: string[] = [];
+  const enriched: string[] = [];
   const ambiguous: string[] = [];
   const errors: { name: string; error: string }[] = [];
 
@@ -268,9 +310,46 @@ export async function POST(req: Request) {
 
     if (matches.length === 1) {
       const m = matches[0];
+      const wasAccepted = isAccepted(m.linkedin?.accepted);
 
-      if (isAccepted(m.linkedin?.accepted)) {
-        alreadyAccepted.push(display);
+      // Already accepted → nothing to flip, but we may still be able to UPGRADE a
+      // name-only record with the headline/profile the accept email carried.
+      if (wasAccepted) {
+        if (m.id === null) {
+          alreadyAccepted.push(display);
+          continue;
+        }
+
+        const cfA: Record<string, unknown> = { ...(m.customFields ?? {}) };
+        const liA: Record<string, unknown> = {
+          ...(isLinkedInObject(cfA.linkedin) ? cfA.linkedin : {}),
+        };
+        const changed = enrichLinkedIn(liA, conn);
+
+        if (changed.length === 0) {
+          alreadyAccepted.push(display);
+          continue;
+        }
+
+        cfA.linkedin = liA;
+        const patchA: Record<string, unknown> = { custom_fields: cfA, updated_at: nowIso };
+        if (changed.includes("company") && conn.company?.trim()) {
+          patchA.company = conn.company.trim();
+        }
+
+        const { error: enrichErr } = await admin
+          .from("crm_contacts")
+          .update(patchA)
+          .eq("id", m.id);
+
+        if (enrichErr) {
+          errors.push({ name: display, error: enrichErr.message });
+          continue;
+        }
+
+        m.linkedin = liA;
+        m.customFields = cfA;
+        enriched.push(`${display} (${changed.join(", ")})`);
         continue;
       }
 
@@ -289,11 +368,19 @@ export async function POST(req: Request) {
       li.accepted = true;
       li.accepted_at = nowIso;
       li.sequence_due = target;
+      // Same upgrade as the already-accepted branch: if this call carries the
+      // headline/profile, fill whatever we were missing.
+      const markChanged = enrichLinkedIn(li, conn);
       cf.linkedin = li;
+
+      const patch: Record<string, unknown> = { custom_fields: cf, updated_at: nowIso };
+      if (markChanged.includes("company") && conn.company?.trim()) {
+        patch.company = conn.company.trim();
+      }
 
       const { error: updateErr } = await admin
         .from("crm_contacts")
-        .update({ custom_fields: cf, updated_at: nowIso })
+        .update(patch)
         .eq("id", m.id);
 
       if (updateErr) {
@@ -367,6 +454,7 @@ export async function POST(req: Request) {
     created,
     marked,
     already_accepted: alreadyAccepted,
+    enriched,
     ambiguous,
     errors,
   });
