@@ -96,7 +96,7 @@ export default async function OnePager({ params }: { params: Promise<Params> }) 
         <p className="eyebrow">{st.toUpperCase()} · {S.label.toUpperCase()} · SURVEY SNAPSHOT</p>
         <h1>The {d.tags.length} {S.tagWord}s {st}<br />{S.noun} are <span className="hl">actually</span> cited on</h1>
         <p className="lede">
-          Every citation issued to a {st} {S.noun.replace(/s$/, "")} over the last three years,
+          Every citation issued to a {st} {S.nounOne} over the last three years,
           ranked by how many were cited{h.hasNational ? " — and compared against the national rate." : "."}
         </p>
 

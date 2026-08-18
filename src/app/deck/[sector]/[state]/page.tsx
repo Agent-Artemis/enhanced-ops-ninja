@@ -70,13 +70,13 @@ export default async function DeckPage({ params }: { params: Promise<Params> }) 
       <style dangerouslySetInnerHTML={{ __html: DECK_CSS }} />
       <div className="stage" id="stage">
 
-        <Slide title notes={`Open by NOT selling. One line on who you are, then straight into the data — the credibility is the work, not the introduction.|SAY: Every citation issued to a ${st} ${S.noun.replace(/s$/, "")} in the last three years — ${h.citations.toLocaleString()} of them, across the ${h.facilities} ${S.noun} that have at least one citation on record. We pulled the federal data and cleaned it. NOTE: this is not a rate across all ${st} ${S.noun} — facilities with no citation are not in the denominator.${h.hasNational ? " The U.S. column IS a true rate: it denominates on facilities surveyed, clean surveys included." : " No national comparison is shown for this sector."}`}>
+        <Slide title notes={`Open by NOT selling. One line on who you are, then straight into the data — the credibility is the work, not the introduction.|SAY: Every citation issued to a ${st} ${S.nounOne} in the last three years — ${h.citations.toLocaleString()} of them, across the ${h.facilities} ${S.noun} that have at least one citation on record. We pulled the federal data and cleaned it. NOTE: this is not a rate across all ${st} ${S.noun} — facilities with no citation are not in the denominator.${h.hasNational ? " The U.S. column IS a true rate: it denominates on facilities surveyed, clean surveys included." : " No national comparison is shown for this sector."}`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="logo" src="/ninja-logo.png" alt="EnhancedOps.ninja" />
           <p className="eyebrow">{st.toUpperCase()} · {S.label.toUpperCase()}</p>
           <h1>Survey Intelligence<br /><span className="hl">{new Date().getFullYear()}</span></h1>
           <p className="lede">
-            Every citation issued to a {st} {S.noun.replace(/s$/, "")} over three years —
+            Every citation issued to a {st} {S.nounOne} over three years —
             {d.worse.length ? " and where this state is a genuine outlier." : " and what it means for your buildings."}
           </p>
         </Slide>
