@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const st = stateName(state.toUpperCase());
   return {
     title: `${st} ${SECTORS[sector].short} Survey Intelligence`,
-    description: `The most-cited ${SECTORS[sector].tagWord}s for ${st} ${SECTORS[sector].noun}, benchmarked against the national rate.`,
+    description: `The most-cited ${SECTORS[sector].tagWord}s among ${st} ${SECTORS[sector].noun} that have a citation on record.`,
     robots: { index: false, follow: false },
   };
 }
@@ -70,7 +70,7 @@ export default async function DeckPage({ params }: { params: Promise<Params> }) 
       <style dangerouslySetInnerHTML={{ __html: DECK_CSS }} />
       <div className="stage" id="stage">
 
-        <Slide title notes={`Open by NOT selling. One line on who you are, then straight into the data — the credibility is the work, not the introduction.|SAY: Every citation issued to a ${st} ${S.noun.replace(/s$/, "")} in the last three years — ${h.citations.toLocaleString()} of them, across all ${h.facilities} that were surveyed. We pulled the federal data, cleaned it, and compared ${st} against the rest of the country.`}>
+        <Slide title notes={`Open by NOT selling. One line on who you are, then straight into the data — the credibility is the work, not the introduction.|SAY: Every citation issued to a ${st} ${S.noun.replace(/s$/, "")} in the last three years — ${h.citations.toLocaleString()} of them, across the ${h.facilities} ${S.noun} that have at least one citation on record. We pulled the federal data and cleaned it. NOTE: this is not a rate across all ${st} ${S.noun} — facilities with no citation are not in the denominator, and no national comparison is shown.`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="logo" src="/ninja-logo.png" alt="EnhancedOps.ninja" />
           <p className="eyebrow">{st.toUpperCase()} · {S.label.toUpperCase()}</p>
@@ -81,11 +81,11 @@ export default async function DeckPage({ params }: { params: Promise<Params> }) 
           </p>
         </Slide>
 
-        <Slide notes={`Establish the base rate BEFORE the comparison, or the numbers later mean nothing. Do not rush.|SAY: ${h.facilities} surveyed. ${h.avgPer} citations each on average. Hold that number — that is the normal ${st} outcome, not a bad one.`}>
+        <Slide notes={`Establish the base rate BEFORE the comparison, or the numbers later mean nothing. Do not rush.|SAY: ${h.facilities} ${S.noun} with a citation on record. ${h.avgPer} citations each on average. Hold that number — that is the normal ${st} outcome, not a bad one.`}>
           <p className="eyebrow">THE LANDSCAPE</p>
           <h2>Three years of {st} surveys</h2>
           <div className="grid">
-            <div className="card"><div className="n">{h.facilities}</div><div className="l">{S.noun} surveyed</div></div>
+            <div className="card"><div className="n">{h.facilities}</div><div className="l">{S.noun} with a citation</div></div>
             <div className="card"><div className="n">{h.citations.toLocaleString()}</div><div className="l">Citations issued</div></div>
             <div className="card"><div className="n">{h.avgPer}</div><div className="l">Average per facility</div></div>
             {h.ij > 0
@@ -186,12 +186,11 @@ export default async function DeckPage({ params }: { params: Promise<Params> }) 
               })}
             </tbody>
           </table>
-          {!h.hasNational && (
-            <p className="cap" style={{ marginTop: "1.4vh", fontSize: "clamp(11px,1.15vw,15px)" }}>
-              {S.label} is licensed state by state under each state&apos;s own rules, so there is no
-              valid national rate to compare against — this is {st} measured against itself.
-            </p>
-          )}
+          <p className="cap" style={{ marginTop: "1.4vh", fontSize: "clamp(11px,1.15vw,15px)" }}>
+            Share of {st} {S.noun} <b>with a citation on record</b> — not a rate across all {S.noun}.
+            No national comparison is shown: the benchmark previously displayed came from a precomputed
+            table whose denominator could not be reconciled, so it has been withdrawn.
+          </p>
         </Slide>
 
         <Slide notes={`Hand them something to use tomorrow. These are questions, NOT your product. Deliver slowly — people write these down, and that is the moment you become useful rather than promotional.|SAY: Take these back to your next leadership meeting. I am not asking you to buy anything to answer them.`}>
@@ -201,7 +200,7 @@ export default async function DeckPage({ params }: { params: Promise<Params> }) 
             {d.tags.slice(0, 3).map((r, i) => (
               <div className="q" key={r.tag + i}>
                 <b>{i + 1}. {prettyTag(r.tag)} — {r.descr.length > 58 ? r.descr.slice(0, 56) + "…" : r.descr}.</b>{" "}
-                Cited at <b>{r.facilities}</b> of your state&apos;s {h.facilities} surveyed {S.noun}.
+                Cited at <b>{r.facilities}</b> of the {h.facilities} {S.noun} in your state that have a citation on record.
                 Can you show current, documented evidence on this — in every building?
               </div>
             ))}

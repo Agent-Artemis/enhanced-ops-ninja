@@ -101,14 +101,14 @@ export default async function OnePager({ params }: { params: Promise<Params> }) 
         </p>
 
         <div className="stats">
-          <div className="stat"><div className="n">{h.facilities}</div><div className="l">{S.noun} surveyed</div></div>
+          <div className="stat"><div className="n">{h.facilities}</div><div className="l">{S.noun} with a citation</div></div>
           <div className="stat"><div className="n">{h.citations.toLocaleString()}</div><div className="l">Citations</div></div>
           <div className="stat"><div className="n">{h.avgPer}</div><div className="l">Avg per facility</div></div>
           <div className="stat"><div className="n warn">{h.ij > 0 ? h.ij : `${d.complaintShare}%`}</div>
             <div className="l">{h.ij > 0 ? "Most-severe findings" : "Complaint-driven"}</div></div>
         </div>
         <p className="stamp">
-          Source: {S.regime} · {window} · {h.facilities} surveyed {S.noun} in {st}
+          Source: {S.regime} · {window} · {h.facilities} {S.noun} with at least one citation in {st}
           {h.hasNational ? " · national comparison across all reporting states" : ""} · compiled by EnhancedOps.Ninja
         </p>
 
@@ -145,11 +145,11 @@ export default async function OnePager({ params }: { params: Promise<Params> }) 
         )}
 
         <h2>The most-cited {S.tagWord}s</h2>
-        <p className="sec">Ranked by distinct {S.noun} cited — one facility cited five times is one facility with a problem, not five.</p>
+        <p className="sec">Of {st} {S.noun} <b>with a citation on record</b>, the share that drew each {S.tagWord}. Ranked by distinct {S.noun} cited — one facility cited five times is one facility with a problem, not five. This is not a rate across all {S.noun}: facilities with no citation are not in the denominator.</p>
         <div className="tw"><table>
           <thead><tr>
             <th>{S.tagWord === "rule" ? "§" : "Tag"}</th><th>Requirement</th>
-            <th className="num">Fac.</th><th className="num">{state}</th>
+            <th className="num">Fac.</th><th className="num">% of cited</th>
             {h.hasNational && <><th className="num">U.S.</th><th className="num">Gap</th></>}
           </tr></thead>
           <tbody>
@@ -172,19 +172,19 @@ export default async function OnePager({ params }: { params: Promise<Params> }) 
             })}
           </tbody>
         </table></div>
-        {!h.hasNational && (
-          <p className="sec" style={{ fontSize: 12.5, color: "var(--muted)" }}>
-            {S.label} is licensed state by state under each state&apos;s own rules, so there is no valid
-            national rate to compare against. These figures are {st} measured against itself.
-          </p>
-        )}
+        <p className="sec" style={{ fontSize: 12.5, color: "var(--muted)" }}>
+          No national comparison is shown. The national benchmark we previously displayed came from a
+          precomputed table whose denominator could not be reconciled against either the citation record
+          or the provider roster, so it has been withdrawn rather than reworded. These figures are {st}
+          measured against itself.
+        </p>
 
         <h2>What this cannot tell you</h2>
         <p className="sec">This is state-level and historical. It describes the population, not your buildings. The questions it raises:</p>
         {d.tags.slice(0, 3).map((r, i) => (
           <div className="ask" key={r.tag + i}>
             <b>{prettyTag(r.tag)} — {r.descr.length > 56 ? r.descr.slice(0, 54) + "…" : r.descr}.</b>{" "}
-            Cited at {r.facilities} of {h.facilities} surveyed {S.noun}. Can you show current documented evidence — in every building?
+            Cited at {r.facilities} of the {h.facilities} {S.noun} that have a citation on record. Can you show current documented evidence — in every building?
           </div>
         ))}
         <div className="ask"><b>Across all {S.tagWord}s.</b> Which of your buildings is drifting right now — and would you know before the surveyor, or after?</div>

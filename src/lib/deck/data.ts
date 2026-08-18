@@ -122,12 +122,20 @@ export async function getDeckData(sector: Sector, state: string): Promise<DeckDa
     facilities: n(hr.facilities), citations: n(hr.citations), avgPer: n(hr.avg_per),
     ij: n(hr.ij), complaint: n(hr.complaint),
     fromDate: hr.from_date ?? null, toDate: hr.to_date ?? null,
-    hasNational: Boolean(hr.has_national),
+    hasNational: false, // suppressed with natlPct above — see note in the tags map
   };
 
   const tags: TagRow[] = (t.data ?? []).map((r: Record<string, unknown>) => {
     const statePct = r.state_pct === null ? null : n(r.state_pct);
-    const natlPct = r.natl_pct === null ? null : n(r.natl_pct);
+    // NATIONAL COMPARISON SUPPRESSED (2026-08-18).
+    // natl_pct comes from deck_natl_rates, whose denominators reconcile with
+    // nothing: for lab it reports 7,687 against 28,028 distinct cited facilities
+    // and a 681,059 roster. No wording makes an unreproducible number honest, so
+    // the comparison is removed rather than reworded. Forcing this to null also
+    // nulls `gap`, which empties `worse`/`better` and drops the "runs N points
+    // above the national rate" blocks from both routes. Restore only when the
+    // denominator reconciliation lands.
+    const natlPct = null;
     return {
       tag: String(r.tag ?? ""),
       descr: String(r.descr ?? ""),
