@@ -34,10 +34,13 @@ function Bar({ label, pct, ours }: { label: string; pct: number; ours?: boolean 
 }
 
 function Slide({
-  children, notes, title, className = "",
-}: { children: React.ReactNode; notes: string; title?: boolean; className?: string }) {
+  children, notes, title, className = "", active = false,
+}: { children: React.ReactNode; notes: string; title?: boolean; className?: string; active?: boolean }) {
   return (
-    <section className={`slide ${title ? "title " : ""}${className}`} data-notes={notes}>
+    <section
+      className={`slide ${title ? "title " : ""}${active ? "on " : ""}${className}`}
+      data-notes={notes}
+    >
       {children}
     </section>
   );
@@ -59,11 +62,22 @@ export default async function DeckPage({ params }: { params: Promise<Params> }) 
   const S = SECTORS[d.sector];
 
   const DW = denomWords(S.denomKind, S.noun);
+
   const st = stateName(state);
   const { headline: h } = d;
   const lead: TagRow | undefined = d.worse[0];
   const second: TagRow | undefined = d.worse[1];
   const win: TagRow | undefined = d.better[0];
+  // Server-rendered slide count. The inline script sets the counter and the
+  // progress bar on its first pass; if the server leaves them empty, that
+  // first pass MUTATES THE DOM BEFORE REACT HYDRATES and React discards the
+  // whole tree. Rendering the same values the script would produce means
+  // there is nothing to mismatch on. Seven slides always render; three are
+  // conditional and must be counted the same way they are gated below.
+  // SIX unconditional Slides render; if you add or remove one, this MUST be
+  // updated or the counter mismatches and the hydration bug returns.
+  const slideCount =
+    6 + (d.complaintShare >= 20 ? 1 : 0) + (lead ? 1 : 0) + (win ? 1 : 0);
   const window = h.fromDate && h.toDate
     ? `${fmtDate(h.fromDate)} – ${fmtDate(h.toDate)}`
     : "all available records";
@@ -73,7 +87,7 @@ export default async function DeckPage({ params }: { params: Promise<Params> }) 
       <style dangerouslySetInnerHTML={{ __html: DECK_CSS }} />
       <div className="stage" id="stage">
 
-        <Slide title notes={`Open by NOT selling. One line on who you are, then straight into the data — the credibility is the work, not the introduction.|SAY: Every citation issued to a ${st} ${S.nounOne} in the last three years — ${h.citations.toLocaleString()} of them, across the ${h.facilities} ${S.noun} that have at least one citation on record. We pulled the federal data and cleaned it. NOTE: this is not a rate across all ${st} ${S.noun} — facilities with no citation are not in the denominator.${h.hasNational ? " The U.S. column IS a true rate: it denominates on facilities surveyed, clean surveys included." : " No national comparison is shown for this sector."}`}>
+        <Slide title active notes={`Open by NOT selling. One line on who you are, then straight into the data — the credibility is the work, not the introduction.|SAY: Every citation issued to a ${st} ${S.nounOne} in the last three years — ${h.citations.toLocaleString()} of them, across the ${h.facilities} ${S.noun} that have at least one citation on record. We pulled the federal data and cleaned it. NOTE: this is not a rate across all ${st} ${S.noun} — facilities with no citation are not in the denominator.${h.hasNational ? " The U.S. column IS a true rate: it denominates on facilities surveyed, clean surveys included." : " No national comparison is shown for this sector."}`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="logo" src="/ninja-logo.png" alt="EnhancedOps.ninja" />
           <p className="eyebrow">{st.toUpperCase()} · {S.label.toUpperCase()}</p>
@@ -255,13 +269,13 @@ export default async function DeckPage({ params }: { params: Promise<Params> }) 
 
       </div>
 
-      <div className="bar"><i id="prog" /></div>
+      <div className="bar"><i id="prog" style={{ width: `${(1 / slideCount) * 100}%` }} /></div>
       <div className="brand">EnhancedOps.Ninja</div>
       <div className="hud">
         <button id="btnNotes" title="Speaker notes (N)">Notes</button>
         <button id="btnFull" title="Fullscreen (F)">Full</button>
         <button id="prev" aria-label="Previous">‹</button>
-        <span id="cnt" />
+        <span id="cnt">{`1 / ${slideCount}`}</span>
         <button id="next" aria-label="Next">›</button>
       </div>
       <div className="notes" id="notes"><h4>SPEAKER NOTES</h4><div id="notesBody" /></div>
