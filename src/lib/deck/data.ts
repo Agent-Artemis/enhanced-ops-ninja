@@ -17,8 +17,19 @@ import { getSupabaseAdmin } from "@/lib/supabase/admin";
 // `nounOne` exists because replace(/s$/,"") produced "facilitie",
 // "communitie", "agencie" and "laboratorie" — it is wrong for every single
 // sector we have. English plurals are not a regex; the singular is declared.
+// denomKind describes WHAT THE PERCENTAGE IS OUT OF, per sector, because it
+// differs and the page must say so accurately:
+//   surveyed — % of facilities surveyed in the cycle, clean surveys included
+//              (SNF: denominator is snf_surveys)
+//   surveys  — % of state surveys on record, zero-deficiency surveys included
+//              (AL: denominator is al_surveys, date-filtered)
+//   cited    — % of units that have at least one citation, the only honest
+//              denominator where no survey roster exists (lab, HH, hospice)
+// Getting this wrong is not cosmetic: it is a false statement about our own
+// method, and it is invisible in Utah because cited and surveyed are both 97.
 export const SECTORS = {
   snf: {
+    denomKind: "surveyed",
     label: "Skilled Nursing",
     short: "SNF",
     noun: "skilled nursing facilities",
@@ -27,6 +38,7 @@ export const SECTORS = {
     regime: "CMS federal survey data",
   },
   assisted_living: {
+    denomKind: "surveys",
     label: "Assisted Living",
     short: "AL",
     noun: "assisted living communities",
@@ -35,6 +47,7 @@ export const SECTORS = {
     regime: "state licensing survey data",
   },
   home_health: {
+    denomKind: "cited",
     label: "Home Health",
     short: "HH",
     noun: "home health agencies",
@@ -43,6 +56,7 @@ export const SECTORS = {
     regime: "CMS federal survey data",
   },
   hospice: {
+    denomKind: "cited",
     label: "Hospice",
     short: "Hospice",
     noun: "hospice agencies",
@@ -51,6 +65,7 @@ export const SECTORS = {
     regime: "CMS federal survey data",
   },
   lab: {
+    denomKind: "cited",
     label: "Clinical Laboratory",
     short: "Lab",
     noun: "clinical laboratories",
@@ -59,6 +74,33 @@ export const SECTORS = {
     regime: "CLIA federal survey data",
   },
 } as const;
+
+export type DenomKind = "surveyed" | "surveys" | "cited";
+
+/** One place that turns denomKind into words. Both routes read these, so the
+ *  column header, the body sentence and the footnote can never disagree. */
+export function denomWords(kind: DenomKind, noun: string) {
+  switch (kind) {
+    case "surveyed":
+      return {
+        columnHeader: "% of surveyed",
+        body: `Of ${noun} surveyed in the inspection cycle — including those that came out clean — the share that drew each tag. Ranked by distinct facilities cited: one facility cited five times is one facility with a problem, not five.`,
+        footnote: `percentages use ${noun} surveyed in the inspection cycle as the denominator, clean surveys included`,
+      };
+    case "surveys":
+      return {
+        columnHeader: "% of surveys",
+        body: `Of the state surveys on record — including those that closed with no deficiency — the share that cited each rule. Ranked by how often each rule appears.`,
+        footnote: `percentages use state surveys on record as the denominator, zero-deficiency surveys included`,
+      };
+    case "cited":
+      return {
+        columnHeader: "% of cited",
+        body: `Of ${noun} with a citation on record, the share that drew each tag. Ranked by distinct ${noun} cited: one cited five times is one with a problem, not five. This is not a rate across all ${noun} — we hold no survey roster for this sector, so those without a citation cannot be told apart from those never inspected.`,
+        footnote: `percentages use ${noun} with at least one citation as the denominator — no survey roster exists for this sector`,
+      };
+  }
+}
 
 export type Sector = keyof typeof SECTORS;
 export const SECTOR_KEYS = Object.keys(SECTORS) as Sector[];
