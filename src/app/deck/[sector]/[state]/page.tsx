@@ -70,7 +70,7 @@ export default async function DeckPage({ params }: { params: Promise<Params> }) 
       <style dangerouslySetInnerHTML={{ __html: DECK_CSS }} />
       <div className="stage" id="stage">
 
-        <Slide title notes={`Open by NOT selling. One line on who you are, then straight into the data — the credibility is the work, not the introduction.|SAY: Every citation issued to a ${st} ${S.noun.replace(/s$/, "")} in the last three years — ${h.citations.toLocaleString()} of them, across the ${h.facilities} ${S.noun} that have at least one citation on record. We pulled the federal data and cleaned it. NOTE: this is not a rate across all ${st} ${S.noun} — facilities with no citation are not in the denominator, and no national comparison is shown.`}>
+        <Slide title notes={`Open by NOT selling. One line on who you are, then straight into the data — the credibility is the work, not the introduction.|SAY: Every citation issued to a ${st} ${S.noun.replace(/s$/, "")} in the last three years — ${h.citations.toLocaleString()} of them, across the ${h.facilities} ${S.noun} that have at least one citation on record. We pulled the federal data and cleaned it. NOTE: this is not a rate across all ${st} ${S.noun} — facilities with no citation are not in the denominator.${h.hasNational ? " The U.S. column IS a true rate: it denominates on facilities surveyed, clean surveys included." : " No national comparison is shown for this sector."}`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="logo" src="/ninja-logo.png" alt="EnhancedOps.ninja" />
           <p className="eyebrow">{st.toUpperCase()} · {S.label.toUpperCase()}</p>
@@ -81,13 +81,13 @@ export default async function DeckPage({ params }: { params: Promise<Params> }) 
           </p>
         </Slide>
 
-        <Slide notes={`Establish the base rate BEFORE the comparison, or the numbers later mean nothing. Do not rush.|SAY: ${h.facilities} ${S.noun} with a citation on record. ${h.avgPer} citations each on average. Hold that number — that is the normal ${st} outcome, not a bad one.`}>
+        <Slide notes={`Establish the base rate BEFORE the comparison, or the numbers later mean nothing. Do not rush.|SAY: ${h.facilities} ${S.noun} with a citation on record. ${h.avgPer} citations each on average, across those cited. Hold that number — that is the normal ${st} outcome, not a bad one.`}>
           <p className="eyebrow">THE LANDSCAPE</p>
           <h2>Three years of {st} surveys</h2>
           <div className="grid">
             <div className="card"><div className="n">{h.facilities}</div><div className="l">{S.noun} with a citation</div></div>
             <div className="card"><div className="n">{h.citations.toLocaleString()}</div><div className="l">Citations issued</div></div>
-            <div className="card"><div className="n">{h.avgPer}</div><div className="l">Average per facility</div></div>
+            <div className="card"><div className="n">{h.avgPer}</div><div className="l">Average per cited facility</div></div>
             {h.ij > 0
               ? <div className="card"><div className="n warn">{h.ij}</div><div className="l">Most-severe findings</div></div>
               : <div className="card"><div className="n warn">{d.complaintShare}%</div><div className="l">Complaint-driven</div></div>}
@@ -154,6 +154,13 @@ export default async function DeckPage({ params }: { params: Promise<Params> }) 
         <Slide notes={`Do not read the table aloud. Point at the highlighted rows and let them scan.|SAY: The full ten. The highlighted rows are where ${st} runs above national.`}>
           <p className="eyebrow">THE FULL PICTURE</p>
           <h2>Ten most-cited in {st}</h2>
+          {h.hasNational && h.nationalAsOf && (
+            <p className="eyebrow" style={{ opacity: 0.7 }}>
+              National comparison as of{" "}
+              {new Date(h.nationalAsOf).toLocaleDateString("en-US",
+                { month: "short", day: "numeric", year: "numeric" })}
+            </p>
+          )}
           <table>
             <thead><tr>
               <th>{S.tagWord === "rule" ? "§" : "Tag"}</th><th>Requirement</th>

@@ -103,13 +103,13 @@ export default async function OnePager({ params }: { params: Promise<Params> }) 
         <div className="stats">
           <div className="stat"><div className="n">{h.facilities}</div><div className="l">{S.noun} with a citation</div></div>
           <div className="stat"><div className="n">{h.citations.toLocaleString()}</div><div className="l">Citations</div></div>
-          <div className="stat"><div className="n">{h.avgPer}</div><div className="l">Avg per facility</div></div>
+          <div className="stat"><div className="n">{h.avgPer}</div><div className="l">Avg per cited facility</div></div>
           <div className="stat"><div className="n warn">{h.ij > 0 ? h.ij : `${d.complaintShare}%`}</div>
             <div className="l">{h.ij > 0 ? "Most-severe findings" : "Complaint-driven"}</div></div>
         </div>
         <p className="stamp">
           Source: {S.regime} · {window} · {h.facilities} {S.noun} with at least one citation in {st}
-          {h.hasNational ? " · national comparison across all reporting states" : ""} · compiled by EnhancedOps.Ninja
+          {h.hasNational ? ` · national comparison as of ${h.nationalAsOf ? new Date(h.nationalAsOf).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}) : "—"}` : ""} · compiled by EnhancedOps.Ninja
         </p>
 
         {(lead || win) && <>
