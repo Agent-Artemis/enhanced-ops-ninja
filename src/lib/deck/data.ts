@@ -122,20 +122,31 @@ export async function getDeckData(sector: Sector, state: string): Promise<DeckDa
     facilities: n(hr.facilities), citations: n(hr.citations), avgPer: n(hr.avg_per),
     ij: n(hr.ij), complaint: n(hr.complaint),
     fromDate: hr.from_date ?? null, toDate: hr.to_date ?? null,
-    hasNational: false, // suppressed with natlPct above — see note in the tags map
+    // National comparison RESTORED 2026-08-18, for SNF only.
+    // deck_top_tags now sources natl_pct from edu_natl_tag_rates, whose
+    // denominator is snf_surveys for the inspection cycle (clean surveys
+    // included) — the same denominator the state figure uses, so the two are
+    // comparable. Verified at parity with the education generator across
+    // UT/CA/TX/FL/NY/OH before restoring.
+    // Still false for every other sector: AL has 50 rulebooks and no national
+    // regime, and lab/home health/hospice have no surveyed-population
+    // denominator, so a national rate for them would be invented.
+    hasNational: sector === "snf",
   };
 
   const tags: TagRow[] = (t.data ?? []).map((r: Record<string, unknown>) => {
     const statePct = r.state_pct === null ? null : n(r.state_pct);
-    // NATIONAL COMPARISON SUPPRESSED (2026-08-18).
-    // natl_pct comes from deck_natl_rates, whose denominators reconcile with
-    // nothing: for lab it reports 7,687 against 28,028 distinct cited facilities
-    // and a 681,059 roster. No wording makes an unreproducible number honest, so
-    // the comparison is removed rather than reworded. Forcing this to null also
-    // nulls `gap`, which empties `worse`/`better` and drops the "runs N points
-    // above the national rate" blocks from both routes. Restore only when the
-    // denominator reconciliation lands.
-    const natlPct = null;
+    // National comparison restored 2026-08-18. It was suppressed because
+    // natl_pct came from deck_natl_rates, whose denominators reconciled with
+    // nothing — for lab it reported 7,687 against 28,028 distinct cited
+    // facilities and a 681,059 roster, and could not be reproduced.
+    //
+    // deck_top_tags now reads edu_natl_tag_rates instead, built from
+    // snf_surveys per inspection cycle. The function returns natl_pct for SNF
+    // and NULL for every other sector, so nothing here needs to gate by
+    // sector: a null still nulls `gap` and empties worse/better, exactly as
+    // the suppression did.
+    const natlPct = r.natl_pct === null || r.natl_pct === undefined ? null : n(r.natl_pct);
     return {
       tag: String(r.tag ?? ""),
       descr: String(r.descr ?? ""),
