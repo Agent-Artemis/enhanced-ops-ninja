@@ -38,6 +38,18 @@
  .row.unv .nm::after{content:" \25B3 verify";color:var(--gold);font-size:11px;font-weight:600;letter-spacing:.04em}
  .pnote{color:var(--gold);font-size:12.5px;line-height:1.4;margin-top:6px;background:rgba(245,179,1,.07);border-left:2px solid var(--gold);padding:6px 9px;border-radius:0 6px 6px 0;white-space:pre-wrap}
  .pnote b{color:var(--ink)}
+ /* RESEARCH BLOCK — machine-written prep from the `note` field. Deliberately a
+    different colour and carries its own label, because it must never be
+    confused with .pnote, which is Jeff's own note box (crm_call_list_notes).
+    Two different things, two different displays. Read-only by construction:
+    there is no input bound to it. */
+ .rnote{color:var(--text);font-size:12px;line-height:1.45;margin-top:6px;
+        background:rgba(26,110,204,.09);border-left:2px solid var(--blue2);
+        padding:6px 9px;border-radius:0 6px 6px 0;white-space:pre-wrap}
+ .rnote .lbl{display:block;font-size:9px;font-weight:800;letter-spacing:.09em;
+             text-transform:uppercase;color:var(--blue2);margin-bottom:3px}
+ .rnote b{color:var(--text);font-weight:700}
+ .row.warm{border-color:var(--gold)}
  .pbtn{appearance:none;border:1px solid var(--line2);background:#0b1220;color:var(--blue2);font-size:13px;font-weight:700;padding:9px 14px;border-radius:8px;cursor:pointer;margin:4px 0 8px;min-height:40px}
  .pbtn:hover{border-color:var(--blue)}
  .nowrap{color:var(--mut);font-size:12px;font-style:italic;padding:9px 0}
@@ -93,6 +105,23 @@
            white-space:pre-wrap; }
   .pnote b { color:#000 !important; }
 
+  /* RESEARCH PRINTS. Jeff called 30 numbers off this page with an empty notes
+     column — the reason codes, gatekeeper names and warnings were in the data
+     and nothing rendered them. On paper this is the difference between a cold
+     dial and a prepared one, so it prints boxed and stays with its row. */
+  .rnote { display:block !important; background:#fff !important; color:#000 !important;
+           border:0.75pt solid #666 !important; border-left:2.5pt solid #000 !important;
+           border-radius:0 !important; font-size:8.5pt !important;
+           padding:3pt 5pt !important; margin:3pt 0 !important;
+           white-space:pre-wrap; break-inside:avoid; page-break-inside:avoid; }
+  .rnote .lbl { display:block !important; font-size:6.5pt !important; font-weight:800 !important;
+                letter-spacing:.08em; color:#000 !important; margin-bottom:1pt !important; }
+  .rnote b { color:#000 !important; font-weight:700 !important; }
+  /* the warm leads are the rows that matter most on paper — mark them against
+     the name, the same way an unverified name is marked */
+  .row.warm .nm::after { content:" \2605\2605 WARM LEAD"; font-size:8.5pt !important;
+                         font-weight:700 !important; letter-spacing:.03em; }
+
   /* the phone number is the point of the page — make it the biggest thing */
   .row::after {
     content: "☐  " attr(data-phone) "                                                        ";
@@ -112,10 +141,10 @@
 <div class="wrap">
 <img class="logo" src="https://enhancedops.ninja/ninja-logo.png" alt="EnhancedOps.ninja">
 <h1>State Healthcare Associations</h1>
-<p class="sub">Association leadership by state. Tap a number to dial. <b>OCS</b> adds them to Action Needed, <b>&#128221;</b> logs a note, <b>&#128465;</b> hides the row.<br><b style="color:#4a9eea">in \u2713 Profile</b> = verified LinkedIn profile. <b style="color:#4a9eea">in Find</b> = pre-filled LinkedIn search \u2014 we never guess a profile URL.</p>
+<p class="sub">Association leadership by state. Tap a number to dial. <b>OCS</b> adds them to Action Needed, <b>&#128221;</b> logs a note, <b>&#128465;</b> hides the row.<br><b style="color:#4a9eea">in &#10003; Profile</b> = verified LinkedIn profile. <b style="color:#4a9eea">in Find</b> = pre-filled LinkedIn search &#8212; we never guess a profile URL.</p>
 <div class="tabs" id="tabs"></div>
 <div class="printhdr" id="printhdr"></div>
-<button id="printBtn" class="pbtn">\ud83d\udda8 Print this tab</button>
+<button id="printBtn" class="pbtn">&#128424; Print this tab</button>
 <div class="bar"><input class="q" id="q" type="search" placeholder="Search state, association, or person&hellip;" autocomplete="off">
 <div class="meta"><span id="cnt"></span><a id="showHid"></a><a id="reset">Clear checkmarks</a></div></div>
 <div id="list"></div>
@@ -176,6 +205,14 @@ function hydrateNotes(){fetch('/api/crm/call-list-note?list='+encodeURIComponent
   .then(function(r){return r.json();}).then(function(j){
     if(j&&j.notes){Object.keys(j.notes).forEach(function(k){NOTES[k]=j.notes[k];});render();}}).catch(function(){});}
 
+// Escapes first, then bolds only literal labels we author ourselves, so the
+// research text stays legible when it is read aloud under time pressure.
+// No caller-supplied HTML can reach the DOM through here.
+function fmtResearch(t){
+  return esc(t)
+    .replace(/Opening line:/g,'<b>Opening line:</b>')
+    .replace(/^(\u2605\u2605[^.]*\.)/,'<b>$1</b>');
+}
 function render(){
   document.getElementById('tabs').innerHTML=TABS.map(function(t){
     return '<button class="tab'+(t.k===tab?' on':'')+'" onclick="setTab(\''+t.k+'\')">'+esc(t.l)+' ('+DATA[t.k].length+')</button>';}).join('');
@@ -191,6 +228,9 @@ function render(){
   if(!rows.length){document.getElementById('list').innerHTML='<p class="empty">No match.</p>';return;}
   document.getElementById('list').innerHTML=rows.map(function(x){
     var r=x.r,i=x.i,k=key(r),hidden=isHidden(r),note=getNote(r);
+    // r.note is the RESEARCH field written into the data; note (above) is
+    // Jeff's own note from crm_call_list_notes. They are never merged.
+    var rn=r.note||'', warm=rn.indexOf('\u2605\u2605')===0;
     var acts=[];
     acts.push('<button class="actbtn'+(isDone(r)?' on':'')+'" onclick="toggle('+i+')">'+(isDone(r)?'\u2713 Called':'Mark called')+'</button>');
     if(r.d)acts.push('<a class="actbtn call" href="tel:+1'+r.d+'">\ud83d\udcde '+esc(r.p)+'</a>');
@@ -207,13 +247,14 @@ function render(){
     acts.push('<button class="actbtn note'+(note?' has':'')+'" id="nd'+i+'" onclick="toggleNote('+i+')">\ud83d\udcdd</button>');
     acts.push(hidden?'<button class="actbtn" onclick="restoreRow('+i+')">Restore</button>'
                     :'<button class="actbtn" onclick="hideRow('+i+')">\ud83d\uddd1</button>');
-    return '<div class="row'+(isDone(r)?' done':'')+(r.uv?' unv':'')+'" data-phone="'+esc(r.p||'')+'">'
+    return '<div class="row'+(isDone(r)?' done':'')+(r.uv?' unv':'')+(warm?' warm':'')+'" data-phone="'+esc(r.p||'')+'">'
       +'<span class="st">'+esc(r.st)+'</span>'
       +'<div class="nm">'+esc(r.n)+'</div>'
       +(r.t&&r.t!=='Association'?'<div class="ti">'+esc(r.t)+'</div>':'')
       +(r.o&&r.o!==r.n?'<div class="og">'+esc(r.o)+'</div>':'')
       +'<div class="mb">Members: '+esc(r.s)+'</div>'
       +(r.lin?'<div class="lin">\u26a0 '+esc(r.lin)+'</div>':'')
+      +(rn?'<div class="rnote"><span class="lbl">Research</span>'+fmtResearch(rn)+'</div>':'')
       +(note?'<div class="pnote"><b>Notes:</b> '+esc(note)+'</div>':'')
       +'<div class="acts">'+acts.join('')+'</div>'
       +(openKey===k?'<textarea class="notebox" placeholder="Notes\u2026" oninput="saveNote('+i+',this.value)" onblur="sendNote(\''+k+'\',this.value)">'+esc(note)+'</textarea>':'')
