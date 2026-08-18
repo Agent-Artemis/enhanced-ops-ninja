@@ -77,6 +77,10 @@ export interface Headline {
   ij: number; complaint: number;
   fromDate: string | null; toDate: string | null;
   hasNational: boolean;
+  /** When the national rates were last rebuilt, so a client-facing page can
+   *  always answer "as of when?" about the national column. Null when the
+   *  sector has no national comparison. */
+  nationalAsOf: string | null;
 }
 export interface TagRow {
   tag: string; descr: string;
@@ -106,12 +110,25 @@ export async function listStates(sector: Sector): Promise<string[]> {
 
 export async function getDeckData(sector: Sector, state: string): Promise<DeckData | null> {
   const sb = getSupabaseAdmin();
-  const [h, t] = await Promise.all([
+  const [h, t, ns] = await Promise.all([
     sb.rpc("deck_headline", { p_sector: sector, p_state: state }),
     sb.rpc("deck_top_tags", { p_sector: sector, p_state: state, p_limit: 10 }),
+    sb.rpc("edu_natl_rates_status"),
   ]);
   if (h.error) throw new Error(`deck_headline: ${h.error.message}`);
   if (t.error) throw new Error(`deck_top_tags: ${t.error.message}`);
+
+  // edu_natl_tag_rates is a TABLE, not a view. If the SNF loader has run since
+  // it was last rebuilt, the national column is stale — right-looking and
+  // quietly wrong. Treat stale as NO national rather than show a number we
+  // cannot stand behind. The loader refreshes it, so this should never fire;
+  // it exists because "should never fire" is how the last two silent-wrong
+  // bugs got shipped.
+  const stat = (ns.data ?? [])[0] as
+    { as_of?: string; is_stale?: boolean } | undefined;
+  const natlFresh = Boolean(stat) && stat!.is_stale === false;
+  const nationalAsOf = natlFresh ? (stat!.as_of ?? null) : null;
+  if (ns.error) console.error("edu_natl_rates_status:", ns.error.message);
 
   const hr = (h.data ?? [])[0];
   // No surveyed facilities means no honest deck — the caller renders a 404
@@ -131,7 +148,8 @@ export async function getDeckData(sector: Sector, state: string): Promise<DeckDa
     // Still false for every other sector: AL has 50 rulebooks and no national
     // regime, and lab/home health/hospice have no surveyed-population
     // denominator, so a national rate for them would be invented.
-    hasNational: sector === "snf",
+    hasNational: sector === "snf" && natlFresh,
+    nationalAsOf: sector === "snf" && natlFresh ? nationalAsOf : null,
   };
 
   const tags: TagRow[] = (t.data ?? []).map((r: Record<string, unknown>) => {
@@ -146,7 +164,8 @@ export async function getDeckData(sector: Sector, state: string): Promise<DeckDa
     // and NULL for every other sector, so nothing here needs to gate by
     // sector: a null still nulls `gap` and empties worse/better, exactly as
     // the suppression did.
-    const natlPct = r.natl_pct === null || r.natl_pct === undefined ? null : n(r.natl_pct);
+    const natlPct =
+      !natlFresh || r.natl_pct === null || r.natl_pct === undefined ? null : n(r.natl_pct);
     return {
       tag: String(r.tag ?? ""),
       descr: String(r.descr ?? ""),

@@ -154,6 +154,13 @@ export default async function DeckPage({ params }: { params: Promise<Params> }) 
         <Slide notes={`Do not read the table aloud. Point at the highlighted rows and let them scan.|SAY: The full ten. The highlighted rows are where ${st} runs above national.`}>
           <p className="eyebrow">THE FULL PICTURE</p>
           <h2>Ten most-cited in {st}</h2>
+          {h.hasNational && h.nationalAsOf && (
+            <p className="eyebrow" style={{ opacity: 0.7 }}>
+              National comparison as of{" "}
+              {new Date(h.nationalAsOf).toLocaleDateString("en-US",
+                { month: "short", day: "numeric", year: "numeric" })}
+            </p>
+          )}
           <table>
             <thead><tr>
               <th>{S.tagWord === "rule" ? "§" : "Tag"}</th><th>Requirement</th>

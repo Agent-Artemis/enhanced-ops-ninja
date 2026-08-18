@@ -109,7 +109,7 @@ export default async function OnePager({ params }: { params: Promise<Params> }) 
         </div>
         <p className="stamp">
           Source: {S.regime} · {window} · {h.facilities} {S.noun} with at least one citation in {st}
-          {h.hasNational ? " · national comparison across all reporting states" : ""} · compiled by EnhancedOps.Ninja
+          {h.hasNational ? ` · national comparison as of ${h.nationalAsOf ? new Date(h.nationalAsOf).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}) : "—"}` : ""} · compiled by EnhancedOps.Ninja
         </p>
 
         {(lead || win) && <>
