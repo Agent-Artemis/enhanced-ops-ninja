@@ -29,6 +29,14 @@
  a.tel:hover{text-decoration:underline}
  .nm{font-weight:700}
  .sub{color:var(--mut);font-size:12px}
+ /* CONTACT LINE. On the AL tab the administrator IS the name cell. On SNF the
+    facility is, because that is how Jeff identifies the row — so the person is
+    added beneath it rather than swapping it out. Net effect: on both tabs the
+    human being is in column two, and the two pages read the same in the hand.
+    Not muted like .sub: on paper this is the thing he is looking for. */
+ .contact{font-weight:600;font-size:12.5px;color:var(--text);margin-top:2px}
+ .contact .role{font-weight:400;color:var(--mut)}
+ .contact a{color:var(--blue2);font-weight:400}
  .ck{width:18px;height:18px;cursor:pointer;accent-color:var(--green)}
  .foot{color:var(--mut);font-size:12px;margin-top:16px}
  .hint{color:var(--gold);font-size:12.5px;margin-top:6px}
@@ -66,6 +74,8 @@
 @media print {
   @page { margin: 10mm 8mm; }
   html, body { background:#fff !important; color:#000 !important; }
+  table, thead, tbody, tr, td, .tscroll, .wrap {
+    background:#fff !important; background-image:none !important; box-shadow:none !important; }
   body { font-size:9.5pt; }
   .wrap { max-width:none !important; padding:0 !important; }
   .top, .tabs, .hint, .bar, .foot, button, .actbtn, input, .pbtn { display:none !important; }
@@ -79,6 +89,14 @@
   td { border-bottom:1px solid #ccc !important; padding:4pt !important; color:#000 !important;
        vertical-align:top; }
   tr { break-inside:avoid; page-break-inside:avoid; }
+  /* The administrator must survive to paper. Jeff hand-wrote Braden, Dave
+     Markley and Jeff Perkins into the margin of the 8/17 printout and opened
+     calls with "who is your administrator at that location?" — the name was in
+     the data and the SNF tab never rendered it. */
+  .contact { display:block !important; color:#000 !important; font-size:8.5pt !important;
+             font-weight:700 !important; margin-top:1pt !important; }
+  .contact .role { font-weight:400 !important; color:#333 !important; }
+  .contact a { color:#000 !important; }
   a { color:#000 !important; text-decoration:none !important; }
   /* hand-written columns */
   thead tr th:first-child::before { content:"\2713 "; }
@@ -185,7 +203,15 @@
      var od=ocsDone(r);
      var ocs='<button class="ocsbtn'+(od?' on':'')+'" id="ocs'+i+'" title="'+(od?'In CRM — click to remove':'Add to CRM (Action Needed)')+'" onclick="createOCS('+i+')">'+(od?'✓ OCS':'OCS')+'</button>';
      var nmVal=(tab==='al')?esc(r.a):esc(r.f);
-     var nm='<td class="nm">'+nmVal+badge+ocs+'</td>';
+     // The AL tab already shows the administrator as the name. The SNF tab shows
+     // the facility, so add the person underneath when we have one. Email renders
+     // on either tab whenever an `e` field exists — no row has one today, and
+     // that is exactly why it is wired now rather than after someone adds one.
+     var cbits=[];
+     if(tab!=='al'&&r.a)cbits.push('<span class="role">Administrator:</span> '+esc(r.a));
+     if(r.e)cbits.push('<a href="mailto:'+esc(r.e)+'">'+esc(r.e)+'</a>');
+     var contact=cbits.length?'<div class="contact">'+cbits.join(' \u00b7 ')+'</div>':'';
+     var nm='<td class="nm">'+nmVal+badge+ocs+contact+'</td>';
      var acts=showHidden
        ? '<button class="actbtn" title="Put back" onclick="restoreRow('+i+')">↩</button>'
        : '<button class="actbtn note'+(getNote(r)?' has':'')+'" id="nd'+i+'" title="Notes" onclick="toggleNote('+i+')">📝</button><button class="actbtn trash" title="Remove" onclick="hideRow('+i+')">🗑</button>';
