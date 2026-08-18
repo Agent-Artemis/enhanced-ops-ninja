@@ -14,11 +14,15 @@ import { getSupabaseAdmin } from "@/lib/supabase/admin";
  *     comparison entirely rather than printing a number that means nothing.
  */
 
+// `nounOne` exists because replace(/s$/,"") produced "facilitie",
+// "communitie", "agencie" and "laboratorie" — it is wrong for every single
+// sector we have. English plurals are not a regex; the singular is declared.
 export const SECTORS = {
   snf: {
     label: "Skilled Nursing",
     short: "SNF",
     noun: "skilled nursing facilities",
+    nounOne: "skilled nursing facility",
     tagWord: "F-tag",
     regime: "CMS federal survey data",
   },
@@ -26,6 +30,7 @@ export const SECTORS = {
     label: "Assisted Living",
     short: "AL",
     noun: "assisted living communities",
+    nounOne: "assisted living community",
     tagWord: "rule",
     regime: "state licensing survey data",
   },
@@ -33,6 +38,7 @@ export const SECTORS = {
     label: "Home Health",
     short: "HH",
     noun: "home health agencies",
+    nounOne: "home health agency",
     tagWord: "G-tag",
     regime: "CMS federal survey data",
   },
@@ -40,6 +46,7 @@ export const SECTORS = {
     label: "Hospice",
     short: "Hospice",
     noun: "hospice agencies",
+    nounOne: "hospice agency",
     tagWord: "L-tag",
     regime: "CMS federal survey data",
   },
@@ -47,6 +54,7 @@ export const SECTORS = {
     label: "Clinical Laboratory",
     short: "Lab",
     noun: "clinical laboratories",
+    nounOne: "clinical laboratory",
     tagWord: "D-tag",
     regime: "CLIA federal survey data",
   },
@@ -172,7 +180,14 @@ export async function getDeckData(sector: Sector, state: string): Promise<DeckDa
       facilities: n(r.facilities), citations: n(r.citations),
       ij: n(r.ij), complaint: n(r.complaint),
       statePct, natlPct,
-      gap: statePct !== null && natlPct !== null ? statePct - natlPct : null,
+      // Rounded HERE, not at each display site. Unrounded this rendered as
+      // "16.799999999999997 points above the national rate" on a live
+      // client-facing page. It was invisible only because natlPct was null
+      // while the national comparison was suppressed; restoring it exposed
+      // the float. One decimal, once, so every consumer inherits it.
+      gap: statePct !== null && natlPct !== null
+        ? Math.round((statePct - natlPct) * 10) / 10
+        : null,
     };
   });
 
