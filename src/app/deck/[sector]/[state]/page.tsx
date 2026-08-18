@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
   SECTORS, isSector, getDeckData, stateName, prettyTag, fmtDate,
+  denomWords,
   type DeckData, type TagRow,
 } from "@/lib/deck/data";
 import { DECK_CSS, DECK_SCRIPT } from "./deck-chrome";
@@ -56,6 +57,8 @@ export default async function DeckPage({ params }: { params: Promise<Params> }) 
   if (!d) notFound();
 
   const S = SECTORS[d.sector];
+
+  const DW = denomWords(S.denomKind, S.noun);
   const st = stateName(state);
   const { headline: h } = d;
   const lead: TagRow | undefined = d.worse[0];
@@ -193,10 +196,14 @@ export default async function DeckPage({ params }: { params: Promise<Params> }) 
               })}
             </tbody>
           </table>
+          {/* Same contradiction as the one-pager: this asserted the national
+              comparison was withdrawn while the U.S. column was on screen.
+              Gated, and the denominator wording now comes from the sector. */}
           <p className="cap" style={{ marginTop: "1.4vh", fontSize: "clamp(11px,1.15vw,15px)" }}>
-            Share of {st} {S.noun} <b>with a citation on record</b> — not a rate across all {S.noun}.
-            No national comparison is shown: the benchmark previously displayed came from a precomputed
-            table whose denominator could not be reconciled, so it has been withdrawn.
+            {DW.footnote.charAt(0).toUpperCase() + DW.footnote.slice(1)}.
+            {!h.hasNational && (S.denomKind === "cited"
+              ? ` No national comparison is shown for ${S.noun}: we hold no survey roster for this sector, so there is no population to measure a national rate against.`
+              : ` No national comparison is shown for ${S.noun}: each state runs its own rulebook, so a national rate would compare unlike things.`)}
           </p>
         </Slide>
 

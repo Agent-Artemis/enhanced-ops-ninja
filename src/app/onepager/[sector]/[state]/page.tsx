@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
-  SECTORS, isSector, getDeckData, stateName, prettyTag, fmtDate, type DeckData,
+  SECTORS, isSector, getDeckData, stateName, prettyTag, fmtDate, denomWords,
+  type DeckData,
 } from "@/lib/deck/data";
 
 export const dynamic = "force-dynamic";
@@ -81,6 +82,8 @@ export default async function OnePager({ params }: { params: Promise<Params> }) 
   if (!d) notFound();
 
   const S = SECTORS[d.sector];
+
+  const DW = denomWords(S.denomKind, S.noun);
   const st = stateName(state);
   const h = d.headline;
   const lead = d.worse[0];
@@ -145,11 +148,11 @@ export default async function OnePager({ params }: { params: Promise<Params> }) 
         )}
 
         <h2>The most-cited {S.tagWord}s</h2>
-        <p className="sec">Of {st} {S.noun} <b>with a citation on record</b>, the share that drew each {S.tagWord}. Ranked by distinct {S.noun} cited — one facility cited five times is one facility with a problem, not five. This is not a rate across all {S.noun}: facilities with no citation are not in the denominator.</p>
+        <p className="sec">{DW.body}</p>
         <div className="tw"><table>
           <thead><tr>
             <th>{S.tagWord === "rule" ? "§" : "Tag"}</th><th>Requirement</th>
-            <th className="num">Fac.</th><th className="num">% of cited</th>
+            <th className="num">Fac.</th><th className="num">{DW.columnHeader}</th>
             {h.hasNational && <><th className="num">U.S.</th><th className="num">Gap</th></>}
           </tr></thead>
           <tbody>
@@ -172,12 +175,17 @@ export default async function OnePager({ params }: { params: Promise<Params> }) 
             })}
           </tbody>
         </table></div>
-        <p className="sec" style={{ fontSize: 12.5, color: "var(--muted)" }}>
-          No national comparison is shown. The national benchmark we previously displayed came from a
-          precomputed table whose denominator could not be reconciled against either the citation record
-          or the provider roster, so it has been withdrawn rather than reworded. These figures are {st}
-          measured against itself.
-        </p>
+        {/* Only renders when there IS no benchmark. It previously rendered
+            unconditionally, so a page showing a full U.S. column also carried a
+            paragraph saying the comparison had been withdrawn — the numbers and
+            the words contradicting each other on the same sheet. */}
+        {!h.hasNational && (
+          <p className="sec" style={{ fontSize: 12.5, color: "var(--muted)" }}>
+            {S.denomKind === "cited"
+              ? `No national comparison is shown for ${S.noun}: we hold no survey roster for this sector, so there is no population to measure a national rate against. These figures are ${st} measured against itself.`
+              : `No national comparison is shown for ${S.noun}: each state runs its own rulebook, so a national rate would compare unlike things. These figures are ${st} measured against itself.`}
+          </p>
+        )}
 
         <h2>What this cannot tell you</h2>
         <p className="sec">This is state-level and historical. It describes the population, not your buildings. The questions it raises:</p>
@@ -197,8 +205,7 @@ export default async function OnePager({ params }: { params: Promise<Params> }) 
 
         <div className="foot">
           Prepared by <b>EnhancedOps.Ninja</b> — a dba of Augeo LLC. Compiled from public {S.regime}. Ranked by distinct
-          facilities cited; percentages use facilities actually surveyed in the window as the denominator, not all licensed
-          facilities. No facility is named. Provided for operational and educational purposes; not legal or regulatory advice
+          facilities cited; {DW.footnote}{"."} No facility is named. Provided for operational and educational purposes; not legal or regulatory advice
           and not a substitute for official survey records.
         </div>
       </div>
