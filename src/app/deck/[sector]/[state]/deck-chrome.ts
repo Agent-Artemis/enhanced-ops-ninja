@@ -81,11 +81,23 @@ ul.pts li b{color:var(--ink)}
 
 export const DECK_SCRIPT = `
 (function(){
-  var slides=[].slice.call(document.querySelectorAll('.slide'));
-  if(!slides.length) return;
+  // WRITTEN TO SURVIVE REACT REGENERATING THE TREE.
+  // This script runs during parse, before hydration. If React finds any
+  // mismatch it discards the server tree and rebuilds it — detaching every
+  // node a script is holding. Previously this file cached the slide list and
+  // bound onclick directly to #next/#prev, so after a rebuild the deck showed
+  // a correct slide 1 that could not advance: the classes were fine, the
+  // LISTENERS were attached to nodes that no longer existed.
+  // Two rules keep it alive regardless of ordering:
+  //   1. never cache element references — re-query on every use
+  //   2. never bind to an element — delegate from document, which React
+  //      never replaces
+  function slides(){ return [].slice.call(document.querySelectorAll('.slide')); }
+  if(!slides().length) return;
   var i=0, notesOn=false;
   function paintNotes(){
-    var raw=slides[i].getAttribute('data-notes')||'';
+    var sl=slides(); if(!sl[i]) return;
+    var raw=sl[i].getAttribute('data-notes')||'';
     var html='';
     raw.split('|').forEach(function(p){
       p=p.trim(); if(!p) return;
@@ -93,21 +105,27 @@ export const DECK_SCRIPT = `
         ? '<p class="say">'+p.slice(4).trim()+'</p>'
         : '<p>'+p+'</p>';
     });
-    document.getElementById('notesBody').innerHTML=html||'<p>&mdash;</p>';
+    var nb=document.getElementById('notesBody'); if(nb) nb.innerHTML=html||'<p>&mdash;</p>';
   }
   function show(n){
-    i=Math.max(0,Math.min(slides.length-1,n));
-    slides.forEach(function(s,k){s.classList.toggle('on',k===i);});
-    document.getElementById('cnt').textContent=(i+1)+' / '+slides.length;
-    document.getElementById('prog').style.width=((i+1)/slides.length*100)+'%';
-    var fls=slides[i].querySelectorAll('.fl');
+    var sl=slides(); if(!sl.length) return;
+    i=Math.max(0,Math.min(sl.length-1,n));
+    sl.forEach(function(s,k){s.classList.toggle('on',k===i);});
+    var c=document.getElementById('cnt'); if(c) c.textContent=(i+1)+' / '+sl.length;
+    var pr=document.getElementById('prog'); if(pr) pr.style.width=((i+1)/sl.length*100)+'%';
+    var fls=sl[i].querySelectorAll('.fl');
     [].forEach.call(fls,function(f){f.style.width='0';});
     setTimeout(function(){[].forEach.call(fls,function(f){f.style.width=(f.getAttribute('data-w')||0)+'%';});},60);
     paintNotes();
     try{history.replaceState(null,'','#'+(i+1));}catch(e){}
   }
-  document.getElementById('next').onclick=function(){show(i+1);};
-  document.getElementById('prev').onclick=function(){show(i-1);};
+  // Delegated from document: survives the tree being rebuilt under us.
+  document.addEventListener('click',function(e){
+    var t=e.target && e.target.closest ? e.target.closest('#next,#prev') : null;
+    if(!t) return;
+    e.preventDefault();
+    show(t.id==='next' ? i+1 : i-1);
+  });
   document.getElementById('btnNotes').onclick=function(){
     notesOn=!notesOn;document.getElementById('notes').classList.toggle('on',notesOn);};
   document.getElementById('btnFull').onclick=function(){
@@ -116,13 +134,17 @@ export const DECK_SCRIPT = `
   document.addEventListener('keydown',function(e){
     if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();show(i+1);}
     else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();show(i-1);}
-    else if(e.key==='Home'){show(0);} else if(e.key==='End'){show(slides.length-1);}
+    else if(e.key==='Home'){show(0);} else if(e.key==='End'){show(slides().length-1);}
     else if(e.key==='n'||e.key==='N'){document.getElementById('btnNotes').click();}
     else if(e.key==='f'||e.key==='F'){document.getElementById('btnFull').click();}
   });
-  var x0=null, stage=document.getElementById('stage');
-  stage.addEventListener('touchstart',function(e){x0=e.changedTouches[0].clientX;},{passive:true});
-  stage.addEventListener('touchend',function(e){
+  // Also delegated, for the same reason as the buttons.
+  var x0=null;
+  document.addEventListener('touchstart',function(e){
+    if(!(e.target&&e.target.closest&&e.target.closest('#stage')))return;
+    x0=e.changedTouches[0].clientX;},{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!(e.target&&e.target.closest&&e.target.closest('#stage')))return;
     if(x0===null)return; var dx=e.changedTouches[0].clientX-x0;
     if(Math.abs(dx)>55) show(i+(dx<0?1:-1)); x0=null;},{passive:true});
   var start=parseInt((location.hash||'').replace('#',''),10);

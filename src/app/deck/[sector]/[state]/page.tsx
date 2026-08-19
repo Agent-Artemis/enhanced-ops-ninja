@@ -279,6 +279,10 @@ export default async function DeckPage({ params }: { params: Promise<Params> }) 
         <button id="next" aria-label="Next">›</button>
       </div>
       <div className="notes" id="notes"><h4>SPEAKER NOTES</h4><div id="notesBody" /></div>
+      {/* Plain inline script, deliberately. next/script afterInteractive did
+          not execute the inline body in the App Router and the deck went dead.
+          Ordering is no longer what makes this safe — the script below is
+          written to survive React regenerating the tree. */}
       <script dangerouslySetInnerHTML={{ __html: DECK_SCRIPT }} />
     </>
   );
