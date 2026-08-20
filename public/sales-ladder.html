@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product Ladder — Sales Training | EnhancedOps.Ninja</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0F1A; --panel:#0E1420; --panel2:#131b2b;
+  --line:#243044; --line2:#31415c;
+  --blue:#1A6ECC; --blue2:#3F8AE0; --gold:#F5B301;
+  --text:#EEF3FA; --soft:#AEBBCD; --mut:#7E8DA0;
+  --head:'Bebas Neue',Impact,sans-serif;
+  --body:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px 80px}
+
+/* ── header ── */
+.top{padding:26px 0 18px;border-bottom:1px solid var(--line)}
+.top img{width:280px;max-width:70vw;height:auto;display:block}
+.eyebrow{font-family:var(--head);letter-spacing:.02em;font-size:15px;color:var(--blue2);margin:22px 0 4px}
+h1{font-family:var(--head);letter-spacing:.02em;font-size:clamp(38px,6vw,62px);line-height:1;margin:0 0 10px}
+.lede{color:var(--soft);font-size:17px;max-width:62ch;margin:0 0 6px}
+.forwho{display:inline-block;margin-top:14px;background:rgba(245,179,1,.12);border:1px solid rgba(245,179,1,.35);
+  color:var(--gold);font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:5px 11px;border-radius:5px}
+
+/* ── quick reference ── */
+h2{font-family:var(--head);letter-spacing:.02em;font-size:clamp(26px,3.4vw,36px);margin:44px 0 6px;line-height:1.1}
+.sub{color:var(--mut);font-size:14px;margin:0 0 18px}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+thead th{text-align:left;font-family:var(--head);letter-spacing:.04em;font-size:13px;color:var(--soft);
+  background:var(--panel2);border-bottom:1px solid var(--line2);padding:9px 12px;text-transform:uppercase}
+td{border-bottom:1px solid var(--line);padding:11px 12px;vertical-align:top}
+td.p{font-weight:700;white-space:nowrap}
+.unit{display:block;color:var(--gold);font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-top:3px}
+
+/* ── ladder ── */
+.rungs{display:flex;flex-direction:column;gap:16px;margin-top:8px}
+.rung{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+  border-left:4px solid var(--blue);border-radius:12px;padding:20px 22px}
+.rung.addon{border-left-color:var(--blue2);border-style:dashed}
+.rnum{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
+  background:var(--blue);color:#fff;font-family:var(--head);font-size:18px;letter-spacing:.02em;margin-right:10px}
+.rung h3{font-family:var(--head);letter-spacing:.02em;font-size:27px;margin:0;display:flex;align-items:center;flex-wrap:wrap;gap:2px}
+.price{margin:10px 0 2px;font-size:23px;font-weight:700;color:var(--blue2)}
+.rung .is{color:var(--text);font-size:15.5px;margin:10px 0 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+.box{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:9px;padding:12px 14px}
+.box .k{font-family:var(--head);letter-spacing:.05em;font-size:12.5px;color:var(--soft);text-transform:uppercase;margin-bottom:5px}
+.box.not{border-color:rgba(245,179,1,.3)}
+.box.not .k{color:var(--gold)}
+.box p{margin:0;font-size:14.5px;color:var(--soft)}
+.next{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line2);font-size:14.5px;color:var(--soft)}
+.next b{color:var(--blue2)}
+.arrow{text-align:center;font-family:var(--head);font-size:22px;color:var(--line2);letter-spacing:.3em;margin:-4px 0}
+.badge{display:inline-block;background:var(--blue);color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;padding:3px 8px;border-radius:4px;margin-left:10px;font-family:var(--body);vertical-align:middle}
+.badge.gold{background:rgba(245,179,1,.14);border:1px solid rgba(245,179,1,.4);color:var(--gold)}
+
+/* ── callouts ── */
+.note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);
+  border-radius:0 9px 9px 0;padding:14px 16px;margin:18px 0;color:var(--soft);font-size:14.5px}
+.note b{color:var(--text)}
+.hero-ninja{float:right;width:150px;margin:-10px 0 12px 22px}
+@media(max-width:720px){.hero-ninja{width:96px;margin-left:14px}}
+.btn{display:inline-block;background:var(--blue);color:#fff;font-weight:700;font-size:15px;
+  padding:12px 22px;border-radius:9px;text-decoration:none;border:0}
+.btn:hover{background:var(--blue2)}
+.foot{margin-top:42px;padding-top:16px;border-top:1px solid var(--line);color:var(--mut);font-size:12.5px}
+
+/* ══ PAPER. Jeff hands this to reps. ══ */
+@media print{
+  @page{margin:12mm 10mm}
+  html,body{background:#fff!important;color:#000!important}
+  body{font-size:10.5pt}
+  .wrap{max-width:none!important;padding:0!important}
+  .top{border-bottom:1.5pt solid #000!important}
+  /* The lockup is two-tone: grayscale alone leaves the lighter half almost
+     invisible on white. Flatten it to a solid black silhouette so the wordmark
+     is fully legible on paper. */
+  .top img{width:200px!important;filter:grayscale(1) brightness(0)}
+  .hero-ninja{width:110px!important;filter:grayscale(1) contrast(1.35)}
+  h1,h2,h3,.rung h3,.eyebrow{color:#000!important}
+  .lede,.sub,.box p,.next,.note,td,.rung .is,.rung p{color:#111!important}
+  .rung,.box,.note,thead th,td{background:#fff!important;background-image:none!important;box-shadow:none!important}
+  .rung{border:1px solid #999!important;border-left:3pt solid #000!important;border-radius:0!important;
+        break-inside:avoid;page-break-inside:avoid;padding:9pt 10pt!important;margin-bottom:8pt!important}
+  .box{border:1px solid #bbb!important;break-inside:avoid;page-break-inside:avoid}
+  .box.not{border:1.2pt solid #000!important}
+  .box.not .k{color:#000!important}
+  .rnum{background:#000!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .badge{background:#eee!important;color:#000!important;border:1px solid #666!important}
+  /* gold reads as pale grey on paper — force every gold surface to black ink */
+  .forwho{color:#000!important;background:#fff!important;border:1.2pt solid #000!important;font-weight:700}
+  .note{border-left:3pt solid #000!important;background:#fff!important}
+  .note b,.box .k,.eyebrow{color:#000!important}
+  .badge.gold{background:#eee!important;color:#000!important;border:1px solid #000!important}
+  .unit{color:#000!important;font-weight:700}
+  .price{color:#000!important}
+  .next b{color:#000!important}
+  .arrow{color:#000!important}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  thead{display:table-header-group}
+  thead th{border-bottom:1.5pt solid #000!important}
+  h2{break-after:avoid;page-break-after:avoid}
+  .btn{background:#fff!important;color:#000!important;border:1.2pt solid #000!important;font-weight:700}
+  a{color:#000!important;text-decoration:none!important}
+  .noprint{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top"><img src="ninja-logo.png" alt="EnhancedOps.Ninja"></div>
+
+  <div class="eyebrow">Sales Training</div>
+  <h1>The Product Ladder</h1>
+  <img class="hero-ninja" src="ninja-meditation.png" alt="">
+  <p class="lede">What we sell, what it costs, and how a customer moves up. Read this before your
+     first call. The most important line in each tier is <b>what it does not include</b> — that is
+     where the next sale comes from, and it is what stops you promising something we do not ship.</p>
+  <div class="forwho">Internal · sales team · not for customers</div>
+
+  <h2>Quick reference</h2>
+  <p class="sub">Get the unit right. It is the thing reps most often say wrong.</p>
+  <table>
+    <thead><tr><th>Product</th><th>Price</th><th>What the price is per</th></tr></thead>
+    <tbody>
+      <tr><td><b>Ninja Operating System</b></td><td class="p">$249/mo</td><td>Per location · unlimited users</td></tr>
+      <tr><td><b>Survey Ninja</b></td><td class="p">$249/mo</td><td>Per location · unlimited users</td></tr>
+      <tr><td><b>Ninja Suite</b> — both together</td><td class="p">$399/mo</td><td>Per location · unlimited users</td></tr>
+      <tr><td><b>Command Center</b></td><td class="p">$5,000 to start<br>+ $127/mo</td><td>Per <b>connection</b>, per location, per month</td></tr>
+      <tr><td><b>Custom software buildout</b></td><td class="p">$25,000+</td><td>Per project</td></tr>
+      <tr><td><b>Marketing package</b></td><td class="p">from $1,800</td><td>Per package (sample: 100 hrs) + data analytics</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note"><b>Launch pricing runs through 30 September.</b> Prices increase 1 October.
+     That is a real deadline you can use — say it plainly, do not invent urgency beyond it.</div>
+
+  <h2>The ladder</h2>
+  <p class="sub">One and two are the path. Three is where it goes for enterprise. Four sits alongside — it is not a rung.</p>
+
+  <div class="rungs">
+
+    <!-- TIER 1 -->
+    <div class="rung">
+      <h3><span class="rnum">1</span>The two core products<span class="badge">Start here</span></h3>
+      <p class="is">Two systems, sold alone or together. This is where nearly every customer starts.</p>
+
+      <div class="price">Ninja Operating System — $249/mo <span class="unit">per location · unlimited users</span></div>
+      <p class="is">Run your whole team: Goals, Scoreboard, Stand-ups, To-Dos, Org &amp; SOPs, Training.</p>
+
+      <div class="price" style="margin-top:16px">Survey Ninja — $249/mo <span class="unit">per location · unlimited users</span></div>
+      <p class="is">Your state's cited F-tags and Life Safety findings, ranked, with a prep workflow
+         to work them.</p>
+
+      <div class="price" style="margin-top:16px">Ninja Suite — both together — $399/mo <span class="unit">per location · unlimited users</span></div>
+      <p class="is">Both systems embedded in <b>one site</b>, so the team has a single login and one
+         place to work. Sold as ease of use, not as analytics.</p>
+
+      <div class="grid">
+        <div class="box"><div class="k">Who it is for</div>
+          <p>Any operator, single or multi-location, who needs the team running on one system.
+             Survey Ninja lands hardest with anyone who has just been surveyed or is due.</p></div>
+        <div class="box not"><div class="k">What it does NOT include</div>
+          <p><b>No dashboard. No data visibility.</b> The Suite puts both products in one site —
+             it does not bring your data together or report on it. Say this plainly on the call.
+             Promising a dashboard here is the single easiest way to lose the deal later.</p></div>
+      </div>
+      <div class="next">Next step up: <b>Command Center</b> — when they ask &ldquo;can I see it all in one view?&rdquo;,
+         that question is the upsell, and it is the one you are waiting for.</div>
+    </div>
+
+    <div class="arrow">▼</div>
+
+    <!-- TIER 2 -->
+    <div class="rung">
+      <h3><span class="rnum">2</span>Command Center<span class="badge">The upsell</span></h3>
+      <p class="is">&ldquo;Bring all of your data to make smart decisions <b>now</b>. Put your data in the
+         hands of the decision makers.&rdquo;</p>
+      <div class="price">$5,000 up front to start <span class="unit">then $127 per connection, per location, per month</span></div>
+      <p class="is">This is where the dashboard and the data actually live. Scales to enterprise.</p>
+      <div class="grid">
+        <div class="box"><div class="k">Who it is for</div>
+          <p>Multi-location operators, and anyone whose decision makers are still waiting on
+             someone to pull a report. The more systems they already run, the stronger this is.</p></div>
+        <div class="box not"><div class="k">What it does NOT include</div>
+          <p>Not custom software. It connects and surfaces what they already have — it does not
+             build them something new. Each connection is priced separately, so scope the number
+             of connections on the call rather than quoting a single monthly figure.</p></div>
+      </div>
+      <div class="next">Next step up: <b>Custom software buildout</b> — when what they need does not exist yet.</div>
+    </div>
+
+    <div class="arrow">▼</div>
+
+    <!-- TIER 3 -->
+    <div class="rung">
+      <h3><span class="rnum">3</span>Custom software buildout<span class="badge">Enterprise</span></h3>
+      <p class="is">Purpose-built software for a workflow no off-the-shelf product covers.</p>
+      <div class="price">$25,000 and up <span class="unit">per project · scoped individually</span></div>
+      <div class="grid">
+        <div class="box"><div class="k">Who it is for</div>
+          <p>Enterprise, and operators with a workflow that is genuinely theirs. Usually arrives
+             after Command Center, once the data is visible and the gap is obvious.</p></div>
+        <div class="box not"><div class="k">What it does NOT include</div>
+          <p>Never quote a price on the call. $25,000 is the floor, not an estimate. Scope, then
+             quote — bring it back to the team before you put a number in writing.</p></div>
+      </div>
+      <div class="next">Runs alongside the subscription tiers. It does not replace them.</div>
+    </div>
+
+    <!-- TIER 4 — parallel -->
+    <div class="rung addon">
+      <h3><span class="rnum" style="background:var(--blue2)">4</span>Marketing package<span class="badge gold">Add-on · not a rung</span></h3>
+      <p class="is">Voice in multiple languages, SMS, chat management, coordination and scheduling
+         for their sales team.</p>
+      <div class="price">Priced per package <span class="unit">sample: $1,800 / 100 hrs · plus data analytics charges</span></div>
+      <div class="grid">
+        <div class="box"><div class="k">Who it is for</div>
+          <p>Anyone with inbound they are not answering fast enough, or a sales team losing leads
+             to slow follow-up. Sells at any tier — it does not depend on the others.</p></div>
+        <div class="box not"><div class="k">What it does NOT include</div>
+          <p>The hours are the package; data analytics is charged on top. Quote both, or the first
+             invoice will be a surprise. Confirm the languages they actually need before promising.</p></div>
+      </div>
+      <div class="next">Attach at any rung — it is a parallel add-on, not the next step.</div>
+    </div>
+
+  </div>
+
+  <h2>How to use this on a call</h2>
+  <div class="note">
+    <b>Lead with the problem, not the ladder.</b> Ask what their team runs on today and what their
+    last survey looked like. If they name a system they hate, that is tier 1. If they say
+    &ldquo;I can never get a straight answer out of the numbers&rdquo;, that is tier 2 and you can go
+    there in the same conversation.
+  </div>
+  <div class="note">
+    <b>Never promise the dashboard at $399.</b> The Suite is one login and one site. The dashboard
+    is Command Center. Getting this wrong is the fastest way to a refund conversation.
+  </div>
+  <div class="note">
+    <b>Say the unit every time you say a price.</b> &ldquo;$249 a month, per location, unlimited
+    users.&rdquo; A rep who drops the unit creates a pricing dispute at renewal.
+  </div>
+
+  <p style="margin-top:26px"><a class="btn" href="https://enhancedops.ninja/">EnhancedOps.Ninja</a></p>
+
+  <div class="foot">
+    Internal sales training material — EnhancedOps.Ninja. Launch pricing valid through
+    30 September; prices increase 1 October. Not for distribution to customers.
+  </div>
+</div>
+</body>
+</html>
