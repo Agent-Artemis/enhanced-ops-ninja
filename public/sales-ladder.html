@@ -88,7 +88,10 @@ td.p{font-weight:700;white-space:nowrap}
 .note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);
   border-radius:0 9px 9px 0;padding:14px 16px;margin:18px 0;color:var(--soft);font-size:14.5px}
 .note b{color:var(--text)}
-.hero-ninja{float:right;width:150px;margin:-34px 34px 12px 22px}
+/* Evenly spaced in the gap between where the heading text ends and the page
+   edge. Measured, not nudged: text ended at 734px, page edge 1100px, ninja
+   150px wide — so 108px each side, which is margin-right 76px. */
+.hero-ninja{float:right;width:150px;margin:-60px 76px 12px 22px}
 @media(max-width:720px){.hero-ninja{width:96px;margin-left:14px}}
 .btn{display:inline-block;background:var(--blue);color:#fff;font-weight:700;font-size:15px;
   padding:12px 22px;border-radius:9px;text-decoration:none;border:0}
