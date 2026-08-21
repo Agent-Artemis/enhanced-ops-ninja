@@ -59,7 +59,6 @@ td.p{font-weight:700;white-space:nowrap}
 .rungs{display:flex;flex-direction:column;gap:16px;margin-top:8px}
 .rung{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
   border-left:4px solid var(--blue);border-radius:12px;padding:20px 22px}
-.rung.addon{border-left-color:var(--blue2);border-style:dashed;margin-top:80px}
 .rnum{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
   background:var(--blue);color:#fff;font-family:var(--head);font-size:18px;letter-spacing:.02em;margin-right:10px}
 .rung h3{font-family:var(--head);letter-spacing:.02em;font-size:27px;margin:0;display:flex;align-items:center;flex-wrap:wrap;gap:2px}
@@ -89,6 +88,19 @@ td.p{font-weight:700;white-space:nowrap}
 .nj{height:85px;width:auto;vertical-align:middle;margin-left:14px;opacity:.92}
 
 /* ── callouts ── */
+/* Section 1 holds three products in one rung, which makes it the densest block
+   on the page and the hardest to scan. Each product gets its own box so a rep
+   sees THREE things rather than one wall of text. The .price border is dropped
+   inside these: the product box now does the grouping, and keeping both would
+   be a box inside a box. Separation is BETWEEN the products, not around them. */
+/* Rungs 1-3 are separated by a 42px <div class="arrow">. Rung 4 has no arrow,
+   because its own copy says it is not the next step -- so without this it sits
+   at the bare 16px flex gap while the others sit at 58px. This is not category
+   styling; it is compensation for the missing separator so all three gaps match. */
+.rung.addon{margin-top:42px}
+.product{border:1.5px solid var(--line2);border-radius:8px;padding:12px 15px 13px;margin-top:14px}
+.product .price{border:0;border-radius:0;padding:0;margin:0;background:none}
+.rung .product .is{margin:7px 0 0}
 .note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);
   border-radius:0 9px 9px 0;padding:14px 16px;margin:18px 0;color:var(--soft);font-size:14.5px}
 .note b{color:var(--text)}
@@ -131,7 +143,6 @@ td.p{font-weight:700;white-space:nowrap}
   .rung{border:1px solid #999!important;border-left:3pt solid #000!important;border-radius:0!important;
         break-inside:auto;page-break-inside:auto;padding:9pt 10pt!important;margin-bottom:8pt!important}
   .rung h3{break-after:avoid;page-break-after:avoid}
-  .rung.addon{margin-top:44pt!important}
   .box{border:1px solid #bbb!important;break-inside:avoid;page-break-inside:avoid}
   .box.not{border:1.2pt solid #000!important}
   .box.not .k{color:#000!important}
@@ -140,6 +151,10 @@ td.p{font-weight:700;white-space:nowrap}
   /* gold reads as pale grey on paper — force every gold surface to black ink */
   .forwho{color:#000!important;background:#fff!important;border:1.2pt solid #000!important;font-weight:700}
   .note{border-left:3pt solid #000!important;background:#fff!important}
+  .rung.addon{margin-top:31.6pt!important}
+  .product{border:1px solid #999!important;border-radius:0!important;padding:6pt 8pt!important;
+            margin-top:8pt!important;break-inside:avoid;page-break-inside:avoid}
+  .product .price{border:0!important;padding:0!important;background:none!important}
   .note b,.box .k,.eyebrow{color:#000!important}
   .unit{color:#000!important;font-weight:700}
   .price{border:1px solid #999!important;background:#fff!important;border-radius:0!important;
@@ -235,16 +250,16 @@ td.p{font-weight:700;white-space:nowrap}
       <h3><span class="rnum">1</span>The two core products<span class="badge">Start here</span><img class="nj" src="ninja-fighting-stance-nj.png" alt=""></h3>
       <p class="is">Two systems, sold alone or together. This is where nearly every customer starts.</p>
 
-      <div class="price">Ninja Operating System — $249/mo <span class="unit">per location · unlimited users</span></div>
-      <p class="is">Run your whole team: Goals, Scoreboard, Stand-ups, To-Dos, Org &amp; SOPs, Training.</p>
+      <div class="product"><div class="price">Ninja Operating System — $249/mo <span class="unit">per location · unlimited users</span></div>
+      <p class="is">Run your whole team: Goals, Scoreboard, Stand-ups, To-Dos, Org &amp; SOPs, Training.</p></div>
 
-      <div class="price" style="margin-top:16px">Survey Ninja — $249/mo <span class="unit">per location · unlimited users</span></div>
+      <div class="product"><div class="price">Survey Ninja — $249/mo <span class="unit">per location · unlimited users</span></div>
       <p class="is">Your state's cited F-tags and Life Safety findings, ranked, with a prep workflow
-         to work them.</p>
+         to work them.</p></div>
 
-      <div class="price" style="margin-top:16px">Ninja Suite — both together — $399/mo <span class="unit">per location · unlimited users</span></div>
+      <div class="product"><div class="price">Ninja Suite — both together — $399/mo <span class="unit">per location · unlimited users</span></div>
       <p class="is">Both systems embedded in <b>one site</b>, so the team has a single login and one
-         place to work. Sold as ease of use, not as analytics.</p>
+         place to work. Sold as ease of use, not as analytics.</p></div>
 
       <div class="grid">
         <div class="box"><div class="k">Who it is for</div>
@@ -300,7 +315,7 @@ td.p{font-weight:700;white-space:nowrap}
 
     <!-- TIER 4 — parallel -->
     <div class="rung addon">
-      <h3><span class="rnum" style="background:var(--blue2)">4</span>Marketing package<img class="nj" src="ninja-star-nj.png" alt=""></h3>
+      <h3><span class="rnum">4</span>Marketing package<img class="nj" src="ninja-star-nj.png" alt=""></h3>
       <p class="is">Voice in multiple languages, SMS, chat management, coordination and scheduling
          for their sales team.</p>
       <div class="price">Priced per package <span class="unit">sample: $1,800 / 100 hrs · plus data analytics charges</span></div>
