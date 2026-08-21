@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EON — Braden Sims, Monday 24 Aug</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#1A6ECC; --gold:#F5B301;
+  --ink:#0F1722; --body:#2B3849; --soft:#5B6B80;
+  --line:#D6DEE9; --tint:#F2F6FB; --goldtint:#FFF8E6;
+  --paper:#FFFFFF;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper); color:var(--body);
+  font-family:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.45; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:860px;margin:0 auto;padding:22px 18px 56px}
+h1,h2,h3,.disp{font-family:"Bebas Neue","DM Sans",Impact,sans-serif;font-weight:400;letter-spacing:.02em;margin:0}
+
+/* header */
+.top{display:flex;align-items:center;gap:14px;border-bottom:3px solid var(--blue);padding-bottom:12px;margin-bottom:18px}
+.top img.logo{height:44px;width:auto}
+.top .t{flex:1;min-width:0}
+.top h1{font-size:34px;line-height:1;color:var(--ink)}
+.top .sub{font-size:13.5px;color:var(--soft);margin-top:3px}
+.when{text-align:right;font-size:13px;color:var(--ink);white-space:nowrap;font-weight:700}
+.when span{display:block;font-weight:400;color:var(--soft);font-size:12px}
+
+/* blocks */
+.block{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 13px;break-inside:avoid;page-break-inside:avoid}
+.block.hero{border:2px solid var(--gold);background:var(--goldtint)}
+.block.warn{background:var(--tint);border-style:dashed}
+.eyebrow{font-family:"Bebas Neue",sans-serif;font-size:15px;letter-spacing:.08em;color:var(--blue);margin-bottom:7px}
+.block.hero .eyebrow{color:#9A6E00}
+.ask{font-size:20px;line-height:1.3;color:var(--ink);font-weight:700;margin:0 0 8px}
+.block.hero .ask{font-size:24px}
+.note{font-size:13.5px;color:var(--body);margin:6px 0 0}
+.stop{font-family:"Bebas Neue",sans-serif;font-size:23px;letter-spacing:.05em;color:#B00020;margin-top:9px}
+
+/* action marker */
+.act{display:flex;gap:9px;align-items:flex-start;margin-top:9px}
+.act img{width:17px;height:17px;flex:0 0 17px;margin-top:2px}
+.act div{font-size:13.5px}
+
+/* numbered questions */
+ol.qs{margin:0;padding:0;list-style:none;counter-reset:q}
+ol.qs li{counter-increment:q;position:relative;padding:9px 0 9px 34px;border-top:1px solid var(--line)}
+ol.qs li:first-child{border-top:0;padding-top:2px}
+ol.qs li::before{content:counter(q);position:absolute;left:0;top:9px;width:23px;height:23px;border-radius:50%;
+  background:var(--blue);color:#fff;font-family:"Bebas Neue",sans-serif;font-size:15px;text-align:center;line-height:23px}
+ol.qs li:first-child::before{top:2px}
+ol.qs li.best::before{background:var(--gold);color:#3D2C00}
+ol.qs .q{font-size:15.5px;color:var(--ink);font-weight:500}
+ol.qs .why{font-size:12.5px;color:var(--soft);margin-top:2px}
+.tag{display:inline-block;background:var(--gold);color:#3D2C00;font-family:"Bebas Neue",sans-serif;
+  font-size:12px;letter-spacing:.06em;padding:1px 7px;border-radius:3px;margin-left:6px;vertical-align:2px}
+
+/* person card */
+.who{display:flex;gap:13px;align-items:flex-start}
+.who img.fig{width:52px;height:auto;flex:0 0 52px;opacity:.92}
+.who .nm{font-size:17px;color:var(--ink);font-weight:700}
+.who .rl{font-size:13px;color:var(--soft);margin-bottom:5px}
+.kv{font-size:13px;margin:1px 0}
+.kv b{color:var(--ink)}
+.overdue{color:#B00020;font-weight:700}
+
+/* facts strip */
+.facts{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:2px}
+.facts div{flex:1 1 132px;padding:9px 12px;border-right:1px solid var(--line);background:var(--tint)}
+.facts div:last-child{border-right:0}
+.facts .n{font-family:"Bebas Neue",sans-serif;font-size:24px;color:var(--blue);line-height:1}
+.facts .l{font-size:11.5px;color:var(--soft);margin-top:1px}
+.foot{font-size:11.5px;color:var(--soft);margin-top:16px;border-top:1px solid var(--line);padding-top:9px}
+
+@media print{
+  @page{margin:11mm}
+  body{font-size:11.5px}
+  .wrap{padding:0;max-width:none}
+  .top h1{font-size:29px}
+  .block{margin-bottom:9px;padding:10px 12px}
+  .block.hero .ask{font-size:20px}
+  .ask{font-size:17px}
+  .foot{margin-top:10px}
+  a{text-decoration:none;color:inherit}
+}
+@media (max-width:560px){
+  .top{flex-wrap:wrap}
+  .when{text-align:left;width:100%}
+  .facts div{flex:1 1 100%;border-right:0;border-bottom:1px solid var(--line)}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <img class="logo" src="/logo-ninja.png" alt="Enhanced Ops Ninja">
+    <div class="t">
+      <h1>Braden Sims &mdash; Monument Bountiful</h1>
+      <div class="sub">Monument Healthcare Bountiful &middot; 100 beds &middot; (801) 295-3135 &middot; braden.sims@monumenthg.com</div>
+    </div>
+    <div class="when">MON 24 AUG &middot; 1:00&ndash;1:30 PM MT<span>Google Meet &middot; he booked it himself</span></div>
+  </div>
+
+  <!-- 1. THE FIRST QUESTION -->
+  <div class="block hero">
+    <div class="eyebrow">Ask this first. Before the demo, before anything.</div>
+    <p class="ask">&ldquo;When was your last survey, and what did they tag you on?&rdquo;</p>
+    <div class="stop">THEN STOP TALKING.</div>
+    <p class="note">However long the silence runs. On 17 Aug you asked him seven questions and
+    <b>not one was about his building</b> &mdash; so he has still never told you a problem. He booked
+    anyway, off your follow-up email. <b>He booked despite that gap, not because of it.</b> Thirty
+    minutes with a man who has given you nothing to solve is the risk on Monday.</p>
+    <div class="act">
+      <img src="/ninja-star-nj.png" alt="">
+      <div>One problem in Braden&rsquo;s own words is worth more than everything else on this page.</div>
+    </div>
+  </div>
+
+  <!-- 2. THE OPENER -->
+  <div class="block">
+    <div class="eyebrow">The opener &mdash; a question only an insider asks</div>
+    <p class="ask">&ldquo;Did Monument get pulled into the five-claim probe? What did they come back on?&rdquo;</p>
+    <p class="note">CMS is running the <b>SNF 5-Claim Probe and Educate Review</b> across
+    <b>every Medicare-billing SNF in the country</b> &mdash; five claims each, rolling since June 2023,
+    highest-risk providers first. Monument has been through it or is in the queue. It is specific,
+    current and checkable, and it lands you on his ground rather than yours.</p>
+  </div>
+
+  <!-- 3. WHO SIGNS -->
+  <div class="block">
+    <div class="eyebrow">Three questions that answer who signs &mdash; without turning the demo into an interview</div>
+    <ol class="qs">
+      <li>
+        <div class="q">&ldquo;When you get an ADR or a probe review, who pulls the record together &mdash; you, or someone regional?&rdquo;</div>
+        <div class="why">Tells you where the work actually sits.</div>
+      </li>
+      <li>
+        <div class="q">&ldquo;If you wanted this for the building, is that your call or does it go through Monument?&rdquo;</div>
+        <div class="why">Tells you who signs. At 11 facilities, expect the answer to be no.</div>
+      </li>
+      <li class="best">
+        <div class="q">&ldquo;Do you use anyone outside for MDS or triple-check review?&rdquo; <span class="tag">Highest value</span></div>
+        <div class="why">The budget we would be displacing. Outsourced MDS/PDPM review starts at
+        <b>$3,500 per facility per month</b> &mdash; across Monument&rsquo;s 11 Utah buildings that is
+        <b>north of $600k a year</b>. If it is in-house instead, the answer is a headcount. Either way he knows,
+        and either way it is the number that sizes this.</div>
+      </li>
+    </ol>
+  </div>
+
+  <!-- 4. BRENT WILSON -->
+  <div class="block">
+    <div class="eyebrow">The second name &mdash; and you already have him</div>
+    <div class="who">
+      <img class="fig" src="/ninja-meditation-nj.png" alt="">
+      <div>
+        <div class="nm">Brent Wilson</div>
+        <div class="rl">Regional Director of Operations, Monument Health Group &middot; confirmed same company as Braden</div>
+        <div class="kv"><b>(801) 866-4773</b> &middot; no email on file &middot; referred by Rob Wensel</div>
+        <div class="kv">In the CRM since 29 Jul &middot; follow-up was due 18 Aug &mdash; <span class="overdue">3 days overdue</span></div>
+        <p class="note">If the buying decision runs through the regional rather than the building &mdash;
+        which is what 11 facilities usually means &mdash; <b>you are not missing that person. You already
+        have him, warm, by referral, and the follow-up lapsed.</b></p>
+        <div class="act">
+          <img src="/ninja-star-nj.png" alt="">
+          <div>Ask Braden how he and Brent work together. Do not name Brent as a lead &mdash; let Braden
+          describe the structure, then you know whether to call Brent as a referral or as a stranger.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. DO NOT ASK -->
+  <div class="block warn">
+    <div class="eyebrow">Do not ask &mdash; Rodney Washburn, same day</div>
+    <p class="note"><b>No PDPM, MDS, NTA or triple-check questions to Rodney.</b> Capitol Hill Senior Living is
+    <b>assisted living</b> (127 beds, licence F23-106565). Assisted living is not paid under PDPM &mdash; no
+    Medicare Part A, no MDS, no NTA. He does not run that process. The risk is not that he says
+    &ldquo;I don&rsquo;t know&rdquo;; it is that he answers helpfully and you act on it.
+    <br><br>He is still worth the call. <b>26 years in one building</b> is the best institutional memory on
+    the Utah list &mdash; but his ground is the <b>state licensing survey</b>, not CMS.</p>
+  </div>
+
+  <!-- FACTS -->
+  <div class="facts">
+    <div><div class="n">11</div><div class="l">Monument facilities in Utah</div></div>
+    <div><div class="n">1,215</div><div class="l">beds statewide</div></div>
+    <div><div class="n">18 mo</div><div class="l">since Monument entered Utah &mdash; 2 buildings, then 9 acquired</div></div>
+    <div><div class="n">3m45s</div><div class="l">your 17 Aug call &mdash; the only live conversation in 30 dials</div></div>
+  </div>
+
+  <p class="foot">
+    <b>Why the 18-month fact matters:</b> Monument assembled this chain by acquisition in about a year.
+    Eleven buildings that recently ran under different owners will not have one MDS process between them
+    &mdash; and inconsistency across buildings is a regional&rsquo;s problem, not an administrator&rsquo;s.
+    That is a question worth asking Braden, and it is the reason a regional would care.
+    <br><br>
+    Prepared 21 Aug 2026. Brent Wilson&rsquo;s employer confirmed against LinkedIn and the CRM record.
+    Facility counts from our own SNF data. Consultant pricing is PDPM Audit Optimization Group&rsquo;s
+    published rate card. <b>Intake Ninja pricing is not set</b> &mdash; no number on this page is a quote.
+  </p>
+
+</div>
+</body>
+</html>
