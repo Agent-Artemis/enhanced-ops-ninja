@@ -42,9 +42,17 @@ thead th{text-align:left;font-family:var(--head);letter-spacing:.04em;font-size:
   background:var(--panel2);border-bottom:1px solid var(--line2);padding:9px 12px;text-transform:uppercase}
 td{border-bottom:1px solid var(--line);padding:11px 12px;vertical-align:top}
 td.p{font-weight:700;white-space:nowrap}
-.seg{display:inline-block;margin-left:8px;background:rgba(26,110,204,.18);border:1px solid var(--blue);
-  color:var(--blue2);font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:4px}
-.seg.al{background:rgba(63,138,224,.10);border-color:var(--line2);color:var(--soft);margin-left:0}
+/* The SNF chip sits after a product name; the Assisted Living chip sits alone
+   in the row below. Left-aligned, their centres could never line up — "SNF" is
+   three characters and "Assisted Living" is fifteen, and the name above pushes
+   one of them across. Fixed width + float right puts BOTH on the same centre
+   axis regardless of label length, and moves the pair to the right of the cell.
+   This is why nudging a margin would not have fixed it. */
+.seg{display:inline-block;float:right;clear:right;width:112px;text-align:center;
+  margin-left:12px;background:rgba(26,110,204,.18);border:1px solid var(--blue);
+  color:var(--blue2);font-size:10px;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;padding:3px 0;border-radius:4px}
+.seg.al{background:rgba(63,138,224,.10);border-color:var(--line2);color:var(--soft);margin-left:12px}
 .unit{display:block;color:var(--gold);font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-top:3px}
 
 /* ── ladder ── */
@@ -69,15 +77,18 @@ td.p{font-weight:700;white-space:nowrap}
 .arrow{text-align:center;font-family:var(--head);font-size:22px;color:var(--line2);letter-spacing:.3em;margin:-4px 0}
 .badge{display:inline-block;background:var(--blue);color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.08em;
   text-transform:uppercase;padding:3px 8px;border-radius:4px;margin-left:10px;font-family:var(--body);vertical-align:middle}
-".badge.gold{background:rgba(245,179,1,.14);border:1px solid rgba(245,179,1,.4);color:var(--gold)}
-.nj{height:30px;width:auto;vertical-align:-7px;margin-left:10px;opacity:.92}
-.nj.sm{height:24px;vertical-align:-5px;margin-left:8px}
+.badge.gold{background:rgba(245,179,1,.14);border:1px solid rgba(245,179,1,.4);color:var(--gold)}
+/* Section accent. These were rendering at the PNG's natural 323px — larger
+   than the hero — because a stray quote above had broken this block. Fixed and
+   set to roughly a quarter of that, so it reads as an accent beside the
+   heading rather than a second hero. */
+.nj{height:80px;width:auto;vertical-align:middle;margin-left:14px;opacity:.92}
 
 /* ── callouts ── */
 .note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);
   border-radius:0 9px 9px 0;padding:14px 16px;margin:18px 0;color:var(--soft);font-size:14.5px}
 .note b{color:var(--text)}
-.hero-ninja{float:right;width:150px;margin:-10px 0 12px 22px}
+.hero-ninja{float:right;width:150px;margin:-34px 34px 12px 22px}
 @media(max-width:720px){.hero-ninja{width:96px;margin-left:14px}}
 .btn{display:inline-block;background:var(--blue);color:#fff;font-weight:700;font-size:15px;
   padding:12px 22px;border-radius:9px;text-decoration:none;border:0}
@@ -208,14 +219,14 @@ td.p{font-weight:700;white-space:nowrap}
       <h3><span class="rnum">1</span>The two core products<span class="badge">Start here</span><img class="nj" src="ninja-arms-folded.png" alt=""></h3>
       <p class="is">Two systems, sold alone or together. This is where nearly every customer starts.</p>
 
-      <div class="price">Ninja Operating System — $249/mo <img class="nj sm" src="ninja-arms-folded.png" alt=""> <span class="unit">per location · unlimited users</span></div>
+      <div class="price">Ninja Operating System — $249/mo <span class="unit">per location · unlimited users</span></div>
       <p class="is">Run your whole team: Goals, Scoreboard, Stand-ups, To-Dos, Org &amp; SOPs, Training.</p>
 
-      <div class="price" style="margin-top:16px">Survey Ninja — $249/mo <img class="nj sm" src="ninja-arms-folded.png" alt=""> <span class="unit">per location · unlimited users</span></div>
+      <div class="price" style="margin-top:16px">Survey Ninja — $249/mo <span class="unit">per location · unlimited users</span></div>
       <p class="is">Your state's cited F-tags and Life Safety findings, ranked, with a prep workflow
          to work them.</p>
 
-      <div class="price" style="margin-top:16px">Ninja Suite — both together — $399/mo <img class="nj sm" src="ninja-arms-folded.png" alt=""> <span class="unit">per location · unlimited users</span></div>
+      <div class="price" style="margin-top:16px">Ninja Suite — both together — $399/mo <span class="unit">per location · unlimited users</span></div>
       <p class="is">Both systems embedded in <b>one site</b>, so the team has a single login and one
          place to work. Sold as ease of use, not as analytics.</p>
 
