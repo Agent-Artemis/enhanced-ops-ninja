@@ -46,7 +46,7 @@ td.p{font-weight:700;white-space:nowrap}
 .rungs{display:flex;flex-direction:column;gap:16px;margin-top:8px}
 .rung{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
   border-left:4px solid var(--blue);border-radius:12px;padding:20px 22px}
-.rung.addon{border-left-color:var(--blue2);border-style:dashed}
+.rung.addon{border-left-color:var(--blue2);border-style:dashed;margin-top:80px}
 .rnum{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
   background:var(--blue);color:#fff;font-family:var(--head);font-size:18px;letter-spacing:.02em;margin-right:10px}
 .rung h3{font-family:var(--head);letter-spacing:.02em;font-size:27px;margin:0;display:flex;align-items:center;flex-wrap:wrap;gap:2px}
@@ -77,10 +77,17 @@ td.p{font-weight:700;white-space:nowrap}
 .btn{display:inline-block;background:var(--blue);color:#fff;font-weight:700;font-size:15px;
   padding:12px 22px;border-radius:9px;text-decoration:none;border:0}
 .btn:hover{background:var(--blue2)}
+.signoff{margin-top:88px;text-align:center}
+.signoff img{height:190px;width:auto;display:block;margin:0 auto 4px;opacity:.92}
+.signoff .tag{font-family:var(--head);letter-spacing:.05em;font-size:34px;line-height:1.1;color:var(--text);margin:0}
+@media(max-width:720px){.signoff{margin-top:56px}.signoff img{height:132px}.signoff .tag{font-size:27px}}
 .foot{margin-top:42px;padding-top:16px;border-top:1px solid var(--line);color:var(--mut);font-size:12.5px}
 
 /* ══ PAPER. Jeff hands this to reps. ══ */
 @media print{
+  .signoff{margin-top:34pt!important;break-inside:avoid;page-break-inside:avoid}
+  .signoff img{height:96pt!important;filter:grayscale(1) contrast(1.35)}
+  .signoff .tag{color:#000!important;font-size:24pt!important}
   @page{margin:12mm 10mm}
   html,body{background:#fff!important;color:#000!important}
   body{font-size:10.5pt}
@@ -101,6 +108,7 @@ td.p{font-weight:700;white-space:nowrap}
   .rung{border:1px solid #999!important;border-left:3pt solid #000!important;border-radius:0!important;
         break-inside:auto;page-break-inside:auto;padding:9pt 10pt!important;margin-bottom:8pt!important}
   .rung h3{break-after:avoid;page-break-after:avoid}
+  .rung.addon{margin-top:44pt!important}
   .box{border:1px solid #bbb!important;break-inside:avoid;page-break-inside:avoid}
   .box.not{border:1.2pt solid #000!important}
   .box.not .k{color:#000!important}
@@ -228,6 +236,12 @@ td.p{font-weight:700;white-space:nowrap}
   </div>
 
   <p style="margin-top:26px"><a class="btn" href="https://enhancedops.ninja/">Talk to us</a></p>
+
+
+  <div class="signoff">
+    <img src="ninja-meditation-nj.png" alt="">
+    <p class="tag">Operate like a ninja.</p>
+  </div>
 
   <div class="foot">
     EnhancedOps.Ninja &mdash; unified operations for multi-location operators.
