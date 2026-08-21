@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What We Build | EnhancedOps.Ninja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0F1A; --panel:#0E1420; --panel2:#131b2b;
+  --line:#243044; --line2:#31415c;
+  --blue:#1A6ECC; --blue2:#3F8AE0; --gold:#F5B301;
+  --text:#EEF3FA; --soft:#AEBBCD; --mut:#7E8DA0;
+  --head:'Bebas Neue',Impact,sans-serif;
+  --body:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px 80px}
+
+/* ── header ── */
+.top{padding:26px 0 18px;border-bottom:1px solid var(--line)}
+.top img{width:280px;max-width:70vw;height:auto;display:block}
+.eyebrow{font-family:var(--head);letter-spacing:.02em;font-size:15px;color:var(--blue2);margin:22px 0 4px}
+h1{font-family:var(--head);letter-spacing:.02em;font-size:clamp(38px,6vw,62px);line-height:1;margin:0 0 10px}
+.lede{color:var(--soft);font-size:17px;max-width:62ch;margin:0 0 6px}
+.forwho{display:inline-block;margin-top:14px;background:rgba(245,179,1,.12);border:1px solid rgba(245,179,1,.35);
+  color:var(--gold);font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:5px 11px;border-radius:5px}
+
+/* ── quick reference ── */
+h2{font-family:var(--head);letter-spacing:.02em;font-size:clamp(26px,3.4vw,36px);margin:44px 0 6px;line-height:1.1}
+.sub{color:var(--mut);font-size:14px;margin:0 0 18px}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+thead th{text-align:left;font-family:var(--head);letter-spacing:.04em;font-size:13px;color:var(--soft);
+  background:var(--panel2);border-bottom:1px solid var(--line2);padding:9px 12px;text-transform:uppercase}
+td{border-bottom:1px solid var(--line);padding:11px 12px;vertical-align:top}
+td.p{font-weight:700;white-space:nowrap}
+.seg{display:inline-block;margin-left:8px;background:rgba(26,110,204,.18);border:1px solid var(--blue);
+  color:var(--blue2);font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:4px}
+.seg.al{background:rgba(63,138,224,.10);border-color:var(--line2);color:var(--soft);margin-left:0}
+.unit{display:block;color:var(--gold);font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-top:3px}
+
+/* ── ladder ── */
+.rungs{display:flex;flex-direction:column;gap:16px;margin-top:8px}
+.rung{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+  border-left:4px solid var(--blue);border-radius:12px;padding:20px 22px}
+.rung.addon{border-left-color:var(--blue2);border-style:dashed}
+.rnum{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
+  background:var(--blue);color:#fff;font-family:var(--head);font-size:18px;letter-spacing:.02em;margin-right:10px}
+.rung h3{font-family:var(--head);letter-spacing:.02em;font-size:27px;margin:0;display:flex;align-items:center;flex-wrap:wrap;gap:2px}
+.price{margin:10px 0 2px;font-size:23px;font-weight:700;color:var(--blue2)}
+.rung .is{color:var(--text);font-size:15.5px;margin:10px 0 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+.box{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:9px;padding:12px 14px}
+.box .k{font-family:var(--head);letter-spacing:.05em;font-size:12.5px;color:var(--soft);text-transform:uppercase;margin-bottom:5px}
+.box.not{border-color:rgba(245,179,1,.3)}
+.box.not .k{color:var(--gold)}
+.box p{margin:0;font-size:14.5px;color:var(--soft)}
+.next{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line2);font-size:14.5px;color:var(--soft)}
+.next b{color:var(--blue2)}
+.arrow{text-align:center;font-family:var(--head);font-size:22px;color:var(--line2);letter-spacing:.3em;margin:-4px 0}
+.badge{display:inline-block;background:var(--blue);color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;padding:3px 8px;border-radius:4px;margin-left:10px;font-family:var(--body);vertical-align:middle}
+".badge.gold{background:rgba(245,179,1,.14);border:1px solid rgba(245,179,1,.4);color:var(--gold)}
+.nj{height:30px;width:auto;vertical-align:-7px;margin-left:10px;opacity:.92}
+.nj.sm{height:24px;vertical-align:-5px;margin-left:8px}
+
+/* ── callouts ── */
+.note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);
+  border-radius:0 9px 9px 0;padding:14px 16px;margin:18px 0;color:var(--soft);font-size:14.5px}
+.note b{color:var(--text)}
+.hero-ninja{float:right;width:150px;margin:-10px 0 12px 22px}
+@media(max-width:720px){.hero-ninja{width:96px;margin-left:14px}}
+.btn{display:inline-block;background:var(--blue);color:#fff;font-weight:700;font-size:15px;
+  padding:12px 22px;border-radius:9px;text-decoration:none;border:0}
+.btn:hover{background:var(--blue2)}
+.foot{margin-top:42px;padding-top:16px;border-top:1px solid var(--line);color:var(--mut);font-size:12.5px}
+
+/* ══ PAPER. Jeff hands this to reps. ══ */
+@media print{
+  @page{margin:12mm 10mm}
+  html,body{background:#fff!important;color:#000!important}
+  body{font-size:10.5pt}
+  .wrap{max-width:none!important;padding:0!important}
+  .top{border-bottom:1.5pt solid #000!important}
+  /* The lockup is two-tone: grayscale alone leaves the lighter half almost
+     invisible on white. Flatten it to a solid black silhouette so the wordmark
+     is fully legible on paper. */
+  .top img{width:200px!important;filter:grayscale(1) brightness(0)}
+  .hero-ninja{width:110px!important;filter:grayscale(1) contrast(1.35)}
+  h1,h2,h3,.rung h3,.eyebrow{color:#000!important}
+  .lede,.sub,.box p,.next,.note,td,.rung .is,.rung p{color:#111!important}
+  .rung,.box,.note,thead th,td{background:#fff!important;background-image:none!important;box-shadow:none!important}
+  /* A rung MAY break. break-inside:avoid on a block taller than the space
+     left pushes the whole thing to the next page and prints a near-empty one —
+     the client page lost all of page 1 to exactly that. Keep the boxes and the
+     table rows whole; let the container flow. */
+  .rung{border:1px solid #999!important;border-left:3pt solid #000!important;border-radius:0!important;
+        break-inside:auto;page-break-inside:auto;padding:9pt 10pt!important;margin-bottom:8pt!important}
+  .rung h3{break-after:avoid;page-break-after:avoid}
+  .box{border:1px solid #bbb!important;break-inside:avoid;page-break-inside:avoid}
+  .box.not{border:1.2pt solid #000!important}
+  .box.not .k{color:#000!important}
+  .rnum{background:#000!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .badge{background:#eee!important;color:#000!important;border:1px solid #666!important}
+  /* gold reads as pale grey on paper — force every gold surface to black ink */
+  .forwho{color:#000!important;background:#fff!important;border:1.2pt solid #000!important;font-weight:700}
+  .note{border-left:3pt solid #000!important;background:#fff!important}
+  .note b,.box .k,.eyebrow{color:#000!important}
+  .badge.gold{background:#eee!important;color:#000!important;border:1px solid #000!important}
+  .unit{color:#000!important;font-weight:700}
+  .seg{background:#eee!important;color:#000!important;border:1px solid #666!important}
+  .nj{filter:grayscale(1) contrast(1.35)}
+  .price{color:#000!important}
+  .next b{color:#000!important}
+  .arrow{color:#000!important}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  thead{display:table-header-group}
+  thead th{border-bottom:1.5pt solid #000!important}
+  h2{break-after:avoid;page-break-after:avoid}
+  .btn{background:#fff!important;color:#000!important;border:1.2pt solid #000!important;font-weight:700}
+  a{color:#000!important;text-decoration:none!important}
+  .noprint{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top"><img src="ninja-logo.png" alt="EnhancedOps.Ninja"></div>
+
+  <div class="eyebrow">What we build</div>
+  <h1>One system, then everything on top of it</h1>
+  <img class="hero-ninja" src="ninja-arms-folded.png" alt="">
+  <p class="lede">Most operators start in one place and grow into the rest. Here is the whole
+     picture, in the order people usually take it — so you can see where you would start and
+     what is there when you are ready for it.</p>
+
+  <h2>How it fits together</h2>
+  <p class="sub">Three steps, and one add-on that stands on its own.</p>
+
+  <div class="rungs">
+
+    <div class="rung">
+      <h3><span class="rnum">1</span>Run the team<img class="nj" src="ninja-arms-folded.png" alt=""></h3>
+      <p class="is">Two products. Take one, or take both together as the <b>Ninja Suite</b> — both
+         systems in one site, so your team has a single login and one place to work.</p>
+
+      <div class="price">Ninja Operating System <img class="nj sm" src="ninja-arms-folded.png" alt=""></div>
+      <p class="is">Run your whole team: Goals, Scoreboard, Stand-ups, To-Dos, Org &amp; SOPs, Training.</p>
+
+      <div class="price" style="margin-top:16px">Survey Ninja <img class="nj sm" src="ninja-arms-folded.png" alt=""></div>
+      <p class="is">Your state&rsquo;s cited F-tags and Life Safety findings, ranked, with a prep
+         workflow to work them — so you are preparing against what surveyors actually write in
+         your state, not a generic checklist.</p>
+
+      <div class="grid">
+        <div class="box"><div class="k">Who it is for</div>
+          <p>Any operator, single or multi-location, who needs the team running on one system.
+             Survey Ninja matters most if you have just been surveyed, or you are due.</p></div>
+        <div class="box"><div class="k">What you get</div>
+          <p>Every location, unlimited users. No per-seat counting and no limit on who you
+             bring in.</p></div>
+      </div>
+    </div>
+
+    <div class="arrow">&#9660;</div>
+
+    <div class="rung">
+      <h3><span class="rnum">2</span>Command Center<img class="nj" src="ninja-arms-folded.png" alt=""></h3>
+      <p class="is">Bring all of your data together to make smart decisions <b>now</b>. Put your
+         data in the hands of the decision makers.</p>
+      <p class="is">This is where the dashboard lives. It connects the systems you already run and
+         surfaces them in one view, so nobody is waiting on someone to pull a report.</p>
+      <div class="grid">
+        <div class="box"><div class="k">Who it is for</div>
+          <p>Multi-location operators, and anyone whose decisions are held up waiting for numbers.
+             The more systems you already run, the more this does.</p></div>
+        <div class="box"><div class="k">What you get</div>
+          <p>Your existing systems connected and reporting together. Scales to enterprise as you
+             add locations and connections.</p></div>
+      </div>
+    </div>
+
+    <div class="arrow">&#9660;</div>
+
+    <div class="rung">
+      <h3><span class="rnum">3</span>Custom software<img class="nj" src="ninja-arms-folded.png" alt=""></h3>
+      <p class="is">Purpose-built software for a workflow that no off-the-shelf product covers.</p>
+      <div class="grid">
+        <div class="box"><div class="k">Who it is for</div>
+          <p>Enterprise, and operators whose way of working is genuinely their own. It usually
+             comes after Command Center, once the data is visible and the gap is obvious.</p></div>
+        <div class="box"><div class="k">What you get</div>
+          <p>Software built to your workflow, scoped with you before anything is quoted.</p></div>
+      </div>
+    </div>
+
+    <div class="rung addon">
+      <h3><span class="rnum" style="background:var(--blue2)">4</span>Marketing<span class="badge gold">Stands alone</span></h3>
+      <p class="is">Voice in multiple languages, SMS, chat management, coordination and scheduling
+         for your sales team. It works at any stage — you do not need the rest to start here.</p>
+      <div class="grid">
+        <div class="box"><div class="k">Who it is for</div>
+          <p>Anyone with inbound they are not answering fast enough, or a team losing leads to
+             slow follow-up.</p></div>
+        <div class="box"><div class="k">What you get</div>
+          <p>Coverage on the channels your customers actually use, in the languages they speak.</p></div>
+      </div>
+    </div>
+
+  </div>
+
+  <h2>How pricing works</h2>
+  <div class="note">
+    <b>Two parts, and which apply depends on how far up you go.</b> Everything runs on a
+    <b>monthly subscription</b>, priced per location with unlimited users — and you can pay
+    monthly, pay annually for two months free, or own it outright with a single payment.
+    The upper tiers also carry an <b>up-front build cost</b>, because connecting your systems or
+    building something new is real work before it is a subscription. What you pay depends on how
+    many locations you run, how many systems you want connected, and the scope of anything built
+    for you. We scope it with you and put it in writing — no estimate on the first call.
+  </div>
+
+  <p style="margin-top:26px"><a class="btn" href="https://enhancedops.ninja/">Talk to us</a></p>
+
+  <div class="foot">
+    EnhancedOps.Ninja &mdash; unified operations for multi-location operators.
+  </div>
+</div>
+</body>
+</html>

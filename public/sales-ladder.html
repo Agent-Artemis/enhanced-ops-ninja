@@ -33,11 +33,18 @@ h1{font-family:var(--head);letter-spacing:.02em;font-size:clamp(38px,6vw,62px);l
 /* ── quick reference ── */
 h2{font-family:var(--head);letter-spacing:.02em;font-size:clamp(26px,3.4vw,36px);margin:44px 0 6px;line-height:1.1}
 .sub{color:var(--mut);font-size:14px;margin:0 0 18px}
+/* The pricing table is wide by necessity — SNF and AL across three terms.
+   It scrolls inside its own container so the page body never does. */
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:10px}
+.tw table{min-width:660px}
 table{width:100%;border-collapse:collapse;font-size:14.5px}
 thead th{text-align:left;font-family:var(--head);letter-spacing:.04em;font-size:13px;color:var(--soft);
   background:var(--panel2);border-bottom:1px solid var(--line2);padding:9px 12px;text-transform:uppercase}
 td{border-bottom:1px solid var(--line);padding:11px 12px;vertical-align:top}
 td.p{font-weight:700;white-space:nowrap}
+.seg{display:inline-block;margin-left:8px;background:rgba(26,110,204,.18);border:1px solid var(--blue);
+  color:var(--blue2);font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:4px}
+.seg.al{background:rgba(63,138,224,.10);border-color:var(--line2);color:var(--soft);margin-left:0}
 .unit{display:block;color:var(--gold);font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-top:3px}
 
 /* ── ladder ── */
@@ -62,7 +69,9 @@ td.p{font-weight:700;white-space:nowrap}
 .arrow{text-align:center;font-family:var(--head);font-size:22px;color:var(--line2);letter-spacing:.3em;margin:-4px 0}
 .badge{display:inline-block;background:var(--blue);color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.08em;
   text-transform:uppercase;padding:3px 8px;border-radius:4px;margin-left:10px;font-family:var(--body);vertical-align:middle}
-.badge.gold{background:rgba(245,179,1,.14);border:1px solid rgba(245,179,1,.4);color:var(--gold)}
+".badge.gold{background:rgba(245,179,1,.14);border:1px solid rgba(245,179,1,.4);color:var(--gold)}
+.nj{height:30px;width:auto;vertical-align:-7px;margin-left:10px;opacity:.92}
+.nj.sm{height:24px;vertical-align:-5px;margin-left:8px}
 
 /* ── callouts ── */
 .note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);
@@ -90,8 +99,13 @@ td.p{font-weight:700;white-space:nowrap}
   h1,h2,h3,.rung h3,.eyebrow{color:#000!important}
   .lede,.sub,.box p,.next,.note,td,.rung .is,.rung p{color:#111!important}
   .rung,.box,.note,thead th,td{background:#fff!important;background-image:none!important;box-shadow:none!important}
+  /* A rung MAY break. break-inside:avoid on a block taller than the space
+     left pushes the whole thing to the next page and prints a near-empty one —
+     the client page lost all of page 1 to exactly that. Keep the boxes and the
+     table rows whole; let the container flow. */
   .rung{border:1px solid #999!important;border-left:3pt solid #000!important;border-radius:0!important;
-        break-inside:avoid;page-break-inside:avoid;padding:9pt 10pt!important;margin-bottom:8pt!important}
+        break-inside:auto;page-break-inside:auto;padding:9pt 10pt!important;margin-bottom:8pt!important}
+  .rung h3{break-after:avoid;page-break-after:avoid}
   .box{border:1px solid #bbb!important;break-inside:avoid;page-break-inside:avoid}
   .box.not{border:1.2pt solid #000!important}
   .box.not .k{color:#000!important}
@@ -103,6 +117,8 @@ td.p{font-weight:700;white-space:nowrap}
   .note b,.box .k,.eyebrow{color:#000!important}
   .badge.gold{background:#eee!important;color:#000!important;border:1px solid #000!important}
   .unit{color:#000!important;font-weight:700}
+  .seg{background:#eee!important;color:#000!important;border:1px solid #666!important}
+  .nj{filter:grayscale(1) contrast(1.35)}
   .price{color:#000!important}
   .next b{color:#000!important}
   .arrow{color:#000!important}
@@ -110,6 +126,8 @@ td.p{font-weight:700;white-space:nowrap}
   thead{display:table-header-group}
   thead th{border-bottom:1.5pt solid #000!important}
   h2{break-after:avoid;page-break-after:avoid}
+  .tw{overflow:visible!important;border:0!important}
+  .tw table{min-width:0!important;width:100%!important}
   .btn{background:#fff!important;color:#000!important;border:1.2pt solid #000!important;font-weight:700}
   a{color:#000!important;text-decoration:none!important}
   .noprint{display:none!important}
@@ -123,25 +141,59 @@ td.p{font-weight:700;white-space:nowrap}
 
   <div class="eyebrow">Sales Training</div>
   <h1>The Product Ladder</h1>
-  <img class="hero-ninja" src="ninja-meditation.png" alt="">
+  <img class="hero-ninja" src="ninja-arms-folded.png" alt="">
   <p class="lede">What we sell, what it costs, and how a customer moves up. Read this before your
      first call. The most important line in each tier is <b>what it does not include</b> — that is
      where the next sale comes from, and it is what stops you promising something we do not ship.</p>
   <div class="forwho">Internal · sales team · not for customers</div>
 
   <h2>Quick reference</h2>
-  <p class="sub">Get the unit right. It is the thing reps most often say wrong.</p>
-  <table>
-    <thead><tr><th>Product</th><th>Price</th><th>What the price is per</th></tr></thead>
+  <p class="sub">Two things reps get wrong: the <b>unit</b>, and the fact that
+     <b>Skilled Nursing and Assisted Living are priced differently</b>. Both are below.</p>
+  <div class="tw"><table>
+    <thead><tr>
+      <th>Product</th>
+      <th>Monthly</th>
+      <th>Annual <span class="unit" style="display:inline;margin:0">2 months free</span></th>
+      <th>Own It</th>
+      <th>Per</th>
+    </tr></thead>
     <tbody>
-      <tr><td><b>Ninja Operating System</b></td><td class="p">$249/mo</td><td>Per location · unlimited users</td></tr>
-      <tr><td><b>Survey Ninja</b></td><td class="p">$249/mo</td><td>Per location · unlimited users</td></tr>
-      <tr><td><b>Ninja Suite</b> — both together</td><td class="p">$399/mo</td><td>Per location · unlimited users</td></tr>
-      <tr><td><b>Command Center</b></td><td class="p">$5,000 to start<br>+ $127/mo</td><td>Per <b>connection</b>, per location, per month</td></tr>
-      <tr><td><b>Custom software buildout</b></td><td class="p">$25,000+</td><td>Per project</td></tr>
-      <tr><td><b>Marketing package</b></td><td class="p">from $1,800</td><td>Per package (sample: 100 hrs) + data analytics</td></tr>
+      <tr><td><b>Survey Ninja</b><span class="seg">SNF</span></td>
+          <td class="p">$249/mo</td><td class="p">$2,490/yr</td><td class="p">$4,482</td>
+          <td rowspan="2">Per location<br>unlimited users</td></tr>
+      <tr><td><span class="seg al">Assisted Living</span></td>
+          <td class="p">$199/mo</td><td class="p">$1,990/yr</td><td class="p">$3,582</td></tr>
+
+      <tr><td><b>Ninja Operating System</b><span class="seg">SNF</span></td>
+          <td class="p">$249/mo</td><td class="p">$2,490/yr</td><td class="p">$4,482</td>
+          <td rowspan="2">Per location<br>unlimited users</td></tr>
+      <tr><td><span class="seg al">Assisted Living</span></td>
+          <td class="p">$249/mo</td><td class="p">$2,490/yr</td><td class="p">$4,482</td></tr>
+
+      <tr><td><b>Ninja Suite</b> — both<span class="seg">SNF</span></td>
+          <td class="p">$399/mo</td><td class="p">$3,990/yr</td><td class="p">$7,182</td>
+          <td rowspan="2">Per location<br>unlimited users</td></tr>
+      <tr><td><span class="seg al">Assisted Living</span></td>
+          <td class="p">$349/mo</td><td class="p">$3,490/yr</td><td class="p">$6,282</td></tr>
+
+      <tr><td><b>Command Center</b></td><td class="p" colspan="3">$5,000 and up, then $127/mo</td>
+          <td>Per <b>connection</b>, per location, per month</td></tr>
+      <tr><td><b>Custom software buildout</b></td><td class="p" colspan="3">$25,000 and up</td><td>Per project</td></tr>
+      <tr><td><b>Marketing package</b></td><td class="p" colspan="3">from $1,800 / 100 hrs</td><td>Per package + data analytics</td></tr>
     </tbody>
-  </table>
+  </table></div>
+
+  <div class="note"><b>Three ways to buy, on every tier-1 product.</b>
+     <b>Monthly</b> — the rate above.
+     <b>Annual</b> — ten months for twelve, so two months free.
+     <b>Own It</b> — a single payment of eighteen months. One payment, yours for life,
+     all updates included. Own It is the same number every time: monthly &times; 18.</div>
+
+  <div class="note"><b>Pre-launch list prices, for the discount you are actually giving:</b>
+     Survey Ninja $299 SNF / $249 AL · Ninja Operating System $299 both ·
+     Ninja Suite $499 SNF / $449 AL. Quote the launch price, but know the list — that is the
+     saving you are offering.</div>
 
   <div class="note"><b>Launch pricing runs through 30 September.</b> Prices increase 1 October.
      That is a real deadline you can use — say it plainly, do not invent urgency beyond it.</div>
@@ -153,17 +205,17 @@ td.p{font-weight:700;white-space:nowrap}
 
     <!-- TIER 1 -->
     <div class="rung">
-      <h3><span class="rnum">1</span>The two core products<span class="badge">Start here</span></h3>
+      <h3><span class="rnum">1</span>The two core products<span class="badge">Start here</span><img class="nj" src="ninja-arms-folded.png" alt=""></h3>
       <p class="is">Two systems, sold alone or together. This is where nearly every customer starts.</p>
 
-      <div class="price">Ninja Operating System — $249/mo <span class="unit">per location · unlimited users</span></div>
+      <div class="price">Ninja Operating System — $249/mo <img class="nj sm" src="ninja-arms-folded.png" alt=""> <span class="unit">per location · unlimited users</span></div>
       <p class="is">Run your whole team: Goals, Scoreboard, Stand-ups, To-Dos, Org &amp; SOPs, Training.</p>
 
-      <div class="price" style="margin-top:16px">Survey Ninja — $249/mo <span class="unit">per location · unlimited users</span></div>
+      <div class="price" style="margin-top:16px">Survey Ninja — $249/mo <img class="nj sm" src="ninja-arms-folded.png" alt=""> <span class="unit">per location · unlimited users</span></div>
       <p class="is">Your state's cited F-tags and Life Safety findings, ranked, with a prep workflow
          to work them.</p>
 
-      <div class="price" style="margin-top:16px">Ninja Suite — both together — $399/mo <span class="unit">per location · unlimited users</span></div>
+      <div class="price" style="margin-top:16px">Ninja Suite — both together — $399/mo <img class="nj sm" src="ninja-arms-folded.png" alt=""> <span class="unit">per location · unlimited users</span></div>
       <p class="is">Both systems embedded in <b>one site</b>, so the team has a single login and one
          place to work. Sold as ease of use, not as analytics.</p>
 
@@ -184,10 +236,10 @@ td.p{font-weight:700;white-space:nowrap}
 
     <!-- TIER 2 -->
     <div class="rung">
-      <h3><span class="rnum">2</span>Command Center<span class="badge">The upsell</span></h3>
+      <h3><span class="rnum">2</span>Command Center<span class="badge">The upsell</span><img class="nj" src="ninja-arms-folded.png" alt=""></h3>
       <p class="is">&ldquo;Bring all of your data to make smart decisions <b>now</b>. Put your data in the
          hands of the decision makers.&rdquo;</p>
-      <div class="price">$5,000 up front to start <span class="unit">then $127 per connection, per location, per month</span></div>
+      <div class="price">$5,000 and up <span class="unit">then $127 per connection, per location, per month</span></div>
       <p class="is">This is where the dashboard and the data actually live. Scales to enterprise.</p>
       <div class="grid">
         <div class="box"><div class="k">Who it is for</div>
@@ -205,7 +257,7 @@ td.p{font-weight:700;white-space:nowrap}
 
     <!-- TIER 3 -->
     <div class="rung">
-      <h3><span class="rnum">3</span>Custom software buildout<span class="badge">Enterprise</span></h3>
+      <h3><span class="rnum">3</span>Custom software buildout<span class="badge">Enterprise</span><img class="nj" src="ninja-arms-folded.png" alt=""></h3>
       <p class="is">Purpose-built software for a workflow no off-the-shelf product covers.</p>
       <div class="price">$25,000 and up <span class="unit">per project · scoped individually</span></div>
       <div class="grid">
