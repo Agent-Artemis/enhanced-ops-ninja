@@ -97,6 +97,12 @@ td .what{color:var(--soft);font-size:12.5px;display:block;margin-top:2px;font-we
   margin:2px 6px 0 0;color:var(--gold-ink);background:#fff;font-weight:700;
   -webkit-print-color-adjust:exact;print-color-adjust:exact}
 
+/* Exclusions list. Plain discs, no glyph bullets, and each item is kept
+   whole so a single exclusion can never split across a page break. */
+.excl{margin:9px 0 0;padding:0 0 0 18px}
+.excl li{font-size:13.5px;margin:5px 0;break-inside:avoid;page-break-inside:avoid}
+.excl li::marker{color:var(--blue)}
+
 /* ── PLAIN-SPEAKING PAIR ── */
 .pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
 .pair .card{border:1px solid var(--line);border-radius:8px;padding:11px 13px;background:var(--tint);
@@ -135,6 +141,7 @@ td .what{color:var(--soft);font-size:12.5px;display:block;margin-top:2px;font-we
   .saving .big{font-size:31px}
   .saving .txt{font-size:11.5px}
   .stack{margin-top:4px;font-size:11px}
+  .excl li{font-size:11.8px;margin:3px 0}
   .pair{gap:9px}
   .pair .card{padding:8px 10px}
   .pair .card h3{font-size:15px}
@@ -306,9 +313,25 @@ td .what{color:var(--soft);font-size:12.5px;display:block;margin-top:2px;font-we
     </div>
   </div>
 
-  <!-- 4 ── STATED PLAINLY -->
+  <!-- 4 ── EXCLUSIONS -->
   <div class="sec">
     <div class="kicker">SECTION 4</div>
+    <h2>What this quote excludes</h2>
+    <p>This quote covers EnhancedOps.Ninja design, build, integration and support. It excludes
+    third-party platform costs, which remain on SAL's own accounts:</p>
+    <ul class="excl">
+      <li>Any ECP partner, interface or API fees. ECP does not publish these.</li>
+      <li>API tier upgrades required for access. For example, SEMrush API access sits on a higher
+          plan tier.</li>
+      <li>Any Veras data-feed charge.</li>
+      <li>QuickBooks Desktop middleware licensing, if the CRAWL evaluation recommends a commercial
+          connector.</li>
+    </ul>
+  </div>
+
+  <!-- 5 ── STATED PLAINLY -->
+  <div class="sec">
+    <div class="kicker">SECTION 5</div>
     <h2>Two things stated plainly</h2>
     <div class="pair">
       <div class="card">
@@ -328,22 +351,23 @@ td .what{color:var(--soft);font-size:12.5px;display:block;margin-top:2px;font-we
     </div>
   </div>
 
-  <!-- 5 ── OWNERSHIP -->
+  <!-- 6 ── OWNERSHIP -->
   <div class="sec">
-    <div class="kicker">SECTION 5</div>
+    <div class="kicker">SECTION 6</div>
     <h2>Ownership</h2>
     <p>SAL owns the resulting system as a company asset that transfers with the business.
     EnhancedOps.Ninja retains its underlying platform and methodology, and serves as SAL's
     exclusive provider for hosting, operation and support. Full terms are in the Service Agreement.</p>
   </div>
 
-  <!-- 6 ── TIMELINE -->
+  <!-- 7 ── TIMELINE -->
   <div class="sec">
-    <div class="kicker">SECTION 6</div>
+    <div class="kicker">SECTION 7</div>
     <h2>What unlocks the timeline</h2>
-    <p>An introduction to Tyler at ECP, or permission to name SAL as the reference, moves ECP
-    partner approval from months to weeks. <b>ECP is the single highest-leverage connection</b>,
-    because most of the Sales module reads from it.</p>
+    <p>An introduction to Tyler at ECP, or permission to name SAL as the reference, is the
+    single most useful thing you can give us. <b>ECP is the highest-leverage connection on the
+    list</b>, because most of the Sales module reads from it, and ECP's partner request asks at
+    the first step whether the applicant is already working with an ECP client.</p>
   </div>
 
   <div class="foot">
