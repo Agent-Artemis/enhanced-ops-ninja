@@ -84,18 +84,48 @@ td .what{color:var(--soft);font-size:12.5px;display:block;margin-top:2px;font-we
 
 .fn{font-size:12px;color:var(--soft);margin-top:10px;padding-top:8px;border-top:1px dashed var(--line)}
 
-/* ── SAVING CALLOUT ── */
-.saving{border:2px solid var(--gold);background:var(--goldtint);border-radius:10px;padding:13px 16px;
-  margin-top:12px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+/* ── TWO BUILD OPTIONS ──────────────────────────────────────────────────
+   Presented as equals: identical widths, borders, weights and type. Neither
+   is marked recommended, because the decision the page is asking for is which
+   one, not whether. The ONLY row that differs between the two columns is the
+   subscription commitment, and it is tinted in both so a reader can see at a
+   glance that the longer term is what buys the lower build. */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.opt{border:1.5px solid var(--line);border-radius:9px;padding:12px 13px 13px;
+  break-inside:avoid;page-break-inside:avoid}
+.opt .oh{border-bottom:1.5px solid var(--line);padding-bottom:7px;margin-bottom:8px}
+.opt .ot{font-family:"Bebas Neue",sans-serif;font-size:21px;color:var(--ink);line-height:1}
+.opt .oterm{font-size:12.5px;color:var(--blue);font-weight:700;margin-top:1px}
+table.calc{margin:0}
+table.calc td{border-bottom:0;padding:3px 0;font-size:12.5px;vertical-align:baseline}
+table.calc td.n{font-weight:700;color:var(--ink)}
+table.calc tr.diff td{background:rgba(26,110,204,.09);padding:5px 6px;
   -webkit-print-color-adjust:exact;print-color-adjust:exact}
-.saving .big{font-family:"Bebas Neue",sans-serif;font-size:44px;line-height:.95;color:var(--gold-ink);
+table.calc tr.diff td:first-child{border-left:3px solid var(--blue);font-weight:700;color:var(--ink)}
+table.calc tr.rule td{border-top:1.5px solid var(--ink);padding-top:6px}
+.opt .yb{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:7px}
+.opt .yb .l{font-family:"Bebas Neue",sans-serif;font-size:15px;letter-spacing:.05em;color:var(--ink)}
+.opt .yb .v{font-family:"Bebas Neue",sans-serif;font-size:31px;color:var(--blue);line-height:1;
   font-variant-numeric:tabular-nums}
-.saving .txt{flex:1;min-width:220px;font-size:13px;color:var(--body)}
-.saving .txt b{color:var(--gold-ink)}
-.stack{margin-top:7px;font-size:12.5px}
-.stack span{display:inline-block;border:1px solid var(--gold);border-radius:4px;padding:1px 7px;
-  margin:2px 6px 0 0;color:var(--gold-ink);background:#fff;font-weight:700;
+.opt .sv{background:var(--goldtint);border:1px solid var(--gold);border-radius:5px;padding:4px 8px;
+  font-size:12.5px;color:var(--gold-ink);font-weight:700;margin-top:7px;text-align:center;
   -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.opt .tcv{margin-top:9px;padding-top:7px;border-top:1px dashed var(--line)}
+.opt .tcv .r{display:flex;justify-content:space-between;gap:8px;font-size:12px;margin:2px 0}
+.opt .tcv .r b{font-variant-numeric:tabular-nums}
+.opt .tcv .r.tt{border-top:1px solid var(--line);margin-top:5px;padding-top:5px;font-size:13px;color:var(--ink)}
+.opt .tcv .r.tt span:first-child{font-family:"Bebas Neue",sans-serif;letter-spacing:.05em;font-size:14px}
+.mech{margin-top:11px;border-left:3px solid var(--blue);background:var(--tint);border-radius:0 6px 6px 0;
+  padding:9px 12px;font-size:13px;break-inside:avoid;page-break-inside:avoid;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.phases{margin:9px 0 0;padding:0;list-style:none}
+.phases li{border-top:1px solid var(--line);padding:6px 0;font-size:13px}
+.phases li:first-child{border-top:0}
+.phases .pn{font-family:"Bebas Neue",sans-serif;font-size:15px;letter-spacing:.05em;color:var(--ink);
+  margin-right:8px}
+.dt{font-weight:700;color:var(--ink)}
+
+/* ── SAVING CALLOUT ── */
 
 /* Exclusions list. Plain discs, no glyph bullets, and each item is kept
    whole so a single exclusion can never split across a page break. */
@@ -118,52 +148,57 @@ td .what{color:var(--soft);font-size:12.5px;display:block;margin-top:2px;font-we
      compression comes out of padding and leading rather than type size,
      which has to stay readable for a COO reading a printed quote. */
   @page{margin:9mm}
-  body{font-size:10.8px;line-height:1.34}
+  body{font-size:10.6px;line-height:1.3}
   .wrap{padding:0;max-width:none}
   .top{padding-bottom:9px;margin-bottom:10px}
   .top h1{font-size:27px}
   .brandchip img{height:36px}
-  .forwho{padding:8px 11px;margin-bottom:10px}
+  .forwho{padding:6px 10px;margin-bottom:8px}
   .forwho .nm{font-size:14px}
-  .sec{margin-bottom:7px;padding:9px 11px}
+  .sec{margin-bottom:5px;padding:8px 10px}
   .sec h2{font-size:19px}
-  .sec .intro{margin:3px 0 6px;font-size:11.5px}
-  .sec p{font-size:11.8px;margin-top:5px}
+  .sec .intro{margin:2px 0 5px;font-size:11.2px}
+  .sec p{font-size:11.4px;margin-top:4px}
   th,td{padding:4px 7px;font-size:11.5px}
   td .what{font-size:10.8px;margin-top:1px}
   tr.tot td{padding-top:6px;font-size:13px}
   tr.tot td:first-child,tr.tot td.n{font-size:14px}
-  .terms{margin-top:7px}
-  .terms div{padding:6px 10px}
-  .terms .n{font-size:17px}
-  .terms .l{font-size:10.5px}
-  .saving{padding:9px 12px;margin-top:8px;gap:12px}
-  .saving .big{font-size:31px}
-  .saving .txt{font-size:11.5px}
-  .stack{margin-top:4px;font-size:11px}
-  .excl li{font-size:11.8px;margin:3px 0}
+  .terms{margin-top:6px}
+  .terms div{padding:4px 9px}
+  .terms .n{font-size:15px}
+  .terms .l{font-size:10px}
+  .opts{gap:8px;margin-top:7px}
+  .opt .tcv .r{margin:1px 0}
+  .opt{padding:7px 9px}
+  .opt .ot{font-size:18px}
+  table.calc td{font-size:11.2px;padding:2px 0}
+  .opt .yb .v{font-size:25px}
+  .opt .tcv .r{font-size:10.8px}
+  .phases li{font-size:11.2px;padding:3px 0}
+  .mech{font-size:11.2px;padding:5px 9px;margin-top:6px}
+  .excl li{font-size:11.4px;margin:1px 0}
   .pair{gap:9px}
-  .pair .card{padding:8px 10px}
+  .pair .card{padding:6px 9px}
   .pair .card h3{font-size:15px}
-  .pair .card p{font-size:11.5px}
+  .pair .card p{font-size:11.2px}
   /* Sections FLOW, rows stay whole. A break-inside:avoid on a section taller
      than the space left on the sheet moves the whole section down and leaves
      half a page blank, which is what was happening to the build table. Instead
      the protection sits on the parts that must not split: table rows, the
-     saving callout, the two cards, the fact strips. The build table's header
-     repeats if it does cross a page, and the totals row can never be orphaned
-     from the rows it totals. */
+     option cards, the mechanism note, the two cards, the fact strips. Each
+     option card is kept whole so a reader never sees half a price stack. */
   .sec{break-inside:auto;page-break-inside:auto}
   .sec h2,.sec .kicker{break-after:avoid;page-break-after:avoid}
   thead{display:table-header-group}
   tr{break-inside:avoid;page-break-inside:avoid}
   tr.tot{break-before:avoid;page-break-before:avoid}
-  .terms,.saving,.pair .card,.forwho{break-inside:avoid;page-break-inside:avoid}
-  .fn{margin-top:7px;padding-top:6px;font-size:10.8px}
-  .foot{margin-top:9px;padding-top:7px;font-size:10.5px}
+  .terms,.opt,.mech,.pair .card,.forwho{break-inside:avoid;page-break-inside:avoid}
+  .fn{margin-top:6px;padding-top:5px;font-size:10.4px}
+  .foot{margin-top:6px;padding-top:5px;font-size:10.2px}
   a{text-decoration:none;color:inherit}
 }
 @media (max-width:620px){
+  .opts{grid-template-columns:1fr}
   .top{flex-wrap:wrap;gap:12px}
   .top .ref{text-align:left;width:100%;white-space:normal}
   .pair{grid-template-columns:1fr}
@@ -187,7 +222,7 @@ td .what{color:var(--soft);font-size:12.5px;display:block;margin-top:2px;font-we
     <div class="brandchip"><img src="/logo-ninja.png" alt="EnhancedOps.Ninja"></div>
     <div class="t">
       <h1>Quote</h1>
-      <div class="sub">SAL Management Group &middot; 15 communities</div>
+      <div class="sub">SAL Management Group &middot; 16 units &middot; 15 communities plus corporate</div>
     </div>
     <div class="ref">
       <b>Scope of Work, 13 Aug 2026</b>
@@ -204,33 +239,33 @@ td .what{color:var(--soft);font-size:12.5px;display:block;margin-top:2px;font-we
   <!-- 1 ── RECURRING, PER COMMUNITY -->
   <div class="sec">
     <div class="kicker">SECTION 1</div>
-    <h2>Recurring, per community per month</h2>
-    <p class="intro">Priced independently of the build, so each community can be costed on its own.</p>
+    <h2>Recurring, per unit per month</h2>
+    <p class="intro">Priced independently of the build, so each unit can be costed on its own. <b>These per-unit prices are not discounted.</b> They are our standard rates, and they do not change with the term you choose.</p>
 
     <table>
       <thead>
-        <tr><th>Tool</th><th class="n">Per community, per month</th></tr>
+        <tr><th>Tool</th><th class="n">Per unit, per month</th></tr>
       </thead>
       <tbody>
         <tr>
           <td>Ninja OS on its own<span class="what">Goals, scoreboard, stand-ups, to-dos, org and SOPs, training</span></td>
-          <td class="n" data-l="Per community, per month">$250 /mo</td>
+          <td class="n" data-l="Per unit, per month">$250 /mo</td>
         </tr>
         <tr>
           <td>State survey and audit tools on its own<span class="what">Cited tags and Life Safety findings for your state, ranked, with a prep workflow</span></td>
-          <td class="n" data-l="Per community, per month">$200 /mo</td>
+          <td class="n" data-l="Per unit, per month">$200 /mo</td>
         </tr>
         <tr class="pick">
           <td><b>Both together</b><span class="pill">RECOMMENDED</span><span class="what">Both systems in one site, a single login and one place to work</span></td>
-          <td class="n" data-l="Per community, per month">$349 /mo</td>
+          <td class="n" data-l="Per unit, per month">$349 /mo</td>
         </tr>
         <tr>
           <td>Command Center, the hub<span class="what">Your data brought together and reported on in one view</span></td>
-          <td class="n" data-l="Per community, per month">+$125 /mo</td>
+          <td class="n" data-l="Per unit, per month">+$125 /mo</td>
         </tr>
         <tr class="tot">
           <td>All in</td>
-          <td class="n" data-l="Per community, per month">$474 /mo</td>
+          <td class="n" data-l="Per unit, per month">$474 /mo</td>
         </tr>
       </tbody>
     </table>
@@ -241,7 +276,14 @@ td .what{color:var(--soft);font-size:12.5px;display:block;margin-top:2px;font-we
       <div><div class="n">$6,282</div><div class="l">Own It, one payment</div></div>
     </div>
 
-    <div class="fn">Billing begins per community as that community goes live, not on signature.</div>
+    <div class="terms" style="margin-top:9px">
+      <div><div class="n">16 units</div><div class="l">15 communities plus corporate</div></div>
+      <div><div class="n">$474 /mo</div><div class="l">All in, per unit</div></div>
+      <div><div class="n">$7,584 /mo</div><div class="l">All in, all 16 units</div></div>
+    </div>
+
+    <div class="fn">Corporate is charged as a unit because it is the heaviest user of the hub.
+    Billing begins per unit as that unit goes live, not on signature.</div>
   </div>
 
   <!-- 2 ── RETAINER -->
@@ -262,55 +304,67 @@ td .what{color:var(--soft);font-size:12.5px;display:block;margin-top:2px;font-we
     <h2>The build, phase gated</h2>
     <p class="intro">Each phase is separately authorized. Nothing starts until the prior phase is accepted.</p>
 
-    <table>
-      <thead>
-        <tr><th>Phase</th><th class="n">List</th><th class="n">Discount</th><th class="n">Net</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><b>CRAWL</b><span class="what">Visibility Audit, plus the financial hub mock-up for Brody. Identifies the source system for payroll and labour data, confirms its access method and returns a connector recommendation with costs</span></td>
-          <td class="n" data-l="List"><span class="strike">$6,500</span></td>
-          <td class="n" data-l="Discount"><span class="cut">&minus;$1,950</span></td>
-          <td class="n" data-l="Net">$4,550</td>
-        </tr>
-        <tr>
-          <td><b>WALK</b><span class="what">ECP, QuickBooks Desktop, internal reports and ProFormas, Sales and Census module, six core Command Center modules</span></td>
-          <td class="n" data-l="List"><span class="strike">$46,000</span></td>
-          <td class="n" data-l="Discount"><span class="cut">&minus;$13,800</span></td>
-          <td class="n" data-l="Net">$32,200</td>
-        </tr>
-        <tr>
-          <td><b>RUN</b><span class="what">Ninja OS rollout, compliance and survey engine, Plan of Correction builder, P&amp;P library</span></td>
-          <td class="n" data-l="List"><span class="strike">$14,000</span></td>
-          <td class="n" data-l="Discount"><span class="cut">&minus;$4,200</span></td>
-          <td class="n" data-l="Net">$9,800</td>
-        </tr>
-        <tr>
-          <td><b>SCALE</b><span class="what">Podium, SEMrush, Meta, Veras, Direct Supply</span></td>
-          <td class="n" data-l="List"><span class="strike">$18,000</span></td>
-          <td class="n" data-l="Discount"><span class="cut">&minus;$5,400</span></td>
-          <td class="n" data-l="Net">$12,600</td>
-        </tr>
-        <tr class="tot">
-          <td>Total</td>
-          <td class="n" data-l="List"><span class="strike">$84,500</span></td>
-          <td class="n" data-l="Discount"><span class="cut">&minus;$25,350</span></td>
-          <td class="n" data-l="Net">$59,150</td>
-        </tr>
-      </tbody>
-    </table>
+    <ul class="phases">
+      <li><span class="pn">CRAWL</span>Visibility Audit, plus the financial hub mock-up for Brody.
+          Identifies the source system for payroll and labour data, confirms its access method and
+          returns a connector recommendation with costs.</li>
+      <li><span class="pn">WALK</span>ECP, QuickBooks Desktop, internal reports and ProFormas,
+          Sales and Census module, six core Command Center modules.</li>
+      <li><span class="pn">RUN</span>Ninja OS rollout, compliance and survey engine, Plan of
+          Correction builder, P&amp;P library.</li>
+      <li><span class="pn">SCALE</span>Podium, SEMrush, Meta, Veras, Direct Supply.</li>
+    </ul>
 
-    <div class="saving">
-      <div class="big">$25,350</div>
-      <div class="txt">
-        <b>Total saving on the build.</b> A 30 percent reduction against list, made up of two
-        separate reasons:
-        <div class="stack">
-          <span>20% design partner and case study</span>
-          <span>10% fast execution and CRAWL prepaid</span>
+    <p class="intro" style="margin:12px 0 0">Two ways to buy the same build. The scope above is
+    identical in both.</p>
+
+    <div class="opts">
+      <div class="opt">
+        <div class="oh">
+          <div class="ot">Option A</div>
+          <div class="oterm">36-month subscription term</div>
+        </div>
+        <table class="calc">
+          <tr><td>List</td><td class="n">$54,270</td></tr>
+          <tr><td>Design partner and case study rights</td><td class="n">&minus;$10,854</td></tr>
+          <tr class="diff"><td>36-month subscription commitment</td><td class="n">&minus;$18,996</td></tr>
+          <tr><td>Signed and paid in full by <span class="dt" id="quote-date-a">[DATE]</span></td><td class="n">&minus;$8,720</td></tr>
+        </table>
+        <div class="yb"><div class="l">Your build</div><div class="v">$15,700</div></div>
+        <div class="sv">You save $38,570</div>
+        <div class="tcv">
+          <div class="r"><span>Subscription, $7,584/mo x 36</span><b>$273,024</b></div>
+          <div class="r"><span>Implementation retainer</span><b>$18,000</b></div>
+          <div class="r"><span>Your build</span><b>$15,700</b></div>
+          <div class="r tt"><span>Total contract value</span><b>$306,724</b></div>
+        </div>
+      </div>
+      <div class="opt">
+        <div class="oh">
+          <div class="ot">Option B</div>
+          <div class="oterm">24-month subscription term</div>
+        </div>
+        <table class="calc">
+          <tr><td>List</td><td class="n">$54,270</td></tr>
+          <tr><td>Design partner and case study rights</td><td class="n">&minus;$10,854</td></tr>
+          <tr class="diff"><td>24-month subscription commitment</td><td class="n">&minus;$12,664</td></tr>
+          <tr><td>Signed and paid in full by <span class="dt" id="quote-date-b">[DATE]</span></td><td class="n">&minus;$8,720</td></tr>
+        </table>
+        <div class="yb"><div class="l">Your build</div><div class="v">$22,032</div></div>
+        <div class="sv">You save $32,238</div>
+        <div class="tcv">
+          <div class="r"><span>Subscription, $7,584/mo x 24</span><b>$182,016</b></div>
+          <div class="r"><span>Implementation retainer</span><b>$18,000</b></div>
+          <div class="r"><span>Your build</span><b>$22,032</b></div>
+          <div class="r tt"><span>Total contract value</span><b>$222,048</b></div>
         </div>
       </div>
     </div>
+
+    <div class="mech"><b>One line separates these two columns.</b> The design partner credit and
+    the signed-and-paid credit are identical in both. Only the subscription commitment changes,
+    and the $6,332 difference in that line is exactly the $6,332 difference in your build price.
+    A longer commitment is what buys the lower build.</div>
   </div>
 
   <!-- 4 ── EXCLUSIONS -->
