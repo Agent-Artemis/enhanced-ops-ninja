@@ -742,12 +742,38 @@ function exportSession(){
   };
   const json = JSON.stringify(payload, null, 2);
   const d = Object.values(S.decisions);
-  const avg = k => { const v = d.filter(x=>x.status===k && x.msSpent).map(x=>x.msSpent);
-    return v.length ? Math.round(v.reduce((a,b)=>a+b,0)/v.length/1000)+'s' : '—'; };
+
+  /* True median, not a mean. The question this answers — does rejecting
+     cost more than confirming — is distorted by one interrupted decision,
+     and a median survives that where an average does not. */
+  const medianMs = k => {
+    const v = d.filter(x => x.status === k && x.msSpent).map(x => x.msSpent).sort((a,b) => a-b);
+    if (!v.length) return null;
+    const m = Math.floor(v.length/2);
+    return v.length % 2 ? v[m] : Math.round((v[m-1]+v[m])/2);
+  };
+  const secs = ms => ms == null ? null : Math.round(ms/100)/10;
+  const cMs = medianMs('confirm'), rMs = medianMs('reject');
+  const cS = secs(cMs), rS = secs(rMs);
+
+  /* The comparison Artemis asked to watch, stated outright rather than
+     left for someone to compute out of the JSON. */
+  let costLine;
+  if (cMs == null || rMs == null) {
+    costLine = `Median time — confirm ${cS==null?'no data':cS+'s'}, reject ${rS==null?'no data':rS+'s'} (need at least one of each to compare)`;
+  } else {
+    const ratio = cMs === 0 ? null : Math.round((rMs/cMs)*10)/10;
+    const verdict = ratio == null ? ''
+      : ratio >= 1.05 ? `  →  rejecting costs ${ratio}x a confirm`
+      : ratio <= 0.95 ? `  →  rejecting is faster than confirming (${ratio}x)`
+      : '  →  about the same';
+    costLine = `Median time — CONFIRM ${cS}s vs REJECT ${rS}s${verdict}`;
+  }
+
   const summary = [
     `Confirmed ${d.filter(x=>x.status==='confirm').length} · Rejected ${d.filter(x=>x.status==='reject').length} · Added ${S.added.length}`,
     `Score ${confirmedPoints()} points — band ${bandFor(confirmedPoints()).code}`,
-    `Median-ish time: confirm ${avg('confirm')}, reject ${avg('reject')}`,
+    costLine,
     `Worked in this order: ${S.order.join(', ')||'—'}`
   ].join('\n');
   TAB='export'; window.__export = {json, summary}; render(); window.scrollTo(0,0);
