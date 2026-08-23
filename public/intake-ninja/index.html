@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Intake Ninja — NTA capture prototype (sample data)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Intake Ninja — prototype
+   Presentation lives here. The data model in the script block carries no
+   styling decisions, so this stylesheet can be replaced wholesale
+   when Evelyn's competitor research lands.
+   ============================================================ */
+:root{
+  --blue:#1A6ECC; --blue-dk:#12508f; --blue-soft:rgba(26,110,204,.10);
+  --gold:#F5B301; --gold-soft:rgba(245,179,1,.14);
+  --ink:#0F1724; --ink-2:#33415A; --ink-3:#6B7A90;
+  --line:#DCE3EC; --bg:#F4F7FB; --card:#FFFFFF;
+  --ok:#1B8A5A; --ok-soft:rgba(27,138,90,.10);
+  --no:#B3261E; --no-soft:rgba(179,38,30,.08);
+  --warn:#8A6100;
+  --r:12px; --pad:16px;
+  --head:'Bebas Neue',Impact,sans-serif;
+  --body:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.h{font-family:var(--head);font-weight:400;letter-spacing:.02em;margin:0}
+button{font:inherit;cursor:pointer}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em}
+
+/* ---------- sample-data banner: must be unmissable on every screen ---------- */
+.sample-banner{position:sticky;top:0;z-index:60;background:var(--gold);color:#241a00;
+  font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;
+  text-align:center;padding:7px 12px;border-bottom:2px solid #c99400}
+
+/* ---------- app bar ---------- */
+.appbar{position:sticky;top:31px;z-index:50;background:var(--card);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:12px;padding:10px var(--pad)}
+.appbar img{height:30px;width:auto;display:block}
+.appbar .name{font-family:var(--head);font-size:23px;line-height:1;color:var(--ink)}
+.appbar .name span{color:var(--blue)}
+.appbar .spacer{flex:1}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink-2);border-radius:10px;
+  padding:9px 13px;font-size:14px;font-weight:500;min-height:44px;display:inline-flex;align-items:center;gap:7px}
+.btn:hover{border-color:var(--blue);color:var(--blue)}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.primary:hover{background:var(--blue-dk);color:#fff}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#241a00;font-weight:700}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:6px;padding:10px var(--pad) 0;background:var(--card);border-bottom:1px solid var(--line);
+  overflow-x:auto;-webkit-overflow-scrolling:touch;position:sticky;top:82px;z-index:45}
+.tab{border:0;background:transparent;color:var(--ink-3);font-weight:500;font-size:15px;
+  padding:10px 12px;border-bottom:3px solid transparent;white-space:nowrap;min-height:44px}
+.tab.on{color:var(--blue);border-bottom-color:var(--blue)}
+.tab .pill{display:inline-block;min-width:20px;padding:0 6px;margin-left:6px;border-radius:999px;
+  background:var(--bg);color:var(--ink-3);font-size:12px;font-weight:700;line-height:19px;text-align:center}
+.tab.on .pill{background:var(--blue-soft);color:var(--blue)}
+
+main{max-width:940px;margin:0 auto;padding:var(--pad) var(--pad) 96px}
+
+/* ---------- BAND DISPLAY — hero. Nobody else shows this. ---------- */
+.band{background:linear-gradient(135deg,#12233b,#1A6ECC);color:#fff;border-radius:var(--r);
+  padding:18px 18px 16px;margin-bottom:14px;box-shadow:0 6px 20px rgba(18,35,59,.18)}
+.band .lede{font-size:12px;letter-spacing:.10em;text-transform:uppercase;opacity:.78;font-weight:700}
+.band .row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-top:6px}
+.band .pts{font-family:var(--head);font-size:52px;line-height:.9}
+.band .code{font-family:var(--head);font-size:52px;line-height:.9;color:var(--gold)}
+.band .code small{font-family:var(--body);font-size:13px;font-weight:700;letter-spacing:.08em;
+  display:block;opacity:.8;color:#fff}
+.band .next{margin-top:12px;background:rgba(255,255,255,.12);border-radius:9px;padding:11px 13px;
+  font-size:15px;font-weight:500}
+.band .next b{color:var(--gold)}
+.band .ladder{display:flex;gap:4px;margin-top:12px}
+.band .rung{flex:1;text-align:center;font-size:11px;font-weight:700;letter-spacing:.05em;
+  padding:5px 2px;border-radius:6px;background:rgba(255,255,255,.10);opacity:.55}
+.band .rung.on{background:var(--gold);color:#241a00;opacity:1}
+.band .caution{margin-top:10px;font-size:12.5px;opacity:.82;line-height:1.4}
+
+/* ---------- finding rows ---------- */
+.sec-h{font-family:var(--head);font-size:20px;color:var(--ink-2);margin:18px 0 8px;letter-spacing:.03em}
+.find{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.find.done{border-color:var(--ok);background:var(--ok-soft)}
+.find.rej{border-color:var(--line);background:var(--no-soft);opacity:.92}
+.find .top{display:flex;gap:12px;align-items:flex-start}
+.find .pts{font-family:var(--head);font-size:30px;line-height:1;color:var(--blue);min-width:52px;text-align:center}
+.find .pts small{display:block;font-family:var(--body);font-size:10px;font-weight:700;color:var(--ink-3);letter-spacing:.07em}
+.find .body{flex:1;min-width:0}
+.find .label{font-weight:700;font-size:16.5px;line-height:1.3}
+.find .mds{font-size:12.5px;color:var(--ink-3);margin-top:2px}
+/* Citation — Clarity's convention: source · p.N · verbatim quote */
+.cite{margin-top:9px;font-size:14px;line-height:1.5;border-left:3px solid var(--blue);
+  padding:7px 0 7px 10px;background:var(--blue-soft);border-radius:0 8px 8px 0}
+.cite .src{font-weight:700;color:var(--blue-dk)}
+.cite .pg{color:var(--ink-2);font-weight:500}
+.cite .q{display:block;margin-top:3px;color:var(--ink);font-style:italic}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
+.acts .btn{flex:0 0 auto}
+.btn.confirm{background:var(--ok);border-color:var(--ok);color:#fff}
+.btn.reject{background:#fff;border-color:var(--no);color:var(--no)}
+.btn.reject:hover{background:var(--no);color:#fff}
+.state{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;
+  padding:5px 10px;border-radius:999px}
+.state.ok{background:var(--ok);color:#fff}
+.state.no{background:var(--no);color:#fff}
+
+/* ---------- reject: inline, 2 taps, never a blocking modal ---------- */
+.rej-panel{margin-top:11px;border-top:1px dashed var(--line);padding-top:11px}
+.rej-panel .ask{font-size:13.5px;font-weight:700;color:var(--ink-2);margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 13px;
+  font-size:14px;color:var(--ink-2);min-height:44px;display:inline-flex;align-items:center}
+.chip:hover,.chip.on{border-color:var(--no);background:var(--no);color:#fff}
+.rej-panel textarea{width:100%;margin-top:8px;border:1px solid var(--line);border-radius:9px;
+  padding:10px;font:inherit;font-size:16px;min-height:56px;resize:vertical}
+.muted{color:var(--ink-3);font-size:13px}
+
+/* ---------- gaps: what we did NOT find ---------- */
+.gap{background:#fff;border:1px solid var(--gold);border-left:5px solid var(--gold);
+  border-radius:var(--r);padding:13px 14px;margin-bottom:10px}
+.gap .t{font-weight:700;margin-bottom:3px}
+.gap .w{font-size:14px;color:var(--ink-2)}
+
+/* ---------- page viewer ---------- */
+.sheet{position:fixed;inset:0;z-index:100;background:rgba(15,23,36,.55);display:none;
+  align-items:flex-end;justify-content:center}
+.sheet.on{display:flex}
+.sheet .inner{background:#fff;width:100%;max-width:940px;max-height:92vh;border-radius:16px 16px 0 0;
+  display:flex;flex-direction:column}
+.sheet .bar{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.sheet .bar .t{font-weight:700;flex:1;min-width:0}
+.sheet .doc{overflow:auto;padding:18px;background:#fbfcfe}
+.page{background:#fff;border:1px solid var(--line);border-radius:6px;padding:26px 28px;
+  font-family:'Courier New',ui-monospace,monospace;font-size:13.5px;line-height:1.62;color:#1a1a1a;
+  box-shadow:0 2px 10px rgba(15,23,36,.07)}
+.page .ph{font-family:var(--body);font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink-3);border-bottom:1px solid var(--line);padding-bottom:7px;margin-bottom:14px;
+  display:flex;justify-content:space-between;gap:10px}
+.page mark{background:var(--gold);color:#241a00;font-weight:700;padding:1px 2px}
+.page .pf{margin-top:18px;border-top:1px solid var(--line);padding-top:7px;
+  font-family:var(--body);font-size:11px;color:var(--ink-3);text-align:center}
+
+/* ---------- artefact ---------- */
+.art{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:12px}
+.art h3{font-size:19px;color:var(--ink);margin-bottom:4px}
+.art .sub{font-size:13px;color:var(--ink-3);margin-bottom:12px}
+.item{border-top:1px solid var(--line);padding:11px 0}
+.item:first-of-type{border-top:0}
+.item .l{font-weight:700}
+.wk{width:100%;border-collapse:collapse;font-size:14px}
+.wk th,.wk td{text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.wk th{font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+.scroll-x{overflow-x:auto}
+
+.never{background:#fff;border:1px dashed var(--ink-3);border-radius:var(--r);padding:13px 14px;
+  font-size:13.5px;color:var(--ink-2);margin-top:14px}
+.never b{color:var(--ink)}
+
+.note-line{font-size:12.5px;color:var(--ink-3);background:var(--card);border:1px solid var(--line);
+  border-radius:10px;padding:9px 12px;margin-bottom:12px}
+
+.empty{color:var(--ink-3);font-size:15px;padding:22px;text-align:center;
+  background:var(--card);border:1px dashed var(--line);border-radius:var(--r)}
+
+textarea,input,select{font-family:inherit}
+.field{display:block;margin-bottom:11px}
+.field span{display:block;font-size:13px;font-weight:700;color:var(--ink-2);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:9px;
+  padding:11px;font-size:16px;min-height:44px}
+
+.exportbox{width:100%;min-height:210px;border:1px solid var(--line);border-radius:9px;padding:11px;
+  font-family:ui-monospace,monospace;font-size:12px;white-space:pre}
+
+@media (max-width:600px){
+  .band .pts,.band .code{font-size:42px}
+  main{padding-left:12px;padding-right:12px}
+}
+@media print{.sample-banner{position:static}.appbar,.tabs,.acts,.sheet{display:none!important}}
+</style>
+</head>
+<body>
+<div class="sample-banner">Sample data — fictional patient — not a real record</div>
+
+<header class="appbar">
+  <img src="/logo-ninja.png" alt="EnhancedOps.ninja">
+  <div class="name">INTAKE <span>NINJA</span></div>
+  <div class="spacer"></div>
+  <button class="btn gold" id="exportBtn">Export session</button>
+</header>
+
+<nav class="tabs" id="tabs"></nav>
+<main id="main"></main>
+
+<div class="sheet" id="sheet"><div class="inner">
+  <div class="bar"><div class="t" id="sheetTitle"></div>
+    <button class="btn" onclick="closeSheet()">Close</button></div>
+  <div class="doc" id="sheetDoc"></div>
+</div></div>
+
+<script>
+/* ================================================================
+   DATA MODEL
+   No presentation decisions live in here. Every string below is
+   content or clinical fact; how it is drawn is entirely the CSS and
+   the render functions. Evelyn's competitor research can restyle the
+   finding row and the band display without touching this section.
+   ================================================================ */
+
+/* --- ALL PATIENT CONTENT BELOW IS INVENTED. There is no real person,
+       no real facility, no redacted real document. Identifiers are
+       deliberately malformed so they cannot resemble a real record. --- */
+const PATIENT = {
+  name: 'HOLLOWAY, MARGARET T. (FICTIONAL)',
+  mrn: 'SAMPLE-000-0000',
+  dob: '01/01/1900 (placeholder)',
+  from: 'Northgate Regional Medical Center (fictional)',
+  to: 'Cedar Hollow Post-Acute (fictional)',
+  packetPages: 60,
+  received: 'Referral packet received by fax, 62 pages, scanned image'
+};
+
+/* NTA case-mix bands. Verified against the CGS Medicare PDPM deck and
+   the CMS NTA fact-sheet table: NA 12+, NB 9-11, NC 6-8, ND 3-5,
+   NE 1-2, NF 0. Case-mix index included because it is the reason a
+   boundary is worth money and a point inside a band is worth nothing. */
+const BANDS = [
+  { code:'NA', min:12, max:Infinity, cmi:3.25 },
+  { code:'NB', min:9,  max:11,       cmi:2.53 },
+  { code:'NC', min:6,  max:8,        cmi:1.85 },
+  { code:'ND', min:3,  max:5,        cmi:1.34 },
+  { code:'NE', min:1,  max:2,        cmi:0.96 },
+  { code:'NF', min:0,  max:0,        cmi:0.72 }
+];
+
+/* Rejection reasons. Order matters: most-used first, so the common
+   case is one tap. */
+const REASONS = [
+  'Not supported in the record',
+  'Not active during the look-back',
+  'Documented elsewhere',
+  'Disagree with the reading',
+  'Needs physician clarification'
+];
+
+/* Candidate findings the tool surfaced.
+   `truth` is NOT shown to the nurse — it drives the facilitator key.
+   Point values are the real CMS NTA values. */
+const FINDINGS = [
+  {
+    id:'iv-med', label:'Special Treatments/Programs: Intravenous Medication', points:5, mds:'O0100H2',
+    src:'Medication Administration Record', page:31,
+    quote:'Vancomycin 1 g IV every 12 hours for MRSA sacral wound infection.',
+    caveat:'Scores only if IV medication continues AFTER admission to the facility. This order is from the hospital stay.',
+    truth:'ambiguous'
+  },
+  {
+    id:'tpn', label:'Parenteral IV Feeding: Level Low', points:3, mds:'K0510A2',
+    src:'History and Physical', page:6,
+    quote:'TPN discontinued 3/14 after enteral tolerance established; patient now on oral diet.',
+    truth:'reject'
+  },
+  {
+    id:'wound-inf', label:'Wound Infection Code', points:2, mds:'I2500',
+    src:'Wound Care Consult', page:41,
+    quote:'Sacral wound with purulent exudate and surrounding erythema; wound infection.',
+    truth:'confirm'
+  },
+  {
+    id:'dm', label:'Active Diagnoses: Diabetes Mellitus', points:2, mds:'I2900',
+    src:'History and Physical', page:4,
+    quote:'Type 2 diabetes mellitus, insulin-dependent, poorly controlled.',
+    truth:'confirm'
+  },
+  {
+    id:'copd', label:'Active Diagnoses: Asthma / COPD / Chronic Lung Disease', points:2, mds:'I6200',
+    src:'History and Physical', page:4,
+    quote:'COPD, GOLD stage III, on home oxygen 2 L via nasal cannula.',
+    truth:'confirm'
+  },
+  {
+    id:'mdro', label:'Active Diagnoses: Multi-Drug Resistant Organism', points:1, mds:'I1700',
+    src:'Microbiology Report', page:42,
+    quote:'Methicillin-resistant Staphylococcus aureus isolated from sacral wound culture.',
+    truth:'confirm'
+  },
+  {
+    id:'obesity', label:'Morbid Obesity', points:1, mds:'I8000',
+    src:'Nutrition Assessment', page:18,
+    quote:'Height 63 in, weight 232 lb, BMI 41.1. Morbid obesity.',
+    truth:'confirm'
+  },
+  {
+    id:'malnutrition', label:'Active Diagnoses: Malnutrition', points:1, mds:'I5600',
+    src:'Nutrition Assessment', page:18,
+    quote:'Patient assessed as AT RISK for malnutrition; no current diagnosis of malnutrition.',
+    truth:'reject'
+  }
+];
+
+/* Documentation gaps. The spec is explicit that silence reading as
+   "nothing there" is the failure mode that hurts someone, so these
+   are rendered loudly rather than omitted. */
+const GAPS = [
+  { t:'No post-admission physician order for IV therapy in this packet',
+    w:'The IV medication candidate above cannot be confirmed as a post-admit service from these pages. If IV therapy is to continue, obtain the order before coding O0100H2. This is the single highest-value item in the packet and the least supported.' },
+  { t:'No physician-signed medication reconciliation',
+    w:'The medication list on pages 29-33 is a hospital MAR, not a reconciled discharge list. Doses may not carry across.' },
+  { t:'No wound measurements after 3/16',
+    w:'Wound care notes stop four days before transfer. Staging and dimensions at admission will need to be established on assessment.' },
+  { t:'Dialysis records present but NOT an NTA comorbidity',
+    w:'Haemodialysis is documented on pages 36-38. It does not appear on the NTA comorbidity table and scores no NTA points. It is captured elsewhere on the MDS. Flagged so its absence from the list above is not mistaken for an oversight.' }
+];
+
+/* MDS worksheet grouping. Mapping only; it never writes anything. */
+const MDS_SECTIONS = [
+  { key:'I', title:'Section I — Active Diagnoses (I0100-I8000)' },
+  { key:'O', title:'Section O — Special Treatments and Programs (O0100)' },
+  { key:'K', title:'Section K — Nutritional Approaches' },
+  { key:'H', title:'Section H — Bladder and Bowel' },
+  { key:'M', title:'Section M — Skin Conditions' }
+];
+
+/* ================================================================
+   THE FICTIONAL PACKET — 60 pages
+   Every word invented. Two NTA items are planted here that the tool
+   does NOT flag (intermittent catheterisation p.52, cirrhosis p.9),
+   because a demo in which the tool is perfect teaches us nothing.
+   ================================================================ */
+const SECTIONS = [
+  { from:1,  to:3,  src:'Referral Face Sheet' },
+  { from:4,  to:8,  src:'History and Physical' },
+  { from:9,  to:13, src:'Discharge Summary' },
+  { from:14, to:17, src:'Physician Progress Notes' },
+  { from:18, to:20, src:'Nutrition Assessment' },
+  { from:21, to:28, src:'Laboratory Results' },
+  { from:29, to:33, src:'Medication Administration Record' },
+  { from:34, to:35, src:'Radiology Reports' },
+  { from:36, to:38, src:'Dialysis Records' },
+  { from:39, to:40, src:'Therapy Evaluations' },
+  { from:41, to:41, src:'Wound Care Consult' },
+  { from:42, to:44, src:'Microbiology Report' },
+  { from:45, to:51, src:'Nursing Flow Sheets' },
+  { from:52, to:56, src:'Nursing Progress Notes' },
+  { from:57, to:60, src:'Discharge Orders and Transfer Form' }
+];
+
+/* Real content for the pages that matter. Everything else is filled
+   with plausible clinical prose so that [View page] never opens an
+   obviously empty stub — the nurse must be able to read around a
+   flag to judge it. */
+const PAGE_CONTENT = {
+  1:['REFERRAL FACE SHEET','','Patient: HOLLOWAY, MARGARET T.  (FICTIONAL RECORD)','MRN: SAMPLE-000-0000    DOB: 01/01/1900 (placeholder)','Referring: Northgate Regional Medical Center (fictional)','Receiving: Cedar Hollow Post-Acute (fictional)','Payer: Medicare Part A','Admit to hospital: 03/09    Anticipated transfer: 03/20','','Reason for referral: Skilled nursing for wound care, IV antibiotic','completion, diabetes management and rehabilitation following','hospitalisation for sepsis secondary to sacral wound infection.'],
+  4:['HISTORY AND PHYSICAL','','CHIEF COMPLAINT: Fever, confusion, sacral wound drainage.','','PAST MEDICAL HISTORY:','  1. Type 2 diabetes mellitus, insulin-dependent, poorly controlled.','  2. COPD, GOLD stage III, on home oxygen 2 L via nasal cannula.','  3. End-stage renal disease on haemodialysis, Tue/Thu/Sat.','  4. Hypertension.','  5. Neurogenic bladder.','  6. Chronic anaemia.','','SOCIAL: Lives alone in single-storey home. Two daughters nearby.'],
+  6:['HISTORY AND PHYSICAL (continued)','','NUTRITION / GI:','  Poor oral intake through first week of admission. Nutrition','  support initiated 03/11.','  TPN discontinued 3/14 after enteral tolerance established;','  patient now on oral diet.','  Tolerating soft diet at time of this note.','','ENDOCRINE: Insulin glargine 22 units nightly, sliding scale with meals.'],
+  9:['DISCHARGE SUMMARY','','HOSPITAL COURSE:','Ms. Holloway presented with fever and altered mental status. Blood','cultures grew MRSA. Source identified as an infected sacral wound.','She was started on IV vancomycin and improved steadily.','','Her course was complicated by volume management around dialysis.','Hepatology was consulted regarding known cirrhosis, Child-Pugh','class A, stable, no decompensation during this admission.','','She is medically stable for transfer to skilled nursing.'],
+  18:['NUTRITION ASSESSMENT','','Anthropometrics:','  Height 63 in, weight 232 lb, BMI 41.1. Morbid obesity.','','Assessment:','  Patient assessed as AT RISK for malnutrition; no current diagnosis','  of malnutrition. Intake improving. Albumin low but confounded by','  inflammatory state and renal disease.','','Plan: Soft diet, supplements between meals, weekly weights.'],
+  31:['MEDICATION ADMINISTRATION RECORD','','ACTIVE INPATIENT MEDICATIONS','','  Vancomycin 1 g IV every 12 hours for MRSA sacral wound infection.','    Last dose given 03/19 2100. Level 14.2 (therapeutic).','','  Insulin glargine 22 units subcutaneous nightly','  Insulin lispro sliding scale with meals','  Albuterol/ipratropium nebuliser every 6 hours PRN','  Pantoprazole 40 mg oral daily','  Sevelamer 800 mg oral three times daily with meals'],
+  41:['WOUND CARE CONSULT','','SITE: Sacrum.','','FINDINGS:','  Sacral wound with purulent exudate and surrounding erythema;','  wound infection. Base with 40% slough, 60% granulation.','  Periwound macerated. Malodorous.','','MEASUREMENTS (03/16): 4.2 cm x 3.8 cm x 1.1 cm. Undermining 0.6 cm','  at 3 o’clock.','','PLAN: Continue IV antibiotics per primary team. Collagenase daily.','  Offloading. Reassess in one week.'],
+  42:['MICROBIOLOGY REPORT','','SOURCE: Sacral wound, deep tissue.','COLLECTED: 03/10','','RESULT:','  Methicillin-resistant Staphylococcus aureus isolated from sacral','  wound culture.','','SUSCEPTIBILITIES:','  Vancomycin      S','  Linezolid       S','  Oxacillin       R','  Clindamycin     R'],
+  52:['NURSING PROGRESS NOTE','','03/18  1400','Patient alert, oriented to person and place. Denies pain at rest.','','Bladder management: Straight cath every 6 hours for neurogenic','bladder, per urology. Patient unable to self-catheterise; nursing','performing. Output 250-400 mL each catheterisation. To continue on','transfer.','','Wound dressing changed, moderate serosanguinous drainage noted.','Daughter present, updated on plan for skilled nursing placement.'],
+  57:['DISCHARGE ORDERS AND TRANSFER FORM','','DISPOSITION: Skilled nursing facility.','','ORDERS ON TRANSFER:','  Wound care: collagenase daily, offloading, reassess weekly.','  Diabetes: insulin glargine 22 units nightly, sliding scale.','  Dialysis: continue Tue/Thu/Sat at contracted centre.','  Diet: soft, renal, carbohydrate-consistent.','','NOTE: Antibiotic plan to be finalised by receiving physician.','No post-discharge IV order is included with this packet.']
+};
+
+const FILLER = {
+  'Referral Face Sheet':['Insurance verification on file. Authorisation pending.','Emergency contact: daughter, listed on page 2.','Advance directive: full code, documented on admission.'],
+  'History and Physical':['Review of systems otherwise negative. Physical examination','documented in full. No acute distress at time of examination.'],
+  'Discharge Summary':['Discharge condition stable. Follow-up appointments arranged.','Family updated. Questions answered to satisfaction.'],
+  'Physician Progress Notes':['Afebrile overnight. Vital signs stable. Continue current plan.','Laboratory trends reviewed. No change to antibiotic course today.'],
+  'Nutrition Assessment':['Calorie count in progress. Supplements ordered between meals.','Dietitian to follow weekly. Weights recorded each Monday.'],
+  'Laboratory Results':['WBC 9.8   Hgb 9.1   Plt 244   Na 137  K 4.6  Cr 4.9 (ESRD baseline)','Glucose 188   A1c 9.2   Albumin 2.6   CRP elevated, trending down.'],
+  'Medication Administration Record':['Doses administered as ordered. No missed doses documented.','PRN medications given as indicated with effect recorded.'],
+  'Radiology Reports':['Chest radiograph: hyperinflation consistent with known COPD.','No acute infiltrate. Cardiomediastinal silhouette unremarkable.'],
+  'Dialysis Records':['Haemodialysis session completed. Target weight achieved.','Access: right upper arm AV fistula, functioning, no complications.','Note: dialysis is captured elsewhere on the MDS and is not an NTA','comorbidity.'],
+  'Therapy Evaluations':['Physical therapy: max assist to stand, tolerates 12 feet with walker.','Occupational therapy: moderate assist for upper body dressing.'],
+  'Wound Care Consult':['See consult note.'],
+  'Microbiology Report':['Additional specimens pending. No growth to date on remaining cultures.'],
+  'Nursing Flow Sheets':['Vital signs recorded every four hours. Intake and output charted.','Turn and reposition every two hours. Skin checks each shift.'],
+  'Nursing Progress Notes':['Shift assessment completed. No falls. Call light within reach.','Patient participated in therapy as tolerated. Appetite fair.'],
+  'Discharge Orders and Transfer Form':['Transfer packet assembled and faxed to receiving facility.','Copies of relevant records enclosed.']
+};
+
+function srcForPage(p){ const s = SECTIONS.find(s => p >= s.from && p <= s.to); return s ? s.src : 'Clinical Record'; }
+
+const PACKET = Array.from({length:60}, (_,i) => {
+  const n = i + 1, src = srcForPage(n);
+  return { n, src, lines: PAGE_CONTENT[n] || [src.toUpperCase(), '', ...(FILLER[src] || ['Continued.'])] };
+});
+
+/* ================================================================
+   SESSION
+   Everything the nurse does, held in localStorage as she goes so an
+   interruption does not lose the session. Disclosed on the page —
+   nothing here is captured covertly.
+   ================================================================ */
+const KEY = 'intake-ninja-session-v1';
+
+const blankSession = () => ({
+  startedAt: new Date().toISOString(),
+  decisions: {},     // id -> {status, reason, note, at, msSpent, order}
+  added: [],         // findings the NURSE says we missed  <- the backlog
+  order: [],         // the sequence she actually worked in
+  events: []         // lightweight trail: views, tab switches
+});
+
+let S = load();
+function load(){
+  try { const raw = localStorage.getItem(KEY); if (raw) return Object.assign(blankSession(), JSON.parse(raw)); }
+  catch(e){ /* corrupted or unavailable storage: start clean rather than fail */ }
+  return blankSession();
+}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+function ev(type, detail){ S.events.push({ type, detail, at: Date.now() }); save(); }
+
+/* Time-per-finding. Timer starts when a finding first becomes visible
+   to her and stops on decision, so we can answer the question that
+   worries us: does rejecting cost three times what confirming costs? */
+const seen = {};
+function touch(id){ if (!seen[id]) seen[id] = Date.now(); }
+function elapsed(id){ return seen[id] ? Date.now() - seen[id] : null; }
+
+function decide(id, status, reason, note){
+  const order = S.order.length + 1;
+  S.decisions[id] = { status, reason: reason || null, note: note || null,
+                      at: new Date().toISOString(), msSpent: elapsed(id), order };
+  if (!S.order.includes(id)) S.order.push(id);
+  save(); render();
+}
+function undecide(id){ delete S.decisions[id]; S.order = S.order.filter(x => x !== id); save(); render(); }
+
+/* ================================================================
+   BAND MATHS — the thing no competitor displays
+   ================================================================ */
+function confirmedFindings(){
+  return FINDINGS.filter(f => S.decisions[f.id] && S.decisions[f.id].status === 'confirm')
+    .concat(S.added.filter(a => a.counts !== false));
+}
+function confirmedPoints(){ return confirmedFindings().reduce((t,f) => t + (Number(f.points)||0), 0); }
+function bandFor(pts){ return BANDS.find(b => pts >= b.min && pts <= b.max) || BANDS[BANDS.length-1]; }
+
+/* How many points to the next band up, and what that band is.
+   Returns null at NA, where there is nothing above. */
+function toNextBand(pts){
+  const i = BANDS.findIndex(b => pts >= b.min && pts <= b.max);
+  if (i <= 0) return null;                 // already NA
+  const next = BANDS[i-1];
+  return { need: next.min - pts, band: next };
+}
+
+/* ================================================================
+   RENDER
+   ================================================================ */
+let TAB = 'review';
+let openReject = null;   // id whose reason panel is open
+
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function tabs(){
+  const rejN = Object.values(S.decisions).filter(d => d.status === 'reject').length;
+  const t = [
+    ['review','Review', FINDINGS.length - Object.keys(S.decisions).length],
+    ['rejections','Rejection log', rejN],
+    ['gaps','Not found', GAPS.length],
+    ['artefact','Artefact', null]
+  ];
+  document.getElementById('tabs').innerHTML = t.map(([k,l,n]) =>
+    `<button class="tab ${TAB===k?'on':''}" onclick="setTab('${k}')">${esc(l)}${
+      n!==null ? `<span class="pill">${n}</span>` : ''}</button>`).join('');
+}
+function setTab(k){ TAB = k; openReject = null; ev('tab', k); render(); window.scrollTo(0,0); }
+
+/* ---- the band display ---- */
+function bandView(){
+  const pts = confirmedPoints(), b = bandFor(pts), nx = toNextBand(pts);
+  const ladder = BANDS.slice().reverse().map(x =>
+    `<div class="rung ${x.code===b.code?'on':''}">${x.code}</div>`).join('');
+  const nextLine = nx
+    ? `<b>${nx.need} more point${nx.need===1?'':'s'}</b> reaches band <b>${nx.band.code}</b>.`
+    : `This is the top band. Nothing above it.`;
+  return `<section class="band">
+    <div class="lede">Confirmed so far</div>
+    <div class="row">
+      <div class="pts">${pts}<small style="font-family:var(--body);font-size:12px;font-weight:700;letter-spacing:.08em;opacity:.8">POINTS</small></div>
+      <div class="code">${b.code}<small>CASE-MIX BAND · INDEX ${b.cmi.toFixed(2)}</small></div>
+    </div>
+    <div class="next">${nextLine}</div>
+    <div class="ladder">${ladder}</div>
+    <div class="caution">NTA pays by band, not by point. A point that crosses a boundary changes
+      payment; a point inside a band does not. This total counts only what you have confirmed.</div>
+  </section>`;
+}
+
+/* ---- one finding row ----
+   Citation format follows the convention already in the market:
+   source name · p.N · verbatim quote from the document. */
+function findRow(f){
+  const d = S.decisions[f.id];
+  touch(f.id);
+  const cls = d ? (d.status==='confirm' ? 'done' : 'rej') : '';
+  let actions;
+  if (d && d.status === 'confirm'){
+    actions = `<span class="state ok">Confirmed</span>
+      <button class="btn" onclick="undecide('${f.id}')">Undo</button>
+      <button class="btn" onclick="viewPage(${f.page},'${f.id}')">View page</button>`;
+  } else if (d && d.status === 'reject'){
+    actions = `<span class="state no">Rejected</span>
+      <span class="muted">${esc(d.reason||'')}${d.note?' — '+esc(d.note):''}</span>
+      <button class="btn" onclick="undecide('${f.id}')">Undo</button>`;
+  } else {
+    actions = `<button class="btn confirm" onclick="decide('${f.id}','confirm')">Confirm</button>
+      <button class="btn reject" onclick="askReject('${f.id}')">Reject</button>
+      <button class="btn" onclick="viewPage(${f.page},'${f.id}')">View page</button>`;
+  }
+  const panel = openReject === f.id ? rejectPanel(f) : '';
+  return `<article class="find ${cls}" id="f-${f.id}">
+    <div class="top">
+      <div class="pts">${f.points}<small>POINTS</small></div>
+      <div class="body">
+        <div class="label">${esc(f.label)}</div>
+        <div class="mds">MDS ${esc(f.mds)}</div>
+        <div class="cite">
+          <span class="src">${esc(f.src)}</span> <span class="pg">· p.${f.page} ·</span>
+          <span class="q">“${esc(f.quote)}”</span>
+        </div>
+        ${f.caveat ? `<div class="gap" style="margin-top:9px;margin-bottom:0"><div class="w"><b>Check before you confirm:</b> ${esc(f.caveat)}</div></div>` : ''}
+        <div class="acts">${actions}</div>
+        ${panel}
+      </div>
+    </div>
+  </article>`;
+}
+
+/* Reject in two taps. Inline, never a blocking modal — if this feels
+   heavy the nurse stops rejecting, and the rejection record is the
+   only ground no competitor holds. */
+function rejectPanel(f){
+  return `<div class="rej-panel">
+    <div class="ask">Why are you rejecting this? One tap is enough.</div>
+    <div class="chips">
+      ${REASONS.map(r => `<button class="chip" onclick="doReject('${f.id}', this.textContent.trim())">${esc(r)}</button>`).join('')}
+    </div>
+    <textarea id="rn-${f.id}" placeholder="Anything you want to add (optional)"></textarea>
+    <div class="acts">
+      <button class="btn" onclick="doReject('${f.id}','Other', true)">Save with my note only</button>
+      <button class="btn" onclick="openReject=null;render()">Cancel</button>
+    </div>
+  </div>`;
+}
+function askReject(id){ openReject = id; ev('reject-open', id); render();
+  const el = document.getElementById('f-'+id); if (el) el.scrollIntoView({block:'center', behavior:'smooth'}); }
+function doReject(id, reason, noteOnly){
+  const ta = document.getElementById('rn-'+id);
+  const note = ta ? ta.value.trim() : '';
+  if (noteOnly && !note){ alert('Add a note, or choose one of the reasons above.'); return; }
+  openReject = null;
+  decide(id, 'reject', reason, note);
+}
+
+/* ---- page viewer: the quote must be findable in one click ---- */
+function viewPage(n, fromId){
+  const pg = PACKET.find(p => p.n === n); if (!pg) return;
+  ev('view-page', {page:n, finding:fromId||null});
+  const f = FINDINGS.find(x => x.id === fromId);
+  const needle = f ? f.quote.trim() : null;
+  const body = pg.lines.map(l => {
+    if (!needle) return esc(l);
+    const key = needle.replace(/[.,;]$/,'').slice(0, 40);
+    return l.includes(key.slice(0,30)) ? `<mark>${esc(l)}</mark>` : esc(l);
+  }).join('\n');
+  document.getElementById('sheetTitle').textContent = `${pg.src} · p.${pg.n}`;
+  document.getElementById('sheetDoc').innerHTML =
+    `<div class="page"><div class="ph"><span>${esc(pg.src)}</span>
+       <span>HOLLOWAY, MARGARET T. (FICTIONAL) · SAMPLE-000-0000</span></div>
+     <pre style="margin:0;font:inherit;white-space:pre-wrap">${body}</pre>
+     <div class="pf">Page ${pg.n} of ${PATIENT.packetPages} — fictional document, sample data</div></div>`;
+  document.getElementById('sheet').classList.add('on');
+}
+function closeSheet(){ document.getElementById('sheet').classList.remove('on'); }
+
+/* ---- add a finding WE missed: the extraction backlog, written by
+        the only person qualified to write it ---- */
+function addMissView(){
+  return `<section class="art" id="addmiss">
+    <h3>Did we miss something?</h3>
+    <div class="sub">If you find an NTA item in the packet that we did not flag, tell us here.
+      This is the most useful thing you can give us.</div>
+    <label class="field"><span>What is the item?</span>
+      <input id="am-label" placeholder="e.g. Intermittent catheterisation"></label>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <label class="field" style="flex:1;min-width:120px"><span>Points</span>
+        <input id="am-points" type="number" min="0" max="8" value="1" inputmode="numeric"></label>
+      <label class="field" style="flex:1;min-width:120px"><span>Page</span>
+        <input id="am-page" type="number" min="1" max="60" inputmode="numeric"></label>
+      <label class="field" style="flex:1;min-width:120px"><span>MDS item (if known)</span>
+        <input id="am-mds" placeholder="e.g. H0100D"></label>
+    </div>
+    <label class="field"><span>What in the record supports it?</span>
+      <textarea id="am-why" rows="3" placeholder="Quote or describe what you saw"></textarea></label>
+    <button class="btn primary" onclick="addMiss()">Add this item</button>
+    ${S.added.length ? `<div style="margin-top:14px">${S.added.map((a,i) =>
+      `<div class="item"><div class="l">${esc(a.label)} — ${a.points} point${a.points==1?'':'s'}
+        ${a.mds?`<span class="muted">· MDS ${esc(a.mds)}</span>`:''}</div>
+       <div class="cite"><span class="src">Found by reviewer</span>
+         <span class="pg">· p.${esc(a.page||'—')} ·</span>
+         <span class="q">“${esc(a.why||'')}”</span></div>
+       <button class="btn" style="margin-top:8px" onclick="rmMiss(${i})">Remove</button></div>`).join('')}</div>` : ''}
+  </section>`;
+}
+function addMiss(){
+  const g = id => (document.getElementById(id)||{}).value;
+  const label = (g('am-label')||'').trim();
+  if (!label){ alert('What is the item?'); return; }
+  S.added.push({ label, points: Number(g('am-points'))||0, page: g('am-page')||null,
+                 mds:(g('am-mds')||'').trim()||null, why:(g('am-why')||'').trim(),
+                 at:new Date().toISOString(), counts:true });
+  ev('added-miss', label); save(); render();
+}
+function rmMiss(i){ S.added.splice(i,1); save(); render(); }
+
+/* ---- rejection log: a first-class view, not a footnote ---- */
+function rejectionsView(){
+  const rows = FINDINGS.filter(f => S.decisions[f.id] && S.decisions[f.id].status==='reject');
+  return `<h2 class="sec-h">Rejection log</h2>
+    <div class="note-line">This is the record that shows a human reviewed the packet. A facility that
+      accepted every suggestion looks automated; one that declined some of them looks clinical.
+      It is kept with the artefact.</div>
+    ${rows.length ? rows.map(f => { const d = S.decisions[f.id];
+      return `<article class="find rej"><div class="top">
+        <div class="pts" style="color:var(--no)">${f.points}<small>POINTS</small></div>
+        <div class="body">
+          <div class="label">${esc(f.label)}</div>
+          <div class="mds">MDS ${esc(f.mds)}</div>
+          <div class="cite"><span class="src">${esc(f.src)}</span>
+            <span class="pg">· p.${f.page} ·</span><span class="q">“${esc(f.quote)}”</span></div>
+          <div style="margin-top:9px"><span class="state no">Rejected</span>
+            <b style="margin-left:8px">${esc(d.reason||'')}</b></div>
+          ${d.note ? `<div class="muted" style="margin-top:5px">“${esc(d.note)}”</div>` : ''}
+          <div class="muted" style="margin-top:5px">Recorded ${esc(new Date(d.at).toLocaleString())}</div>
+          <div class="acts"><button class="btn" onclick="undecide('${f.id}')">Undo</button></div>
+        </div></div></article>`; }).join('')
+      : `<div class="empty">Nothing rejected yet. If a flag is not supported by the record, reject it —
+          that is the part of this we most want to learn from.</div>`}`;
+}
+
+/* ---- what we did NOT find ---- */
+function gapsView(){
+  return `<h2 class="sec-h">What we did not find</h2>
+    <div class="note-line">Silence is the dangerous failure. Where the packet does not support something,
+      it is said here rather than left out.</div>
+    ${GAPS.map(g => `<div class="gap"><div class="t">${esc(g.t)}</div><div class="w">${esc(g.w)}</div></div>`).join('')}`;
+}
+
+/* ---- the artefact: assembled in the order a reviewer reads it ---- */
+function artefactView(){
+  const conf = FINDINGS.filter(f => S.decisions[f.id] && S.decisions[f.id].status==='confirm');
+  const rej  = FINDINGS.filter(f => S.decisions[f.id] && S.decisions[f.id].status==='reject');
+  const und  = FINDINGS.filter(f => !S.decisions[f.id]);
+  const pts = confirmedPoints(), b = bandFor(pts);
+
+  const sect = k => conf.concat(S.added).filter(f => (f.mds||'').charAt(0) === k);
+
+  return `<h2 class="sec-h">Evidence artefact</h2>
+  <div class="note-line">A per-claim record that falls out of the review. Nothing here is submitted
+    anywhere; it is the document you would hand a reviewer.</div>
+
+  <section class="art">
+    <h3>Summary</h3>
+    <div class="sub">${esc(PATIENT.name)} · ${esc(PATIENT.mrn)} · ${esc(PATIENT.received)}</div>
+    <div class="item"><div class="l">Confirmed NTA score: ${pts} points — band ${b.code}
+      (case-mix index ${b.cmi.toFixed(2)})</div>
+      <div class="muted">${conf.length} item${conf.length===1?'':'s'} confirmed,
+        ${rej.length} rejected, ${S.added.length} added by reviewer,
+        ${und.length} left undecided.</div></div>
+  </section>
+
+  <section class="art">
+    <h3>Confirmed items, with source</h3>
+    <div class="sub">Each item carries the document, the page and the sentence it came from.</div>
+    ${conf.length||S.added.length ? conf.map(f => `<div class="item">
+      <div class="l">${esc(f.label)} — ${f.points} point${f.points===1?'':'s'} <span class="muted">· MDS ${esc(f.mds)}</span></div>
+      <div class="cite"><span class="src">${esc(f.src)}</span> <span class="pg">· p.${f.page} ·</span>
+        <span class="q">“${esc(f.quote)}”</span></div>
+      <div class="muted" style="margin-top:5px">Confirmed ${esc(new Date(S.decisions[f.id].at).toLocaleString())}</div>
+    </div>`).join('') + S.added.map(a => `<div class="item">
+      <div class="l">${esc(a.label)} — ${a.points} point${a.points===1?'':'s'}
+        <span class="muted">· added by reviewer${a.mds?' · MDS '+esc(a.mds):''}</span></div>
+      <div class="cite"><span class="src">Found by reviewer</span>
+        <span class="pg">· p.${esc(a.page||'—')} ·</span><span class="q">“${esc(a.why||'')}”</span></div>
+    </div>`).join('') : '<div class="empty">Nothing confirmed yet.</div>'}
+  </section>
+
+  <section class="art">
+    <h3>Rejected items, and why</h3>
+    <div class="sub">The page that shows judgement was applied.</div>
+    ${rej.length ? rej.map(f => { const d=S.decisions[f.id]; return `<div class="item">
+      <div class="l">${esc(f.label)} — ${f.points} point${f.points===1?'':'s'} declined</div>
+      <div class="cite"><span class="src">${esc(f.src)}</span> <span class="pg">· p.${f.page} ·</span>
+        <span class="q">“${esc(f.quote)}”</span></div>
+      <div style="margin-top:6px"><b>Reason:</b> ${esc(d.reason||'')}${d.note?` — “${esc(d.note)}”`:''}</div>
+      <div class="muted" style="margin-top:4px">Recorded ${esc(new Date(d.at).toLocaleString())}</div>
+    </div>`; }).join('') : '<div class="empty">No rejections recorded.</div>'}
+  </section>
+
+  <section class="art">
+    <h3>Query list — items that failed for want of documentation</h3>
+    <div class="sub">Raised at admission, not on appeal.</div>
+    ${GAPS.map(g => `<div class="item"><div class="l">${esc(g.t)}</div>
+      <div class="muted">${esc(g.w)}</div></div>`).join('')}
+  </section>
+
+  <section class="art">
+    <h3>MDS worksheet</h3>
+    <div class="sub">Confirmed items mapped to the field they belong in. To be keyed by a person.</div>
+    <div class="scroll-x"><table class="wk">
+      <tr><th>MDS item</th><th>Finding</th><th>Points</th><th>Source</th></tr>
+      ${MDS_SECTIONS.map(s => { const rows = sect(s.key); return rows.length
+        ? `<tr><td colspan="4" style="background:var(--bg);font-weight:700;font-size:12.5px">${esc(s.title)}</td></tr>`
+          + rows.map(f => `<tr><td><code>${esc(f.mds||'—')}</code></td><td>${esc(f.label)}</td>
+              <td>${f.points}</td><td>${esc(f.src||'Reviewer')} p.${esc(f.page||'—')}</td></tr>`).join('')
+        : ''; }).join('')}
+      ${conf.length||S.added.length ? '' : '<tr><td colspan="4" class="muted">Nothing confirmed yet.</td></tr>'}
+    </table></div>
+    <div class="never"><b>This tool never submits.</b> It does not code, does not score the MDS and does
+      not write to any system. Everything above is a suggestion for a person to accept, decline or correct.</div>
+  </section>`;
+}
+
+/* ---- export: available throughout, not only at the end ---- */
+function exportSession(){
+  const payload = {
+    tool:'Intake Ninja prototype', sampleData:true, patient:PATIENT.name,
+    startedAt:S.startedAt, exportedAt:new Date().toISOString(),
+    confirmedPoints:confirmedPoints(), band:bandFor(confirmedPoints()).code,
+    decisions:FINDINGS.map(f => ({ id:f.id, label:f.label, points:f.points, mds:f.mds,
+      page:f.page, decision:S.decisions[f.id]||null })),
+    addedByReviewer:S.added, workedInOrder:S.order, events:S.events
+  };
+  const json = JSON.stringify(payload, null, 2);
+  const d = Object.values(S.decisions);
+  const avg = k => { const v = d.filter(x=>x.status===k && x.msSpent).map(x=>x.msSpent);
+    return v.length ? Math.round(v.reduce((a,b)=>a+b,0)/v.length/1000)+'s' : '—'; };
+  const summary = [
+    `Confirmed ${d.filter(x=>x.status==='confirm').length} · Rejected ${d.filter(x=>x.status==='reject').length} · Added ${S.added.length}`,
+    `Score ${confirmedPoints()} points — band ${bandFor(confirmedPoints()).code}`,
+    `Median-ish time: confirm ${avg('confirm')}, reject ${avg('reject')}`,
+    `Worked in this order: ${S.order.join(', ')||'—'}`
+  ].join('\n');
+  TAB='export'; window.__export = {json, summary}; render(); window.scrollTo(0,0);
+}
+function exportView(){
+  const e = window.__export || {json:'', summary:''};
+  return `<h2 class="sec-h">Session export</h2>
+    <div class="note-line">Copy this out and send it back. It is the whole point of the exercise.</div>
+    <section class="art"><h3>Summary</h3><pre style="white-space:pre-wrap;font-size:14px">${esc(e.summary)}</pre></section>
+    <section class="art"><h3>Full session (JSON)</h3>
+      <textarea class="exportbox" readonly onclick="this.select()">${esc(e.json)}</textarea>
+      <div class="acts"><button class="btn primary" onclick="copyJson()">Copy to clipboard</button>
+        <button class="btn" onclick="setTab('review')">Back to review</button></div></section>`;
+}
+function copyJson(){
+  const t = document.querySelector('.exportbox'); if(!t) return;
+  t.select(); try{ document.execCommand('copy'); }catch(e){}
+  if (navigator.clipboard) navigator.clipboard.writeText(t.value).catch(()=>{});
+  alert('Copied.');
+}
+
+/* ---- review tab ---- */
+function reviewView(){
+  const pending = FINDINGS.filter(f => !S.decisions[f.id]).sort((a,b)=>b.points-a.points);
+  const done = FINDINGS.filter(f => S.decisions[f.id]).sort((a,b)=>b.points-a.points);
+  return bandView()
+    + `<div class="note-line">This session records which items you confirm or reject, the reason you give,
+        how long each one takes and the order you work in — so we can improve the tool. Nothing is
+        recorded about you, and nothing leaves this device until you export it.</div>`
+    + `<h2 class="sec-h">Candidates — ${pending.length} to review</h2>`
+    + (pending.length ? pending.map(findRow).join('') : `<div class="empty">Every candidate has a decision.</div>`)
+    + (done.length ? `<h2 class="sec-h">Decided</h2>` + done.map(findRow).join('') : '')
+    + addMissView();
+}
+
+function render(){
+  tabs();
+  const v = TAB==='review' ? reviewView()
+          : TAB==='rejections' ? rejectionsView()
+          : TAB==='gaps' ? gapsView()
+          : TAB==='artefact' ? artefactView()
+          : exportView();
+  document.getElementById('main').innerHTML = v;
+}
+document.getElementById('exportBtn').addEventListener('click', exportSession);
+document.getElementById('sheet').addEventListener('click', e => { if (e.target.id==='sheet') closeSheet(); });
+render();
+</script>
+</body>
+</html>
