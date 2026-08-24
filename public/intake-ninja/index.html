@@ -63,14 +63,14 @@ code{font-family:var(--body);font-weight:700;letter-spacing:.03em;font-size:.94e
    screen permanently. It scrolls away; the banner and the tabs stay. */
 .appbar{position:relative;z-index:50;background:var(--panel);border-bottom:1px solid var(--line);
   display:flex;align-items:center;gap:16px;padding:10px var(--pad)}
-/* ONE image carrying the whole identity: the ninja standing behind the
-   wordmark, as the brand artwork actually reads.
-   Uses ninja-logo-full-transparent.png — the original ninja-logo-full.png has
-   a solid white background and NO alpha, and a naive white-to-alpha pass would
-   erase the word NINJA, whose lettering is itself white. This file was made by
-   flood-filling the white from the BORDER INWARDS so the enclosed lettering
-   survives. Do not substitute the original. */
-.appbar .logo{width:240px;height:auto;display:block;flex:0 0 auto}
+/* ONE image carrying the whole identity: the ARMS-FOLDED ninja standing behind
+   the word ENHANCED, wordmark crossing his torso, head above and legs below.
+   That is Jeff's established preference and what he actually asked for.
+   NOT the sword ninja, and NOT a figure beside the lockup.
+   Do not substitute ninja-logo-full.png — it has a solid white plate and no
+   alpha, and the white cannot be keyed because the NINJA lettering is itself
+   white. ninja-logo-full-transparent.png solves that but is the wrong ninja. */
+.appbar .logo{width:250px;height:auto;display:block;flex:0 0 auto}
 .appbar .logo-sm{display:none;width:210px;height:auto;flex:0 0 auto}
 .appbar .prod{font-family:var(--head);font-size:19px;line-height:1;color:var(--text-2);
   letter-spacing:.06em;text-transform:uppercase;padding-left:14px;margin-left:2px;
@@ -334,7 +334,7 @@ textarea,input,select{font-family:inherit}
 <div class="sample-banner">Sample data — fictional patient — not a real record</div>
 
 <header class="appbar">
-  <img class="logo" src="/ninja-logo-full-transparent.png" alt="EnhancedOps.Ninja">
+  <img class="logo" src="/ninja-logo-arms-lockup.png" alt="EnhancedOps.Ninja">
   <img class="logo-sm" src="/ninja-logo.png" alt="EnhancedOps.Ninja">
   <div class="prod">Intake Ninja</div>
   <div class="spacer"></div>
