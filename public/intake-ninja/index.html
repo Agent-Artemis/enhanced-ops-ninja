@@ -60,14 +60,34 @@ code{font-family:var(--body);font-weight:700;letter-spacing:.03em;font-size:.94e
 
 /* ---------- app bar ---------- */
 .appbar{position:sticky;top:31px;z-index:50;background:var(--panel);border-bottom:1px solid var(--line);
-  display:flex;align-items:center;gap:12px;padding:10px var(--pad)}
+  display:flex;align-items:center;gap:12px;padding:6px var(--pad)}
 /* The wide lockup IS the wordmark — never a text wordmark beside it, and never
-   the square logo shrunk into a nav, which goes illegible. */
-.appbar .logo{width:280px;max-width:290px;height:auto;object-fit:contain;display:block}
+   the square logo shrunk into a nav, which goes illegible.
+   The ninja sits BEHIND and to the left, the way the original artwork reads.
+   Both layers are transparent PNGs: ninja-logo-full.png is NOT used because it
+   carries a solid white background, and the white cannot be keyed out — the
+   word NINJA in the wordmark is itself white and would be erased with it. */
+.appbar .lockup{position:relative;width:306px;height:48px;flex:0 0 auto}
+/* He is a dark figure on a dark ground, so he needs clear space at the left to
+   read as a figure at all — the overlap with the wordmark is the last third of
+   him, not most of him. A soft glow lifts the silhouette off the panel without
+   putting a light plate behind the logo. */
+.appbar .lk-ninja{position:absolute;left:0;bottom:-3px;height:52px;width:auto;
+  z-index:0;pointer-events:none;object-fit:contain;
+  filter:drop-shadow(0 0 6px rgba(63,138,224,.45))}
+.appbar .lk-mark{position:absolute;left:34px;top:50%;transform:translateY(-50%);
+  width:272px;height:auto;z-index:1;object-fit:contain;display:block}
 .appbar .prod{font-family:var(--head);font-size:19px;line-height:1;color:var(--text-2);
   letter-spacing:.06em;text-transform:uppercase;padding-left:14px;margin-left:2px;
   border-left:1px solid var(--line-2)}
-@media (max-width:560px){.appbar .logo{width:200px}.appbar .prod{display:none}}
+@media (max-width:560px){
+  /* A phone header has no room for both, and the wordmark is the part that
+     matters. The ninja is decoration and goes. */
+  .appbar .lk-ninja{display:none}
+  .appbar .lockup{width:210px;height:32px}
+  .appbar .lk-mark{left:0;width:210px}
+  .appbar .prod{display:none}
+}
 .appbar .spacer{flex:1}
 /* Every button is SOLID. Never ghost, never outline, never transparent.
    Default is solid blue; secondary actions are solid in a panel tone with a
@@ -320,7 +340,10 @@ textarea,input,select{font-family:inherit}
 <div class="sample-banner">Sample data — fictional patient — not a real record</div>
 
 <header class="appbar">
-  <img class="logo" src="/ninja-logo.png" alt="EnhancedOps.Ninja">
+  <div class="lockup">
+    <img class="lk-ninja" src="/ninja-with-sword-nj.png" alt="" aria-hidden="true">
+    <img class="lk-mark" src="/ninja-logo.png" alt="EnhancedOps.Ninja">
+  </div>
   <div class="prod">Intake Ninja</div>
   <div class="spacer"></div>
   <button class="btn primary" id="printBtn">Save as PDF</button>
