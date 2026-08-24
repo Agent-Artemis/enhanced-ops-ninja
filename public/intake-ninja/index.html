@@ -108,30 +108,68 @@ main{max-width:940px;margin:0 auto;padding:var(--pad) var(--pad) 96px}
 
 /* ---------- finding rows ---------- */
 .sec-h{font-family:var(--head);font-size:20px;color:var(--text-2);margin:18px 0 8px;letter-spacing:.03em}
-.find{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:10px}
-.find.done{border-color:var(--ok);background:var(--ok-soft)}
-.find.rej{border-color:var(--line);background:var(--no-soft);opacity:.92}
-.find .top{display:flex;gap:12px;align-items:flex-start}
-.find .pts{font-family:var(--head);font-size:30px;line-height:1;color:var(--blue-lt);min-width:52px;text-align:center}
-.find .pts small{display:block;font-family:var(--body);font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:.07em}
-.find .body{flex:1;min-width:0}
-.find .label{font-weight:700;font-size:16.5px;line-height:1.3}
-.find .mds{font-size:12.5px;color:var(--text-3);margin-top:2px}
-/* Citation — Clarity's convention: source · p.N · verbatim quote */
-.cite{margin-top:9px;font-size:14px;line-height:1.5;border-left:3px solid var(--blue);
-  padding:7px 0 7px 10px;background:var(--blue-soft);border-radius:0 8px 8px 0}
-.cite .src{font-weight:700;color:var(--blue-lt)}
-.cite .pg{color:var(--text-2);font-weight:500}
-.cite .q{display:block;margin-top:3px;color:var(--text);font-style:italic}
-.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
-.acts .btn{flex:0 0 auto}
-.btn.confirm{background:var(--ok);border-color:var(--ok);color:#06170f;font-weight:700}
-.btn.reject{background:transparent;border-color:var(--no);color:var(--no)}
-.btn.reject:hover{background:var(--no);color:#12060a}
-.state{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;
-  padding:5px 10px;border-radius:999px}
-.state.ok{background:var(--ok);color:#06170f}
-.state.no{background:var(--no);color:#12060a}
+/* ---------- finding rows — dense, scannable, one line ----------
+   A list she can run her eye down and COMPARE, not eight cards she has to
+   read sequentially. The quote is the ONLY flexible column; everything else
+   is fixed so the columns line up down the page. ------------------------- */
+.rows{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--panel)}
+.find{display:grid;
+  grid-template-columns:46px minmax(120px,168px) minmax(0,1fr) 118px auto;
+  align-items:center;gap:10px;padding:0 12px;min-height:52px;
+  border-top:1px solid var(--line);cursor:pointer;
+  transition:background .12s ease}
+.find:first-child{border-top:0}
+.find:hover{background:var(--panel-2)}
+.find.open{background:var(--panel-2)}
+/* settled rows read quieter than pending ones, without shouting */
+.find.done{background:rgba(63,191,135,.05)}
+.find.done .label{color:var(--text-2)}
+.find.rej{background:rgba(255,107,97,.045)}
+.find.rej .label,.find.rej .q{color:var(--text-3);text-decoration:line-through}
+
+/* points: tabular so the column does not jitter */
+.find .pts{font-family:var(--head);font-size:24px;line-height:1;color:var(--blue-lt);
+  text-align:right;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+.find .pts i{font-family:var(--body);font-style:normal;font-size:10px;font-weight:700;
+  color:var(--text-3);letter-spacing:.06em;margin-left:3px}
+
+.find .label{font-weight:700;font-size:14.5px;line-height:1.25;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* the only column allowed to shrink */
+.find .q{font-size:13.5px;color:var(--text-2);font-style:italic;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+
+/* fixed, never truncates — a cut-off citation is worse than none */
+.find .cit{font-size:12.5px;color:var(--text-3);white-space:nowrap;text-align:right}
+.find .cit b{color:var(--blue-lt);font-weight:700}
+
+.find .acts{display:flex;gap:6px;justify-self:end}
+.find .acts .btn{min-height:38px;padding:6px 10px;font-size:13px;border-radius:8px}
+.find .acts .state{font-size:12px;padding:5px 9px}
+
+/* expanded detail — full quote, the caveat, and the reason chips */
+.detail{grid-column:1/-1;padding:2px 0 14px;border-top:1px dashed var(--line-2);margin-top:2px}
+.detail .full{font-size:14.5px;line-height:1.55;color:var(--text);font-style:italic;
+  border-left:3px solid var(--blue);background:var(--blue-soft);
+  padding:9px 12px;border-radius:0 8px 8px 0;margin:10px 0 8px}
+.detail .meta{font-size:12.5px;color:var(--text-3)}
+.detail .meta b{color:var(--text-2)}
+/* the caveat is the trap the whole test is built on — it must not get buried */
+.caveat{margin:10px 0 0;background:var(--gold-soft);border:1px solid var(--line-2);
+  border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 12px;
+  font-size:13.5px;color:var(--text);line-height:1.5}
+.caveat b{color:var(--gold)}
+.rowhint{font-size:12px;color:var(--text-3);margin:6px 2px 10px}
+
+@media (max-width:700px){
+  /* Below iPad portrait the five columns cannot hold. Documented, not silent:
+     the row goes two-tier rather than truncating the citation. */
+  .find{grid-template-columns:46px minmax(0,1fr) auto;row-gap:2px;padding:9px 12px}
+  .find .q{grid-column:2/-1;order:3}
+  .find .cit{grid-column:2;order:4;text-align:left}
+  .find .acts{grid-column:3;order:5}
+}
 
 /* ---------- reject: inline, 2 taps, never a blocking modal ---------- */
 .rej-panel{margin-top:11px;border-top:1px dashed var(--line);padding-top:11px}
@@ -190,6 +228,11 @@ main{max-width:940px;margin:0 auto;padding:var(--pad) var(--pad) 96px}
 .note-line{font-size:12.5px;color:var(--text-3);background:var(--panel);border:1px solid var(--line);
   border-radius:10px;padding:9px 12px;margin-bottom:12px}
 
+.footer-tools{max-width:940px;margin:0 auto;padding:0 var(--pad) 36px;
+  display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;
+  font-size:12px;color:var(--text-3);line-height:1.5}
+.footer-tools a{color:var(--text-3);text-decoration:underline;text-underline-offset:3px}
+.footer-tools a:hover{color:var(--blue-lt)}
 .empty{color:var(--text-3);font-size:15px;padding:22px;text-align:center;
   background:var(--panel);border:1px dashed var(--line);border-radius:var(--r)}
 
@@ -207,7 +250,48 @@ textarea,input,select{font-family:inherit}
   .band .pts,.band .code{font-size:42px}
   main{padding-left:12px;padding-right:12px}
 }
-@media print{.sample-banner{position:static}.appbar,.tabs,.acts,.sheet{display:none!important}}
+/* ---------- PRINT: this is the deliverable ----------
+   Chrome's print-to-PDF is the tool. The output is a WORKSHEET she keys FROM,
+   never a submission. Two sections: the MDS worksheet in MDS-ITEM order
+   (data-entry order, the order she goes down her EHR screen), then the
+   evidence packet in the order a reviewer reads it. ---------------------- */
+@media print{
+  @page{ margin:14mm 12mm 16mm; }
+  html,body{background:#fff!important;color:#000!important}
+  .appbar,.tabs,.acts,.sheet,.rowhint,.note-line,.btn,.chips,.rej-panel,
+  #addmiss,.band .ladder,.footer-tools{display:none!important}
+  .sample-banner{display:none!important}
+
+  /* banner and footer repeat on EVERY printed page via a running header */
+  .printdoc{display:block!important}
+  .printdoc .ph-banner{background:#F5B301!important;color:#241a00!important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+    text-align:center;font-weight:700;font-size:9pt;letter-spacing:.08em;
+    text-transform:uppercase;padding:5pt;margin-bottom:8pt;border:1pt solid #c99400}
+  .printdoc h1{font-family:var(--head);font-size:20pt;color:#000!important;margin:0 0 2pt}
+  .printdoc h2{font-family:var(--head);font-size:14pt;color:#000!important;
+    margin:14pt 0 5pt;border-bottom:1.5pt solid #000;padding-bottom:2pt;
+    break-after:avoid;page-break-after:avoid}
+  .printdoc h3{font-size:10.5pt;margin:9pt 0 3pt;break-after:avoid}
+  .printdoc,.printdoc *{color:#000!important;background:transparent!important}
+  .printdoc .sub{font-size:9pt;color:#333!important;margin-bottom:8pt}
+  .printdoc table{width:100%;border-collapse:collapse;font-size:9.5pt;margin-bottom:6pt}
+  .printdoc th,.printdoc td{border:0.6pt solid #444;padding:4pt 5pt;text-align:left;vertical-align:top}
+  .printdoc th{background:#eee!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;
+    font-size:8pt;letter-spacing:.05em;text-transform:uppercase}
+  .printdoc .ev{border-top:0.6pt solid #999;padding:6pt 0;break-inside:avoid;page-break-inside:avoid}
+  .printdoc .ev .l{font-weight:700;font-size:10.5pt}
+  .printdoc .ev .c{font-size:9.5pt;margin-top:2pt}
+  .printdoc .ev .c i{font-style:italic}
+  .printdoc .ev .why{font-size:9.5pt;margin-top:3pt}
+  .printdoc .sig{margin-top:16pt;border-top:1pt solid #000;padding-top:6pt;font-size:9pt}
+  .printdoc .foot{margin-top:12pt;border-top:1.5pt solid #000;padding-top:5pt;
+    font-size:8.5pt;line-height:1.4}
+  main{padding:0!important;max-width:none!important}
+  #main{display:none!important}
+}
+/* the print document is built into the DOM but never shown on screen */
+.printdoc{display:none}
 </style>
 </head>
 <body>
@@ -217,11 +301,17 @@ textarea,input,select{font-family:inherit}
   <img class="logo" src="/ninja-logo.png" alt="EnhancedOps.Ninja">
   <div class="prod">Intake Ninja</div>
   <div class="spacer"></div>
-  <button class="btn primary" id="exportBtn">Export session</button>
+  <button class="btn primary" id="printBtn">Save as PDF</button>
 </header>
 
 <nav class="tabs" id="tabs"></nav>
 <main id="main"></main>
+<div class="printdoc" id="printdoc"></div>
+<footer class="footer-tools">
+  <span>Sample data — fictional patient. This session records your choices and timing so we can
+    improve the tool.</span>
+  <a href="#" id="researchLink">Session data for the build team</a>
+</footer>
 
 <div class="sheet" id="sheet"><div class="inner">
   <div class="bar"><div class="t" id="sheetTitle"></div>
@@ -280,50 +370,50 @@ const REASONS = [
 const FINDINGS = [
   {
     id:'iv-med', label:'Special Treatments/Programs: Intravenous Medication', points:5, mds:'O0100H2',
-    src:'Medication Administration Record', page:31,
+    src:'Medication Administration Record', srcShort:'MAR', page:31,
     quote:'Vancomycin 1 g IV every 12 hours for MRSA sacral wound infection.',
     caveat:'Scores only if IV medication continues AFTER admission to the facility. This order is from the hospital stay.',
     truth:'ambiguous'
   },
   {
     id:'tpn', label:'Parenteral IV Feeding: Level Low', points:3, mds:'K0510A2',
-    src:'History and Physical', page:6,
+    src:'History and Physical', srcShort:'H&P', page:6,
     quote:'TPN discontinued 3/14 after enteral tolerance established; patient now on oral diet.',
     truth:'reject'
   },
   {
     id:'wound-inf', label:'Wound Infection Code', points:2, mds:'I2500',
-    src:'Wound Care Consult', page:41,
+    src:'Wound Care Consult', srcShort:'Wound Consult', page:41,
     quote:'Sacral wound with purulent exudate and surrounding erythema; wound infection.',
     truth:'confirm'
   },
   {
     id:'dm', label:'Active Diagnoses: Diabetes Mellitus', points:2, mds:'I2900',
-    src:'History and Physical', page:4,
+    src:'History and Physical', srcShort:'H&P', page:4,
     quote:'Type 2 diabetes mellitus, insulin-dependent, poorly controlled.',
     truth:'confirm'
   },
   {
     id:'copd', label:'Active Diagnoses: Asthma / COPD / Chronic Lung Disease', points:2, mds:'I6200',
-    src:'History and Physical', page:4,
+    src:'History and Physical', srcShort:'H&P', page:4,
     quote:'COPD, GOLD stage III, on home oxygen 2 L via nasal cannula.',
     truth:'confirm'
   },
   {
     id:'mdro', label:'Active Diagnoses: Multi-Drug Resistant Organism', points:1, mds:'I1700',
-    src:'Microbiology Report', page:42,
+    src:'Microbiology Report', srcShort:'Micro', page:42,
     quote:'Methicillin-resistant Staphylococcus aureus isolated from sacral wound culture.',
     truth:'confirm'
   },
   {
     id:'obesity', label:'Morbid Obesity', points:1, mds:'I8000',
-    src:'Nutrition Assessment', page:18,
+    src:'Nutrition Assessment', srcShort:'Nutrition', page:18,
     quote:'Height 63 in, weight 232 lb, BMI 41.1. Morbid obesity.',
     truth:'confirm'
   },
   {
     id:'malnutrition', label:'Active Diagnoses: Malnutrition', points:1, mds:'I5600',
-    src:'Nutrition Assessment', page:18,
+    src:'Nutrition Assessment', srcShort:'Nutrition', page:18,
     quote:'Patient assessed as AT RISK for malnutrition; no current diagnosis of malnutrition.',
     truth:'reject'
   }
@@ -483,6 +573,7 @@ function toNextBand(pts){
    ================================================================ */
 let TAB = 'review';
 let openReject = null;   // id whose reason panel is open
+let openRow = null;      // id whose row is expanded
 
 const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
@@ -498,7 +589,7 @@ function tabs(){
     `<button class="tab ${TAB===k?'on':''}" onclick="setTab('${k}')">${esc(l)}${
       n!==null ? `<span class="pill">${n}</span>` : ''}</button>`).join('');
 }
-function setTab(k){ TAB = k; openReject = null; ev('tab', k); render(); window.scrollTo(0,0); }
+function setTab(k){ TAB = k; openReject = null; openRow = null; ev('tab', k); render(); window.scrollTo(0,0); }
 
 /* ---- the band display ---- */
 function bandView(){
@@ -521,45 +612,58 @@ function bandView(){
   </section>`;
 }
 
-/* ---- one finding row ----
-   Citation format follows the convention already in the market:
-   source name · p.N · verbatim quote from the document. */
+/* ---- one finding row: a single scannable line ----
+   Citation uses the standard clinical short form (MAR, H&P, Micro) so it is
+   ALWAYS fully visible and never truncated — the full source name is shown on
+   expand and in the artefact. Tapping the row opens the full quote, the
+   caveat, and the reason chips. */
 function findRow(f){
   const d = S.decisions[f.id];
   touch(f.id);
-  const cls = d ? (d.status==='confirm' ? 'done' : 'rej') : '';
-  let actions;
+  const open = openRow === f.id;
+  const cls = (d ? (d.status==='confirm' ? 'done' : 'rej') : '') + (open ? ' open' : '');
+
+  let acts;
   if (d && d.status === 'confirm'){
-    actions = `<span class="state ok">Confirmed</span>
-      <button class="btn" onclick="undecide('${f.id}')">Undo</button>
-      <button class="btn" onclick="viewPage(${f.page},'${f.id}')">View page</button>`;
+    acts = `<span class="state ok">Confirmed</span>
+      <button class="btn" onclick="stop(event);undecide('${f.id}')">Undo</button>`;
   } else if (d && d.status === 'reject'){
-    actions = `<span class="state no">Rejected</span>
-      <span class="muted">${esc(d.reason||'')}${d.note?' — '+esc(d.note):''}</span>
-      <button class="btn" onclick="undecide('${f.id}')">Undo</button>`;
+    acts = `<span class="state no">Rejected</span>
+      <button class="btn" onclick="stop(event);undecide('${f.id}')">Undo</button>`;
   } else {
-    actions = `<button class="btn confirm" onclick="decide('${f.id}','confirm')">Confirm</button>
-      <button class="btn reject" onclick="askReject('${f.id}')">Reject</button>
-      <button class="btn" onclick="viewPage(${f.page},'${f.id}')">View page</button>`;
+    acts = `<button class="btn confirm" onclick="stop(event);decide('${f.id}','confirm')">Confirm</button>
+      <button class="btn reject" onclick="stop(event);askReject('${f.id}')">Reject</button>
+      <button class="btn" onclick="stop(event);viewPage(${f.page},'${f.id}')">Page</button>`;
   }
-  const panel = openReject === f.id ? rejectPanel(f) : '';
-  return `<article class="find ${cls}" id="f-${f.id}">
-    <div class="top">
-      <div class="pts">${f.points}<small>POINTS</small></div>
-      <div class="body">
-        <div class="label">${esc(f.label)}</div>
-        <div class="mds">MDS ${esc(f.mds)}</div>
-        <div class="cite">
-          <span class="src">${esc(f.src)}</span> <span class="pg">· p.${f.page} ·</span>
-          <span class="q">“${esc(f.quote)}”</span>
-        </div>
-        ${f.caveat ? `<div class="gap" style="margin-top:9px;margin-bottom:0"><div class="w"><b>Check before you confirm:</b> ${esc(f.caveat)}</div></div>` : ''}
-        <div class="acts">${actions}</div>
-        ${panel}
-      </div>
-    </div>
-  </article>`;
+
+  const cite = `${esc(f.srcShort || f.src)} · <b>p.${f.page}</b>`;
+
+  return `<article class="find ${cls}" id="f-${f.id}" onclick="toggleRow('${f.id}')">
+      <div class="pts">${f.points}<i>PTS</i></div>
+      <div class="label" title="${esc(f.label)}">${esc(f.label)}</div>
+      <div class="q">${f.caveat ? '\u25B3 ' : ''}“${esc(f.quote)}”</div>
+      <div class="cit">${cite}</div>
+      <div class="acts">${acts}</div>
+      ${open ? detail(f, d) : ''}
+    </article>`;
 }
+
+/* Expanded detail: the full quote, the full source name, the caveat, and —
+   when rejecting — the reason chips, so rejection stays TWO taps. */
+function detail(f, d){
+  return `<div class="detail" onclick="stop(event)">
+    <div class="full">“${esc(f.quote)}”</div>
+    <div class="meta"><b>${esc(f.src)}</b> · page ${f.page} · MDS <b>${esc(f.mds)}</b></div>
+    ${f.caveat ? `<div class="caveat"><b>\u25B3 Check before you confirm:</b> ${esc(f.caveat)}</div>` : ''}
+    ${openReject === f.id ? rejectPanel(f) : ''}
+    <div class="acts" style="margin-top:11px">
+      <button class="btn" onclick="stop(event);viewPage(${f.page},'${f.id}')">View the page</button>
+    </div>
+  </div>`;
+}
+
+function stop(e){ if(e) e.stopPropagation(); }
+function toggleRow(id){ openRow = (openRow===id) ? null : id; if(openRow!==id) openReject=null; ev('row', id); render(); }
 
 /* Reject in two taps. Inline, never a blocking modal — if this feels
    heavy the nurse stops rejecting, and the rejection record is the
@@ -577,13 +681,14 @@ function rejectPanel(f){
     </div>
   </div>`;
 }
-function askReject(id){ openReject = id; ev('reject-open', id); render();
+function askReject(id){ openReject = id; openRow = id; ev('reject-open', id); render();
   const el = document.getElementById('f-'+id); if (el) el.scrollIntoView({block:'center', behavior:'smooth'}); }
 function doReject(id, reason, noteOnly){
+  /* still two taps: [Reject] opens the row with chips, one chip saves */
   const ta = document.getElementById('rn-'+id);
   const note = ta ? ta.value.trim() : '';
   if (noteOnly && !note){ alert('Add a note, or choose one of the reasons above.'); return; }
-  openReject = null;
+  openReject = null; openRow = null;
   decide(id, 'reject', reason, note);
 }
 
@@ -690,9 +795,11 @@ function artefactView(){
 
   const sect = k => conf.concat(S.added).filter(f => (f.mds||'').charAt(0) === k);
 
-  return `<h2 class="sec-h">Evidence artefact</h2>
-  <div class="note-line">A per-claim record that falls out of the review. Nothing here is submitted
-    anywhere; it is the document you would hand a reviewer.</div>
+  return `<h2 class="sec-h">Review worksheet</h2>
+  <div class="note-line">The document you key from and file. It lists the confirmed items in MDS
+    item order, then the evidence behind each one. <b>Nothing here is submitted anywhere</b> — MDS
+    assessments are generated and transmitted by your own EHR.
+    <div class="acts" style="margin-top:10px"><button class="btn primary" onclick="printArtefact()">Save as PDF</button></div></div>
 
   <section class="art">
     <h3>Summary</h3>
@@ -741,7 +848,7 @@ function artefactView(){
 
   <section class="art">
     <h3>MDS worksheet</h3>
-    <div class="sub">Confirmed items mapped to the field they belong in. To be keyed by a person.</div>
+    <div class="sub">Confirmed items in MDS item order — the order you key them. A worksheet, not a submission.</div>
     <div class="scroll-x"><table class="wk">
       <tr><th>MDS item</th><th>Finding</th><th>Points</th><th>Source</th></tr>
       ${MDS_SECTIONS.map(s => { const rows = sect(s.key); return rows.length
@@ -755,6 +862,94 @@ function artefactView(){
       not write to any system. Everything above is a suggestion for a person to accept, decline or correct.</div>
   </section>`;
 }
+
+/* ---- MDS item ordering ----
+   Data-entry order, not points order. She goes down her EHR screen section by
+   section: H, I, K, M, O. Points order is for DECIDING; item order is for KEYING. */
+const SECTION_ORDER = ['H','I','K','M','O'];
+function mdsSortKey(item){
+  const m = String(item||'').match(/^([A-Z])(\d+)(.*)$/);
+  if (!m) return [99, 99999, String(item||'')];
+  const sec = SECTION_ORDER.indexOf(m[1]);
+  return [sec === -1 ? 98 : sec, parseInt(m[2],10), m[3]];
+}
+function byMdsItem(a,b){
+  const ka = mdsSortKey(a.mds), kb = mdsSortKey(b.mds);
+  for (let i=0;i<3;i++){ if (ka[i] < kb[i]) return -1; if (ka[i] > kb[i]) return 1; }
+  return 0;
+}
+
+/* ---- THE PDF: a worksheet she keys FROM. Never a submission. ----
+   Built into the DOM, hidden on screen, revealed only by the print stylesheet,
+   so Chrome's print-to-PDF renders it without any PDF library. */
+function buildPrintDoc(){
+  const conf = FINDINGS.filter(f => S.decisions[f.id] && S.decisions[f.id].status==='confirm');
+  const rej  = FINDINGS.filter(f => S.decisions[f.id] && S.decisions[f.id].status==='reject');
+  const all  = conf.concat(S.added.filter(a => a.counts !== false));
+  const pts  = confirmedPoints(), b = bandFor(pts);
+  const when = new Date().toLocaleString();
+  const banner = '<div class="ph-banner">Sample data — fictional patient — not a real record</div>';
+
+  const worksheet = all.slice().sort(byMdsItem).map(f => `<tr>
+      <td><b>${esc(f.mds || '—')}</b></td>
+      <td>${esc(f.label)}</td>
+      <td style="text-align:right">${f.points}</td>
+      <td>${esc(f.src || 'Added by reviewer')}${f.page ? ', p.'+f.page : ''}</td>
+      <td style="width:56px"></td></tr>`).join('');
+
+  const evidence = conf.map(f => `<div class="ev">
+      <div class="l">${esc(f.label)} — ${f.points} point${f.points===1?'':'s'} · MDS ${esc(f.mds)}</div>
+      <div class="c">${esc(f.src)} · p.${f.page} · <i>“${esc(f.quote)}”</i></div>
+      <div class="why">Confirmed by reviewer, ${esc(new Date(S.decisions[f.id].at).toLocaleString())}</div>
+    </div>`).join('') + S.added.map(a => `<div class="ev">
+      <div class="l">${esc(a.label)} — ${a.points} point${a.points===1?'':'s'}${a.mds?' · MDS '+esc(a.mds):''}</div>
+      <div class="c">Identified by the reviewer${a.page?', p.'+esc(a.page):''} · <i>“${esc(a.why||'')}”</i></div>
+    </div>`).join('');
+
+  const declined = rej.map(f => { const d=S.decisions[f.id]; return `<div class="ev">
+      <div class="l">${esc(f.label)} — ${f.points} point${f.points===1?'':'s'} DECLINED</div>
+      <div class="c">${esc(f.src)} · p.${f.page} · <i>“${esc(f.quote)}”</i></div>
+      <div class="why"><b>Reason:</b> ${esc(d.reason||'')}${d.note?` — “${esc(d.note)}”`:''}
+        <br>Declined by reviewer, ${esc(new Date(d.at).toLocaleString())}</div>
+    </div>`; }).join('');
+
+  const queries = GAPS.map(g => `<div class="ev"><div class="l">${esc(g.t)}</div>
+      <div class="why">${esc(g.w)}</div></div>`).join('');
+
+  document.getElementById('printdoc').innerHTML = `
+    ${banner}
+    <h1>NTA Review Worksheet</h1>
+    <div class="sub">${esc(PATIENT.name)} · ${esc(PATIENT.mrn)}<br>
+      ${esc(PATIENT.from)} → ${esc(PATIENT.to)} · ${esc(PATIENT.received)}<br>
+      Reviewed ${esc(when)} · Confirmed total ${pts} points — NTA band ${b.code}</div>
+
+    <h2>1 · MDS worksheet — key these in</h2>
+    <div class="sub">Listed in MDS item order, the order you work down the assessment.
+      Tick each one as you key it. <b>This worksheet is not a submission and nothing here has
+      been sent anywhere.</b></div>
+    <table>
+      <tr><th>MDS item</th><th>Condition / service</th><th>Pts</th><th>Source</th><th>Keyed</th></tr>
+      ${worksheet || '<tr><td colspan="5">No items confirmed.</td></tr>'}
+    </table>
+
+    <h2>2 · Evidence packet</h2>
+    <h3>Confirmed items, with source and quotation</h3>
+    ${evidence || '<div class="ev"><div class="why">No items confirmed.</div></div>'}
+    <h3>Items declined by the reviewer, and why</h3>
+    ${declined || '<div class="ev"><div class="why">No items were declined.</div></div>'}
+    <h3>Query list — items that failed for want of documentation</h3>
+    ${queries}
+
+    <div class="sig">Reviewed by: ________________________________
+      &nbsp;&nbsp; Title: ______________ &nbsp;&nbsp; Date: ____________</div>
+    <div class="foot"><b>This is a review worksheet, not a submission.</b>
+      No assessment has been coded, scored or transmitted. MDS assessments are generated and
+      transmitted to CMS by the facility's own EHR. Every item above is a suggestion for a
+      qualified reviewer to accept, decline or correct, and the reviewer's decisions are recorded
+      as shown. Sample data — fictional patient — not a real record.</div>`;
+}
+
+function printArtefact(){ ev('print-artefact', confirmedPoints()); buildPrintDoc(); window.print(); }
 
 /* ---- export: available throughout, not only at the end ---- */
 function exportSession(){
@@ -806,8 +1001,8 @@ function exportSession(){
 }
 function exportView(){
   const e = window.__export || {json:'', summary:''};
-  return `<h2 class="sec-h">Session export</h2>
-    <div class="note-line">Copy this out and send it back. It is the whole point of the exercise.</div>
+  return `<h2 class="sec-h">Session data for the build team</h2>
+    <div class="note-line">This is for the build team, not for the resident record. Copy it out and send it back.</div>
     <section class="art"><h3>Summary</h3><pre style="white-space:pre-wrap;font-size:14px">${esc(e.summary)}</pre></section>
     <section class="art"><h3>Full session (JSON)</h3>
       <textarea class="exportbox" readonly onclick="this.select()">${esc(e.json)}</textarea>
@@ -844,7 +1039,9 @@ function render(){
           : exportView();
   document.getElementById('main').innerHTML = v;
 }
-document.getElementById('exportBtn').addEventListener('click', exportSession);
+document.getElementById('printBtn').addEventListener('click', printArtefact);
+var __rl = document.getElementById('researchLink');
+if (__rl) __rl.addEventListener('click', function(e){ e.preventDefault(); exportSession(); });
 document.getElementById('sheet').addEventListener('click', e => { if (e.target.id==='sheet') closeSheet(); });
 render();
 </script>
