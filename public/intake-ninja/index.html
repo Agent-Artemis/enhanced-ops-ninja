@@ -143,6 +143,22 @@ main{max-width:940px;margin:0 auto;padding:var(--pad) var(--pad) 96px}
 /* fixed, never truncates — a cut-off citation is worse than none */
 .find .cit{font-size:12.5px;color:var(--text-3);white-space:nowrap;text-align:right}
 .find .cit b{color:var(--blue-lt);font-weight:700}
+.find .cit .s2{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--gold);font-weight:700}
+.detail .step{font-size:13px;line-height:1.5;color:var(--text-2);margin-top:7px;
+  padding-left:11px;border-left:2px solid var(--line-2)}
+.detail .step b{color:var(--text)}
+.detail .step.weak{border-left-color:var(--gold);color:var(--text)}
+.detail .step.step2{border-left-color:var(--gold)}
+.detail .step.step2 b{color:var(--gold)}
+.cat-h{font-family:var(--head);font-size:15px;letter-spacing:.06em;color:var(--text-2);
+  background:var(--panel-2);padding:7px 12px;border-top:1px solid var(--line);
+  text-transform:uppercase}
+.cat-h:first-child{border-top:0}
+.sortbar{display:flex;gap:8px;align-items:center;margin:0 0 9px;flex-wrap:wrap}
+.sortbar .lbl{font-size:12.5px;color:var(--text-3)}
+.sortbar .btn{min-height:38px;padding:7px 11px;font-size:13px}
+.sortbar .btn.on{background:var(--blue);border-color:var(--blue);color:#fff}
 
 .find .acts{display:flex;gap:6px;justify-self:end}
 .find .acts .btn{min-height:38px;padding:6px 10px;font-size:13px;border-radius:8px}
@@ -341,6 +357,22 @@ const PATIENT = {
   received: 'Referral packet received by fax, 62 pages, scanned image'
 };
 
+
+/* MDS Section I is ordered BY MAJOR DISEASE CATEGORY, verbatim from RAI v1.20.1.
+   This is the order she keys down her EHR screen, so it is our default sort.
+   Sorting by points is the "capture more NTA" framing we killed — the sort
+   order encodes the positioning. */
+const MDS_CATEGORIES = [
+  'Cancer','Heart/Circulation','Gastrointestinal','Genitourinary','Infections',
+  'Metabolic','Musculoskeletal','Neurological','Nutritional',
+  'Psychiatric/Mood Disorder','Pulmonary','Vision',
+  'Other (I8000 write-in)',
+  'Section K — Nutritional Approaches',
+  'Section O — Special Treatments and Programs',
+  'Section H — Bladder and Bowel',
+  'Section M — Skin Conditions'
+];
+
 /* NTA case-mix bands. Verified against the CGS Medicare PDPM deck and
    the CMS NTA fact-sheet table: NA 12+, NB 9-11, NC 6-8, ND 3-5,
    NE 1-2, NF 0. Case-mix index included because it is the reason a
@@ -373,48 +405,56 @@ const FINDINGS = [
     src:'Medication Administration Record', srcShort:'MAR', page:31,
     quote:'Vancomycin 1 g IV every 12 hours for MRSA sacral wound infection.',
     caveat:'Scores only if IV medication continues AFTER admission to the facility. This order is from the hospital stay.',
+    category:'Section O — Special Treatments and Programs', icd10:null, capture:'checkbox', documentedBy:'physician', docDate:'19 Mar',
     truth:'ambiguous'
   },
   {
     id:'tpn', label:'Parenteral IV Feeding: Level Low', points:3, mds:'K0510A2',
     src:'History and Physical', srcShort:'H&P', page:6,
     quote:'TPN discontinued 3/14 after enteral tolerance established; patient now on oral diet.',
+    category:'Section K — Nutritional Approaches', icd10:null, capture:'checkbox', documentedBy:'physician', docDate:'14 Mar',
     truth:'reject'
   },
   {
     id:'wound-inf', label:'Wound Infection Code', points:2, mds:'I2500',
     src:'Wound Care Consult', srcShort:'Wound Consult', page:41,
     quote:'Sacral wound with purulent exudate and surrounding erythema; wound infection.',
+    category:'Infections', icd10:'L08.9', capture:'checkbox', documentedBy:'physician', docDate:'16 Mar',
     truth:'confirm'
   },
   {
     id:'dm', label:'Active Diagnoses: Diabetes Mellitus', points:2, mds:'I2900',
     src:'History and Physical', srcShort:'H&P', page:4,
     quote:'Type 2 diabetes mellitus, insulin-dependent, poorly controlled.',
+    category:'Metabolic', icd10:'E11.9', capture:'checkbox', documentedBy:'physician', docDate:'09 Mar',
     truth:'confirm'
   },
   {
     id:'copd', label:'Active Diagnoses: Asthma / COPD / Chronic Lung Disease', points:2, mds:'I6200',
     src:'History and Physical', srcShort:'H&P', page:4,
     quote:'COPD, GOLD stage III, on home oxygen 2 L via nasal cannula.',
+    category:'Pulmonary', icd10:'J44.9', capture:'checkbox', documentedBy:'physician', docDate:'09 Mar',
     truth:'confirm'
   },
   {
     id:'mdro', label:'Active Diagnoses: Multi-Drug Resistant Organism', points:1, mds:'I1700',
     src:'Microbiology Report', srcShort:'Micro', page:42,
     quote:'Methicillin-resistant Staphylococcus aureus isolated from sacral wound culture.',
+    category:'Infections', icd10:'B95.62', capture:'checkbox', documentedBy:'laboratory', docDate:'10 Mar',
     truth:'confirm'
   },
   {
     id:'obesity', label:'Morbid Obesity', points:1, mds:'I8000',
     src:'Nutrition Assessment', srcShort:'Nutrition', page:18,
     quote:'Height 63 in, weight 232 lb, BMI 41.1. Morbid obesity.',
+    category:'Other (I8000 write-in)', icd10:'E66.01', capture:'write-in', documentedBy:'dietitian', docDate:'11 Mar',
     truth:'confirm'
   },
   {
     id:'malnutrition', label:'Active Diagnoses: Malnutrition', points:1, mds:'I5600',
     src:'Nutrition Assessment', srcShort:'Nutrition', page:18,
     quote:'Patient assessed as AT RISK for malnutrition; no current diagnosis of malnutrition.',
+    category:'Nutritional', icd10:'E46', capture:'checkbox', documentedBy:'dietitian', docDate:'11 Mar',
     truth:'reject'
   }
 ];
@@ -612,6 +652,41 @@ function bandView(){
   </section>`;
 }
 
+/* ---- THE TWO-STEP TEST — RAI v1.20.1 §Section I ----
+   Step 1 IDENTIFY: 60-day look-back, needs a PHYSICIAN-documented diagnosis.
+     The manual names transfer documents and discharge summaries as valid
+     sources, so a referral packet is a legitimate Step 1 source.
+   Step 2 ACTIVE: 7-day look-back, needs a direct relationship to the
+     resident's CURRENT status in the building.
+   We read a document written BEFORE the resident arrived. Step 2 evidence
+   does not exist in it. That is structural, not a model-quality problem, and
+   it is why every line states what we did and did not do. */
+const STEP2_NOT_ASSESSED =
+  'Step 2 not assessed: you must determine whether it is active in the 7-day look-back.';
+
+/* I2300 UTI is the documented exception — it does not use the 7-day active
+   look-back and carries its own criteria. Special-cased so it never gets the
+   generic Step 2 line. */
+function isUTI(f){ return String(f.mds||'').startsWith('I2300'); }
+function step2Line(f){
+  return isUTI(f)
+    ? 'I2300 UTI does not use the 7-day active look-back — apply the separate UTI criteria in the RAI manual.'
+    : STEP2_NOT_ASSESSED;
+}
+
+/* Step 1 statement, per item. Says WHO documented it, because Step 1 requires
+   a physician (or NP/PA/CNS where state licensure allows) — a laboratory
+   result or a dietitian note is NOT a physician-documented diagnosis. */
+function step1Line(f){
+  const src = `${esc(f.src)} p.${f.page}${f.docDate ? ', '+esc(f.docDate) : ''}`;
+  if (f.documentedBy === 'physician')
+    return `Physician-documented, ${src} — within the 60-day look-back.`;
+  const who = f.documentedBy === 'laboratory' ? 'a laboratory result' : `a ${esc(f.documentedBy)} note`;
+  return `Found in ${src}, but this is ${who}, NOT a physician-documented diagnosis. `
+       + `Step 1 requires one — confirm a physician has documented it before coding.`;
+}
+function step1Weak(f){ return f.documentedBy && f.documentedBy !== 'physician'; }
+
 /* ---- one finding row: a single scannable line ----
    Citation uses the standard clinical short form (MAR, H&P, Micro) so it is
    ALWAYS fully visible and never truncated — the full source name is shown on
@@ -642,7 +717,7 @@ function findRow(f){
       <div class="pts">${f.points}<i>PTS</i></div>
       <div class="label" title="${esc(f.label)}">${esc(f.label)}</div>
       <div class="q">${f.caveat ? '\u25B3 ' : ''}“${esc(f.quote)}”</div>
-      <div class="cit">${cite}</div>
+      <div class="cit">${cite}<span class="s2">step 2</span></div>
       <div class="acts">${acts}</div>
       ${open ? detail(f, d) : ''}
     </article>`;
@@ -653,7 +728,11 @@ function findRow(f){
 function detail(f, d){
   return `<div class="detail" onclick="stop(event)">
     <div class="full">“${esc(f.quote)}”</div>
-    <div class="meta"><b>${esc(f.src)}</b> · page ${f.page} · MDS <b>${esc(f.mds)}</b></div>
+    <div class="meta"><b>${esc(f.src)}</b> · page ${f.page} · MDS <b>${esc(f.mds)}</b>${
+      f.icd10 ? ` · ICD-10 <b>${esc(f.icd10)}</b>` : ''}${
+      f.capture==='write-in' ? ' · <b>write-in</b>' : ''}</div>
+    <div class="step ${step1Weak(f)?'weak':''}"><b>Step 1 — identify:</b> ${step1Line(f)}</div>
+    <div class="step step2"><b>${isUTI(f)?'I2300 UTI exception':'Step 2 — active?'}</b> ${step2Line(f)}</div>
     ${f.caveat ? `<div class="caveat"><b>\u25B3 Check before you confirm:</b> ${esc(f.caveat)}</div>` : ''}
     ${openReject === f.id ? rejectPanel(f) : ''}
     <div class="acts" style="margin-top:11px">
@@ -858,8 +937,13 @@ function artefactView(){
         : ''; }).join('')}
       ${conf.length||S.added.length ? '' : '<tr><td colspan="4" class="muted">Nothing confirmed yet.</td></tr>'}
     </table></div>
-    <div class="never"><b>This tool never submits.</b> It does not code, does not score the MDS and does
-      not write to any system. Everything above is a suggestion for a person to accept, decline or correct.</div>
+    <div class="never"><b>This tool never submits — and could not.</b> CMS's own coding rules require a
+      clinical determination it is structurally incapable of making. RAI Manual v1.20.1 sets a two-step
+      test for Section I: Step 1 identifies a physician-documented diagnosis within 60 days, which this
+      packet can support. Step 2 determines whether that diagnosis is <b>active</b> in the 7-day
+      look-back — a judgement about the resident's current status in this building, which no document
+      written before their arrival can answer. Everything above is a Step 1 suggestion for a qualified
+      reviewer to accept, decline or correct.</div>
   </section>`;
 }
 
@@ -890,17 +974,43 @@ function buildPrintDoc(){
   const when = new Date().toLocaleString();
   const banner = '<div class="ph-banner">Sample data — fictional patient — not a real record</div>';
 
-  const worksheet = all.slice().sort(byMdsItem).map(f => `<tr>
+  /* Grouped by MDS disease category, in the manual's order — the order she
+     keys down her screen. Every line states the Step 2 position. */
+  const grouped = groupedByCategory(all);
+  let worksheet = '';
+  grouped.forEach((items, cat) => {
+    worksheet += `<tr><td colspan="5" style="background:#e8e8e8;font-weight:700">${esc(cat)}</td></tr>`;
+    worksheet += items.map(f => `<tr>
       <td><b>${esc(f.mds || '—')}</b></td>
-      <td>${esc(f.label)}</td>
+      <td>${esc(f.label)}${f.icd10 ? `<br><span style="font-size:8.5pt">ICD-10 <b>${esc(f.icd10)}</b>${f.capture==='write-in'?' — write in at I8000':''}</span>`:''}
+        <br><span style="font-size:8pt">${esc(step1Line(f))}</span>
+        <br><span style="font-size:8pt"><b>${isUTI(f)?'I2300 UTI exception:':'Step 2 not assessed:'}</b>
+        ${esc(isUTI(f)?step2Line(f):'you must determine whether it is active in the 7-day look-back.')}</span></td>
       <td style="text-align:right">${f.points}</td>
-      <td>${esc(f.src || 'Added by reviewer')}${f.page ? ', p.'+f.page : ''}</td>
-      <td style="width:56px"></td></tr>`).join('');
+      <td>${esc(f.srcShort || f.src || 'Reviewer')}${f.page ? ', p.'+f.page : ''}</td>
+      <td style="width:52px"></td></tr>`).join('');
+  });
+
+  /* I8000 is a WRITE-IN box, and more than half the NTA comorbidities arrive
+     through it. A clean diagnosis + ICD-10 list ready to key is the single
+     most useful thing this worksheet produces. */
+  const writeIns = all.filter(f => f.capture === 'write-in' || String(f.mds||'').startsWith('I8000'));
+  const writeInBlock = writeIns.length ? `
+    <h2>1b · I8000 write-in list</h2>
+    <div class="sub">I8000 is a write-in box: enter the diagnosis name and its ICD-10 code.
+      Codes are right-justified with the decimal in its own box.</div>
+    <table>
+      <tr><th style="width:120px">ICD-10 code</th><th>Diagnosis name, as written</th><th style="width:52px">Keyed</th></tr>
+      ${writeIns.map(f => `<tr><td><b>${esc(f.icd10 || '—')}</b></td>
+        <td>${esc(f.label)}</td><td></td></tr>`).join('')}
+    </table>` : '';
 
   const evidence = conf.map(f => `<div class="ev">
       <div class="l">${esc(f.label)} — ${f.points} point${f.points===1?'':'s'} · MDS ${esc(f.mds)}</div>
       <div class="c">${esc(f.src)} · p.${f.page} · <i>“${esc(f.quote)}”</i></div>
-      <div class="why">Confirmed by reviewer, ${esc(new Date(S.decisions[f.id].at).toLocaleString())}</div>
+      <div class="why">${esc(step1Line(f))}<br>
+        <b>${isUTI(f)?'I2300 UTI exception:':'Step 2 not assessed:'}</b> ${esc(step2Line(f))}<br>
+        Confirmed by reviewer, ${esc(new Date(S.decisions[f.id].at).toLocaleString())}</div>
     </div>`).join('') + S.added.map(a => `<div class="ev">
       <div class="l">${esc(a.label)} — ${a.points} point${a.points===1?'':'s'}${a.mds?' · MDS '+esc(a.mds):''}</div>
       <div class="c">Identified by the reviewer${a.page?', p.'+esc(a.page):''} · <i>“${esc(a.why||'')}”</i></div>
@@ -924,13 +1034,19 @@ function buildPrintDoc(){
       Reviewed ${esc(when)} · Confirmed total ${pts} points — NTA band ${b.code}</div>
 
     <h2>1 · MDS worksheet — key these in</h2>
-    <div class="sub">Listed in MDS item order, the order you work down the assessment.
-      Tick each one as you key it. <b>This worksheet is not a submission and nothing here has
-      been sent anywhere.</b></div>
+    <div class="sub">Grouped by MDS disease category in the manual's order — the order you work
+      down the assessment. Tick each one as you key it.<br>
+      <b>Every item below is a Step 1 result only.</b> Each was identified from a
+      physician-documented diagnosis within the 60-day look-back. Step 2 — whether the condition is
+      active in the 7-day look-back — has not been assessed and cannot be, from a packet written
+      before the resident arrived. <b>This worksheet is not a submission and nothing here has been
+      sent anywhere.</b></div>
     <table>
       <tr><th>MDS item</th><th>Condition / service</th><th>Pts</th><th>Source</th><th>Keyed</th></tr>
       ${worksheet || '<tr><td colspan="5">No items confirmed.</td></tr>'}
     </table>
+
+    ${writeInBlock}
 
     <h2>2 · Evidence packet</h2>
     <h3>Confirmed items, with source and quotation</h3>
@@ -943,10 +1059,17 @@ function buildPrintDoc(){
     <div class="sig">Reviewed by: ________________________________
       &nbsp;&nbsp; Title: ______________ &nbsp;&nbsp; Date: ____________</div>
     <div class="foot"><b>This is a review worksheet, not a submission.</b>
+      <b>CMS's own coding rules require a clinical determination this tool is structurally
+      incapable of making.</b> RAI Manual v1.20.1 sets a two-step test for Section I: Step 1
+      identifies a physician-documented diagnosis within 60 days, which a referral packet can
+      support; Step 2 determines whether that diagnosis is active in the 7-day look-back, which
+      requires knowledge of the resident's current status in this building. A document written
+      before the resident arrived cannot answer it. That is a structural limit, not a limitation of
+      this software.<br>
       No assessment has been coded, scored or transmitted. MDS assessments are generated and
       transmitted to CMS by the facility's own EHR. Every item above is a suggestion for a
-      qualified reviewer to accept, decline or correct, and the reviewer's decisions are recorded
-      as shown. Sample data — fictional patient — not a real record.</div>`;
+      qualified reviewer to accept, decline or correct. Sample data — fictional patient — not a
+      real record.</div>`;
 }
 
 function printArtefact(){ ev('print-artefact', confirmedPoints()); buildPrintDoc(); window.print(); }
@@ -1016,19 +1139,63 @@ function copyJson(){
   alert('Copied.');
 }
 
-/* ---- review tab ---- */
+/* ---- review tab ----
+   DEFAULT SORT IS MDS CATEGORY ORDER, matching the order she keys down her
+   EHR screen. Points-descending is a toggle, because deciding and keying are
+   different jobs. */
+let SORT = 'mds';
+
+function catIndex(f){
+  const i = MDS_CATEGORIES.indexOf(f.category);
+  return i === -1 ? MDS_CATEGORIES.length : i;
+}
+function groupedByCategory(list){
+  const groups = new Map();
+  list.slice().sort((a,b) => catIndex(a) - catIndex(b) || byMdsItem(a,b))
+      .forEach(f => { const k=f.category||'Other';
+                      if(!groups.has(k)) groups.set(k,[]); groups.get(k).push(f); });
+  return groups;
+}
+
 function reviewView(){
-  const pending = FINDINGS.filter(f => !S.decisions[f.id]).sort((a,b)=>b.points-a.points);
-  const done = FINDINGS.filter(f => S.decisions[f.id]).sort((a,b)=>b.points-a.points);
+  const pending = FINDINGS.filter(f => !S.decisions[f.id]);
+  const decided = FINDINGS.filter(f => S.decisions[f.id]);
+
+  const sortBar = `<div class="sortbar">
+      <span class="lbl">Order:</span>
+      <button class="btn ${SORT==='mds'?'on':''}" onclick="setSort('mds')">MDS item order</button>
+      <button class="btn ${SORT==='points'?'on':''}" onclick="setSort('points')">Points</button>
+      <span class="lbl">MDS order matches the sequence you key down your screen.</span>
+    </div>`;
+
+  const listOf = (arr) => {
+    if (!arr.length) return '';
+    if (SORT === 'points')
+      return `<div class="rows">${arr.slice().sort((a,b)=>b.points-a.points).map(findRow).join('')}</div>`;
+    let html = '<div class="rows">';
+    groupedByCategory(arr).forEach((items, cat) => {
+      html += `<div class="cat-h">${esc(cat)}</div>` + items.map(findRow).join('');
+    });
+    return html + '</div>';
+  };
+
   return bandView()
+    + `<div class="note-line">Every candidate below is a <b>Step 1</b> result only — identified from
+        a physician-documented diagnosis in the referral packet, within the 60-day look-back.
+        <b>Step 2, whether the condition is active in the 7-day look-back, has not been assessed
+        and cannot be from a packet written before the resident arrived.</b> That determination is
+        yours.</div>`
     + `<div class="note-line">This session records which items you confirm or reject, the reason you give,
         how long each one takes and the order you work in — so we can improve the tool. Nothing is
         recorded about you, and nothing leaves this device until you export it.</div>`
+    + sortBar
     + `<h2 class="sec-h">Candidates — ${pending.length} to review</h2>`
-    + (pending.length ? pending.map(findRow).join('') : `<div class="empty">Every candidate has a decision.</div>`)
-    + (done.length ? `<h2 class="sec-h">Decided</h2>` + done.map(findRow).join('') : '')
+    + (pending.length ? listOf(pending) : `<div class="empty">Every candidate has a decision.</div>`)
+    + (decided.length ? `<h2 class="sec-h">Decided</h2>` + listOf(decided) : '')
+    + `<div class="rowhint">Tap any row for the full quote, the source and the look-back position.</div>`
     + addMissView();
 }
+function setSort(k){ SORT = k; ev('sort', k); render(); }
 
 function render(){
   tabs();
