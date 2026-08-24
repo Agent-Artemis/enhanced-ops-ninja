@@ -623,7 +623,7 @@ function tabs(){
     ['review','Review', FINDINGS.length - Object.keys(S.decisions).length],
     ['rejections','Rejection log', rejN],
     ['gaps','Not found', GAPS.length],
-    ['artefact','Artefact', null]
+    ['artefact','Worksheet', null]
   ];
   document.getElementById('tabs').innerHTML = t.map(([k,l,n]) =>
     `<button class="tab ${TAB===k?'on':''}" onclick="setTab('${k}')">${esc(l)}${
@@ -687,6 +687,19 @@ function step1Line(f){
 }
 function step1Weak(f){ return f.documentedBy && f.documentedBy !== 'physician'; }
 
+/* The category heading already carries the MDS section context, so the label
+   prefix ("Active Diagnoses:", "Special Treatments/Programs:") is redundant in
+   the row and was consuming the whole column — leaving "Active Diagnoses: Mul…"
+   where she needs to tell Multiple Sclerosis from MDRO at a glance.
+   Stripped for the ROW only. Full label stays on expand, in the worksheet and
+   in the artefact. */
+function shortLabel(l){
+  return String(l||'')
+    .replace(/^Active Diagnoses:\s*/,'')
+    .replace(/^Special Treatments\/Programs:\s*/,'')
+    .replace(/^Nutritional Approaches:\s*/,'');
+}
+
 /* ---- one finding row: a single scannable line ----
    Citation uses the standard clinical short form (MAR, H&P, Micro) so it is
    ALWAYS fully visible and never truncated — the full source name is shown on
@@ -715,7 +728,7 @@ function findRow(f){
 
   return `<article class="find ${cls}" id="f-${f.id}" onclick="toggleRow('${f.id}')">
       <div class="pts">${f.points}<i>PTS</i></div>
-      <div class="label" title="${esc(f.label)}">${esc(f.label)}</div>
+      <div class="label" title="${esc(f.label)}">${esc(shortLabel(f.label))}</div>
       <div class="q">${f.caveat ? '\u25B3 ' : ''}“${esc(f.quote)}”</div>
       <div class="cit">${cite}<span class="s2">step 2</span></div>
       <div class="acts">${acts}</div>
@@ -1199,6 +1212,10 @@ function setSort(k){ SORT = k; ev('sort', k); render(); }
 
 function render(){
   tabs();
+  /* Keep the print document current on every render, so browser Print or
+     Cmd+P produces the worksheet rather than a blank page. Caught by actually
+     rendering to PDF rather than by reading the code. */
+  try { buildPrintDoc(); } catch(e){}
   const v = TAB==='review' ? reviewView()
           : TAB==='rejections' ? rejectionsView()
           : TAB==='gaps' ? gapsView()
