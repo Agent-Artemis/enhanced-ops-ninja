@@ -16,23 +16,42 @@
    when Evelyn's competitor research lands.
    ============================================================ */
 :root{
-  --blue:#1A6ECC; --blue-dk:#12508f; --blue-soft:rgba(26,110,204,.10);
-  --gold:#F5B301; --gold-soft:rgba(245,179,1,.14);
-  --ink:#0F1724; --ink-2:#33415A; --ink-3:#6B7A90;
-  --line:#DCE3EC; --bg:#F4F7FB; --card:#FFFFFF;
-  --ok:#1B8A5A; --ok-soft:rgba(27,138,90,.10);
-  --no:#B3261E; --no-soft:rgba(179,38,30,.08);
-  --warn:#8A6100;
+  /* Locked EnhancedOps.Ninja palette. Backgrounds are ALWAYS dark, never white. */
+  --bg:#0A0F1A;            /* page ground */
+  --panel:#0E1420;         /* cards */
+  --panel-2:#131b2b;       /* raised / nested */
+  --line:#243044;          /* hairline */
+  --line-2:#31415c;        /* stronger divider */
+
+  --text:#EEF3FA;          /* primary */
+  --text-2:#AEBBCD;        /* secondary */
+  --text-3:#7E8DA0;        /* tertiary / meta */
+
+  --blue:#1A6ECC;          /* primary brand */
+  --blue-lt:#3F8AE0;       /* emphasis, links, focus */
+  --blue-soft:rgba(26,110,204,.16);
+  --gold:#F5B301;          /* SECONDARY ACCENT ONLY — badges and pills */
+  --gold-soft:rgba(245,179,1,.14);
+
+  --ok:#3FBF87;            /* lifted for contrast on dark */
+  --ok-soft:rgba(63,191,135,.13);
+  --no:#FF6B61;            /* lifted for contrast on dark */
+  --no-soft:rgba(255,107,97,.12);
+  --warn:#F5B301;
+
   --r:12px; --pad:16px;
+  /* Headings Bebas Neue (condensed all-caps, needs positive tracking).
+     Body DM Sans. No system monospace anywhere in the app chrome. */
   --head:'Bebas Neue',Impact,sans-serif;
   --body:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
 h1,h2,h3,.h{font-family:var(--head);font-weight:400;letter-spacing:.02em;margin:0}
+.sec-h,.mark,.band .pts,.band .code,.find .pts{letter-spacing:.02em}
 button{font:inherit;cursor:pointer}
-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em}
+code{font-family:var(--body);font-weight:700;letter-spacing:.03em;font-size:.94em;color:var(--blue-lt)}
 
 /* ---------- sample-data banner: must be unmissable on every screen ---------- */
 .sample-banner{position:sticky;top:0;z-index:60;background:var(--gold);color:#241a00;
@@ -40,142 +59,149 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em}
   text-align:center;padding:7px 12px;border-bottom:2px solid #c99400}
 
 /* ---------- app bar ---------- */
-.appbar{position:sticky;top:31px;z-index:50;background:var(--card);border-bottom:1px solid var(--line);
+.appbar{position:sticky;top:31px;z-index:50;background:var(--panel);border-bottom:1px solid var(--line);
   display:flex;align-items:center;gap:12px;padding:10px var(--pad)}
-.appbar img{height:30px;width:auto;display:block}
-.appbar .name{font-family:var(--head);font-size:23px;line-height:1;color:var(--ink)}
-.appbar .name span{color:var(--blue)}
+/* The wide lockup IS the wordmark — never a text wordmark beside it, and never
+   the square logo shrunk into a nav, which goes illegible. */
+.appbar .logo{width:280px;max-width:290px;height:auto;object-fit:contain;display:block}
+.appbar .prod{font-family:var(--head);font-size:19px;line-height:1;color:var(--text-2);
+  letter-spacing:.06em;text-transform:uppercase;padding-left:14px;margin-left:2px;
+  border-left:1px solid var(--line-2)}
+@media (max-width:560px){.appbar .logo{width:200px}.appbar .prod{display:none}}
 .appbar .spacer{flex:1}
-.btn{border:1px solid var(--line);background:var(--card);color:var(--ink-2);border-radius:10px;
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--text-2);border-radius:10px;
   padding:9px 13px;font-size:14px;font-weight:500;min-height:44px;display:inline-flex;align-items:center;gap:7px}
-.btn:hover{border-color:var(--blue);color:var(--blue)}
-.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
-.btn.primary:hover{background:var(--blue-dk);color:#fff}
-.btn.gold{background:var(--gold);border-color:var(--gold);color:#241a00;font-weight:700}
+.btn:hover{border-color:var(--blue-lt);color:var(--blue-lt)}
+.btn.primary{background:var(--blue);border-color:var(--blue-lt);color:#fff}
+.btn.primary:hover{background:var(--blue-lt);color:#fff}
 
 /* ---------- tabs ---------- */
-.tabs{display:flex;gap:6px;padding:10px var(--pad) 0;background:var(--card);border-bottom:1px solid var(--line);
+.tabs{display:flex;gap:6px;padding:10px var(--pad) 0;background:var(--panel);border-bottom:1px solid var(--line);
   overflow-x:auto;-webkit-overflow-scrolling:touch;position:sticky;top:82px;z-index:45}
-.tab{border:0;background:transparent;color:var(--ink-3);font-weight:500;font-size:15px;
+.tab{border:0;background:transparent;color:var(--text-3);font-weight:500;font-size:15px;
   padding:10px 12px;border-bottom:3px solid transparent;white-space:nowrap;min-height:44px}
-.tab.on{color:var(--blue);border-bottom-color:var(--blue)}
+.tab.on{color:var(--blue-lt);border-bottom-color:var(--blue-lt)}
 .tab .pill{display:inline-block;min-width:20px;padding:0 6px;margin-left:6px;border-radius:999px;
-  background:var(--bg);color:var(--ink-3);font-size:12px;font-weight:700;line-height:19px;text-align:center}
-.tab.on .pill{background:var(--blue-soft);color:var(--blue)}
+  background:var(--bg);color:var(--text-3);font-size:12px;font-weight:700;line-height:19px;text-align:center}
+.tab.on .pill{background:var(--blue-soft);color:var(--blue-lt)}
 
 main{max-width:940px;margin:0 auto;padding:var(--pad) var(--pad) 96px}
 
 /* ---------- BAND DISPLAY — hero. Nobody else shows this. ---------- */
-.band{background:linear-gradient(135deg,#12233b,#1A6ECC);color:#fff;border-radius:var(--r);
-  padding:18px 18px 16px;margin-bottom:14px;box-shadow:0 6px 20px rgba(18,35,59,.18)}
-.band .lede{font-size:12px;letter-spacing:.10em;text-transform:uppercase;opacity:.78;font-weight:700}
+.band{background:var(--panel-2);color:var(--text);border-radius:var(--r);
+  border:1px solid var(--line-2);border-left:4px solid var(--blue);
+  padding:18px 18px 16px;margin-bottom:14px}
+.band .lede{font-size:12px;letter-spacing:.10em;text-transform:uppercase;color:var(--text-3);font-weight:700}
 .band .row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-top:6px}
 .band .pts{font-family:var(--head);font-size:52px;line-height:.9}
-.band .code{font-family:var(--head);font-size:52px;line-height:.9;color:var(--gold)}
+.band .code{font-family:var(--head);font-size:52px;line-height:.9;color:var(--blue-lt)}
 .band .code small{font-family:var(--body);font-size:13px;font-weight:700;letter-spacing:.08em;
   display:block;opacity:.8;color:#fff}
-.band .next{margin-top:12px;background:rgba(255,255,255,.12);border-radius:9px;padding:11px 13px;
-  font-size:15px;font-weight:500}
-.band .next b{color:var(--gold)}
+.band .next{margin-top:12px;background:var(--blue-soft);border:1px solid var(--line-2);
+  border-radius:9px;padding:11px 13px;font-size:15px;font-weight:500;color:var(--text)}
+.band .next b{color:var(--blue-lt)}
 .band .ladder{display:flex;gap:4px;margin-top:12px}
 .band .rung{flex:1;text-align:center;font-size:11px;font-weight:700;letter-spacing:.05em;
-  padding:5px 2px;border-radius:6px;background:rgba(255,255,255,.10);opacity:.55}
+  padding:5px 2px;border-radius:6px;background:var(--panel);color:var(--text-3)}
 .band .rung.on{background:var(--gold);color:#241a00;opacity:1}
-.band .caution{margin-top:10px;font-size:12.5px;opacity:.82;line-height:1.4}
+.band .caution{margin-top:10px;font-size:12.5px;color:var(--text-2);line-height:1.45}
 
 /* ---------- finding rows ---------- */
-.sec-h{font-family:var(--head);font-size:20px;color:var(--ink-2);margin:18px 0 8px;letter-spacing:.03em}
-.find{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.sec-h{font-family:var(--head);font-size:20px;color:var(--text-2);margin:18px 0 8px;letter-spacing:.03em}
+.find{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:10px}
 .find.done{border-color:var(--ok);background:var(--ok-soft)}
 .find.rej{border-color:var(--line);background:var(--no-soft);opacity:.92}
 .find .top{display:flex;gap:12px;align-items:flex-start}
-.find .pts{font-family:var(--head);font-size:30px;line-height:1;color:var(--blue);min-width:52px;text-align:center}
-.find .pts small{display:block;font-family:var(--body);font-size:10px;font-weight:700;color:var(--ink-3);letter-spacing:.07em}
+.find .pts{font-family:var(--head);font-size:30px;line-height:1;color:var(--blue-lt);min-width:52px;text-align:center}
+.find .pts small{display:block;font-family:var(--body);font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:.07em}
 .find .body{flex:1;min-width:0}
 .find .label{font-weight:700;font-size:16.5px;line-height:1.3}
-.find .mds{font-size:12.5px;color:var(--ink-3);margin-top:2px}
+.find .mds{font-size:12.5px;color:var(--text-3);margin-top:2px}
 /* Citation — Clarity's convention: source · p.N · verbatim quote */
 .cite{margin-top:9px;font-size:14px;line-height:1.5;border-left:3px solid var(--blue);
   padding:7px 0 7px 10px;background:var(--blue-soft);border-radius:0 8px 8px 0}
-.cite .src{font-weight:700;color:var(--blue-dk)}
-.cite .pg{color:var(--ink-2);font-weight:500}
-.cite .q{display:block;margin-top:3px;color:var(--ink);font-style:italic}
+.cite .src{font-weight:700;color:var(--blue-lt)}
+.cite .pg{color:var(--text-2);font-weight:500}
+.cite .q{display:block;margin-top:3px;color:var(--text);font-style:italic}
 .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
 .acts .btn{flex:0 0 auto}
-.btn.confirm{background:var(--ok);border-color:var(--ok);color:#fff}
-.btn.reject{background:#fff;border-color:var(--no);color:var(--no)}
-.btn.reject:hover{background:var(--no);color:#fff}
+.btn.confirm{background:var(--ok);border-color:var(--ok);color:#06170f;font-weight:700}
+.btn.reject{background:transparent;border-color:var(--no);color:var(--no)}
+.btn.reject:hover{background:var(--no);color:#12060a}
 .state{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;
   padding:5px 10px;border-radius:999px}
-.state.ok{background:var(--ok);color:#fff}
-.state.no{background:var(--no);color:#fff}
+.state.ok{background:var(--ok);color:#06170f}
+.state.no{background:var(--no);color:#12060a}
 
 /* ---------- reject: inline, 2 taps, never a blocking modal ---------- */
 .rej-panel{margin-top:11px;border-top:1px dashed var(--line);padding-top:11px}
-.rej-panel .ask{font-size:13.5px;font-weight:700;color:var(--ink-2);margin-bottom:8px}
+.rej-panel .ask{font-size:13.5px;font-weight:700;color:var(--text-2);margin-bottom:8px}
 .chips{display:flex;flex-wrap:wrap;gap:7px}
-.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 13px;
-  font-size:14px;color:var(--ink-2);min-height:44px;display:inline-flex;align-items:center}
-.chip:hover,.chip.on{border-color:var(--no);background:var(--no);color:#fff}
-.rej-panel textarea{width:100%;margin-top:8px;border:1px solid var(--line);border-radius:9px;
-  padding:10px;font:inherit;font-size:16px;min-height:56px;resize:vertical}
-.muted{color:var(--ink-3);font-size:13px}
+.chip{border:1px solid var(--line-2);background:var(--panel-2);border-radius:999px;padding:9px 13px;
+  font-size:14px;color:var(--text-2);min-height:44px;display:inline-flex;align-items:center}
+.chip:hover,.chip.on{border-color:var(--no);background:var(--no);color:#12060a}
+.rej-panel textarea{width:100%;margin-top:8px;border:1px solid var(--line-2);border-radius:9px;
+  padding:10px;font:inherit;font-size:16px;min-height:56px;resize:vertical;
+  background:var(--panel-2);color:var(--text)}
+.muted{color:var(--text-3);font-size:13px}
 
 /* ---------- gaps: what we did NOT find ---------- */
-.gap{background:#fff;border:1px solid var(--gold);border-left:5px solid var(--gold);
+.gap{background:var(--gold-soft);border:1px solid var(--line-2);border-left:4px solid var(--gold);
   border-radius:var(--r);padding:13px 14px;margin-bottom:10px}
 .gap .t{font-weight:700;margin-bottom:3px}
-.gap .w{font-size:14px;color:var(--ink-2)}
+.gap .w{font-size:14px;color:var(--text-2)}
+.gap .t{color:var(--text)}
 
 /* ---------- page viewer ---------- */
 .sheet{position:fixed;inset:0;z-index:100;background:rgba(15,23,36,.55);display:none;
   align-items:flex-end;justify-content:center}
 .sheet.on{display:flex}
-.sheet .inner{background:#fff;width:100%;max-width:940px;max-height:92vh;border-radius:16px 16px 0 0;
+.sheet .inner{background:var(--panel);width:100%;max-width:940px;max-height:92vh;border-radius:16px 16px 0 0;
   display:flex;flex-direction:column}
 .sheet .bar{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)}
 .sheet .bar .t{font-weight:700;flex:1;min-width:0}
-.sheet .doc{overflow:auto;padding:18px;background:#fbfcfe}
-.page{background:#fff;border:1px solid var(--line);border-radius:6px;padding:26px 28px;
-  font-family:'Courier New',ui-monospace,monospace;font-size:13.5px;line-height:1.62;color:#1a1a1a;
-  box-shadow:0 2px 10px rgba(15,23,36,.07)}
+.sheet .doc{overflow:auto;padding:18px;background:var(--panel-2)}
+.page{background:#FBFBF8;border:1px solid #d8d8cf;border-radius:4px;padding:26px 28px;
+  font-family:var(--body);font-size:14px;line-height:1.7;color:#171A1F;
+  letter-spacing:.008em;box-shadow:0 2px 14px rgba(0,0,0,.35)}
 .page .ph{font-family:var(--body);font-size:11px;letter-spacing:.09em;text-transform:uppercase;
-  color:var(--ink-3);border-bottom:1px solid var(--line);padding-bottom:7px;margin-bottom:14px;
+  color:#5C6270;border-bottom:1px solid #d8d8cf;padding-bottom:7px;margin-bottom:14px;
   display:flex;justify-content:space-between;gap:10px}
 .page mark{background:var(--gold);color:#241a00;font-weight:700;padding:1px 2px}
-.page .pf{margin-top:18px;border-top:1px solid var(--line);padding-top:7px;
-  font-family:var(--body);font-size:11px;color:var(--ink-3);text-align:center}
+.page .pf{margin-top:18px;border-top:1px solid #d8d8cf;padding-top:7px;
+  font-family:var(--body);font-size:11px;color:#5C6270;text-align:center}
 
 /* ---------- artefact ---------- */
-.art{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:12px}
-.art h3{font-size:19px;color:var(--ink);margin-bottom:4px}
-.art .sub{font-size:13px;color:var(--ink-3);margin-bottom:12px}
+.art{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:12px}
+.art h3{font-size:19px;color:var(--text);margin-bottom:4px}
+.art .sub{font-size:13px;color:var(--text-3);margin-bottom:12px}
 .item{border-top:1px solid var(--line);padding:11px 0}
 .item:first-of-type{border-top:0}
 .item .l{font-weight:700}
 .wk{width:100%;border-collapse:collapse;font-size:14px}
 .wk th,.wk td{text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);vertical-align:top}
-.wk th{font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+.wk th{font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3)}
 .scroll-x{overflow-x:auto}
 
-.never{background:#fff;border:1px dashed var(--ink-3);border-radius:var(--r);padding:13px 14px;
-  font-size:13.5px;color:var(--ink-2);margin-top:14px}
-.never b{color:var(--ink)}
+.never{background:var(--panel-2);border:1px dashed var(--line-2);border-radius:var(--r);padding:13px 14px;
+  font-size:13.5px;color:var(--text-2);margin-top:14px}
+.never b{color:var(--text)}
 
-.note-line{font-size:12.5px;color:var(--ink-3);background:var(--card);border:1px solid var(--line);
+.note-line{font-size:12.5px;color:var(--text-3);background:var(--panel);border:1px solid var(--line);
   border-radius:10px;padding:9px 12px;margin-bottom:12px}
 
-.empty{color:var(--ink-3);font-size:15px;padding:22px;text-align:center;
-  background:var(--card);border:1px dashed var(--line);border-radius:var(--r)}
+.empty{color:var(--text-3);font-size:15px;padding:22px;text-align:center;
+  background:var(--panel);border:1px dashed var(--line);border-radius:var(--r)}
 
 textarea,input,select{font-family:inherit}
 .field{display:block;margin-bottom:11px}
-.field span{display:block;font-size:13px;font-weight:700;color:var(--ink-2);margin-bottom:5px}
-.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:9px;
-  padding:11px;font-size:16px;min-height:44px}
+.field span{display:block;font-size:13px;font-weight:700;color:var(--text-2);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--line-2);border-radius:9px;
+  padding:11px;font-size:16px;min-height:44px;background:var(--panel-2);color:var(--text)}
 
 .exportbox{width:100%;min-height:210px;border:1px solid var(--line);border-radius:9px;padding:11px;
-  font-family:ui-monospace,monospace;font-size:12px;white-space:pre}
+  background:var(--panel-2);color:var(--text-2);font-family:var(--body);font-size:12.5px;
+  letter-spacing:.01em;white-space:pre;line-height:1.55}
 
 @media (max-width:600px){
   .band .pts,.band .code{font-size:42px}
@@ -188,10 +214,10 @@ textarea,input,select{font-family:inherit}
 <div class="sample-banner">Sample data — fictional patient — not a real record</div>
 
 <header class="appbar">
-  <img src="/logo-ninja.png" alt="EnhancedOps.ninja">
-  <div class="name">INTAKE <span>NINJA</span></div>
+  <img class="logo" src="/ninja-logo.png" alt="EnhancedOps.Ninja">
+  <div class="prod">Intake Ninja</div>
   <div class="spacer"></div>
-  <button class="btn gold" id="exportBtn">Export session</button>
+  <button class="btn primary" id="exportBtn">Export session</button>
 </header>
 
 <nav class="tabs" id="tabs"></nav>
@@ -485,7 +511,7 @@ function bandView(){
   return `<section class="band">
     <div class="lede">Confirmed so far</div>
     <div class="row">
-      <div class="pts">${pts}<small style="font-family:var(--body);font-size:12px;font-weight:700;letter-spacing:.08em;opacity:.8">POINTS</small></div>
+      <div class="pts">${pts}<small style="font-family:var(--body);font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--text-3)">POINTS</small></div>
       <div class="code">${b.code}<small>CASE-MIX BAND · INDEX ${b.cmi.toFixed(2)}</small></div>
     </div>
     <div class="next">${nextLine}</div>
