@@ -69,9 +69,13 @@ code{font-family:var(--body);font-weight:700;letter-spacing:.03em;font-size:.94e
   border-left:1px solid var(--line-2)}
 @media (max-width:560px){.appbar .logo{width:200px}.appbar .prod{display:none}}
 .appbar .spacer{flex:1}
-.btn{border:1px solid var(--line);background:var(--panel);color:var(--text-2);border-radius:10px;
-  padding:9px 13px;font-size:14px;font-weight:500;min-height:44px;display:inline-flex;align-items:center;gap:7px}
-.btn:hover{border-color:var(--blue-lt);color:var(--blue-lt)}
+/* Every button is SOLID. Never ghost, never outline, never transparent.
+   Default is solid blue; secondary actions are solid in a panel tone with a
+   border so they still read as buttons rather than as text. */
+.btn{border:1px solid var(--line-2);background:var(--panel-2);color:var(--text);border-radius:10px;
+  padding:9px 13px;font-size:14px;font-weight:600;min-height:44px;display:inline-flex;
+  align-items:center;gap:7px}
+.btn:hover{background:var(--line);border-color:var(--blue-lt);color:#fff}
 .btn.primary{background:var(--blue);border-color:var(--blue-lt);color:#fff}
 .btn.primary:hover{background:var(--blue-lt);color:#fff}
 
@@ -114,8 +118,8 @@ main{max-width:940px;margin:0 auto;padding:var(--pad) var(--pad) 96px}
    is fixed so the columns line up down the page. ------------------------- */
 .rows{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--panel)}
 .find{display:grid;
-  grid-template-columns:46px minmax(120px,168px) minmax(0,1fr) 118px auto;
-  align-items:center;gap:10px;padding:0 12px;min-height:52px;
+  grid-template-columns:46px 176px minmax(0,1fr) 118px auto;
+  align-items:center;gap:10px;padding:8px 12px;min-height:56px;
   border-top:1px solid var(--line);cursor:pointer;
   transition:background .12s ease}
 .find:first-child{border-top:0}
@@ -133,8 +137,9 @@ main{max-width:940px;margin:0 auto;padding:var(--pad) var(--pad) 96px}
 .find .pts i{font-family:var(--body);font-style:normal;font-size:10px;font-weight:700;
   color:var(--text-3);letter-spacing:.06em;margin-left:3px}
 
-.find .label{font-weight:700;font-size:14.5px;line-height:1.25;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.find .label{font-weight:700;font-size:14.5px;line-height:1.22;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden;overflow-wrap:break-word}
 
 /* the only column allowed to shrink */
 .find .q{font-size:13.5px;color:var(--text-2);font-style:italic;
@@ -143,8 +148,9 @@ main{max-width:940px;margin:0 auto;padding:var(--pad) var(--pad) 96px}
 /* fixed, never truncates — a cut-off citation is worse than none */
 .find .cit{font-size:12.5px;color:var(--text-3);white-space:nowrap;text-align:right}
 .find .cit b{color:var(--blue-lt);font-weight:700}
-.find .cit .s2{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--gold);font-weight:700}
+.find .cit .s2{display:block;font-size:10px;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--text-3);font-weight:600;opacity:.85}
+.find .cit .s2::before{content:'\2022 ';color:var(--text-3)}
 .detail .step{font-size:13px;line-height:1.5;color:var(--text-2);margin-top:7px;
   padding-left:11px;border-left:2px solid var(--line-2)}
 .detail .step b{color:var(--text)}
@@ -191,8 +197,8 @@ main{max-width:940px;margin:0 auto;padding:var(--pad) var(--pad) 96px}
 .rej-panel{margin-top:11px;border-top:1px dashed var(--line);padding-top:11px}
 .rej-panel .ask{font-size:13.5px;font-weight:700;color:var(--text-2);margin-bottom:8px}
 .chips{display:flex;flex-wrap:wrap;gap:7px}
-.chip{border:1px solid var(--line-2);background:var(--panel-2);border-radius:999px;padding:9px 13px;
-  font-size:14px;color:var(--text-2);min-height:44px;display:inline-flex;align-items:center}
+.chip{border:1px solid var(--line-2);background:var(--line);border-radius:999px;padding:9px 13px;
+  font-size:14px;color:var(--text);font-weight:600;min-height:44px;display:inline-flex;align-items:center}
 .chip:hover,.chip.on{border-color:var(--no);background:var(--no);color:#12060a}
 .rej-panel textarea{width:100%;margin-top:8px;border:1px solid var(--line-2);border-radius:9px;
   padding:10px;font:inherit;font-size:16px;min-height:56px;resize:vertical;
