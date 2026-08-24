@@ -61,26 +61,33 @@ code{font-family:var(--body);font-weight:700;letter-spacing:.03em;font-size:.94e
 /* ---------- app bar ---------- */
 /* Deliberately NOT sticky. At 136px the logo would take a fifth of an iPad
    screen permanently. It scrolls away; the banner and the tabs stay. */
+/* No bottom padding: the mascot stands ON the bar's bottom rule. His full
+   height therefore sets the bar height, rather than a negative margin
+   shrinking his box while he still draws at full size — which pushed his head
+   up into the sample-data banner. */
 .appbar{position:relative;z-index:50;background:var(--panel);border-bottom:1px solid var(--line);
-  display:flex;align-items:center;gap:16px;padding:10px var(--pad)}
-/* THE brand logo, and it was in /public the whole time: logo-ninja.png,
-   661x377 RGBA — the folded-arms ninja with the sword on his back, standing
-   behind ENHANCED with the wordmark crossing his body.
-   ⚠️ The old checklist line "never shrink the SQUARE logo-ninja.png into a nav"
-   is what sent three separate attempts chasing substitutes. IT IS NOT SQUARE.
-   It is 1.75:1 and it is the full lockup. Use it directly; do not composite,
-   do not key anything out, and do not reach for ninja-logo-full.png, which has
-   a solid white plate and unkeyable white lettering. */
-.appbar .logo{width:220px;height:auto;display:block;flex:0 0 auto}
-.appbar .logo-sm{display:none;width:210px;height:auto;flex:0 0 auto}
+  display:flex;align-items:center;gap:16px;padding:12px var(--pad) 0}
+/* LEFT: the wordmark only. ninja-logo.png measures 1525x163 canvas against
+   1517x161 of content — margins t0 b2 l1 r7 — so there is effectively no dead
+   space in the file and the header needs no negative-margin trimming.
+   (logo-ninja.png, the full lockup, carries 63px top and 85px bottom of
+   transparency, which is what made the bar look loose at any padding.) */
+.appbar .logo{width:275px;height:auto;display:block;flex:0 0 auto;margin-bottom:12px}
+
+/* RIGHT: the mascot, anchored to the far right edge and STANDING ON the bar's
+   bottom border. He is deliberately taller than the wordmark — at ~40px a dark
+   ninja on a dark panel reads as a smudge, so he sets the bar height rather
+   than being squeezed into it. Bottom-aligned via align-self, with the negative
+   margin cancelling the bar's bottom padding so his feet land on the rule. */
+.appbar .mascot{height:64px;width:auto;flex:0 0 auto;align-self:flex-end;
+  margin-left:24px;pointer-events:none;display:block}
 .appbar .prod{font-family:var(--head);font-size:19px;line-height:1;color:var(--text-2);
   letter-spacing:.06em;text-transform:uppercase;padding-left:14px;margin-left:2px;
-  border-left:1px solid var(--line-2)}
+  margin-bottom:12px;border-left:1px solid var(--line-2)}
 @media (max-width:560px){
-  /* A 137px-tall logo on a phone header is wrong, so swap to the wide wordmark
-     rather than shrinking the full lockup into illegibility. */
-  .appbar .logo{display:none}
-  .appbar .logo-sm{display:block}
+  /* No room for the mascot on a phone. The wordmark is the identity and stays. */
+  .appbar .mascot{display:none}
+  .appbar .logo{width:210px}
   .appbar .prod{display:none}
 }
 .appbar .spacer{flex:1}
@@ -335,11 +342,11 @@ textarea,input,select{font-family:inherit}
 <div class="sample-banner">Sample data — fictional patient — not a real record</div>
 
 <header class="appbar">
-  <img class="logo" src="/logo-ninja.png" alt="EnhancedOps.Ninja">
-  <img class="logo-sm" src="/ninja-logo.png" alt="EnhancedOps.Ninja">
+  <img class="logo" src="/ninja-logo.png" alt="EnhancedOps.Ninja">
   <div class="prod">Intake Ninja</div>
   <div class="spacer"></div>
-  <button class="btn primary" id="printBtn">Save as PDF</button>
+  <button class="btn primary" id="printBtn" style="margin-bottom:12px">Save as PDF</button>
+  <img class="mascot" src="/ninja-arms-folded.png" alt="" aria-hidden="true">
 </header>
 
 <nav class="tabs" id="tabs"></nav>
