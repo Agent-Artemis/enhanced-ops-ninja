@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>SAL Management Group — Proposal | EnhancedOps.Ninja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0F1A; --panel:#0E1420; --panel2:#131b2b; --line:#243044; --line2:#31415c;
+  --text:#EEF3FA; --soft:#AEBBCD; --mut:#7E8DA0;
+  --blue:#1A6ECC; --blue2:#3F8AE0; --gold:#F5B301; --ok:#46c46a;
+  --head:'Bebas Neue',Impact,sans-serif; --body:'DM Sans',system-ui,sans-serif;
+  --pad:26px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);
+  font-size:15.5px;line-height:1.62;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 var(--pad) 72px}
+h1,h2,h3,.num{font-family:var(--head);letter-spacing:.02em;font-weight:400;text-wrap:balance}
+h1{font-size:44px;line-height:1.04;margin:0 0 6px}
+h2{font-size:27px;margin:44px 0 14px;color:var(--text)}
+h3{font-size:20px;margin:0 0 8px}
+p{margin:0 0 13px}
+a{color:var(--blue2)}
+strong{font-weight:700}
+.appbar{display:flex;align-items:center;gap:18px;padding:16px var(--pad) 14px;
+  border-bottom:1px solid var(--line);background:var(--panel)}
+.appbar img{width:210px;height:auto;display:block;flex:0 0 auto}
+.prod{font-family:var(--head);font-size:18px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--soft);padding-left:15px;border-left:1px solid var(--line2)}
+.hero{padding:34px 0 4px}
+.eyebrow{font-family:var(--head);font-size:14px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
+.lede{font-size:17px;color:var(--soft);max-width:70ch}
+
+/* the number that must land */
+.headline{margin:26px 0 6px;background:linear-gradient(180deg,var(--panel2),var(--panel));
+  border:1px solid var(--line2);border-left:4px solid var(--blue);border-radius:12px;padding:24px 26px}
+.big{font-family:var(--head);font-size:76px;line-height:.9;color:var(--blue2);
+  font-variant-numeric:tabular-nums}
+.big span{font-size:26px;color:var(--soft);letter-spacing:.04em}
+.headline .sub{color:var(--soft);margin:10px 0 0;font-size:15px}
+.breakdown{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.chip{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 13px;
+  font-size:13.5px;color:var(--soft)}
+.chip b{color:var(--text);font-variant-numeric:tabular-nums}
+
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:12px}
+.opt{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px 22px 20px;
+  display:flex;flex-direction:column}
+.opt.lead{border-color:var(--blue);border-width:1.5px;box-shadow:0 0 0 3px rgba(26,110,204,.12)}
+.tag{display:inline-block;font-family:var(--head);font-size:13px;letter-spacing:.12em;
+  text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:12px}
+.tag.now{background:var(--gold);color:#161104}
+.tag.later{background:var(--panel2);color:var(--mut);border:1px solid var(--line2)}
+.upfront{font-family:var(--head);font-size:52px;line-height:1;font-variant-numeric:tabular-nums;margin:2px 0 2px}
+.opt .why{color:var(--soft);font-size:14.5px;margin:8px 0 0}
+.strike{color:var(--mut);text-decoration:line-through;font-size:20px;font-family:var(--head)}
+
+.box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin:16px 0}
+.box.accent{border-left:4px solid var(--gold)}
+.box.blue{border-left:4px solid var(--blue)}
+ul{margin:8px 0 0;padding-left:20px}
+li{margin:0 0 8px;color:var(--soft)}
+li b{color:var(--text)}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14.5px}
+th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line)}
+th{font-family:var(--head);font-size:14px;letter-spacing:.07em;text-transform:uppercase;color:var(--mut);font-weight:400}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--text)}
+.total td{border-top:1px solid var(--line2);border-bottom:none;font-weight:700;color:var(--text)}
+.foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--mut);font-size:13px}
+.note{color:var(--mut);font-size:13.5px}
+
+@media (max-width:820px){
+  :root{--pad:18px}
+  h1{font-size:34px} .big{font-size:58px} .cols{grid-template-columns:1fr}
+  .appbar img{width:170px} .prod{display:none}
+}
+@media print{
+  :root{--bg:#fff;--panel:#fff;--panel2:#fff;--text:#111;--soft:#333;--mut:#555;--line:#ccc;--line2:#999}
+  body{font-size:11.5pt}
+  .appbar{border-bottom:1px solid #ccc}
+  .opt,.box,.headline{break-inside:avoid;page-break-inside:avoid}
+  .big{color:#1A6ECC}
+  a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+
+<header class="appbar">
+  <img src="/logo-ninja.png" alt="EnhancedOps.Ninja">
+  <div class="prod">Proposal</div>
+</header>
+
+<div class="wrap">
+
+<section class="hero">
+  <div class="eyebrow">Prepared for SAL Management Group</div>
+  <h1>Your Connected Command Center</h1>
+  <p class="lede">Brent Egan, Brody Jardine and Cameron Harris — this is the pricing for the Scope of
+  Work you approved on 21 August. Fifteen communities plus corporate, one screen, built on the
+  systems you already run.</p>
+</section>
+
+<div class="headline">
+  <div class="eyebrow" style="color:var(--mut)">What it costs per community</div>
+  <div class="big">$476<span> / month</span></div>
+  <p class="sub">Per location. Unlimited users. That is what one community pays to have every system
+  it runs pulled into one live view.</p>
+  <div class="breakdown">
+    <div class="chip">Ninja OS + Survey Ninja &nbsp;<b>$349</b></div>
+    <div class="chip">Connection management &nbsp;<b>$127</b></div>
+    <div class="chip">15 communities + corporate &nbsp;<b>16 units</b></div>
+    <div class="chip">Total monthly &nbsp;<b>$7,616</b></div>
+  </div>
+</div>
+
+<h2>Two ways to start</h2>
+
+<div class="cols">
+
+  <div class="opt lead">
+    <span class="tag now">Sign by 30 September</span>
+    <h3>Build begins this month</h3>
+    <div class="upfront" style="color:var(--ok)">$0</div>
+    <p class="why"><b>No up-front build cost.</b> Not a discount — a trade. In exchange you agree to
+    be a reference and a case study. Candidly, that is worth more to us than the build fee, and we
+    would rather have it from a group we enjoy working with than buy it somewhere else.</p>
+    <p class="why" style="margin-top:12px"><b>What we ask in return</b> — a short written statement
+    and one <b>30-minute recorded interview</b> from each of the three of you. Three seats, three
+    different problems, three different answers. That is the whole value to us.</p>
+  </div>
+
+  <div class="opt">
+    <span class="tag later">October onward</span>
+    <h3>Q4 2026 and Q1 2027</h3>
+    <div class="upfront">$15,700 <span class="strike">$31,400</span></div>
+    <p class="why"><b>Build cost applies, at half.</b> The scope you approved is unusually specific
+    and several of the connections are manual rather than off-the-shelf, which is what the build
+    genuinely costs to deliver. We will hold it at <b>50%</b> for you.</p>
+    <p class="why" style="margin-top:12px">Everything below is identical. The only difference between
+    these two columns is <b>when you start</b>.</p>
+  </div>
+
+</div>
+
+<h2>The monthly, either way</h2>
+<table>
+  <tr><th>Item</th><th style="text-align:right">Per location</th><th style="text-align:right">16 units</th></tr>
+  <tr><td>Ninja Operating System + Survey Ninja</td><td class="n">$349</td><td class="n">$5,584</td></tr>
+  <tr><td>Command Center — managing your connections</td><td class="n">$127</td><td class="n">$2,032</td></tr>
+  <tr class="total"><td>Monthly</td><td class="n">$476</td><td class="n">$7,616</td></tr>
+</table>
+<p class="note" style="margin-top:10px">Corporate counts as one location — it is the heaviest user of
+the portfolio view. Payments begin as a monthly payment and continue monthly. No annual commitment
+is required to start.</p>
+
+<div class="box blue">
+  <h3>Recommended, and optional</h3>
+  <p style="margin:0"><b>Consulting with Jeff — $3,000 per month for six months.</b> This is the
+  difference between software that is installed and software your leadership team actually runs on.
+  It is not required and it can be added later, but the groups that take it get there faster.</p>
+</div>
+
+<div class="box accent">
+  <h3>All sixteen start together</h3>
+  <p style="margin:0">Implementation and training happen once, for every location at the same time.
+  Staggering rollouts costs far more time than it saves — it doubles the training, splits your team
+  across two versions of the same process, and delays the portfolio view that is the entire point.</p>
+</div>
+
+<div class="box">
+  <h3>What actually determines how fast this goes</h3>
+  <p style="margin:0 0 8px"><b>Speed of access to your information, and access to your team.</b>
+  That is the honest answer. The build is not the constraint — we have done this before and we know
+  what it takes. What sets the pace is how quickly we get credentials, sample reports and a named
+  person per system, and how quickly your people can answer a question when we have one.</p>
+  <p style="margin:0" class="note">Everything we need is listed in section 7 of the Scope of Work.</p>
+</div>
+
+<h2>Where this goes next</h2>
+<p class="lede" style="font-size:15.5px">Not part of this proposal, and nothing here depends on it —
+but worth knowing the direction, because each of these gets easier once your data is in one place:</p>
+<ul>
+  <li><b>AI voice team</b> — inbound tour and family calls answered and logged, outbound occupancy
+    and reactivation, around the clock.</li>
+  <li><b>Marketing automation</b> — the sequences and follow-up that turn the sales metrics Cameron
+    specified into actual move-ins.</li>
+  <li><b>Custom software</b> — building or replacing the pieces of your stack that are costing you
+    more than they return.</li>
+</ul>
+
+<div class="box" style="border-left:4px solid var(--blue)">
+  <h3>Ownership</h3>
+  <p style="margin:0">SAL owns the resulting system. It is a company asset that transfers with the
+  business rather than a subscription that ends when you stop paying. EnhancedOps.Ninja retains its
+  underlying platform and methodology and serves as SAL's exclusive provider for hosting, operation
+  and support. Full terms in the accompanying Service Agreement.</p>
+</div>
+
+<div class="foot">
+  Prepared for Brent Egan, Brody Jardine and Cameron Harris · SAL Management Group ·
+  against the Scope of Work dated 13 August 2026, approved 21 August 2026.<br>
+  EnhancedOps.Ninja is a trade name of Augeo LLC. Third-party platform costs — ECP interface or API
+  fees, API tier upgrades, and any Veras data-feed charge — remain on SAL's own accounts.<br>
+  <b style="color:var(--soft)">Rule your day!</b>
+</div>
+
+</div>
+</body>
+</html>
