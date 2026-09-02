@@ -1,0 +1,261 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>EON — M&A and Referral Partners</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+ :root{--bg:#0A0F1A;--panel:#0E1420;--panel2:#121A28;--line:#243044;--line2:#2e3b52;--blue:#1A6ECC;--blue2:#3F8AE0;--gold:#F5B301;--text:#EEF3FA;--soft:#AEBBCD;--mut:#7E8DA0;--green:#46c46a;--head:'Bebas Neue',Impact,sans-serif;--body:'DM Sans',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--shadow:0 2px 6px rgba(0,0,0,.35),0 16px 40px rgba(0,0,0,.4)}
+ *{box-sizing:border-box}
+ body{margin:0;background:radial-gradient(900px 440px at 82% -10%,rgba(26,110,204,.10),transparent 60%),var(--bg);color:var(--text);font-family:var(--body);line-height:1.5;-webkit-font-smoothing:antialiased}
+ .wrap{max-width:1000px;margin:0 auto;padding:16px 16px 60px}
+ .top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:4px 0 12px}
+ .top img.logo{height:74px;width:auto}
+ .h{font-size:13px;color:var(--soft)}
+
+ /* ── THE STANDING NOTICE ────────────────────────────────────────────────────
+    This list is 63 named targets with almost no contact details: one phone,
+    no emails, five LinkedIn URLs. Jeff must know that before he opens it
+    expecting to dial, so the notice is stated at the top rather than being
+    something he infers from 66 rows with no phone number on them. */
+ .banner{border:1px solid var(--line2);border-left:4px solid var(--gold);background:var(--panel);
+   border-radius:10px;padding:11px 14px;margin:0 0 14px}
+ .banner .bt{font-family:var(--head);letter-spacing:.05em;font-size:17px;color:var(--gold)}
+ .banner p{margin:3px 0 0;font-size:13.5px;color:var(--soft)}
+ .banner b{color:var(--text)}
+
+ .tabs{display:flex;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line2);border-radius:999px;padding:4px;gap:2px}
+ .tabs button{border:0;background:transparent;color:var(--soft);font-weight:700;font-size:13.5px;padding:9px 15px;border-radius:999px;cursor:pointer;font-family:var(--body)}
+ .tabs button.on{background:var(--blue);color:#fff}
+ .bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:14px 0}
+ input[type=search]{flex:1;min-width:200px;background:#0a0f1a;border:1px solid var(--line2);color:var(--text);border-radius:10px;padding:11px 14px;font-size:15px;font-family:var(--body)}
+ input::placeholder{color:var(--mut)}
+ .prog{font-size:13px;color:var(--soft);white-space:nowrap}
+ .prog b{color:var(--gold)}
+ .resetbtn{background:transparent;border:1px solid var(--line2);color:var(--soft);border-radius:8px;padding:8px 12px;font-size:12.5px;cursor:pointer;font-family:var(--body)}
+ .pbtn{appearance:none;border:1px solid var(--line2);background:#0b1220;color:var(--blue2);font-size:13px;font-weight:700;padding:9px 14px;border-radius:8px;cursor:pointer;margin:6px 0 4px;min-height:40px;font-family:var(--body)}
+ .pbtn:hover{border-color:var(--blue)}
+
+ /* ── ROWS ───────────────────────────────────────────────────────────────────
+    Cards, not a table. state-associations.html is card-based too, so this is
+    the family's existing pattern rather than a new one. It is the right one
+    here because the note is the payload and runs to 572 characters, which no
+    table cell handles, and because a table would have given us two columns
+    that are empty on 66 of 67 rows. */
+ .row{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px;box-shadow:var(--shadow)}
+ .row.done{opacity:.45}
+ .row.done .nm{text-decoration:line-through}
+ .rhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+ .who{flex:1;min-width:200px}
+ .nm{font-family:var(--head);letter-spacing:.02em;font-size:23px;line-height:1.05;color:var(--text)}
+ .ftag{display:inline-block;font-family:var(--head);letter-spacing:.07em;font-size:11px;color:var(--mut);
+   border:1px solid var(--line2);border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:4px}
+ .ti{font-size:13.5px;color:var(--soft);margin-top:2px}
+ .qual{font-size:12.5px;color:var(--mut);margin-top:5px}
+
+ /* the note is the reason the call happens, so it carries the visual weight
+    that a phone number carries on the other lists */
+ .note{border-left:3px solid var(--blue);background:var(--panel2);border-radius:0 8px 8px 0;
+   padding:9px 12px;margin-top:10px;font-size:14px;color:var(--text)}
+ .note b{color:var(--blue2);font-weight:700}
+ .note .warn{color:var(--gold);font-weight:700}
+ .script{border:1px solid var(--line2);border-radius:8px;background:#0a0f1a;padding:9px 12px;margin-top:8px}
+ .script .lbl{font-family:var(--head);letter-spacing:.07em;font-size:11.5px;color:var(--gold);display:block;margin-bottom:2px}
+ .script q{font-size:14px;color:var(--text);font-style:italic;quotes:'\201C' '\201D'}
+
+ .acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+ .actbtn{padding:7px 11px;font-size:13px;font-weight:700;line-height:1;border-radius:8px;
+   border:1px solid var(--line2);background:var(--panel2);color:var(--text);cursor:pointer;
+   text-decoration:none;display:inline-block;font-family:var(--body);min-height:34px;line-height:20px}
+ .actbtn:hover{border-color:var(--blue)}
+ a.actbtn.call{background:var(--blue);border-color:var(--blue);color:#fff}
+ a.actbtn.li{background:var(--blue);border-color:var(--blue);color:#fff}
+ .actbtn.mark.on{background:var(--green);border-color:var(--green);color:#06210e}
+ .notebox{width:100%;min-height:64px;background:#0a0f1a;border:1px solid var(--line2);color:var(--text);
+   border-radius:8px;padding:9px 11px;font-size:14px;font-family:var(--body);resize:vertical;margin-top:9px}
+ .notebox:focus{outline:none;border-color:var(--blue)}
+ .pnote{font-size:13.5px;color:var(--soft);margin-top:8px;border-top:1px dashed var(--line2);padding-top:7px}
+ .pnote b{color:var(--gold)}
+ .empty{color:var(--mut);font-size:14px;padding:20px 2px}
+ .foot{color:var(--mut);font-size:12px;margin-top:18px;border-top:1px solid var(--line);padding-top:10px}
+
+ @media print{
+   /* Cards print as blocks, each kept whole. The interactive chrome goes, the
+      palette inverts for ink, and a ruled box is added per record because the
+      job on paper is to write down the number that is missing. */
+   @page{margin:11mm 9mm}
+   html,body{background:#fff!important;color:#000!important}
+   body{font-size:9.5pt}
+   .wrap{max-width:none!important;padding:0!important}
+   .tabs,.bar,.pbtn,.resetbtn,.notebox,.acts button,.foot .np{display:none!important}
+   .top img.logo{height:34px!important;filter:grayscale(1) contrast(2)}
+   .banner{border:1pt solid #000!important;border-left:3pt solid #000!important;background:#fff!important;
+     padding:5pt 7pt!important;margin-bottom:8pt!important}
+   .banner .bt{color:#000!important;font-size:12pt!important}
+   .banner p{color:#000!important;font-size:8.5pt!important}
+   /* These two stayed light on white: .h was never overridden, and .banner b
+      inherits --text. Both were legible on screen and near-invisible on paper. */
+   .h{color:#000!important;font-size:8pt!important}
+   .banner b{color:#000!important}
+   .top img.logo{height:46px!important}
+   .row{background:#fff!important;border:1px solid #999!important;border-radius:0!important;
+     box-shadow:none!important;padding:5pt 6pt!important;margin-bottom:4pt!important;
+     break-inside:avoid;page-break-inside:avoid;opacity:1!important}
+   .nm{color:#000!important;font-size:12pt!important}
+   .ti,.qual,.note,.script q,.pnote{color:#000!important}
+   .qual{font-size:8pt!important}
+   .note{background:#f2f2f2!important;border-left:2pt solid #000!important;border-radius:0!important;
+     padding:4pt 6pt!important;font-size:8.5pt!important;margin-top:4pt!important;
+     -webkit-print-color-adjust:exact;print-color-adjust:exact}
+   .note b,.note .warn{color:#000!important}
+   .script{background:#fff!important;border:1px dashed #666!important;padding:4pt 6pt!important;font-size:8.5pt!important;margin-top:4pt!important}
+   .script .lbl{color:#000!important}
+   .ftag{color:#000!important;border-color:#000!important}
+   a.actbtn{background:#fff!important;color:#000!important;border:1px solid #000!important;
+     padding:2pt 5pt!important;font-size:8.5pt!important;min-height:0!important;line-height:1.2!important}
+   /* somewhere to write the number this list does not have */
+   .row::after{content:"Number found:";display:block;margin-top:4pt;padding-top:7pt;
+     border-top:1px solid #000;font-size:7pt;color:#000}
+   .printhdr{display:block!important;font-size:8pt;color:#333;margin-bottom:6pt}
+   .foot{color:#000!important;font-size:7.5pt!important}
+ }
+ .printhdr{display:none}
+ @media(max-width:560px){
+   .top img.logo{height:58px}
+   .nm{font-size:20px}
+   .acts{justify-content:flex-start;width:100%}
+   .rhead{flex-direction:column}
+ }
+</style>
+<div class="wrap">
+
+ <div class="top">
+   <img class="logo" src="/logo-ninja.png" alt="EnhancedOps.Ninja">
+   <div class="h">M&amp;A and referral partners &middot; built 31 Aug 2026</div>
+ </div>
+
+ <div class="banner">
+   <div class="bt">NAMED TARGETS, NOT A DIAL LIST</div>
+   <p>This list gives you <b>the right person and the right opening line</b>. It does not give you
+   the number. Phone, email and LinkedIn were only recorded where they were verified, so most rows
+   have none, and finding the number is the first step of working a row rather than something that
+   has already been done.</p>
+ </div>
+
+ <div class="tabs" id="tabs"></div>
+ <button class="pbtn" id="printBtn">Print this tab</button>
+
+ <div class="bar">
+   <input type="search" id="q" placeholder="Search name, title, firm, sector, note&hellip;" oninput="render()">
+   <span class="prog" id="prog"></span>
+   <button class="resetbtn" onclick="resetCalled()">Reset marks</button>
+ </div>
+
+ <div class="printhdr" id="printhdr"></div>
+ <div id="list"></div>
+
+ <div class="foot">Every name and title is taken from the firm's own website or the Exit Planning
+ Institute member directory. No phone, email or LinkedIn value has been constructed: an empty field
+ means not verified, not that none exists. &middot; EnhancedOps.Ninja</div>
+</div>
+
+<script>
+var LIST='ma-partners';
+var DATA={"utah": [{"n": "Colin Kent", "t": "Managing Partner", "o": "Premara Group", "p": "", "d": "", "e": "", "s": "Salt Lake City · sell-side · $3-25M EBITDA · SaaS/consumer/B2B services", "note": "FORMER OPERATOR AT ORACLE AND DOMO. Domo is a BI company - he will understand the product in one sentence. HIGHEST-PRIORITY CALL ON THIS LIST. Opening line: 'You ran product at Domo, so you already know what a semantic layer is worth. I build them for your sellers before diligence.'", "li": ""}, {"n": "Josh Robbins", "t": "Managing Partner", "o": "Premara Group", "p": "", "d": "", "e": "", "s": "Salt Lake City · sell-side · $3-25M EBITDA · SaaS/consumer/B2B services", "note": "Former operator at AMAZON and QUALTRICS - both metrics-obsessed cultures. Same firm as Colin Kent; call whichever answers. Opening line: same operator framing.", "li": ""}, {"n": "Clint Peterson", "t": "Managing Partner", "o": "Peterson Partners", "p": "", "d": "", "e": "", "s": "Salt Lake City · PE / search-fund platform · $5-25M check sizes", "note": "Runs the firm. Peterson backs SEARCH FUNDS - searchers buy one messy company and immediately need reporting they can trust. That is Jeff's product at the moment of maximum pain. Opening line: 'Your searchers inherit a business with no reporting. I stand one up in weeks, not quarters.'", "li": ""}, {"n": "Ann Cardona", "t": "Partnership Development Representative", "o": "Peterson Partners", "p": "", "d": "", "e": "", "s": "Salt Lake City · PE / search-fund platform", "note": "HER ENTIRE JOB IS PARTNERSHIPS. Easiest door at Peterson - a partnerships rep is paid to take calls like this one. Start here, ask for the right partner.", "li": ""}, {"n": "Dan Hanks", "t": "Partner", "o": "Peterson Partners", "p": "", "d": "", "e": "", "s": "Salt Lake City · PE / search-fund platform · $5-25M checks", "note": "Deal partner. No specific hook verified - go via Ann Cardona or Clint Peterson first.", "li": ""}, {"n": "Max Artz", "t": "Partner", "o": "Peterson Partners", "p": "", "d": "", "e": "", "s": "Salt Lake City · PE / search-fund platform · $5-25M checks", "note": "Deal partner. No specific hook verified.", "li": ""}, {"n": "Spencer Clawson", "t": "Partner", "o": "Peterson Partners", "p": "", "d": "", "e": "", "s": "Salt Lake City · PE / search-fund platform · $5-25M checks", "note": "Deal partner. No specific hook verified.", "li": ""}, {"n": "Brett Stohlton", "t": "Partner", "o": "Peterson Partners", "p": "", "d": "", "e": "", "s": "Salt Lake City · PE / search-fund platform · $5-25M checks", "note": "Deal partner. No specific hook verified.", "li": ""}, {"n": "Benjamin Pearson", "t": "Vice President", "o": "Peterson Partners", "p": "", "d": "", "e": "", "s": "Salt Lake City · PE / search-fund platform", "note": "VP level - often the person actually doing portfolio reporting work and feeling the data pain directly. Good technical second call.", "li": ""}, {"n": "Tro Panosian", "t": "Founder & CEO", "o": "William & Wall", "p": "", "d": "", "e": "", "s": "Utah - SLC / Provo / Lehi · lower middle market sell-side", "note": "Their own about page positions the firm as coming 'from large-cap deals on Wall Street to lower middle market' - i.e. they bring big-bank process to small deals. A seller-prep data partner fits that positioning exactly. Founder-led, so one call reaches the decision.", "li": ""}, {"n": "Jack Stelianou", "t": "Vice President", "o": "William & Wall", "p": "", "d": "", "e": "", "s": "Utah - SLC / Provo / Lehi · lower middle market sell-side", "note": "The VP at a two-person senior team is the one preparing materials. He will feel the messy-seller problem first-hand.", "li": ""}, {"n": "Duane Toney", "t": "Certified Exit Planning Advisor (CEPA), CPA/PFS", "o": "RightValueReady LLC", "p": "", "d": "", "e": "", "s": "Salt Lake City · exit planning · owners 1-3 years from sale", "note": "BEST-TIMED CONTACT IN UTAH. CEPA plus CPA - he both plans the exit AND understands the books. Firm name is literally RightValueReady. Exit planners engage owners 1-3 YEARS OUT, which is exactly the lead time a BI build needs. Opening line: 'Your clients are 2 years out with numbers that will not survive a QofE. I fix that in the window you already own.'", "li": ""}, {"n": "Steven Cox", "t": "Certified Exit Planning Advisor (CEPA)", "o": "SDP Personalized Planning", "p": "", "d": "", "e": "", "s": "Utah · exit planning · owners approaching transition", "note": "Listed in the Exit Planning Institute member directory. Same 1-3 year timing argument as Duane Toney. No firm specialism verified beyond exit planning.", "li": ""}, {"n": "Samuel Waltman", "t": "Certified Exit Planning Advisor (CEPA)", "o": "Kayne Anderson Rudnick", "p": "", "d": "", "e": "", "s": "Salt Lake City · wealth management + exit planning", "note": "Wealth-management side of exit planning - he meets the owner before the banker does. Wealth advisors refer to protect the client relationship, not for a fee, so the pitch is 'make your client's exit bigger', not 'pay me'.", "li": ""}, {"n": "Heidi Westfall", "t": "Wealth Advisor, CEPA", "o": "RTI Wealth Management", "p": "", "d": "", "e": "", "s": "Salt Lake City · wealth management + exit planning", "note": "Earned the CEPA designation - meaning she deliberately chose to specialise in business-owner exits. Deliberate specialists are the ones who build referral networks.", "li": ""}, {"n": "Jason F. Payne", "t": "Certified Exit Planning Advisor (CEPA)", "o": "Timpanogos Financial Advisors", "p": "", "d": "", "e": "", "s": "Utah County - Provo area · exit planning", "note": "Provo-area coverage, which is the part of Utah the SLC firms cover least. No further specialism verified.", "li": ""}], "mw": [{"n": "Warren Henson", "t": "Partner", "o": "Peakview Partners", "p": "", "d": "", "e": "", "s": "Denver (LoDo) · generalist middle market · ~$5-100M", "note": "30+ years in investment banking per his own firm bio. Peakview runs true sell-side processes rather than listing services and has closed Colorado deals inside the last 24 months. Senior enough to say yes to a referral relationship on one call.", "li": ""}, {"n": "Tim Dailey", "t": "Partner", "o": "Peakview Partners", "p": "", "d": "", "e": "", "s": "Denver (LoDo) · generalist middle market · ~$5-100M", "note": "30+ years, worked for two Wall Street firms per his bio. Same firm as Henson - call whichever answers.", "li": ""}, {"n": "Alan Mayer", "t": "Partner", "o": "Peakview Partners", "p": "", "d": "", "e": "", "s": "Denver (LoDo) · generalist middle market · ~$5-100M", "note": "30+ years of transactional experience as an investment banker per his bio. Third partner at the same firm.", "li": ""}, {"n": "Jamie Cowan", "t": "Senior Vice President", "o": "Peakview Partners", "p": "", "d": "", "e": "", "s": "Denver (LoDo) · generalist middle market · ~$5-100M", "note": "15+ years in finance and strategy. SVP is usually the person actually assembling the seller's numbers - the one who feels a messy data room personally. Best technical conversation at Peakview.", "li": ""}, {"n": "Alexis Sewolich", "t": "Chief Operating Officer", "o": "Peakview Partners", "p": "", "d": "", "e": "", "s": "Denver (LoDo) · generalist middle market", "note": "COO since 2017. Operations leads own vendor and partner relationships - the right person for a standing referral arrangement rather than a single deal.", "li": ""}], "pnw": [{"n": "Brian Murphy", "t": "Managing Principal of Investment Banking", "o": "Meridian Capital", "p": "", "d": "", "e": "", "s": "Seattle · middle market M&A · CHECK DEAL FLOOR before calling", "note": "Runs the IB practice. CAVEAT: Meridian looks larger than lower-middle-market - confirm their minimum deal size is under $50M EV before spending a call, per the qualification rule.", "li": ""}, {"n": "Patrick Ringland", "t": "President & Managing Director", "o": "Meridian Capital", "p": "", "d": "", "e": "", "s": "Seattle · middle market M&A", "note": "President - firm-level decisions on partnerships sit here. Same deal-floor caveat as Murphy.", "li": ""}, {"n": "Chuck Wilke", "t": "Founder", "o": "Meridian Capital", "p": "", "d": "", "e": "", "s": "Seattle · middle market M&A", "note": "Founder. Founders take the long view on referral relationships. Same deal-floor caveat.", "li": ""}, {"n": "Randy Moe", "t": "Managing Director", "o": "Meridian Capital", "p": "", "d": "", "e": "", "s": "Seattle · middle market M&A", "note": "One of eight MDs. Sector coverage not published on the team index - ask which verticals he runs before pitching.", "li": ""}, {"n": "Matt Rechtin", "t": "Managing Director", "o": "Meridian Capital", "p": "", "d": "", "e": "", "s": "Seattle · middle market M&A", "note": "One of eight MDs. Sector coverage not verified.", "li": ""}, {"n": "Greg Powell", "t": "Managing Director", "o": "Meridian Capital", "p": "", "d": "", "e": "", "s": "Seattle · middle market M&A", "note": "One of eight MDs. Sector coverage not verified.", "li": ""}, {"n": "Teague Collins", "t": "Managing Director", "o": "Meridian Capital", "p": "", "d": "", "e": "", "s": "Seattle · middle market M&A", "note": "One of eight MDs. Sector coverage not verified.", "li": ""}, {"n": "Ian Sylvan", "t": "Managing Director", "o": "Meridian Capital", "p": "", "d": "", "e": "", "s": "Seattle · middle market M&A", "note": "One of eight MDs. Sector coverage not verified.", "li": ""}, {"n": "James Kim", "t": "Managing Director", "o": "Meridian Capital", "p": "", "d": "", "e": "", "s": "Seattle · middle market M&A", "note": "One of eight MDs. Sector coverage not verified.", "li": ""}, {"n": "David Shapiro", "t": "Managing Director", "o": "Meridian Capital", "p": "", "d": "", "e": "", "s": "Seattle · middle market M&A", "note": "One of eight MDs. Sector coverage not verified.", "li": ""}, {"n": "Jared Holum", "t": "Shareholder, President", "o": "Perkins & Co (joining CLA)", "p": "", "d": "", "e": "", "s": "Portland · CPA firm w/ transaction advisory · QofE for $2-10M EBITDA sellers", "note": "TIME-SENSITIVE AND HANDLE WITH CARE: their own site links a 2026 CLA press release, 'Perkins and Company team joins CLA'. A firm mid-merger is the WORST time to sell a partnership into - everyone is protecting their seat. Worth a relationship call, not a pitch. Revisit in 6-12 months.", "li": ""}, {"n": "Lisa Goecke", "t": "Shareholder, CPA/ABV/CFF", "o": "Perkins & Co (joining CLA)", "p": "", "d": "", "e": "", "s": "Portland · business valuation and forensic credentials", "note": "ABV = Accredited in Business Valuation, CFF = Certified in Financial Forensics. SHE VALUES BUSINESSES FOR A LIVING, so she sees exactly how bad data drags a multiple down. Best technical conversation at Perkins. Same mid-merger caveat.", "li": ""}, {"n": "Tiffany Mellow", "t": "Shareholder, CPA/ABV", "o": "Perkins & Co (joining CLA)", "p": "", "d": "", "e": "", "s": "Portland · business valuation", "note": "Second ABV-credentialled shareholder. Same valuation-side argument as Lisa Goecke. Same mid-merger caveat.", "li": ""}, {"n": "Timothy Kalberg", "t": "Principal", "o": "Perkins & Co (joining CLA)", "p": "", "d": "", "e": "", "s": "Portland · CPA firm w/ transaction advisory", "note": "Principal level. No specific hook verified. Same mid-merger caveat.", "li": ""}], "cfo": [{"n": "Kevin Clouser", "t": "Market Development Leader", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "Utah HQ, multi-office nationally · fractional CFO / controller", "note": "BEST DOOR AT NOW CFO. 'Market Development' means partnerships and channel - it is his job to take this call. Opening line: 'Your CFOs are rebuilding the same spreadsheets at every client. I automate that layer and you keep the advisory hours.'", "li": ""}, {"n": "Randy Christensen", "t": "Chief Executive Officer", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "Utah HQ, multi-office nationally · fractional CFO / controller", "note": "CEO. NOW CFO's own footer says 'NOW CFO is not a CPA Firm' - so no independence conflict and no audit turf to protect. WARNING: their service menu already lists DATA WAREHOUSING and MASTER DATA MANAGEMENT, so they may see Jeff as a competitor rather than a partner. Lead with partnership, not product.", "li": ""}, {"n": "Alex Benanti", "t": "Chief Operating Officer", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "Utah HQ, multi-office nationally · fractional CFO / controller", "note": "COO owns delivery consistency across offices - the pain of every consultant rebuilding reporting from scratch lands on him. Strong operational argument.", "li": ""}, {"n": "Jeff Gibbs", "t": "Chief Information Officer", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "Utah HQ, multi-office nationally · fractional CFO / controller", "note": "CIO - the person who would evaluate the data-warehousing overlap flagged above. If NOW CFO is building this in-house, he knows. Worth a call purely as intelligence on whether they are partner or competitor.", "li": ""}, {"n": "Shawn Dinkelman", "t": "Chief Financial Officer", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "Utah HQ, multi-office nationally", "note": "Internal CFO. Lower priority than Clouser or Benanti for a channel conversation.", "li": ""}, {"n": "Melissa Henke", "t": "Regional Partner", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "fractional CFO / controller · REGION NOT PUBLISHED on their roster", "note": "Regional Partners carry a client book. Region is not stated on the team page - ask which market before pitching. Same for every NOW CFO partner below.", "li": ""}, {"n": "Cole Dennard", "t": "Regional Partner", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "fractional CFO / controller · region not published", "note": "Carries a client book. Region not verified.", "li": ""}, {"n": "Chris Arambula", "t": "Regional Partner", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "fractional CFO / controller · region not published", "note": "Carries a client book. Region not verified.", "li": ""}, {"n": "Amanda Morrison", "t": "Market President", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "fractional CFO / controller · market not published", "note": "Market Presidents run a local P&L and own local client relationships - the level where a referral actually gets made. Market not verified; ask.", "li": ""}, {"n": "Mary Ann Matchett", "t": "Market President", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "fractional CFO / controller · market not published", "note": "Runs a local P&L. Market not verified.", "li": ""}, {"n": "April Diemer", "t": "Market President", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "fractional CFO / controller · market not published", "note": "Runs a local P&L. Market not verified.", "li": ""}, {"n": "Ben Godinez", "t": "Market President", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "fractional CFO / controller · market not published", "note": "Runs a local P&L. Market not verified.", "li": ""}, {"n": "Dana Wallace", "t": "Market President", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "fractional CFO / controller · market not published", "note": "Runs a local P&L. Market not verified.", "li": ""}, {"n": "Rachel Durkot", "t": "Market President", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "fractional CFO / controller · market not published", "note": "Runs a local P&L. Market not verified.", "li": ""}, {"n": "George Stephens", "t": "Partner", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "fractional CFO / controller · market not published", "note": "Partner-level, carries clients. Market not verified.", "li": ""}, {"n": "Mariah Block", "t": "Partner", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "fractional CFO / controller · market not published", "note": "Partner-level, carries clients. Market not verified.", "li": ""}, {"n": "Brit Summerill", "t": "Partner", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "fractional CFO / controller · market not published", "note": "Partner-level, carries clients. Market not verified.", "li": ""}, {"n": "Christi Cereghino", "t": "Partner", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "fractional CFO / controller · market not published", "note": "Partner-level, carries clients. Market not verified.", "li": ""}, {"n": "Bodi Braithwaite", "t": "Partner", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "fractional CFO / controller · market not published", "note": "Partner-level, carries clients. Market not verified.", "li": ""}, {"n": "Sana Sundrani", "t": "Partner", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "fractional CFO / controller · market not published", "note": "Partner-level, carries clients. Market not verified.", "li": ""}, {"n": "Bill Sablan", "t": "Partner", "o": "NOW CFO", "p": "", "d": "", "e": "", "s": "fractional CFO / controller · market not published", "note": "Partner-level, carries clients. Market not verified. NOTE: the NOW CFO roster has a 'Load More' control - there are MORE partners than the 22 captured here.", "li": ""}, {"n": "", "t": "", "o": "Preferred CFO", "p": "(801) 804-5800", "d": "8018045800", "e": "", "s": "Salt Lake City - 478 S 100 E · fractional CFO + HR · operating since 2013", "note": "FIRM MAIN LINE ONLY - I could not verify a single named person; their team page renders client-side and defeated three extraction attempts. This is the one number on the list Jeff can dial today without a name. Ask for whoever owns partnerships.", "li": ""}, {"n": "", "t": "", "o": "CFO Selections", "p": "", "d": "", "e": "", "s": "Pacific Northwest (WA/OR) · fractional CFO / controller · ~138-person consultant roster", "note": "NO NAMES VERIFIED - their team page is client-side rendered and returned 'We couldn't load the team right now' to every attempt. I know the roster is ~138 people from the page's own per-person URLs, but I will not guess at names. THIS IS THE DEEPEST PNW BENCH FOUND and is worth a manual look in a browser.", "li": ""}], "sector": [{"n": "Tim Hughes", "t": "VP, Strategic Alliances and Partnerships", "o": "Align Business Advisory Services", "p": "", "d": "", "e": "", "s": "Winter Park FL, nationwide coverage · fire & life safety + trades M&A · $10-200M revenue clients", "note": "THE SINGLE BEST DOOR ON THIS ENTIRE LIST. His literal job title is the thing Jeff wants. Align publishes 'For Referral Partners', 'How We Work with Advisors' and a network called FRIENDS OF ALIGN naming wealth managers, attorneys, bankers and accountants - THERE IS NO DATA CATEGORY IN IT, so Jeff is a new category, not a competitor. Their fee is a success fee at close, so clean data pays them directly. Opening line: 'Your Friends of Align network has no data partner. A quarter of broken deals die in diligence - I make the numbers survive it before you go to market.'", "li": ""}, {"n": "Elizabeth Drivas McEnroe", "t": "Partnerships Executive", "o": "Align Business Advisory Services", "p": "", "d": "", "e": "", "s": "Align nationwide · fire & life safety + trades M&A", "note": "Dedicated partnerships role - a second live door if Tim Hughes does not respond. LinkedIn slug is published in Align's own team-page source.", "li": "https://linkedin.com/in/elizabethpdrivas"}, {"n": "Lori McLane", "t": "Partnerships Executive", "o": "Align Business Advisory Services", "p": "", "d": "", "e": "", "s": "Align nationwide · fire & life safety + trades M&A", "note": "Third partnerships contact at the same firm. Align staffs partnerships with at least three people, which tells you the channel is real and funded. LinkedIn published on their site.", "li": "https://linkedin.com/in/lori-mclane-b3787515"}, {"n": "Dena Jalbert", "t": "Founder & CEO", "o": "Align Business Advisory Services", "p": "", "d": "", "e": "", "s": "Winter Park FL, nationwide · fire & life safety + trades M&A · $10-200M revenue", "note": "Founder and CEO. Go here only if the partnerships team stalls - founders resent being jumped to. Align claims 250% YoY growth and multiple 'Best M&A Consultancy' awards 2019-2022.", "li": ""}, {"n": "William Knoch", "t": "Managing Director, Business Development", "o": "Align Business Advisory Services", "p": "", "d": "", "e": "", "s": "Align nationwide · fire & life safety + trades M&A", "note": "BD at MD level - originates deals, so he meets sellers with messy books before anyone else does. Strong second conversation after Tim Hughes. LinkedIn published on their site.", "li": "https://linkedin.com/in/williamknoch"}, {"n": "Brian Hatton", "t": "Director, Mergers and Acquisitions", "o": "Align Business Advisory Services", "p": "", "d": "", "e": "", "s": "Align nationwide · fire & life safety + trades M&A", "note": "Deal-side director. He will have concrete stories about deals that stalled on data - useful for building the case study Jeff needs. LinkedIn published on their site.", "li": "https://linkedin.com/in/brianhatton"}, {"n": "Connor Foreman", "t": "Vice President, Deal Fulfillment", "o": "Align Business Advisory Services", "p": "", "d": "", "e": "", "s": "Align nationwide · fire & life safety + trades M&A", "note": "DEAL FULFILLMENT - this is the person who actually assembles the seller's numbers and suffers most when they are a mess. The most sympathetic technical listener at Align. LinkedIn published on their site.", "li": "https://linkedin.com/in/connor-foreman-56513751"}, {"n": "", "t": "", "o": "The Potomac Company", "p": "", "d": "", "e": "", "s": "fire protection, safety & security investment banking · middle market and family-owned", "note": "NO NAMES VERIFIED. Describes its fire protection & safety team as 'the most experienced in the industry'. Also covers education, healthcare services and tech. Worth a team-page crawl - I ran out of runway.", "li": ""}, {"n": "", "t": "", "o": "Roadmap Advisors", "p": "", "d": "", "e": "", "s": "fire, life & safety sector M&A · sell-side", "note": "NO NAMES VERIFIED. Publishes a dedicated FL&S M&A practice covering suppression, alarms, sprinklers and surveillance. Second-tier target after Align.", "li": ""}]};
+var TABS=[{"k": "utah", "l": "Utah"}, {"k": "mw", "l": "Mountain West"}, {"k": "pnw", "l": "Pacific NW"}, {"k": "cfo", "l": "Fractional CFO"}, {"k": "sector", "l": "Sector Specialists"}];
+var tab=TABS[0].k, openKey=null;
+
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function cur(){return DATA[tab];}
+function key(r){return tab+'|'+(r.o||'')+'|'+(r.n||'');}
+function isDone(r){return localStorage.getItem('called:'+key(r))!==null;}
+function toggle(i){var r=cur()[i],k='called:'+key(r);
+  if(localStorage.getItem(k)!==null)localStorage.removeItem(k);else localStorage.setItem(k,new Date().toISOString());
+  render();}
+function resetCalled(){if(!confirm('Clear all marks on this tab?'))return;
+  cur().forEach(function(r){localStorage.removeItem('called:'+key(r));});render();}
+function getNote(r){return localStorage.getItem('note:'+key(r))||'';}
+function saveNote(i,v){localStorage.setItem('note:'+key(cur()[i]),v);}
+function toggleNote(i){var k=key(cur()[i]);openKey=(openKey===k)?null:k;render();}
+
+/* The note carries its own emphasis: a leading all-caps verdict, an occasional
+   WARNING, and on six records an explicit opening line for Jeff to say. Those
+   are pulled out rather than left buried in a paragraph, because they are the
+   parts he reads in the two seconds before the call connects. */
+function fmtNote(t){
+  var body=t, script='';
+  var i=t.indexOf('Opening line:');
+  if(i>=0){
+    var tail=t.slice(i+13).trim();
+    /* Promote to a spoken script ONLY when the source actually quoted it. One
+       record's opening line reads "same operator framing", which is a pointer
+       to the record above, not words to say. Rendering that in quotes would
+       put a nonsense line in front of Jeff mid-call. */
+    if(/^['"‘’“”]/.test(tail)){
+      body=t.slice(0,i).trim();
+      script=tail.replace(/^['"‘’“”]+|['"‘’“”]+$/g,'');
+    }
+  }
+  var h=esc(body)
+    .replace(/^([A-Z][A-Z0-9 '&amp;,\.\-]{7,}?)(\.|\s-\s|$)/,'<b>$1</b>$2')
+    .replace(/(WARNING:?)/g,'<span class="warn">$1</span>');
+  return {body:h, script:script?esc(script):''};
+}
+
+function rowHtml(r,i){
+  var named=!!(r.n&&r.n.trim());
+  var acts=[];
+  acts.push('<button class="actbtn mark'+(isDone(r)?' on':'')+'" onclick="toggle('+i+')">'
+    +(isDone(r)?'Marked':'Mark done')+'</button>');
+  /* Only ever emitted when the value exists. There is no placeholder, no dash
+     and no disabled button, because 58 of 67 rows have nothing here at all and
+     the empty state has to look deliberate rather than broken. */
+  if(r.d)acts.push('<a class="actbtn call" href="tel:+1'+esc(r.d)+'">Call '+esc(r.p)+'</a>');
+  if(r.e)acts.push('<a class="actbtn" href="mailto:'+esc(r.e)+'">Email</a>');
+  if(r.li)acts.push('<a class="actbtn li" href="'+esc(r.li)+'" target="_blank" rel="noopener">LinkedIn</a>');
+  acts.push('<button class="actbtn" onclick="toggleNote('+i+')">Note</button>');
+
+  /* Built from the parts that exist and joined afterwards, so a missing title
+     or firm can never leave a dangling separator. */
+  var sub=[]; if(named){ if(r.t)sub.push(esc(r.t)); if(r.o)sub.push(esc(r.o)); }
+  var nf=fmtNote(r.note||'');
+  var mine=getNote(r);
+
+  return '<div class="row'+(isDone(r)?' done':'')+'">'
+    +'<div class="rhead"><div class="who">'
+      +'<div class="nm">'+esc(named?r.n:r.o)+(named?'':'<span class="ftag">FIRM</span>')+'</div>'
+      +(sub.length?'<div class="ti">'+sub.join(' &middot; ')+'</div>':'')
+    +'</div><div class="acts">'+acts.join('')+'</div></div>'
+    +(r.s?'<div class="qual">'+esc(r.s)+'</div>':'')
+    +(nf.body?'<div class="note">'+nf.body+'</div>':'')
+    +(nf.script?'<div class="script"><span class="lbl">OPENING LINE</span><q>'+nf.script+'</q></div>':'')
+    +(mine?'<div class="pnote"><b>Your note:</b> '+esc(mine)+'</div>':'')
+    +(openKey===key(r)?'<textarea class="notebox" placeholder="Your notes…" oninput="saveNote('+i+',this.value)">'+esc(mine)+'</textarea>':'')
+    +'</div>';
+}
+
+function render(){
+  document.getElementById('tabs').innerHTML=TABS.map(function(t){
+    return '<button class="'+(t.k===tab?'on':'')+'" onclick="setTab(\''+t.k+'\')">'
+      +esc(t.l)+' ('+DATA[t.k].length+')</button>';}).join('');
+  var q=(document.getElementById('q').value||'').toLowerCase().trim();
+  var rows=cur(), out=[], shown=0, done=0;
+  rows.forEach(function(r,i){
+    if(isDone(r))done++;
+    if(q){var hay=[r.n,r.t,r.o,r.s,r.note,r.p].join(' ').toLowerCase();
+      if(hay.indexOf(q)<0)return;}
+    shown++; out.push(rowHtml(r,i));
+  });
+  document.getElementById('list').innerHTML=out.length?out.join(''):
+    '<div class="empty">Nothing on this tab matches that search.</div>';
+  document.getElementById('prog').innerHTML=shown+' of '+rows.length+' shown &middot; <b>'+done+'</b> marked';
+  var t=TABS.filter(function(x){return x.k===tab;})[0];
+  document.getElementById('printhdr').textContent=
+    'M&A and referral partners — '+(t?t.l:'')+'  ·  printed '+new Date().toLocaleDateString();
+}
+function setTab(t){tab=t;openKey=null;document.getElementById('q').value='';render();}
+document.getElementById('printBtn').onclick=function(){window.print();};
+render();
+</script>
