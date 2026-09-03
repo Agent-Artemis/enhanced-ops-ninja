@@ -19,9 +19,9 @@ const nextConfig: NextConfig = {
   // permanent: false is deliberate — a 308 gets cached hard by browsers and we
   // could never take it back. Temporary keeps the next rename cheap.
   //
-  // NOTE: /book/15 currently 404s AT CAL.COM because the 15-min event type has
-  // not been recreated under the new username. The redirect is wired so the
-  // moment it exists the five landing-page links work with no deploy.
+  // The 15-min event type was deleted deliberately by Jeff on 2026-09-02 and is
+  // not coming back, so there is no /book/15. The five landing pages that
+  // offered it now offer the 30-minute call, copy included.
   // ---------------------------------------------------------------------
   async redirects() {
     const CAL = "https://cal.com/businessintelligenceninja";
@@ -30,7 +30,6 @@ const nextConfig: NextConfig = {
       { source: "/book/briefing", destination: `${CAL}/secret-mission-briefing`, permanent: false },
       { source: "/book/45", destination: `${CAL}/45-min`, permanent: false },
       { source: "/book/hour", destination: `${CAL}/1-hour`, permanent: false },
-      { source: "/book/15", destination: `${CAL}/15-min`, permanent: false },
     ];
   },
   async rewrites() {

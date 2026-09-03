@@ -239,10 +239,10 @@ npx playwright test e2e/paid-assessment-live.spec.ts  # real DB + email
   - `secret-mission-briefing` — 60 min, HIDDEN, assessment-checkout funnel (id 6204896)
   - `1-hour` — "1 Hour with Jeff", general link (id 6204897)
   - `30-min` — "30 Min with Jeff", LinkedIn DM outreach (id **6546833**; original was accidentally deleted 2026-08-03 then recreated and the slug restored to `30-min`, which is why /book exists — old id 5185711 is dead)
-  - `15-min` — ⚠️ **DELETED in the 2026-09-02 rename and not recreated.** `/book/15` is wired and
-    will start working the moment the event exists again — it must be recreated with the slug
-    exactly `15-min`. Five landing pages link to it. (Confirmed deleted, not hidden: hidden types
-    still resolve, and `15min` / `15-minutes` / `quick-15` all 404.)
+  - `15-min` — ❌ **DELETED BY JEFF 2026-09-02, deliberately. Not coming back.** There is no
+    `/book/15`. The five landing pages that offered a free 15 minutes (operational-gaps,
+    visibility-audit, survey-ready, revenue-leak, labor-cost) now offer the 30-minute call, with
+    the button and body copy changed to match — do not reintroduce a 15-minute offer.
   - `45-min` — legacy ops review link, "45 Min with Enhanced Ops Ninja" (id 5700126; still live, used by LinkedIn post CTAs)
   - Webhook `fa6de199…` → `https://enhancedops.ninja/api/cal-webhook` on BOOKING_CREATED + BOOKING_RESCHEDULED (all event types) → Bookings review panel in /crm
 - **Email from:** `jeff@enhancedops.ninja`
