@@ -200,7 +200,7 @@ export default async function OnePager({ params }: { params: Promise<Params> }) 
         <div className="cta">
           <h2>Is your building exposed?</h2>
           <p>This describes {st}. It cannot tell you where <em>you</em> stand — that takes a look at your own operation, across every building you run.</p>
-          <a className="btn" href="https://cal.com/enhancedopsninja/30-min">Book a 30-minute call →</a>
+          <a className="btn" href="/book">Book a 30-minute call →</a>
         </div>
 
         <div className="foot">

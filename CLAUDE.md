@@ -124,7 +124,7 @@ Email + firstName passed as URL params `dde`/`ddf`. Answers auto-saved to `DEEP_
 Booking section embedded directly on the score page — no intermediate navigation. Direct-link button (`target="_blank"`) plus inline Cal.com embed via `next/script afterInteractive`. The `/deep-dive/schedule` page still exists for email links.
 
 ### 7a. Social tab in CRM (`a6d8113`)
-`/crm` has a fourth view: **Social** (`CrmView` now includes `'social'`). `SocialView.tsx` is the social-media command center — LinkedIn is live (links to the Google Sheets "LinkedIn Content Calendar — Enhanced Ops" at doc ID `17xf0GmuVqj1_7DEPAWnLyK6Uf-q4iSk57z2hOvwEVzM`, plus the Cal.com 45-min booking link, LinkedIn feed and Sales Navigator). Facebook/Instagram/X are placeholder "soon" buttons. Workflow: Artemis drafts posts in the sheet (Status=DRAFT) → Jeff flips to APPROVED → Artemis posts via Playwright and records the live link (Status=POSTED). Post images are branded HTML→PNG renders (generator: `~/Projects/linkedin-content/generate-images.js`) committed to `public/social/` and served at `enhancedops.ninja/social/*.png`. Booking links go in the post's FIRST COMMENT (LinkedIn suppresses external links in post bodies); post CTAs funnel to the 45-min ops review; LinkedIn DM outreach uses `https://cal.com/enhancedopsninja/30-min`.
+`/crm` has a fourth view: **Social** (`CrmView` now includes `'social'`). `SocialView.tsx` is the social-media command center — LinkedIn is live (links to the Google Sheets "LinkedIn Content Calendar — Enhanced Ops" at doc ID `17xf0GmuVqj1_7DEPAWnLyK6Uf-q4iSk57z2hOvwEVzM`, plus the Cal.com 45-min booking link, LinkedIn feed and Sales Navigator). Facebook/Instagram/X are placeholder "soon" buttons. Workflow: Artemis drafts posts in the sheet (Status=DRAFT) → Jeff flips to APPROVED → Artemis posts via Playwright and records the live link (Status=POSTED). Post images are branded HTML→PNG renders (generator: `~/Projects/linkedin-content/generate-images.js`) committed to `public/social/` and served at `enhancedops.ninja/social/*.png`. Booking links go in the post's FIRST COMMENT (LinkedIn suppresses external links in post bodies); post CTAs funnel to the 45-min ops review; LinkedIn DM outreach uses `https://enhancedops.ninja/book`.
 
 ### 7. Header button — direct to client portal (`135207a`)
 `MarketingHeader.tsx` "Enter the Mission" button is a direct `<a href="https://mission.enhancedops.ninja">` — no modal, no choice. EON team accesses Ninja Dojo by typing `dojo.enhancedops.ninja` directly; there is no entry point from the marketing site for the team.
@@ -192,7 +192,7 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 STRIPE_SECRET_KEY
 STRIPE_WEBHOOK_SECRET
 RESEND_API_KEY
-CAL_COM_BOOKING_URL   # default: https://cal.com/enhancedopsninja/secret-mission-briefing
+CAL_COM_BOOKING_URL   # default: https://enhancedops.ninja/book/briefing
 CAL_COM_API_KEY       # Cal.com API v2 (Bearer auth) — in Vercel prod+dev; account jeff@enhancedops.ninja
 ```
 
@@ -226,11 +226,23 @@ npx playwright test e2e/paid-assessment-live.spec.ts  # real DB + email
 - **Primary blue (this site):** `#1A6ECC` — not `#1A6BF9` (eon-app)
 - **Logo:** `/public/logo-transparent.png`
 - **Legal entity:** Augeo LLC (dba EnhancedOps.ninja)
-- **Cal.com** (account `jeff@enhancedops.ninja`, username `enhancedopsninja`, TZ America/Denver):
+- **Cal.com** (account `jeff@enhancedops.ninja`, username `businessintelligenceninja`, TZ America/Denver):
+  - **Renamed 2026-09-02**: `enhancedopsninja` → `businessintelligenceninja`. The old profile
+    **404s — cal.com does not redirect a renamed username**, so every published link died at once.
+    Account email is unchanged; only the public username moved.
+  - ⚠️ **NEVER put a cal.com URL in a page, email or post.** Renamed twice in a month
+    (`enhancedopsninja` → `businessintelligenceninja`, 2026-09-02), and every published link died
+    both times because the old profile 404s rather than redirecting. Link to **`/book`** paths
+    instead — relative on our own pages, `https://enhancedops.ninja/book…` in email and social
+    where a relative path has no origin to resolve against. The username lives in exactly one
+    place: the `redirects()` block in `next.config.ts`. Next rename is a four-line edit there.
   - `secret-mission-briefing` — 60 min, HIDDEN, assessment-checkout funnel (id 6204896)
   - `1-hour` — "1 Hour with Jeff", general link (id 6204897)
-  - `30-min` — "30 Min with Jeff", LinkedIn DM outreach (id **6546833**; original was accidentally deleted 2026-08-03 then recreated and the slug restored to `30-min`, so cal.com/enhancedopsninja/30-min still works — old id 5185711 is dead)
-  - `15-min` — "15 Min with Jeff" (id 6385355)
+  - `30-min` — "30 Min with Jeff", LinkedIn DM outreach (id **6546833**; original was accidentally deleted 2026-08-03 then recreated and the slug restored to `30-min`, which is why /book exists — old id 5185711 is dead)
+  - `15-min` — ❌ **DELETED BY JEFF 2026-09-02, deliberately. Not coming back.** There is no
+    `/book/15`. The five landing pages that offered a free 15 minutes (operational-gaps,
+    visibility-audit, survey-ready, revenue-leak, labor-cost) now offer the 30-minute call, with
+    the button and body copy changed to match — do not reintroduce a 15-minute offer.
   - `45-min` — legacy ops review link, "45 Min with Enhanced Ops Ninja" (id 5700126; still live, used by LinkedIn post CTAs)
   - Webhook `fa6de199…` → `https://enhancedops.ninja/api/cal-webhook` on BOOKING_CREATED + BOOKING_RESCHEDULED (all event types) → Bookings review panel in /crm
 - **Email from:** `jeff@enhancedops.ninja`

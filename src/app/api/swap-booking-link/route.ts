@@ -9,7 +9,7 @@ import { getSupabaseAdmin } from "@/lib/supabase/admin";
 export const dynamic = "force-dynamic";
 
 const OLD_URL = "https://calendar.app.google/JPqDPdCQNxDu8qtb6";
-const NEW_URL = "https://cal.com/enhancedopsninja/30-min";
+const NEW_URL = "https://enhancedops.ninja/book";
 const FIELDS = ["msg1", "msg2", "msg3", "accepted_msg"] as const;
 
 export async function GET(req: Request) {

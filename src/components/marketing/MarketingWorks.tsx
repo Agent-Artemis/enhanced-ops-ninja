@@ -251,7 +251,7 @@ function MissionCta() {
         Leverage recovered · Revenue protected · Team unstoppable
       </p>
       <a
-        href="https://cal.com/enhancedopsninja/30-min"
+        href="/book"
         target="_blank"
         rel="noopener noreferrer"
         className="mt-6 inline-block rounded-xl bg-white px-8 py-3.5 text-[15px] font-semibold text-[#124e92] shadow-[0_8px_22px_-8px_rgba(0,0,0,0.5)] transition-transform hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0"

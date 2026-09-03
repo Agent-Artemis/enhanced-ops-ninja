@@ -120,7 +120,7 @@ function buildCompletionEmailHtml(params: {
 
 // Assessment checkouts book the 60-min Secret Mission Briefing (hidden event —
 // reachable only via this link, not listed on the public Cal.com page).
-const DEFAULT_CAL_BOOKING_URL = "https://cal.com/enhancedopsninja/secret-mission-briefing";
+const DEFAULT_CAL_BOOKING_URL = "https://enhancedops.ninja/book/briefing";
 
 /**
  * Rough worksheet values derived from the client's ranged multiple-choice

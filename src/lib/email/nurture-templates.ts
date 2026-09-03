@@ -1,5 +1,5 @@
 const FREE_AUDIT_URL = "https://enhancedops.ninja/visibility-audit";
-const BOOKING_URL = "https://cal.com/enhancedopsninja/secret-mission-briefing";
+const BOOKING_URL = "https://enhancedops.ninja/book/briefing";
 const UNSUBSCRIBE_URL = "https://enhancedops.ninja/unsubscribe";
 
 function e(s: string) {
