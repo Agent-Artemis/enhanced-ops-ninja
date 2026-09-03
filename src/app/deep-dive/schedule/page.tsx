@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Script from 'next/script';
 
-const CAL_LINK = 'enhancedopsninja/secret-mission-briefing';
+const CAL_LINK = '/book/briefing';
 
 function initCal() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

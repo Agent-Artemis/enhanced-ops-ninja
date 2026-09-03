@@ -6,6 +6,33 @@ const nextConfig: NextConfig = {
   // Vercel's ?dpl= deployment scoping works (crm.enhancedops.ninja secondary
   // domain doesn't properly resolve ?dpl= scoped assets)
   assetPrefix: process.env.NODE_ENV === 'production' ? 'https://enhancedops.ninja' : '',
+  // ---------------------------------------------------------------------
+  // BOOKING LINKS — the only place the cal.com username appears.
+  //
+  // Every booking link on our sites and in our emails points at a relative
+  // /book path, never at cal.com directly. Two reasons:
+  //   1. Masking. A healthcare prospect should see enhancedops.ninja in the
+  //      address bar, not whatever the cal.com username happens to be.
+  //   2. Renames. This is the second username change in a month, so assume a
+  //      third. When it happens this block is the whole edit.
+  //
+  // permanent: false is deliberate — a 308 gets cached hard by browsers and we
+  // could never take it back. Temporary keeps the next rename cheap.
+  //
+  // NOTE: /book/15 currently 404s AT CAL.COM because the 15-min event type has
+  // not been recreated under the new username. The redirect is wired so the
+  // moment it exists the five landing-page links work with no deploy.
+  // ---------------------------------------------------------------------
+  async redirects() {
+    const CAL = "https://cal.com/businessintelligenceninja";
+    return [
+      { source: "/book", destination: `${CAL}/30-min`, permanent: false },
+      { source: "/book/briefing", destination: `${CAL}/secret-mission-briefing`, permanent: false },
+      { source: "/book/45", destination: `${CAL}/45-min`, permanent: false },
+      { source: "/book/hour", destination: `${CAL}/1-hour`, permanent: false },
+      { source: "/book/15", destination: `${CAL}/15-min`, permanent: false },
+    ];
+  },
   async rewrites() {
     return {
       beforeFiles: [

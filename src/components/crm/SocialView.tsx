@@ -16,11 +16,11 @@ function onePagerOffer(firstName?: string | null): string {
 
 const CONTENT_CALENDAR_URL =
   'https://docs.google.com/spreadsheets/d/17xf0GmuVqj1_7DEPAWnLyK6Uf-q4iSk57z2hOvwEVzM/edit';
-const DM_BOOKING_URL = 'https://cal.com/enhancedopsninja/30-min';
-const OPS_REVIEW_URL = 'https://cal.com/enhancedopsninja/45-min';
+const DM_BOOKING_URL = 'https://enhancedops.ninja/book';
+const OPS_REVIEW_URL = 'https://enhancedops.ninja/book/45';
 // "1 Hour with Jeff" — the long-form slot, for a conversation that has already
 // earned more than a discovery call. Verified live on Cal.com.
-const HOUR_MEETING_URL = 'https://cal.com/enhancedopsninja/1-hour';
+const HOUR_MEETING_URL = 'https://enhancedops.ninja/book/hour';
 
 interface Platform {
   id: string; name: string; live: boolean;
