@@ -168,7 +168,9 @@ export async function POST(req: Request) {
       // crm_contacts now holds healthcare operators AND supplement white-label
       // targets. Tagging at creation costs nothing; retrofitting hundreds of
       // cards later does.
-      tags: ["call-list", listId, ...(bizTag ? [bizTag] : [])],
+      // deduped: on ma-partners the list id and the business tag are the
+      // same string, and a card carrying it twice reads as a bug.
+      tags: Array.from(new Set(["call-list", listId, ...(bizTag ? [bizTag] : [])])),
       custom_fields: {
         source: "call-list",
         call_list: listId,
