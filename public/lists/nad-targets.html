@@ -1,0 +1,291 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>EON — White-label oral NAD targets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+ :root{--bg:#0A0F1A;--panel:#0E1420;--panel2:#121A28;--line:#243044;--line2:#2e3b52;--blue:#1A6ECC;--blue2:#3F8AE0;--gold:#F5B301;--text:#EEF3FA;--soft:#AEBBCD;--mut:#7E8DA0;--green:#46c46a;--head:'Bebas Neue',Impact,sans-serif;--body:'DM Sans',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--shadow:0 2px 6px rgba(0,0,0,.35),0 16px 40px rgba(0,0,0,.4)}
+ *{box-sizing:border-box}
+ body{margin:0;background:radial-gradient(900px 440px at 82% -10%,rgba(26,110,204,.10),transparent 60%),var(--bg);color:var(--text);font-family:var(--body);line-height:1.5;-webkit-font-smoothing:antialiased}
+ .wrap{max-width:1000px;margin:0 auto;padding:16px 16px 60px}
+ .top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:4px 0 12px}
+ .top img.logo{height:74px;width:auto}
+ .h{font-size:13px;color:var(--soft)}
+
+ .banner{border:1px solid var(--line2);border-left:4px solid var(--gold);background:var(--panel);
+   border-radius:10px;padding:11px 14px;margin:0 0 14px}
+ .banner .bt{font-family:var(--head);letter-spacing:.05em;font-size:17px;color:var(--gold)}
+ .banner p{margin:3px 0 0;font-size:13.5px;color:var(--soft)}
+ .banner b{color:var(--text)}
+
+ .tabs{display:flex;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:4px;gap:2px}
+ .tabs button{border:0;background:transparent;color:var(--soft);font-weight:700;font-size:13px;padding:9px 13px;border-radius:10px;cursor:pointer;font-family:var(--body)}
+ .tabs button.on{background:var(--blue);color:#fff}
+ .bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:14px 0}
+ input[type=search]{flex:1;min-width:200px;background:#0a0f1a;border:1px solid var(--line2);color:var(--text);border-radius:10px;padding:11px 14px;font-size:15px;font-family:var(--body)}
+ input::placeholder{color:var(--mut)}
+ .prog{font-size:13px;color:var(--soft);white-space:nowrap}
+ .prog b{color:var(--gold)}
+ .resetbtn{background:transparent;border:1px solid var(--line2);color:var(--soft);border-radius:8px;padding:8px 12px;font-size:12.5px;cursor:pointer;font-family:var(--body)}
+ .pbtn{appearance:none;border:1px solid var(--line2);background:#0b1220;color:var(--blue2);font-size:13px;font-weight:700;padding:9px 14px;border-radius:8px;cursor:pointer;margin:6px 0 4px;min-height:40px;font-family:var(--body)}
+ .pbtn:hover{border-color:var(--blue)}
+
+ .ghead{display:flex;align-items:baseline;gap:9px;margin:18px 0 9px}
+ .ghead .gt{font-family:var(--head);letter-spacing:.06em;font-size:18px;color:var(--text)}
+ .ghead .gc{font-size:12.5px;color:var(--mut)}
+ /* The unresearched records are a different KIND of row, not a lower-ranked
+    one, so they sit under their own rule and a quieter heading. */
+ .ghead.quiet{margin-top:26px;padding-top:12px;border-top:1px solid var(--line)}
+ .ghead.quiet .gt{font-size:14px;color:var(--mut);letter-spacing:.08em}
+
+ .row{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px;box-shadow:var(--shadow)}
+ .row.done{opacity:.45}
+ .row.done .nm{text-decoration:line-through}
+ .row.raw{background:transparent;border-style:dashed;box-shadow:none}
+ .rhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+ .who{flex:1;min-width:210px}
+ .nm{font-family:var(--head);letter-spacing:.02em;font-size:23px;line-height:1.05;color:var(--text)}
+ .seg{font-size:12.5px;color:var(--mut);margin-top:2px}
+ .person{font-size:13.5px;color:var(--soft);margin-top:2px}
+
+ /* The two qualifiers that decide the order are shown on the row, so the
+    ranking is visible rather than something the reader has to take on faith. */
+ .quals{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+ .q{display:inline-block;font-family:var(--head);letter-spacing:.06em;font-size:11.5px;
+   border-radius:4px;padding:2px 7px;border:1px solid var(--line2);color:var(--soft)}
+ .q.loc{border-color:var(--blue);color:var(--blue2)}
+ .q.loc b{font-family:var(--body);font-weight:700;font-size:12px}
+ .q.nad{border-color:var(--green);color:var(--green)}
+ .q.nad.maybe{border-color:var(--line2);color:var(--soft)}
+ .q.nad.cold{border-color:var(--line2);color:var(--mut)}
+ .q.inc{border-color:var(--gold);color:var(--gold)}
+
+ .meta{font-size:12.5px;color:var(--mut);margin-top:6px}
+ .why{border-left:3px solid var(--blue);background:var(--panel2);border-radius:0 8px 8px 0;
+   padding:9px 12px;margin-top:10px;font-size:14px;color:var(--text)}
+ .why b{color:var(--blue2);font-weight:700}
+ .flag{border-left:3px solid var(--gold);background:rgba(245,179,1,.06);border-radius:0 8px 8px 0;
+   padding:8px 12px;margin-top:8px;font-size:13.5px;color:var(--soft)}
+ .flag b{color:var(--gold)}
+
+ /* No record on this list has a named decision maker yet, so the ROUTE is the
+    contact. It gets the weight a phone number would get, and a URL inside it
+    is made tappable rather than left as text to retype on a phone. */
+ .route{border:1px solid var(--line2);border-radius:8px;background:#0a0f1a;padding:9px 12px;margin-top:9px}
+ .route .lbl{font-family:var(--head);letter-spacing:.07em;font-size:11.5px;color:var(--soft);display:block;margin-bottom:2px}
+ .route .rt{font-size:13.5px;color:var(--text)}
+ .route a{color:var(--blue2)}
+ .route.door{border-color:var(--gold);background:rgba(245,179,1,.08)}
+ .route.door .lbl{color:var(--gold)}
+ .route.unver{border-style:dashed}
+ .route.unver .lbl{color:var(--gold)}
+
+ .acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+ .actbtn{padding:7px 11px;font-size:13px;font-weight:700;border-radius:8px;
+   border:1px solid var(--line2);background:var(--panel2);color:var(--text);cursor:pointer;
+   text-decoration:none;display:inline-block;font-family:var(--body);min-height:34px;line-height:20px}
+ .actbtn:hover{border-color:var(--blue)}
+ a.actbtn.call,a.actbtn.mail{background:var(--blue);border-color:var(--blue);color:#fff}
+ a.actbtn.door{background:var(--gold);border-color:var(--gold);color:#3D2C00}
+ .actbtn.mark.on{background:var(--green);border-color:var(--green);color:#06210e}
+ .notebox{width:100%;min-height:64px;background:#0a0f1a;border:1px solid var(--line2);color:var(--text);
+   border-radius:8px;padding:9px 11px;font-size:14px;font-family:var(--body);resize:vertical;margin-top:9px}
+ .notebox:focus{outline:none;border-color:var(--blue)}
+ .pnote{font-size:13.5px;color:var(--soft);margin-top:8px;border-top:1px dashed var(--line2);padding-top:7px}
+ .pnote b{color:var(--gold)}
+ .empty{color:var(--mut);font-size:14px;padding:20px 2px}
+ .foot{color:var(--mut);font-size:12px;margin-top:18px;border-top:1px solid var(--line);padding-top:10px}
+
+ @media print{
+   @page{margin:11mm 9mm}
+   html,body{background:#fff!important;color:#000!important}
+   body{font-size:9.5pt}
+   .wrap{max-width:none!important;padding:0!important}
+   .tabs,.bar,.pbtn,.resetbtn,.notebox,.acts button{display:none!important}
+   .top img.logo{height:46px!important;filter:grayscale(1) contrast(2)}
+   .h{color:#000!important;font-size:8pt!important}
+   .banner{border:1pt solid #000!important;border-left:3pt solid #000!important;background:#fff!important;padding:5pt 7pt!important;margin-bottom:8pt!important}
+   .banner .bt{color:#000!important;font-size:12pt!important}
+   .banner p,.banner b{color:#000!important;font-size:8.5pt!important}
+   .ghead{margin:9pt 0 4pt!important}
+   .ghead .gt,.ghead .gc{color:#000!important}
+   .ghead .gt{font-size:11pt!important}
+   .ghead.quiet{border-top:1px solid #000!important;padding-top:6pt!important}
+   .row{background:#fff!important;border:1px solid #999!important;border-radius:0!important;box-shadow:none!important;
+     padding:5pt 6pt!important;margin-bottom:4pt!important;break-inside:avoid;page-break-inside:avoid;opacity:1!important}
+   .row.raw{border-style:dashed!important}
+   .nm{color:#000!important;font-size:12pt!important}
+   .seg,.person,.meta,.why,.flag,.route .rt,.pnote{color:#000!important}
+   .q{color:#000!important;border-color:#000!important;font-size:8pt!important}
+   .why{background:#f2f2f2!important;border-left:2pt solid #000!important;border-radius:0!important;
+     padding:4pt 6pt!important;font-size:8.5pt!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+   .flag{background:#fff!important;border-left:2pt solid #000!important;border-radius:0!important;padding:4pt 6pt!important;font-size:8.5pt!important}
+   .why b,.flag b,.route .lbl{color:#000!important}
+   .route{background:#fff!important;border:1px dashed #666!important;padding:4pt 6pt!important;font-size:8.5pt!important}
+   .route.door{border:1.5pt solid #000!important}
+   a.actbtn{background:#fff!important;color:#000!important;border:1px solid #000!important;
+     padding:2pt 5pt!important;font-size:8.5pt!important;min-height:0!important;line-height:1.2!important}
+   .row::after{content:"Contact found:";display:block;margin-top:4pt;padding-top:7pt;
+     border-top:1px solid #000;font-size:7pt;color:#000}
+   .printhdr{display:block!important;font-size:8pt;color:#333;margin-bottom:6pt}
+   .foot{color:#000!important;font-size:7.5pt!important}
+ }
+ .printhdr{display:none}
+ @media(max-width:560px){
+   .top img.logo{height:58px}
+   .nm{font-size:20px}
+   .acts{justify-content:flex-start;width:100%}
+   .rhead{flex-direction:column}
+ }
+</style>
+<div class="wrap">
+
+ <div class="top">
+   <img class="logo" src="/logo-ninja.png" alt="EnhancedOps.Ninja">
+   <div class="h">White-label oral NAD &middot; sample target list &middot; built 3 Sep 2026</div>
+ </div>
+
+ <div class="banner">
+   <div class="bt">RANKED BY DOORS, THEN BY WHO ALREADY SELLS NAD</div>
+   <p>Liposomal <b>oral</b> NAD and NAD+, white-labelled under the buyer's brand and drop-shipped.
+   The manufacturer reaches $8 to $10 a bottle at roughly 100,000 bottles a month, so <b>volume
+   decides the list</b>: a 400-door chain outranks a perfect single-site fit, and an operator
+   already selling NAD needs no education. <b>No named decision makers exist yet</b> on any record.
+   These chains publish forms and national lines, so the route is the contact.</p>
+ </div>
+
+ <div class="tabs" id="tabs"></div>
+ <button class="pbtn" id="printBtn">Print this tab</button>
+
+ <div class="bar">
+   <input type="search" id="q" placeholder="Search company, segment, HQ, note&hellip;" oninput="render()">
+   <span class="prog" id="prog"></span>
+   <button class="resetbtn" onclick="resetCalled()">Reset marks</button>
+ </div>
+
+ <div class="printhdr" id="printhdr"></div>
+ <div id="list"></div>
+
+ <div class="foot">Every figure is from the company's own site on the date read. UNVERIFIED means not
+ confirmed on the company's own site; nothing here was constructed. Nothing on this page is a legal
+ opinion. &middot; EnhancedOps.Ninja</div>
+</div>
+
+<script>
+var LIST='nad-targets';
+var DATA={"iv": [{"company": "Restore Hyper Wellness", "segLabel": "IV therapy", "hq": "Austin, TX — 13740 North Highway 183 L2, Austin TX 78750-1835 (their Contact page)", "ownership": "Franchise", "why": "THE NUMBER ONE TARGET. 210+ locations, already sells NAD in four forms, and has already educated its base into RECURRING NAD PURCHASING. An oral take-home NAD is a pure attach - zero demand creation.", "flags": "⚠️ HARDER SELL THAN IT LOOKS: they already carry NIAGEN (NR), a BRANDED licensed NAD-precursor ingredient (ChromaDex). An incumbent ingredient-brand relationship exists. Also note 'RestoreLabs' in their nav - possible house-brand programme, could not verify (page 404s).", "contact_route": "Contact form on restore.com/contact-us with a department picker (Marketing / Franchise / IT / Legal / Other). NO corporate phone or email published.", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": "220+ locations", "loc": 220, "nadLabel": "SELLS NAD", "nadClass": "", "nadRank": 0, "incumbent": true, "raw": false, "door": false}, {"company": "REVIV", "segLabel": "IV therapy", "hq": "UNVERIFIED", "ownership": "Franchise / global licensing", "why": "Second-largest IV footprint found, already sells NAD, and a franchise model means one master agreement can reach many operators.", "flags": "International franchise structure may mean per-market supply rules. US-only fulfilment could be a blocker.", "contact_route": "Contact form. ⚠️ I scraped their contact page and it returned a third-party gmail address and an unrelated LinkedIn profile - almost certainly an embedded widget, NOT REVIV. I DISCARDED IT. Do not use anything scraped from that page.", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": "100+ locations", "loc": 100, "nadLabel": "SELLS NAD", "nadClass": "", "nadRank": 0, "incumbent": false, "raw": false, "door": false}, {"company": "Next Health", "segLabel": "IV therapy / longevity hybrid", "hq": "Los Angeles, CA", "ownership": "Corporate + some licensed", "why": "Premium longevity positioning, NAD is a headline SKU with tiered dosing - they already price-anchor NAD. Small footprint but high revenue per site and a brand that would white-label credibly.", "flags": "Low location count - fails the volume filter on its own. Worth it as a brand-credibility logo, not for volume.", "contact_route": "Published phone and email on their own site", "contact_name": "", "contact_title": "", "phone": "(310) 295-2075", "email": "info@next-health.com", "tel": "3102952075", "locLabel": "~7-10", "loc": -1, "nadLabel": "SELLS NAD", "nadClass": "", "nadRank": 0, "incumbent": false, "raw": false, "door": false}, {"company": "The DRIPBaR", "segLabel": "IV therapy", "hq": "UNVERIFIED", "ownership": "Franchise", "why": "⭐ TOP-TIER SEGMENT 1 FIT. A franchise that already sells NAD+ AND an NR precursor, alongside peptides, semaglutide and hyperbarics — a menu that signals a customer base primed for a take-home longevity SKU.", "flags": "Already carries an NR product, so an incumbent precursor relationship may exist. Location count unverified.", "contact_route": "Website contact form; no tel/mailto published in page source", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "SELLS NAD", "nadClass": "", "nadRank": 0, "incumbent": true, "raw": false, "door": false}, {"company": "Hydreight Network", "segLabel": "IV therapy", "hq": "UNVERIFIED", "ownership": "Platform/network", "why": "⭐ STRUCTURALLY INTERESTING: a NETWORK of independent nurses rather than clinics. One agreement could put a take-home SKU in front of a large distributed provider base.", "flags": "Support email is not a BD route - needs a named commercial contact.", "contact_route": "Published support email only", "contact_name": "", "contact_title": "", "phone": "", "email": "customer.service@hydreight.com", "tel": "", "locLabel": "Nurse-network model across many st", "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}, {"company": "IV Bars", "segLabel": "IV therapy", "hq": "Texas", "ownership": "Franchise", "why": "Franchise IV bar chain - franchise HQ can mandate a retail SKU across the system.", "flags": "", "contact_route": "Published phone and email", "contact_name": "", "contact_title": "", "phone": "(855) 273-9950", "email": "info@ivbars.com", "tel": "8552739950", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}, {"company": "IV Nutrition", "segLabel": "IV therapy", "hq": "UNVERIFIED", "ownership": "Franchise", "why": "Franchise IV chain - system-wide retail mandate possible.", "flags": "", "contact_route": "Site reachable, no contact extracted", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}, {"company": "Ivy Hydration", "segLabel": "IV therapy", "hq": "Denver, CO area", "ownership": "UNVERIFIED", "why": "Regional IV chain in Jeff's Mountain West geography.", "flags": "", "contact_route": "Published phone", "contact_name": "", "contact_title": "", "phone": "1-303-893-0552", "email": "", "tel": "13038930552", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}, {"company": "Liquivida", "segLabel": "IV therapy", "hq": "Florida", "ownership": "Franchise", "why": "Established IV franchise with a wellness-centre model and existing retail behaviour.", "flags": "", "contact_route": "Published phone on their own site", "contact_name": "", "contact_title": "", "phone": "(844) 548-2100", "email": "", "tel": "8445482100", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}, {"company": "Mobile IV Medics", "segLabel": "IV therapy", "hq": "UNVERIFIED", "ownership": "UNVERIFIED", "why": "Mobile model means no shelf space constraint - an oral take-home SKU is the only retail they CAN do.", "flags": "", "contact_route": "Published phone", "contact_name": "", "contact_title": "", "phone": "833-483-7477", "email": "", "tel": "8334837477", "locLabel": "Multi-state mobile", "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}, {"company": "The Hydration Room", "segLabel": "IV therapy", "hq": "California", "ownership": "UNVERIFIED", "why": "MEMBERSHIP-led IV chain - a membership base is a recurring-revenue base, which is what an oral SKU needs.", "flags": "", "contact_route": "Published membership email", "contact_name": "", "contact_title": "", "phone": "", "email": "membership@hydrationroom.com", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}, {"company": "The IV Doc", "segLabel": "IV therapy", "hq": "UNVERIFIED", "ownership": "UNVERIFIED", "why": "Concierge/mobile IV with a national and UK presence; established NAD-adjacent menu.", "flags": "", "contact_route": "Published phone (also a UK line, +44 800 112 6126)", "contact_name": "", "contact_title": "", "phone": "844-843-4836", "email": "", "tel": "8448434836", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}, {"company": "Thrive Drip Spa", "segLabel": "IV therapy", "hq": "Texas", "ownership": "UNVERIFIED", "why": "Regional IV/drip spa chain — spa format means an existing retail counter.", "flags": "", "contact_route": "Published phone", "contact_name": "", "contact_title": "", "phone": "1-844-820-1713", "email": "", "tel": "18448201713", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}], "func": [{"company": "Forum Health", "segLabel": "Integrative & longevity group", "hq": "UNVERIFIED", "ownership": "Group / affiliated practices", "why": "⭐ BEST DOOR IN THE WHOLE LIST. A multi-location integrative medicine group that PUBLISHES A PARTNER INBOX - they are openly soliciting exactly this conversation. Integrative practices already retail supplements.", "flags": "⚠️ MEDICAL PRACTICES - this is the segment where the compliance question is sharpest (see regulatory note).", "contact_route": "⭐ THEY PUBLISH A PARTNERSHIPS INBOX: partners@forumhealth.com. Also marketing@ and careers@.", "contact_name": "", "contact_title": "", "phone": "1-888-558-6980", "email": "partners@forumhealth.com", "tel": "18885586980", "locLabel": "Multi-location national network", "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": true}, {"company": "Parsley Health", "segLabel": "Functional medicine", "hq": "New York, NY", "ownership": "Corporate", "why": "Functional medicine membership with an existing supplement dispensary habit and a national member list.", "flags": "⚠️ Medical practice - compliance question applies.", "contact_route": "Published department emails", "contact_name": "", "contact_title": "", "phone": "", "email": "care@parsleyhealth.com, enrollment@parsleyhealth.com", "tel": "", "locLabel": "Multi-city + telehealth", "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}], "medspa": [{"company": "Milan Laser Hair Removal", "segLabel": "Med spa", "hq": "Omaha, NE", "ownership": "Corporate-owned (not franchised) — VERIFY", "why": "⭐ LARGEST LOCATION COUNT IN THE WHOLE LIST - 400+. Corporate ownership means ONE decision reaches every door, which is exactly the 'one signature beats fifty clinics' economics.", "flags": "Single-service laser business with NO existing supplement retail and no NAD education. Highest volume, coldest fit. This is a build-the-category sell, not an attach.", "contact_route": "Published national phone. No BD email found.", "contact_name": "", "contact_title": "", "phone": "833-667-2967", "email": "privacy@milanlaser.com (privacy inbox only - NOT a BD route)", "tel": "8336672967", "locLabel": "400+ locations", "loc": 400, "nadLabel": "UNLIKELY TO SELL NAD", "nadClass": "cold", "nadRank": 3, "incumbent": false, "raw": false, "door": false}, {"company": "Sono Bello", "segLabel": "Med spa / body contouring", "hq": "UNVERIFIED", "ownership": "Corporate", "why": "100+ corporate-owned sites, affluent patient base already paying cash for aesthetic outcomes.", "flags": "Surgical/procedural focus - retail supplement attach is unproven for them.", "contact_route": "Published national phone", "contact_name": "", "contact_title": "", "phone": "1-800-995-1136", "email": "", "tel": "18009951136", "locLabel": "100+ locations", "loc": 100, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}, {"company": "Ideal Image", "segLabel": "Med spa", "hq": "Tampa, FL", "ownership": "Franchise + corporate", "why": "Large national med spa brand with a membership model.", "flags": "Could not reach their site. Also check financial health before investing time.", "contact_route": "Site did not resolve for me", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}, {"company": "LaserAway", "segLabel": "Med spa", "hq": "Los Angeles, CA", "ownership": "Corporate", "why": "Large corporate med spa chain with a young, high-frequency clientele.", "flags": "Could not reach their site.", "contact_route": "Site returned 403 to me - contact not verified", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}, {"company": "Skin Laundry", "segLabel": "Med spa", "hq": "UNVERIFIED", "ownership": "UNVERIFIED", "why": "Membership-led skin clinic chain with existing retail shelf.", "flags": "", "contact_route": "Site reachable, no contact extracted", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}], "long": [{"company": "Fountain Life", "segLabel": "Longevity", "hq": "Naples, FL", "ownership": "Corporate", "why": "Flagship longevity brand (Diamandis-associated). NAD is core to the longevity pitch, members pay five figures a year, and a branded take-home is an obvious member benefit.", "flags": "Small number of centres - a credibility logo more than a volume play.", "contact_route": "Three published centre phones plus a care email", "contact_name": "", "contact_title": "", "phone": "(239) 235-6644 / (407) 499-8511 / (469) 647-9344", "email": "care@fountainlife.com", "tel": "239235664440749985114696479344", "locLabel": "Multiple US centers", "loc": -1, "nadLabel": "LIKELY SELLS NAD", "nadClass": "maybe", "nadRank": 1, "incumbent": false, "raw": false, "door": false}, {"company": "Lifeforce", "segLabel": "Longevity", "hq": "UNVERIFIED", "ownership": "Corporate", "why": "Direct-to-consumer longevity membership with an existing supplement line and an owned list - closest thing to segment 6 with clinical credibility.", "flags": "⚠️ ALREADY HAS ITS OWN SUPPLEMENT LINE - house-brand conflict, harder sell.", "contact_route": "Contact page 404'd for me", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": "Virtual/national", "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": true, "raw": false, "door": false}, {"company": "Serotonin Centers", "segLabel": "Longevity franchise", "hq": "Florida", "ownership": "Franchise", "why": "A LONGEVITY FRANCHISE - franchise economics plus longevity positioning is the ideal combination for a white-label retail SKU.", "flags": "Could not verify locations or contact.", "contact_route": "Contact page 404'd for me", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}], "gym": [{"company": "Anytime Fitness (Self Esteem Brands / Purpose Brands)", "segLabel": "Health club franchise", "hq": "Woodbury, MN", "ownership": "Franchise", "why": "One of the largest gym franchise systems in the world - the single biggest door count available if a master agreement were possible.", "flags": "24/7 unstaffed model means little retail attention at club level.", "contact_route": "NOT VERIFIED - needs a corporate/BD contact", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}, {"company": "Crunch Fitness", "segLabel": "Health club", "hq": "New York, NY", "ownership": "Franchise", "why": "Large franchise system - one HQ agreement reaches many clubs.", "flags": "Could not reach contact page.", "contact_route": "NOT VERIFIED - needs a corporate/BD contact", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}, {"company": "EoS Fitness", "segLabel": "Health club", "hq": "Arizona/Nevada", "ownership": "Corporate", "why": "Fast-growing Southwest gym chain in Jeff's broader region.", "flags": "Value gym - price point risk.", "contact_route": "NOT VERIFIED - needs a corporate/BD contact", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}, {"company": "Life Time", "segLabel": "Health club", "hq": "Chanhassen, MN", "ownership": "Corporate (public: LTH)", "why": "Premium athletic clubs with LifeCafe retail already selling supplements at the point of exit. Existing shelf, affluent members, and a house nutrition line to benchmark against.", "flags": "⚠️ HAS A HOUSE SUPPLEMENT BRAND (LifeCafe/Life Time branded nutrition) - harder sell, but they already believe in the category.", "contact_route": "NOT VERIFIED - needs a corporate/BD contact", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": true, "raw": false, "door": false}, {"company": "Orangetheory Fitness", "segLabel": "Boutique fitness franchise", "hq": "Boca Raton, FL", "ownership": "Franchise", "why": "Very large franchise system with a coached, high-engagement member base that already buys performance products.", "flags": "No existing supplement retail programme verified.", "contact_route": "NOT VERIFIED - needs a corporate/BD contact", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}, {"company": "VASA Fitness", "segLabel": "Health club", "hq": "Utah", "ownership": "Corporate", "why": "⭐ MOUNTAIN WEST, JEFF'S GEOGRAPHY. Multi-state gym chain - a warm local intro is plausible.", "flags": "Value-priced gym model may not support a premium NAD price point.", "contact_route": "NOT VERIFIED - needs a corporate/BD contact", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}], "chiro": [{"company": "HealthSource Chiropractic", "segLabel": "Chiropractic franchise", "hq": "UNVERIFIED", "ownership": "Franchise", "why": "Franchise chiro system with established wellness retail.", "flags": "Contact unverified.", "contact_route": "Email obfuscated in page source (info@healthsourcechiro.com pattern) - NOT confirmed, do not use until verified", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": false, "raw": false, "door": false}, {"company": "The Joint Chiropractic", "segLabel": "Chiropractic franchise", "hq": "Scottsdale, AZ", "ownership": "Franchise (public: JYNT)", "why": "⭐ ENORMOUS DOOR COUNT and a MEMBERSHIP model - members visit repeatedly, which is exactly the frequency a consumable needs. Publicly traded so franchisee-level retail is centrally coordinated.", "flags": "Chiropractic retail programmes are usually tightly controlled; and no existing NAD education at all.", "contact_route": "Published corporate phone", "contact_name": "", "contact_title": "", "phone": "+1-480-245-5960", "email": "", "tel": "+14802455960", "locLabel": "Large national franchise", "loc": -1, "nadLabel": "DOES NOT SELL NAD", "nadClass": "cold", "nadRank": 3, "incumbent": false, "raw": false, "door": false}], "supp": [{"company": "1st Phorm", "segLabel": "Supplement/creator brand with a list", "hq": "UNVERIFIED", "ownership": "Corporate", "why": "Owns a large direct list and already sells adjacent longevity/energy/methylation SKUs. The pure drop-ship play - they bring list and brand, we bring product and fulfilment.", "flags": "⚠️ ALL OF THESE ALREADY HAVE MANUFACTURING RELATIONSHIPS AND OFTEN OWN OR CONTROL FORMULATION. Hardest segment to displace, but the fastest to launch if one says yes. Bucked Up is Utah-based - closest to Jeff.", "contact_route": "NOT VERIFIED", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": true, "raw": true, "door": false}, {"company": "Bucked Up (DAS Labs)", "segLabel": "Supplement/creator brand with a list", "hq": "UNVERIFIED", "ownership": "Corporate", "why": "Owns a large direct list and already sells adjacent longevity/energy/methylation SKUs. The pure drop-ship play - they bring list and brand, we bring product and fulfilment.", "flags": "⚠️ ALL OF THESE ALREADY HAVE MANUFACTURING RELATIONSHIPS AND OFTEN OWN OR CONTROL FORMULATION. Hardest segment to displace, but the fastest to launch if one says yes. Bucked Up is Utah-based - closest to Jeff.", "contact_route": "NOT VERIFIED", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": true, "raw": true, "door": false}, {"company": "Momentous", "segLabel": "Supplement/creator brand with a list", "hq": "UNVERIFIED", "ownership": "Corporate", "why": "Owns a large direct list and already sells adjacent longevity/energy/methylation SKUs. The pure drop-ship play - they bring list and brand, we bring product and fulfilment.", "flags": "⚠️ ALL OF THESE ALREADY HAVE MANUFACTURING RELATIONSHIPS AND OFTEN OWN OR CONTROL FORMULATION. Hardest segment to displace, but the fastest to launch if one says yes. Bucked Up is Utah-based - closest to Jeff.", "contact_route": "NOT VERIFIED", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": true, "raw": true, "door": false}, {"company": "Thorne HealthTech", "segLabel": "Supplement/creator brand with a list", "hq": "UNVERIFIED", "ownership": "Corporate", "why": "Owns a large direct list and already sells adjacent longevity/energy/methylation SKUs. The pure drop-ship play - they bring list and brand, we bring product and fulfilment.", "flags": "⚠️ ALL OF THESE ALREADY HAVE MANUFACTURING RELATIONSHIPS AND OFTEN OWN OR CONTROL FORMULATION. Hardest segment to displace, but the fastest to launch if one says yes. Bucked Up is Utah-based - closest to Jeff.", "contact_route": "NOT VERIFIED", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": true, "raw": true, "door": false}, {"company": "Transparent Labs", "segLabel": "Supplement/creator brand with a list", "hq": "UNVERIFIED", "ownership": "Corporate", "why": "Owns a large direct list and already sells adjacent longevity/energy/methylation SKUs. The pure drop-ship play - they bring list and brand, we bring product and fulfilment.", "flags": "⚠️ ALL OF THESE ALREADY HAVE MANUFACTURING RELATIONSHIPS AND OFTEN OWN OR CONTROL FORMULATION. Hardest segment to displace, but the fastest to launch if one says yes. Bucked Up is Utah-based - closest to Jeff.", "contact_route": "NOT VERIFIED", "contact_name": "", "contact_title": "", "phone": "", "email": "", "tel": "", "locLabel": null, "loc": -1, "nadLabel": "NAD STATUS UNVERIFIED", "nadClass": "maybe", "nadRank": 2, "incumbent": true, "raw": true, "door": false}]};
+var TABS=[{"k": "iv", "l": "IV & drip bars"}, {"k": "func", "l": "Functional & integrative"}, {"k": "medspa", "l": "Med spa"}, {"k": "long", "l": "Longevity"}, {"k": "gym", "l": "Health club & gym"}, {"k": "chiro", "l": "Chiropractic"}, {"k": "supp", "l": "Supplement & creator brands"}];
+var tab=TABS[0].k, openKey=null;
+
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function cur(){return DATA[tab];}
+function key(r){return (r.company||'');}
+function isDone(r){return localStorage.getItem('called:'+LIST+'|'+key(r))!==null;}
+function toggle(i){var r=find(i),k='called:'+LIST+'|'+key(r);
+  if(localStorage.getItem(k)!==null)localStorage.removeItem(k);else localStorage.setItem(k,new Date().toISOString());
+  render();}
+function resetCalled(){if(!confirm('Clear all marks on this tab?'))return;
+  cur().forEach(function(r){localStorage.removeItem('called:'+LIST+'|'+key(r));});render();}
+function getNote(r){return localStorage.getItem('note:'+LIST+'|'+key(r))||'';}
+function saveNote(i,v){localStorage.setItem('note:'+LIST+'|'+key(find(i)),v);}
+function toggleNote(i){var k=key(find(i));openKey=(openKey===k)?null:k;render();}
+function find(i){return cur()[i];}
+
+/* Records Jeff must not contact from this page. REVIV's published contact was
+   scraped from an embedded third-party widget and resolved to a stranger's
+   Gmail and an unrelated LinkedIn; Evelyn discarded it and so does this page.
+   The company still shows, with no route and an explicit verify-first note,
+   because suppressing the company would just hide a real 100-door target. */
+var NO_ROUTE={'REVIV':'The contact published on their site came from an embedded third-party widget and does not belong to REVIV. It has been discarded. Verify a corporate contact before any outreach.'};
+
+/* Emoji are stripped everywhere: the source notes use them as emphasis but the
+   brand does not allow them on a page a partner sees. */
+function noEmoji(t){return String(t||'').replace(/[\u2190-\u21FF\u2300-\u27BF\u2B00-\u2BFF\uFE0F\u2600-\u26FF]|[\uD83C-\uDBFF][\uDC00-\uDFFF]/g,'').replace(/\s{2,}/g,' ').trim();}
+
+/* Email addresses are matched BEFORE bare domains, because the naive version
+   matched "forumhealth.com" inside "partners@forumhealth.com" and turned the
+   only partnerships inbox on the list into a link to their homepage. Ordered
+   alternation means the whole address is consumed by the mailto branch. */
+function linkify(t){
+  return esc(noEmoji(t)).replace(
+    /(\b[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}\b)|((?:https?:\/\/|www\.)[^\s,;)]+|\b[a-z0-9-]+\.(?:com|health|io|net)\b(?:\/[^\s,;)]*)?)/gi,
+    function(m,mail,url){
+      if(mail)return '<a href="mailto:'+mail+'">'+mail+'</a>';
+      var href=/^https?:\/\//i.test(url)?url:('https://'+url.replace(/^www\./i,''));
+      return '<a href="'+href+'" target="_blank" rel="noopener">'+url+'</a>';});
+}
+function emph(t){
+  return esc(noEmoji(t)).replace(/^([A-Z][A-Z0-9 '&amp;,\.\-\/\+]{7,}?)(\.|\s-\s|:|$)/,'<b>$1</b>$2');
+}
+
+function rowHtml(r,i){
+  var acts=[], noRoute=NO_ROUTE[r.company];
+  acts.push('<button class="actbtn mark'+(isDone(r)?' on':'')+'" onclick="toggle('+i+')">'
+    +(isDone(r)?'Marked':'Mark done')+'</button>');
+  if(!noRoute){
+    if(r.tel)acts.push('<a class="actbtn call" href="tel:'+esc(r.tel)+'">Call '+esc(r.phone)+'</a>');
+    if(r.email)acts.push('<a class="actbtn '+(r.door?'door':'mail')+'" href="mailto:'+esc(r.email)+'">'
+      +(r.door?'Email partnerships':'Email')+'</a>');
+  }
+  acts.push('<button class="actbtn" onclick="toggleNote('+i+')">Note</button>');
+
+  var quals=[];
+  if(r.locLabel)quals.push('<span class="q loc"><b>'+esc(r.locLabel)+'</b></span>');
+  quals.push('<span class="q nad '+esc(r.nadClass)+'">'+esc(r.nadLabel)+'</span>');
+  if(r.incumbent)quals.push('<span class="q inc">INCUMBENT SUPPLIER</span>');
+
+  var meta=[]; if(r.hq)meta.push(esc(r.hq)); if(r.ownership)meta.push(esc(r.ownership));
+  var mine=getNote(r);
+
+  return '<div class="row'+(isDone(r)?' done':'')+(r.raw?' raw':'')+'">'
+    +'<div class="rhead"><div class="who">'
+      +'<div class="nm">'+esc(r.company)+'</div>'
+      +(r.segLabel?'<div class="seg">'+esc(r.segLabel)+'</div>':'')
+      +(r.contact_name?'<div class="person">'+esc(r.contact_name)
+          +(r.contact_title?' &middot; '+esc(r.contact_title):'')+'</div>':'')
+      +'<div class="quals">'+quals.join('')+'</div>'
+    +'</div><div class="acts">'+acts.join('')+'</div></div>'
+    +(meta.length?'<div class="meta">'+meta.join(' &middot; ')+'</div>':'')
+    +(r.why?'<div class="why">'+emph(r.why)+'</div>':'')
+    +(r.flags?'<div class="flag">'+emph(r.flags)+'</div>':'')
+    +(noRoute
+        ?'<div class="route unver"><span class="lbl">NO VERIFIED CONTACT</span><span class="rt">'+esc(noEmoji(noRoute))+'</span></div>'
+        :(r.contact_route?'<div class="route'+(r.door?' door':'')+'"><span class="lbl">'
+            +(r.door?'INBOUND DOOR':'HOW TO REACH THEM')+'</span><span class="rt">'+linkify(r.contact_route)+'</span></div>':''))
+    +(mine?'<div class="pnote"><b>Your note:</b> '+esc(mine)+'</div>':'')
+    +(openKey===key(r)?'<textarea class="notebox" placeholder="Your notes…" oninput="saveNote('+i+',this.value)">'+esc(mine)+'</textarea>':'')
+    +'</div>';
+}
+
+function render(){
+  document.getElementById('tabs').innerHTML=TABS.map(function(t){
+    return '<button class="'+(t.k===tab?'on':'')+'" onclick="setTab(\''+t.k+'\')">'
+      +esc(t.l)+' ('+DATA[t.k].length+')</button>';}).join('');
+  var q=(document.getElementById('q').value||'').toLowerCase().trim();
+  var rows=cur(), ready=[], raw=[], shown=0, done=0;
+  rows.forEach(function(r,i){
+    if(isDone(r))done++;
+    if(q){var hay=[r.company,r.segLabel,r.hq,r.ownership,r.why,r.flags,r.contact_route,r.phone,r.email].join(' ').toLowerCase();
+      if(hay.indexOf(q)<0)return;}
+    shown++; (r.raw?raw:ready).push({i:i,r:r});
+  });
+  var out='';
+  if(ready.length)out+='<div class="ghead"><span class="gt">RANKED TARGETS</span>'
+    +'<span class="gc">'+ready.length+' &middot; most doors first, then who already sells NAD</span></div>'
+    +ready.map(function(x){return rowHtml(x.r,x.i);}).join('');
+  if(raw.length)out+='<div class="ghead quiet"><span class="gt">NEEDS RESEARCH</span>'
+    +'<span class="gc">'+raw.length+' of '+rows.length+' &middot; no verified contact and no confirmed door count</span></div>'
+    +raw.map(function(x){return rowHtml(x.r,x.i);}).join('');
+  document.getElementById('list').innerHTML=out||'<div class="empty">Nothing on this tab matches that search.</div>';
+  document.getElementById('prog').innerHTML=shown+' of '+rows.length+' shown &middot; <b>'+done+'</b> marked';
+  var t=TABS.filter(function(x){return x.k===tab;})[0];
+  document.getElementById('printhdr').textContent=
+    'White-label oral NAD targets — '+(t?t.l:'')+'  ·  printed '+new Date().toLocaleDateString();
+}
+function setTab(t){tab=t;openKey=null;document.getElementById('q').value='';render();}
+document.getElementById('printBtn').onclick=function(){window.print();};
+render();
+</script>
