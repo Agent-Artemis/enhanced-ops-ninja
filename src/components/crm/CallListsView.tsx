@@ -32,6 +32,34 @@ interface CallList {
 
 const LISTS: CallList[] = [
   {
+    id: 'nad-targets',
+    title: 'White-label Oral NAD — Target Operators',
+    blurb:
+      'Chains that could put an oral NAD SKU on their own shelf under their own label. ' +
+      'The two best lead: GameDay Men\'s Health (400+ clinics, already sells NAD+ AND an oral ' +
+      'therapy, so their patients have already proven they accept a take-home oral format) and ' +
+      'Lindora (already sells NAD+ and already runs a Nutrition & Supplements shelf, so the retail ' +
+      'P&L exists). Ranked by door count then by who already sells NAD. 7 rows carry named ' +
+      'executives with a START HERE primary and clinical gatekeepers marked; the rest publish no ' +
+      'executives at all, which is a finding rather than a gap. The buyer here is a Chief Science ' +
+      'Officer or CMO rather than a merchandiser, so the opener on the page is clinical, not ' +
+      'merchandising.',
+    count: '42 targets · 9 segments',
+    url: 'https://enhancedops.ninja/lists/nad-targets.html',
+  },
+  {
+    id: 'ma-partners',
+    title: 'M&A Advisors & Fractional CFOs — Referral Channel',
+    blurb:
+      'Firms that bring clients rather than being clients: M&A advisors, fractional CFOs and ' +
+      'sector specialists who sit next to owners at exactly the moment the numbers have to survive ' +
+      'diligence. 59 of the 67 carry a phone; PeakView is the only firm publishing DIRECT PARTNER ' +
+      'LINES rather than a switchboard, and those rows are marked. Dialable rows sort to the top of ' +
+      'every region.',
+    count: '67 firms · 5 regions',
+    url: 'https://enhancedops.ninja/lists/ma-partners.html',
+  },
+  {
     id: 'ut-snf-al',
     title: 'Utah — SNF & AL Administrators',
     blurb:

@@ -72,6 +72,9 @@
  a.actbtn.call{background:var(--blue);border-color:var(--blue);color:#fff}
  a.actbtn.li{background:var(--blue);border-color:var(--blue);color:#fff}
  .actbtn.mark.on{background:var(--green);border-color:var(--green);color:#06210e}
+ .actbtn.ocs.on{background:var(--green);border-color:var(--green);color:#06210e}
+ .actbtn.note.has{border-color:var(--gold);background:rgba(245,179,1,.12)}
+ .actbtn.trash:hover{border-color:#e0556b;background:rgba(224,85,107,.12)}
  .notebox{width:100%;min-height:64px;background:#0a0f1a;border:1px solid var(--line2);color:var(--text);
    border-radius:8px;padding:9px 11px;font-size:14px;font-family:var(--body);resize:vertical;margin-top:9px}
  .notebox:focus{outline:none;border-color:var(--blue)}
@@ -236,8 +239,11 @@ function toggle(i){var r=cur()[i],k='called:'+key(r);
   render();}
 function resetCalled(){if(!confirm('Clear all marks on this tab?'))return;
   cur().forEach(function(r){localStorage.removeItem('called:'+key(r));});render();}
-function getNote(r){return localStorage.getItem('note:'+key(r))||'';}
-function saveNote(i,v){localStorage.setItem('note:'+key(cur()[i]),v);}
+function getNote(r){var k=key(r);return NOTES[k]!==undefined?NOTES[k]:(localStorage.getItem('note:'+k)||'');}
+function saveNote(i,v){var k=key(cur()[i]);
+  if(v){NOTES[k]=v;try{localStorage.setItem('note:'+k,v);}catch(e){}}
+  else{delete NOTES[k];try{localStorage.removeItem('note:'+k);}catch(e){}}
+  pushNote(k,v);}
 function toggleNote(i){var k=key(cur()[i]);openKey=(openKey===k)?null:k;render();}
 
 /* The note carries its own emphasis: a leading all-caps verdict, an occasional
@@ -264,6 +270,49 @@ function fmtNote(t){
   return {body:h, script:script?esc(script):''};
 }
 
+
+/* Same CRM machinery as the other call lists: OCS mints a crm_contacts card in
+   Action Needed, notes log to the shared endpoint, remove hides the row. The
+   key is the firm plus the person, so the four firm-level rows card up under
+   the firm and never collide with a named row at the same firm. */
+var NOTES={}, noteTimers={}, showHidden=false;
+function sendNote(k,v){fetch('/api/crm/call-list-note',{method:'POST',headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({list:LIST,key:k,note:v})}).catch(function(){});}
+function pushNote(k,v){if(noteTimers[k])clearTimeout(noteTimers[k]);
+  noteTimers[k]=setTimeout(function(){noteTimers[k]=null;sendNote(k,v);},600);}
+function hydrateNotes(){fetch('/api/crm/call-list-note?list='+encodeURIComponent(LIST))
+  .then(function(r){return r.json();}).then(function(j){
+    if(!j||!j.notes)return; Object.keys(j.notes).forEach(function(k){NOTES[k]=j.notes[k];}); render();})
+  .catch(function(){});}
+function ocsDone(r){return localStorage.getItem('ocs:'+LIST+'|'+key(r))==='1';}
+function ocsContext(r){
+  var L=[];
+  if(r.s)L.push('Focus: '+r.s);
+  if(r.note)L.push('Why: '+r.note);
+  return L.join('\n');
+}
+function createOCS(i){
+  var r=cur()[i], k=key(r), on=ocsDone(r), btn=document.getElementById('ocs'+i);
+  if(on&&!confirm('Remove '+(r.n||r.o)+' from the CRM?'))return;
+  if(btn){btn.textContent='\u2026';btn.disabled=true;}
+  var payload=on?{action:'remove',key:k}:{
+    list:LIST, tab:tab, key:k, name:r.n||'', title:r.t||'',
+    company:r.o||'', facility:r.o||'', phone:r.p||'', email:r.e||'',
+    route:r.li||'', context:ocsContext(r)};
+  fetch('/api/crm/call-list-card',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(function(res){return res.json().catch(function(){return {};}).then(function(j){return {ok:res.ok,j:j};});})
+    .then(function(o){
+      if(o.ok&&o.j&&o.j.ok){if(on)localStorage.removeItem('ocs:'+LIST+'|'+k);else localStorage.setItem('ocs:'+LIST+'|'+k,'1');render();}
+      else{alert('Could not update the OCS card: '+((o.j&&o.j.error)||'server error'));
+        if(btn){btn.textContent=on?'\u2713 OCS':'OCS';btn.disabled=false;}}})
+    .catch(function(){alert('Network error. Check your connection and try again.');
+      if(btn){btn.textContent=on?'\u2713 OCS':'OCS';btn.disabled=false;}});
+}
+function isHidden(r){return localStorage.getItem('hidden:'+LIST+'|'+key(r))==='1';}
+function hideRow(i){var r=cur()[i];if(!confirm('Remove '+(r.n||r.o)+' from this list?'))return;
+  localStorage.setItem('hidden:'+LIST+'|'+key(r),'1');if(openKey===key(r))openKey=null;render();}
+function toggleHidden(){showHidden=!showHidden;openKey=null;render();}
+
 function rowHtml(r,i){
   var named=!!(r.n&&r.n.trim());
   var acts=[];
@@ -276,7 +325,12 @@ function rowHtml(r,i){
   else if(r.p)acts.push('<a class="actbtn call" href="tel:'+esc(r.p.replace(/[^0-9+]/g,''))+'">Call '+esc(r.p)+'</a>');
   if(r.e)acts.push('<a class="actbtn" href="mailto:'+esc(r.e)+'">Email</a>');
   if(r.li)acts.push('<a class="actbtn li" href="'+esc(r.li)+'" target="_blank" rel="noopener">LinkedIn</a>');
-  acts.push('<button class="actbtn" onclick="toggleNote('+i+')">Note</button>');
+  var od=ocsDone(r);
+  acts.push('<button class="actbtn ocs'+(od?' on':'')+'" id="ocs'+i+'" title="'
+    +(od?'In the CRM — click to remove':'Add to the CRM (Action Needed)')+'" onclick="createOCS('+i+')">'
+    +(od?'\u2713 OCS':'OCS')+'</button>');
+  acts.push('<button class="actbtn note'+(getNote(r)?' has':'')+'" onclick="toggleNote('+i+')">Note</button>');
+  acts.push('<button class="actbtn trash" title="Remove from this list" onclick="hideRow('+i+')">Remove</button>');
 
   /* Built from the parts that exist and joined afterwards, so a missing title
      or firm can never leave a dangling separator. */
@@ -310,6 +364,7 @@ function render(){
     if(isDone(r))done++;
     if(q){var hay=[r.n,r.t,r.o,r.s,r.note,r.p,r.e].join(' ').toLowerCase();
       if(hay.indexOf(q)<0)return;}
+    if(isHidden(r)&&!showHidden)return;
     shown++;
     /* Within the no-number group, anything with a route or an email still
        sorts above the records with no way in at all. */
@@ -333,5 +388,6 @@ function render(){
 }
 function setTab(t){tab=t;openKey=null;document.getElementById('q').value='';render();}
 document.getElementById('printBtn').onclick=function(){window.print();};
+hydrateNotes();
 render();
 </script>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import type { Contact, Stage, TeamMember, Sequence, Note, ActionItem } from '@/lib/crm/types';
 import { appointmentOf, denverWallClockToISO, denverTimeOfDay, projectOf, PROJECT_COLORS, PARTNER_BADGES } from '@/lib/crm/types';
 import { upsertContact, deleteContact, addNote, deleteNote, updateNote, fetchAffiliateContacts, clearAppointment, fetchCardActionItemsForContact, setActionItemDone } from '@/lib/crm/data';
@@ -77,6 +78,27 @@ function formatPhone(raw: string): string {
   if (digits.length === 10) return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
   if (digits.length === 11 && digits[0] === '1') return `+1 (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7)}`;
   return raw;
+}
+
+/* Note bodies render as plain text, but call-list cards carry a contact route
+   that is frequently a web form and nothing else. An unclickable URL on such a
+   card leaves the whole value of the card behind a copy-paste. */
+function linkifyNote(text: string): ReactNode {
+  const parts = String(text ?? '').split(
+    /(https?:\/\/[^\s]+|[^\s@]+@[^\s@]+\.[^\s@]+|[a-z0-9-]+\.(?:com|health|io|net)(?:\/[^\s]*)?)/gi,
+  );
+  return parts.map((p, i) => {
+    if (!p) return null;
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p))
+      return <a key={i} href={`mailto:${p}`} style={{ color: '#3F8AE0' }}>{p}</a>;
+    if (/^https?:\/\//i.test(p) || /^[a-z0-9-]+\.(com|health|io|net)/i.test(p)) {
+      const href = /^https?:\/\//i.test(p) ? p : `https://${p}`;
+      return (
+        <a key={i} href={href} target="_blank" rel="noopener noreferrer" style={{ color: '#3F8AE0' }}>{p}</a>
+      );
+    }
+    return <span key={i}>{p}</span>;
+  });
 }
 
 export function ContactDrawer({ open, contact, stages, team, sequences, onClose, onSaved, onRefresh }: Props) {
@@ -793,7 +815,9 @@ export function ContactDrawer({ open, contact, stages, team, sequences, onClose,
                         </>
                       ) : (
                         <>
-                          <p style={{ margin: 0, fontSize: 13, color: D.text }}>{n.body}</p>
+                          <p style={{ margin: 0, fontSize: 13, color: D.text, whiteSpace: 'pre-wrap' }}>
+                            {linkifyNote(n.body)}
+                          </p>
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
                             <p style={{ margin: 0, fontSize: 11, color: D.textMut }}>
                               {new Date(n.created_at).toLocaleString()}
