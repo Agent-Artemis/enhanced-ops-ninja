@@ -12,6 +12,13 @@ import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
 
+/* crm_contacts.first_name is NOT NULL, but on a company-level card the name
+   area must stay free: Jeff types the human's name there once he has called the
+   company and found one. So the field carries a neutral placeholder that reads
+   unmistakably as "awaiting input" and is trivial to select over. It is never
+   the company name, never "Unknown", and never a fabricated person. */
+const NAME_PLACEHOLDER = "\u2014";
+
 function digitsOnly(s: string): string {
   return (s || "").replace(/\D/g, "");
 }
@@ -96,22 +103,36 @@ export async function POST(req: Request) {
   // name he learned on the call would never reach the card. It now FILLS IN
   // fields that are still empty and never overwrites one that has a value, so
   // anything typed in the CRM by hand always wins.
-  if (key) {
-    const { data: existing } = await admin
+  // On the healthcare lists the PERSON is the target, so two executives at one
+  // operator are correctly two cards and dedupe stays on the per-person key.
+  // On the new lists the COMPANY is the target and the person is an attribute
+  // that changes as Jeff learns who to talk to, so dedupe is on company within
+  // the list tag. Keying those on the person would mint a sibling card the
+  // moment a company card gained a name.
+  const dedupeByCompany = Boolean(bizTag && (company || facility));
+  if (key || dedupeByCompany) {
+    const q = admin
       .from("crm_contacts")
-      .select("id, first_name, last_name, company, phone, email, custom_fields")
-      .eq("custom_fields->>call_list_key", key)
-      .limit(1)
-      .maybeSingle();
+      .select("id, first_name, last_name, company, phone, email, custom_fields");
+    const scoped = dedupeByCompany
+      ? q.eq("company", company || facility).eq("custom_fields->>call_list", listId)
+      : q.eq("custom_fields->>call_list_key", key);
+    const { data: existing } = await scoped.limit(1).maybeSingle();
     if (existing?.id) {
       const cf = (existing.custom_fields ?? {}) as Record<string, unknown>;
       const patch: Record<string, unknown> = {};
-      if (name && !existing.last_name && !cf.title) {
+      // A real name Jeff typed must survive a re-click. Only the placeholder,
+      // or an empty field, is ever replaced.
+      const nameIsFree =
+        !existing.first_name ||
+        existing.first_name === NAME_PLACEHOLDER ||
+        existing.first_name.trim() === "";
+      if (name && nameIsFree) {
         const np = name.split(/\s+/);
         patch.first_name = np.shift() || name;
         patch.last_name = np.length ? np.join(" ") : null;
       }
-      if (!existing.company && (facility || company)) patch.company = facility || company;
+      if (!existing.company && (company || facility)) patch.company = company || facility;
       if (!existing.phone && phoneRaw) patch.phone = phoneRaw;
       if (!existing.email && email) patch.email = email;
       const cfPatch: Record<string, unknown> = {};
@@ -126,10 +147,9 @@ export async function POST(req: Request) {
     }
   }
 
-  // With no person named, the company carries the card so it is findable.
-  const cardName = name || company;
-  const parts = cardName.split(/\s+/);
-  const firstName = parts.shift() || cardName;
+  // The company goes in `company`, never in the name area.
+  const parts = name ? name.split(/\s+/) : [];
+  const firstName = name ? parts.shift() || name : NAME_PLACEHOLDER;
   const lastName = name && parts.length ? parts.join(" ") : null;
 
   const { data: created, error } = await admin
@@ -137,7 +157,9 @@ export async function POST(req: Request) {
     .insert({
       first_name: firstName,
       last_name: lastName,
-      company: facility || company || null,
+      // Never empty on a list-created card: it is the stable identity of the
+      // target, and on the NAD list it is what dedupe keys on.
+      company: company || facility || null,
       phone: phoneRaw || null,
       email: email || null,
       is_active: true, // → Action Needed
