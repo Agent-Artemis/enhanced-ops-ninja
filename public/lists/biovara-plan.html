@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>BioVara: White-label Oral NAD | EnhancedOps.Ninja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0F1A; --panel:#0E1420; --panel2:#131b2b; --line:#243044; --line2:#31415c;
+  --text:#EEF3FA; --soft:#AEBBCD; --mut:#7E8DA0;
+  --blue:#1A6ECC; --blue2:#3F8AE0; --gold:#F5B301; --ok:#46c46a;
+  --head:'Bebas Neue',Impact,sans-serif; --body:'DM Sans',system-ui,sans-serif;
+  --pad:26px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);
+  font-size:15.5px;line-height:1.62;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 var(--pad) 72px}
+h1,h2,h3,.num{font-family:var(--head);letter-spacing:.02em;font-weight:400;text-wrap:balance}
+h1{font-size:44px;line-height:1.04;margin:0 0 6px}
+h2{font-size:27px;margin:44px 0 14px;color:var(--text)}
+h3{font-size:20px;margin:0 0 8px}
+p{margin:0 0 13px}
+a{color:var(--blue2)}
+strong{font-weight:700}
+.appbar{display:flex;align-items:center;gap:18px;padding:16px var(--pad) 14px;
+  border-bottom:1px solid var(--line);background:var(--panel)}
+.appbar img{width:210px;height:auto;display:block;flex:0 0 auto}
+.prod{font-family:var(--head);font-size:18px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--soft);padding-left:15px;border-left:1px solid var(--line2)}
+.hero{padding:34px 0 4px}
+.eyebrow{font-family:var(--head);font-size:14px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
+.lede{font-size:17px;color:var(--soft);max-width:70ch}
+
+.headline{margin:26px 0 6px;background:linear-gradient(180deg,var(--panel2),var(--panel));
+  border:1px solid var(--line2);border-left:4px solid var(--blue);border-radius:12px;padding:24px 26px}
+.big{font-family:var(--head);font-size:76px;line-height:.9;color:var(--blue2);font-variant-numeric:tabular-nums}
+.big span{font-size:26px;color:var(--soft);letter-spacing:.04em}
+.headline .sub{color:var(--soft);margin:10px 0 0;font-size:15px}
+.breakdown{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.chip{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 13px;
+  font-size:13.5px;color:var(--soft)}
+.chip b{color:var(--text);font-variant-numeric:tabular-nums}
+
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:12px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin:16px 0}
+.box.accent{border-left:4px solid var(--gold)}
+.box.blue{border-left:4px solid var(--blue)}
+ul{margin:8px 0 0;padding-left:20px}
+li{margin:0 0 8px;color:var(--soft)}
+li b{color:var(--text)}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14.5px}
+th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line)}
+th{font-family:var(--head);font-size:14px;letter-spacing:.07em;text-transform:uppercase;color:var(--mut);font-weight:400}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--text)}
+.total td{border-top:1px solid var(--line2);border-bottom:none;font-weight:700;color:var(--text)}
+.foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--mut);font-size:13px}
+.note{color:var(--mut);font-size:13.5px}
+
+/* terms: the four lines of the proposal, no adjectives */
+.terms{margin-top:12px}
+.terms .t{display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+  padding:14px 0;border-bottom:1px solid var(--line)}
+.terms .t:last-child{border-bottom:0}
+.terms .t .l{font-size:15.5px;color:var(--text)}
+.terms .t .l small{display:block;color:var(--mut);font-size:13.5px;margin-top:2px}
+.terms .t .v{font-family:var(--head);font-size:30px;color:var(--blue2);white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+
+/* the crossover: the question Blake is actually asking */
+.cross td.n b{color:var(--blue2)}
+.pen{background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:16px 18px;margin-top:16px}
+.pen .k{font-family:var(--head);font-size:15px;letter-spacing:.08em;color:var(--gold);margin-bottom:6px}
+.landing{margin-top:18px;border-left:4px solid var(--gold);background:rgba(245,179,1,.07);
+  border-radius:0 10px 10px 0;padding:16px 20px;font-size:16px;color:var(--text)}
+.landing b{color:var(--gold)}
+
+.top5{margin-top:10px}
+.t5{border-top:1px solid var(--line);padding:13px 0}
+.t5:first-child{border-top:0}
+.t5 .nm{font-family:var(--head);font-size:20px;color:var(--text)}
+.t5 .nm span{font-family:var(--body);font-size:13px;color:var(--blue2);margin-left:9px;
+  border:1px solid var(--blue);border-radius:4px;padding:1px 7px;vertical-align:2px;
+  font-variant-numeric:tabular-nums}
+.t5 p{margin:4px 0 0;color:var(--soft);font-size:14.5px}
+
+/* an unfinished section must look unfinished */
+.pending{border:1px dashed var(--gold);background:rgba(245,179,1,.05);border-radius:12px;padding:20px 22px;margin:16px 0}
+.pending .stamp{font-family:var(--head);font-size:14px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--gold);border:1px solid var(--gold);border-radius:5px;padding:3px 9px;display:inline-block;margin-bottom:12px}
+
+@media (max-width:820px){
+  :root{--pad:18px}
+  h1{font-size:34px} .big{font-size:52px} .cols{grid-template-columns:1fr}
+  .appbar img{width:170px} .prod{display:none}
+  .terms .t{flex-direction:column;gap:2px}
+  .terms .t .v{font-size:26px}
+  table{font-size:13.5px} th,td{padding:9px 8px}
+  .tscroll{overflow-x:auto}
+}
+@media print{
+  :root{--bg:#fff;--panel:#fff;--panel2:#fff;--text:#111;--soft:#333;--mut:#555;--line:#ccc;--line2:#999}
+  /* A plan, not a one-pager, but 11 sheets was mostly air. The compression is
+     in leading and padding rather than type size, which stays readable. */
+  @page{margin:12mm 11mm}
+  body{font-size:10.4pt;line-height:1.42}
+  h1{font-size:26pt} h2{font-size:16pt;margin:18pt 0 7pt} h3{font-size:13pt;margin:0 0 5pt}
+  .hero{padding:12pt 0 2pt} .lede{font-size:11pt}
+  .box,.pen,.pending{padding:9pt 11pt;margin:9pt 0}
+  .headline{padding:12pt 14pt;margin:12pt 0 4pt} .big{font-size:34pt}
+  .terms .t{padding:7pt 0} .terms .t .v{font-size:17pt}
+  th,td{padding:5pt 6pt;font-size:9.5pt}
+  li{margin:0 0 4pt} p{margin:0 0 7pt}
+  .t5{padding:7pt 0} .t5 .nm{font-size:13pt}
+  .landing{padding:9pt 12pt;font-size:10.5pt}
+  .foot{margin-top:14pt;padding-top:8pt;font-size:8.5pt}
+  /* The brand mark sets NINJA in white with a thin outline. With the panel
+     turned white for ink that word disappears, so the bar keeps its dark
+     ground on paper. Without print-color-adjust the browser drops it and the
+     logo is half-invisible again. */
+  .appbar{background:#0A0F1A!important;border-bottom:1px solid #ccc;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .appbar img{width:150px}
+  .prod{color:#AEBBCD!important;border-left-color:#31415c!important}
+  .box,.headline,.pen,.landing,.pending,.terms .t,.t5{break-inside:avoid;page-break-inside:avoid}
+  h2{break-after:avoid;page-break-after:avoid}
+  .big,.terms .t .v{color:#1A6ECC}
+  .landing{background:#f6f6f6!important;border-left:3pt solid #000!important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .landing b{color:#111}
+  .pending{border:1px dashed #666!important;background:#fff!important}
+  .pending .stamp{color:#111!important;border-color:#111!important}
+  .pen{background:#f6f6f6!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .pen .k,.eyebrow{color:#111!important}
+  a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+
+<header class="appbar">
+  <img src="/logo-ninja.png" alt="EnhancedOps.Ninja">
+  <div class="prod">Business Plan</div>
+</header>
+
+<div class="wrap">
+
+<section class="hero">
+  <div class="eyebrow">BioVara &middot; white-label oral NAD</div>
+  <h1>Liposomal oral NAD, under the buyer's label</h1>
+  <p class="lede">The product is a liposomal oral NAD and NAD+, white-labelled for the buyer and
+  drop-shipped. This is the structure, the point at which it pays for itself, who we contact, how we
+  open the conversation, and what we still need to settle.</p>
+</section>
+
+<!-- 1 ── STRUCTURE ────────────────────────────────────────────────────────── -->
+<h2>1 &middot; The structure</h2>
+<div class="box">
+  <div class="terms">
+    <div class="t">
+      <div class="l">Monthly draw<small>Jeff, running the commercial side</small></div>
+      <div class="v">$12,000 /mo</div>
+    </div>
+    <div class="t">
+      <div class="l">Voice AI<small>Books discovery calls into the target list</small></div>
+      <div class="v">$2,000 /mo</div>
+    </div>
+    <div class="t">
+      <div class="l">Commission<small>On gross sales</small></div>
+      <div class="v">25%</div>
+    </div>
+    <div class="t">
+      <div class="l">Profit share<small>Begins once revenue clears the threshold, and replaces the
+        monthly draw rather than adding to it</small></div>
+      <div class="v">On threshold</div>
+    </div>
+  </div>
+</div>
+
+<!-- 2 ── CROSSOVER ────────────────────────────────────────────────────────── -->
+<h2>2 &middot; When the commission replaces the draw</h2>
+<p class="lede">The draw is not a permanent cost. At a known level of sales the 25% covers it, and
+past that point the commission is the cheaper of the two for the business.</p>
+
+<div class="headline">
+  <div class="eyebrow" style="color:var(--mut)">The crossover, in gross sales</div>
+  <div class="big">$48,000<span> / month</span></div>
+  <p class="sub">Gross sales at which the 25% commission covers the $12,000 draw.
+  <strong>$56,000 a month</strong> covers the draw and the voice AI together. This is arithmetic and
+  holds at any price we sell for.</p>
+</div>
+
+<h3 style="margin-top:30px">What that requires, at different selling prices</h3>
+<div class="box accent">
+  <p style="margin:0"><strong>Selling price is not yet set.</strong> These bands show what any given
+  price requires. The figures below are what <em>we</em> sell to the chain for, not what we pay
+  BioVara, the two are separated deliberately, and our cost is in the next block.</p>
+</div>
+<div class="tscroll">
+<table>
+  <thead><tr>
+    <th>Average selling price, ours to the chain</th>
+    <th class="n">Bottles / mo to cover the draw</th>
+    <th class="n">Bottles / mo to cover draw + voice AI</th>
+  </tr></thead>
+  <tbody>
+    <tr><td>$20</td><td class="n">2,400</td><td class="n">2,800</td></tr>
+    <tr><td>$25</td><td class="n">1,920</td><td class="n">2,240</td></tr>
+    <tr><td>$30</td><td class="n">1,600</td><td class="n">1,867</td></tr>
+    <tr><td>$35</td><td class="n">1,372</td><td class="n">1,600</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="note">Illustrative bands, not a proposal. $48,000 divided by the selling price gives the
+bottle count.</p>
+
+<h3 style="margin-top:30px">Our cost, which is an input we do not control</h3>
+<div class="box">
+  <div class="tscroll">
+  <table style="margin-top:0">
+    <thead><tr><th>Order volume</th><th class="n">BioVara's price to us</th><th class="n">Against a $4 to $6 make cost</th></tr></thead>
+    <tbody>
+      <tr><td>1,000-bottle order</td><td class="n">~$24 / bottle</td><td class="n">4 to 6&times;</td></tr>
+      <tr><td>100,000 / month</td><td class="n">$8 to $10 / bottle</td><td class="n">~1.5 to 2.5&times;</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="margin:12px 0 0"><strong>The price tiers and the volume bands move together</strong>, so
+  they are only ever read as a pair: the $8 to $10 price exists at 100,000 bottles a month and not
+  before. That is why volume matters to both sides. Our margin widens as we scale, and at the bottom
+  of the price range Page is still roughly doubling his money on every bottle, with considerably more
+  than that at the small-order tier.</p>
+</div>
+
+<div class="pen">
+  <div class="k">AND IN REAL CUSTOMERS</div>
+  <p style="margin:0 0 10px;color:var(--soft)">GameDay Men's Health publishes 400+ clinics on their
+  own site. At ten bottles a month per participating clinic:</p>
+  <div class="tscroll">
+  <table style="margin-top:0">
+    <thead><tr><th>Share of their clinics selling it</th><th class="n">Bottles per month</th></tr></thead>
+    <tbody>
+      <tr><td>10%</td><td class="n">400</td></tr>
+      <tr><td>25%</td><td class="n">1,000</td></tr>
+      <tr><td>50%</td><td class="n">2,000</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<div class="landing">
+  <b>At a $25 average selling price, half of GameDay's clinics selling ten bottles a month covers the
+  $12,000 draw outright.</b> Two chains at a quarter of their clinics each does exactly the same.
+  One mid-sized chain at real penetration gets most of the way to self-funding; two gets past it.
+  <p class="note" style="margin:8px 0 0">2,000 bottles at $25 is $50,000 of gross sales, and 25% of
+  that is $12,500. At a $20 selling price the same 2,000 bottles returns $10,000 and does not cover
+  it, which is why the price band and the penetration are worth reading together rather than
+  separately.</p>
+</div>
+
+<!-- 3 ── WHO WE CONTACT ───────────────────────────────────────────────────── -->
+<h2>3 &middot; Who we contact</h2>
+<p>42 target operators, researched from each company's own website, across nine segments. The full
+callable list, with contact routes and named executives where they exist, is at
+<a href="https://enhancedops.ninja/lists/nad-targets.html">enhancedops.ninja/lists/nad-targets.html</a>.</p>
+
+<div class="tscroll">
+<table>
+  <thead><tr><th>Segment</th><th class="n">Targets</th></tr></thead>
+  <tbody>
+    <tr><td>IV &amp; drip bars</td><td class="n">13</td></tr>
+    <tr><td>Health club &amp; gym</td><td class="n">8</td></tr>
+    <tr><td>Med spa</td><td class="n">5</td></tr>
+    <tr><td>Supplement &amp; creator brands</td><td class="n">5</td></tr>
+    <tr><td>TRT &amp; hormone</td><td class="n">3</td></tr>
+    <tr><td>Longevity</td><td class="n">3</td></tr>
+    <tr><td>Chiropractic</td><td class="n">2</td></tr>
+    <tr><td>Functional &amp; integrative</td><td class="n">2</td></tr>
+    <tr><td>GLP-1 &amp; weight loss</td><td class="n">1</td></tr>
+    <tr class="total"><td>Total</td><td class="n">42</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3 style="margin-top:28px">The five we open with</h3>
+<div class="box top5">
+  <div class="t5">
+    <div class="nm">GameDay Men's Health <span>400+ clinics</span></div>
+    <p>Already sells NAD+ injections, and already sells an <strong>oral</strong> therapy. Their
+    patients have proven they will buy and keep buying a take-home oral format, which is the single
+    biggest objection an injectable clinic raises.</p>
+  </div>
+  <div class="t5">
+    <div class="nm">Lindora <span>35 clinics</span></div>
+    <p>Already sells NAD+, and already runs a Nutrition &amp; Supplements category in its own
+    navigation. The retail shelf and the supplement P&amp;L exist. Every other target would build
+    one from nothing.</p>
+  </div>
+  <div class="t5">
+    <div class="nm">Forum Health <span>partnerships inbox</span></div>
+    <p>The only organisation on the list publishing a partnerships route rather than a contact form.
+    They are soliciting this conversation.</p>
+  </div>
+  <div class="t5">
+    <div class="nm">Restore Hyper Wellness <span>210+ studios</span></div>
+    <p>Sells NAD in four forms and has already moved its base onto recurring NAD plans. The demand
+    is created; an oral take-home is an attach.</p>
+  </div>
+  <div class="t5">
+    <div class="nm">Milan Laser <span>400+ locations</span></div>
+    <p>The largest door count on the list, and corporate-owned, so one decision reaches every
+    location. No existing supplement retail, so this is the build-the-category sell rather than an
+    attach.</p>
+  </div>
+</div>
+
+<div class="box accent">
+  <p style="margin:0"><strong>7 of the 42 carry named executives.</strong> The rest publish contact
+  routes rather than people. That is how this industry is organised rather than a gap in the
+  research: these are clinical and marketing organisations, and they publish forms and national
+  lines instead of a leadership page.</p>
+</div>
+
+<!-- 4 ── HOW WE SELL ──────────────────────────────────────────────────────── -->
+<h2>4 &middot; How we sell</h2>
+
+<div class="box blue">
+  <h3>The opening is clinical, not merchandising</h3>
+  <p style="margin:0">The title we want mostly does not exist here. These are clinical and marketing
+  organisations, not retailers, and only Forum Health publishes a partnerships route. So the first
+  yes comes from a <strong>Chief Science Officer or a Chief Medical Officer</strong>, and the opening
+  leads with formulation and data rather than with price and minimum order.</p>
+</div>
+
+<div class="box">
+  <h3>The lab is the differentiator</h3>
+  <p>Every other white-label supplier in this category is a contract manufacturer competing on cost.
+  We have an independent PhD-run lab, ex-Merck, running work on the formulation itself. That is
+  third-party lab validation, and study data is available.</p>
+  <ul>
+    <li><b>Stability.</b> Liposomal degradation at the 135 to 150&deg;F a delivery truck reaches in
+    summer. Every chain shipping supplements has this problem and most have not measured it.</li>
+    <li><b>Bioavailability.</b> Oral against sublingual, subcutaneous and IV. This is the exact
+    objection an IV clinic raises, answered with data rather than assertion.</li>
+    <li><b>Intracellular NAD assay.</b> No market equivalent.</li>
+  </ul>
+</div>
+
+<div class="box">
+  <h3>The pitch is "oral, take-home, your label", not "NAD"</h3>
+  <p style="margin:0">The best-qualified chains already have an NAD ingredient partner. Restore
+  carries Niagen, The DRIPBaR carries NR. The NAD conversation is occupied and arguing it means
+  displacing an incumbent. The oral take-home format is not occupied, and it is additive to what
+  they already sell rather than a replacement for it.</p>
+</div>
+
+<div class="box">
+  <h3>Voice AI at $2,000 a month</h3>
+  <p style="margin:0">Top-of-funnel scheduling. It books discovery calls into this target list so
+  that selling time is spent on calls rather than on dialling. It does not sell and it does not
+  qualify; it fills the calendar.</p>
+</div>
+
+<!-- 5 ── VETERINARY ───────────────────────────────────────────────────────── -->
+<h2>5 &middot; New products: veterinary</h2>
+
+<div class="box accent">
+  <h3>Pet NAD already exists at retail</h3>
+  <p>The retail shelf is not empty, and the incumbent is the same one we meet on the human side.
+  <strong>Zesty Paws sells an NAD+ precursor built on Niagen</strong>, ChromaDex's branded
+  ingredient, the company already supplying Restore Hyper Wellness. Also on sale:
+  Bark&amp;Spark NAD+ for Dogs, Boops Pets Longevity, Nutridog NMN, ProHealth Pet Longevity NMN
+  Chews on Uthever NMN, a second branded ingredient, and VetPRO+ NMN Advance.</p>
+  <p style="margin:0">Every one of those is retail and direct-to-consumer, sold through Amazon and
+  the brands' own storefronts. <strong>The corporate veterinary clinic shelf is a different
+  channel</strong>, stocked through veterinary distributors and vet-exclusive brands.
+  <em>Pet NAD exists at retail. We have not seen it win the veterinary clinic shelf.</em> That
+  second sentence is our reading of what we have found so far, not an established fact.</p>
+</div>
+
+<h3 style="margin-top:28px">Who the buyers would be</h3>
+<p class="note">Counts are from each company's own site.</p>
+<div class="box top5">
+  <div class="t5">
+    <div class="nm">Mars Veterinary Health <span>12,000+ veterinarians</span></div>
+    <p>Around 70,000 associates. Parent of VCA, Banfield, BluePearl and Antech. VCA is part of this
+    group; we have not verified a hospital count for VCA and are not putting one on the page.</p>
+  </div>
+  <div class="t5">
+    <div class="nm">Banfield Pet Hospital <span>1,000+ hospitals</span></div>
+    <p>More than 3,600 veterinarians.</p>
+  </div>
+  <div class="t5">
+    <div class="nm">NVA <span>1,000 community hospitals</span></div>
+    <p>Their own description. Also runs Ethos Veterinary Health and a named equine division, so the
+    separate equine market has a door inside a group we would already be talking to.</p>
+  </div>
+</div>
+<p class="note">Thrive, VetCor and Southern Veterinary Partners are not listed here. Their pages did
+not resolve and no count has been established.</p>
+
+<div class="box blue">
+  <h3>The structural point: who ships, and who buys</h3>
+  <p>US veterinary distribution runs through three national distributors, <strong>Covetrus,
+  MWI Animal Health and Patterson Veterinary</strong>, and it is about to be two. Cencora is
+  selling MWI for <strong>$1.25 billion in cash plus a 34.3% stake</strong> in the combined company.
+  The channel is consolidating from three players to two.</p>
+  <p style="margin:0"><strong>Distributors ship.</strong> Like Fullscript on the human side they
+  replace our fulfilment rather than buy from us, which makes them a route to independent clinics
+  rather than a white-label customer. <strong>The corporate groups are the operators with own-brand
+  shelves, and those are the genuine white-label buyers.</strong> That distinction is the strategy
+  for this channel.</p>
+</div>
+
+<h3 style="margin-top:28px">The product: a curcumin chew for joint health</h3>
+
+<div class="box">
+  <h4 style="font-family:var(--head);font-size:17px;margin:0 0 6px">1 &middot; Curcumin is the challenger here, not the incumbent</h4>
+  <p style="margin:0 0 14px">The vet-recommended leaders are built on glucosamine, chondroitin, ASU,
+  green-lipped mussel and eggshell membrane. <strong>Nutramax</strong> (Cosequin, Dasuquin) describes
+  itself as the number one vet-recommended retail joint health brand, 25+ years old, with ASU as its
+  differentiator, and it is the competitor that matters. <strong>Virbac Movoflex</strong> positions
+  explicitly as an alternative to glucosamine and chondroitin, on BiovaFlex eggshell membrane.
+  <strong>YuMOVE</strong> is green-lipped mussel. Curcumin is not the established answer in this
+  channel, which is the opening and also the work.</p>
+
+  <h4 style="font-family:var(--head);font-size:17px;margin:0 0 6px">2 &middot; The absorption problem is real and is not considered solved</h4>
+  <p style="margin:0 0 14px">Oral curcumin has poor systemic bioavailability, from rapid intestinal
+  and hepatic metabolism. The literature notes that improvement from enhancers, piperine included,
+  has not reached a satisfactory therapeutic level. This is an open problem, not a solved one.</p>
+
+  <h4 style="font-family:var(--head);font-size:17px;margin:0 0 6px">3 &middot; Competitors are already using serious delivery technology</h4>
+  <p style="margin:0 0 8px">This is not a category of naive formulations, and it should not be
+  described as one. Several pet curcumin products already carry patented bioavailability
+  technology: Pet Parents SoftSupps (BioPerine and CurQmin), CurcuMagic (Arjuna BCM-95 /
+  Curcugreen), Dr Jones' (BCM-95 and BioPerine), Coco and Luna (BioPerine), PawEver (curcumin
+  phytosome).</p>
+  <p style="margin:0 0 14px"><strong>What we have not found is a liposomal curcumin pet product.</strong>
+  The enhancers in use are piperine, phytosome and patented complexes. That is an absence in our
+  search rather than proof of absence, and it is worth verifying before it is said in a room.
+  <span class="note">Note also that the strongest published evidence in curcumin delivery is
+  phytosome rather than liposomal, curcumin phytosome is reported at 29&times; the plasma
+  curcuminoid levels of standard curcumin, so the argument is that liposomal is unexplored
+  here, not that it is superior.</span></p>
+
+  <h4 style="font-family:var(--head);font-size:17px;margin:0 0 6px">4 &middot; There is dog-specific support</h4>
+  <p style="margin:0">A peer-reviewed review reports that in beagle dogs, curcumin
+  beta-cyclodextrin complex, solid dispersion and <strong>curcumin phospholipid complex</strong>
+  improved bioavailability by over 200%. Phospholipid complex is adjacent to our manufacturer's
+  capability. Canine efficacy work exists too: co-micronised glucosamine with curcumin restored
+  locomotor function by 45% in an induced model, and a randomised double-blind curcuminoid study
+  found significant pain reduction on manipulation in the treatment group and not in the control.</p>
+</div>
+
+<div class="box blue">
+  <h3>Format and demand</h3>
+  <ul>
+    <li><b>Soft chews are around 48% of product forms</b> in the category, with a second source
+    putting chewables at 43.84% for 2026. A chew is the dominant format, not a niche one.</li>
+    <li><b>Hip and joint is projected at 40.24% of the whole pet supplement market</b> in 2026.</li>
+    <li>Around <b>35% of dogs over seven</b> show signs of joint disorders, and about <b>55% of
+    veterinary prescriptions for aging dogs</b> include a joint health recommendation.</li>
+    <li><b>39% of consumers prefer "veterinarian formulated"</b> and <b>31% actively seek products
+    described as clinically tested.</b> That second figure is the commercial argument for the lab:
+    an absorption study is exactly the evidence that buyer is looking for, and it is the thing a
+    contract manufacturer competing on cost cannot put on the table.</li>
+  </ul>
+  <p class="note" style="margin:12px 0 0">No market size figure appears here deliberately. Two
+  credible publishers are an order of magnitude apart on it, $139.79M against $1.1B, so neither is
+  quotable and the structural percentages are used instead.</p>
+</div>
+
+<div class="pending">
+  <span class="stamp">Open &middot; regulatory and wording</span>
+  <p>Animal supplements sit under a <strong>different framework</strong> from human ones, the
+  FDA Center for Veterinary Medicine and AAFCO rather than DSHEA. We are confirming the detail rather
+  than guessing at it, and nothing here should be read as saying that framework is lighter.</p>
+  <p style="margin:0">The product language is <strong>joint health, mobility and comfort</strong>.
+  Naming a disease would move the product from supplement toward drug, so that wording is settled
+  before any label is printed rather than after.</p>
+</div>
+
+<!-- 6 ── WHAT WE NEED FROM PAGE ───────────────────────────────────────────── -->
+<h2>6 &middot; What we need from Page</h2>
+<p>Three open items from the 3 September meeting, to settle rather than to negotiate:</p>
+<div class="box">
+  <ul>
+    <li><b>Volume-tiered pricing agreed up front</b>, rather than a single floor price. The
+    crossover above moves with the tier, so the tiers need to be known before we quote a chain.</li>
+    <li><b>Confirmation of the supply commitment</b> at the volumes in section 2.</li>
+    <li><b>Clarity on who funds the research</b>, running at roughly $10,000 a month.</li>
+  </ul>
+</div>
+
+<div class="foot">
+  Every figure on this page traces to the 3 September meeting notes, to the target research dated
+  3 September 2026, or to the arithmetic shown alongside it. Segment counts and the named targets
+  come from the 42-record research file behind
+  <a href="https://enhancedops.ninja/lists/nad-targets.html">the callable list</a>.
+  EnhancedOps.Ninja is a trade name of Augeo LLC. Confidential.
+</div>
+
+</div>
+</body>
+</html>
