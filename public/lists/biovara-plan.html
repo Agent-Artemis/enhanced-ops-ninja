@@ -138,405 +138,312 @@ td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;color
   .pen .k,.eyebrow{color:#111!important}
   a{color:#111;text-decoration:none}
 }
+
+/* ── PLAN ───────────────────────────────────────────────────────────────────
+   A schedule, not an argument. Every line carries an owner and a week, because
+   an unowned line is a decision nobody has made yet rather than work. */
+.month{margin:22px 0 0;border:1px solid var(--line2);border-radius:12px;overflow:hidden}
+.month .mh{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap;
+  background:var(--panel2);padding:14px 18px;border-bottom:1px solid var(--line2)}
+.month .mh .t{font-family:var(--head);font-size:23px;color:var(--text);letter-spacing:.03em}
+.month .mh .d{font-size:13.5px;color:var(--gold);font-variant-numeric:tabular-nums}
+.month .mh .g{font-size:13.5px;color:var(--soft);flex-basis:100%}
+.month table{margin:0}
+.month th{background:transparent;padding:10px 18px}
+.month td{padding:11px 18px;vertical-align:top}
+.month td.who{white-space:nowrap;color:var(--text);font-weight:700;font-size:13.5px}
+.month td.when{white-space:nowrap;color:var(--blue2);font-size:13px;font-variant-numeric:tabular-nums}
+.month tr:last-child td{border-bottom:0}
+.month td .sub{display:block;color:var(--mut);font-size:13px;margin-top:3px}
+.tbd{color:var(--gold)}
+.first{border-left:3px solid var(--gold)}
+.goal{margin:22px 0 0;border:1px solid var(--line2);border-left:4px solid var(--blue);
+  border-radius:12px;background:linear-gradient(180deg,var(--panel2),var(--panel));padding:20px 22px}
+.goal .big{font-size:52px}
+.dec{border-top:1px solid var(--line);padding:12px 0}
+.dec:first-of-type{border-top:0}
+.dec .q{font-size:15.5px;color:var(--text)}
+.dec .w{font-size:13.5px;color:var(--mut);margin-top:2px}
 </style>
 </head>
 <body>
 
 <header class="appbar">
   <img src="/logo-ninja.png" alt="EnhancedOps.Ninja">
-  <div class="prod">Business Plan</div>
+  <div class="prod">90-Day Plan</div>
 </header>
 
 <div class="wrap">
 
 <section class="hero">
   <div class="eyebrow">BioVara &middot; white-label oral NAD</div>
-  <h1>Liposomal oral NAD, under the buyer's label</h1>
-  <p class="lede">The product is a liposomal oral NAD and NAD+, white-labelled for the buyer and
-  drop-shipped. This is the structure, the point at which it pays for itself, who we contact, how we
-  open the conversation, and what we still need to settle.</p>
+  <h1>90-day implementation plan</h1>
+  <p class="lede">Three 30-day blocks from 4 September to 2 December 2026. Every line has an owner
+  and a week. Where an owner is not yet decided it says TBD, because an unassigned line is a
+  decision to make rather than a gap to cover.</p>
 </section>
 
-<!-- 1 ── STRUCTURE ────────────────────────────────────────────────────────── -->
-<h2>1 &middot; The structure</h2>
+<!-- ── STRUCTURE ──────────────────────────────────────────────────────────── -->
+<h2>Who runs what</h2>
 <div class="box">
-  <div class="terms">
-    <div class="t">
-      <div class="l">Monthly draw<small>Jeff, running the commercial side</small></div>
-      <div class="v">$12,000 /mo</div>
-    </div>
-    <div class="t">
-      <div class="l">Voice AI<small>Books discovery calls into the target list</small></div>
-      <div class="v">$2,000 /mo</div>
-    </div>
-    <div class="t">
-      <div class="l">Commission<small>On gross sales</small></div>
-      <div class="v">25%</div>
-    </div>
-    <div class="t">
-      <div class="l">Profit share<small>Begins once revenue clears the threshold, and replaces the
-        monthly draw rather than adding to it</small></div>
-      <div class="v">On threshold</div>
-    </div>
-  </div>
+  <div class="dec"><div class="q"><b>Jeff</b> runs the venture, and personally works the
+    <b>health and wellness</b> side.</div>
+    <div class="w">Liposomal NAD, glutathione, vitamin C, and the veterinary product. Everything
+    detailed in this plan sits here.</div></div>
+  <div class="dec"><div class="q"><b>Ryan</b> works the <b>THC and CBD</b> side, reporting into Jeff.</div>
+    <div class="w">Ryan owns the work; Jeff owns the business result. That division is not documented
+    here beyond its status, because Jeff does not work it.</div></div>
 </div>
 
-<!-- 2 ── CROSSOVER ────────────────────────────────────────────────────────── -->
-<h2>2 &middot; When the commission replaces the draw</h2>
-<p class="lede">The draw is not a permanent cost. At a known level of sales the 25% covers it, and
-past that point the commission is the cheaper of the two for the business.</p>
+<!-- ── COMPENSATION ───────────────────────────────────────────────────────── -->
+<h2>How Jeff is paid for running it</h2>
+<div class="box blue">
+  <p><strong>$12,000 a month is the draw for running the business</strong>, not a retainer against
+  selling. <strong>$2,000 a month</strong> covers the voice AI that books discovery calls.
+  <strong>25% of gross sales</strong> follows from running the whole venture, so it runs across both
+  divisions rather than only the side Jeff works personally.</p>
+  <p style="margin:0">Profit share begins once revenue clears the threshold and <strong>replaces the
+  draw rather than adding to it</strong>. Whether that is a hard switch or the greater of the two is
+  an open decision below.</p>
+</div>
 
-<div class="headline">
-  <div class="eyebrow" style="color:var(--mut)">The crossover, in gross sales</div>
+<div class="goal">
+  <div class="eyebrow" style="color:var(--mut)">What month 3 is measured against</div>
   <div class="big">$48,000<span> / month</span></div>
-  <p class="sub">Gross sales at which the 25% commission covers the $12,000 draw.
-  <strong>$56,000 a month</strong> covers the draw and the voice AI together. This is arithmetic and
-  holds at any price we sell for.</p>
+  <p class="sub">Gross sales at which the 25% covers the $12,000 draw.
+  <strong>$56,000 a month</strong> covers the draw and the voice AI together. That is the goal line
+  for the end of this plan and the point at which the draw stops being the way Jeff is paid.</p>
+  <p class="sub" style="margin-top:8px"><strong>Measured across both divisions.</strong> BioVara is
+  currently running at roughly $80,000 to $90,000 a month between THC/CBD and peptides, so if the
+  25% applies across the business as described above, the crossover sits <strong>below existing
+  run-rate rather than beyond it</strong>. That makes it a near-term threshold rather than a
+  distant one, and it is the reason the scope question in Open Decisions matters more than it
+  looks.</p>
 </div>
 
-<h3 style="margin-top:30px">What that requires, at different selling prices</h3>
+<!-- ── THE CONSTRAINT ─────────────────────────────────────────────────────── -->
+<h2>The one date that drives the plan</h2>
 <div class="box accent">
-  <p style="margin:0"><strong>Selling price is not yet set.</strong> These bands show what any given
-  price requires. The figures below are what <em>we</em> sell to the chain for, not what we pay
-  BioVara, the two are separated deliberately, and our cost is in the next block.</p>
+  <p><strong>The NASC audit runs roughly four months, and it is the only item here whose lead time
+  is longer than the plan itself.</strong> Started in week one, on 4 September, the seal lands around
+  <strong>4 January</strong>. This plan closes on 2 December.</p>
+  <p>So starting it in week one is not what opens the veterinary channel inside 90 days.
+  <strong>The veterinary channel is a Q1 2027 revenue event, not a 90-day one.</strong> What can
+  happen inside these 90 days is conversations: scoping the product with Page and Chris, and opening
+  first contact with Mars, Banfield and NVA. What likely cannot happen without the seal is a supply
+  agreement with a corporate group of that size.</p>
+  <p style="margin:0">Moving early is still worth paying for in Month 1, because it is what makes the
+  channel openable in <strong>Q1 rather than Q2</strong>. Every other line in this plan can slip a
+  fortnight without consequence; this one cannot move at all.
+  <span class="note">One honest caveat we carry either way: we could not confirm that the channel
+  formally requires the seal. If it turns out not to, the veterinary timeline improves.</span></p>
 </div>
-<div class="tscroll">
-<table>
-  <thead><tr>
-    <th>Average selling price, ours to the chain</th>
-    <th class="n">Bottles / mo to cover the draw</th>
-    <th class="n">Bottles / mo to cover draw + voice AI</th>
-  </tr></thead>
-  <tbody>
-    <tr><td>$20</td><td class="n">2,400</td><td class="n">2,800</td></tr>
-    <tr><td>$25</td><td class="n">1,920</td><td class="n">2,240</td></tr>
-    <tr><td>$30</td><td class="n">1,600</td><td class="n">1,867</td></tr>
-    <tr><td>$35</td><td class="n">1,372</td><td class="n">1,600</td></tr>
-  </tbody>
-</table>
-</div>
-<p class="note">Illustrative bands, not a proposal. $48,000 divided by the selling price gives the
-bottle count.</p>
 
-<h3 style="margin-top:30px">Our cost, which is an input we do not control</h3>
-<div class="box">
-  <div class="tscroll">
-  <table style="margin-top:0">
-    <thead><tr><th>Order volume</th><th class="n">BioVara's price to us</th><th class="n">Against a $4 to $6 make cost</th></tr></thead>
+<!-- ── MONTH 1 ────────────────────────────────────────────────────────────── -->
+<h2>Month 1 &middot; Foundation and first calls</h2>
+<div class="month">
+  <div class="mh">
+    <div class="t">Month 1</div><div class="d">4 Sept to 3 Oct</div>
+    <div class="g">Get the terms written down, the pricing agreed, the longest clock started, and the
+    first five calls made.</div>
+  </div>
+  <div class="tscroll"><table>
+    <thead><tr><th>Work</th><th>Owner</th><th>When</th></tr></thead>
     <tbody>
-      <tr><td>1,000-bottle order</td><td class="n">~$24 / bottle</td><td class="n">4 to 6&times;</td></tr>
-      <tr><td>100,000 / month</td><td class="n">$8 to $10 / bottle</td><td class="n">~1.5 to 2.5&times;</td></tr>
+      <tr class="first"><td><b>NASC Preferred Supplier application opened</b>
+        <span class="sub">First because it is the longest lead time in the plan. Everything
+        veterinary waits on it.</span></td><td class="who">Page / Blake</td><td class="when">Week 1</td></tr>
+      <tr><td><b>Terms documented</b>
+        <span class="sub">Scope of gross sales, draw against profit share, and who funds the research
+        at roughly $10,000 a month.</span></td><td class="who">Jeff + Blake</td><td class="when">Week 1</td></tr>
+      <tr><td><b>Volume-tiered pricing agreed with Page</b>
+        <span class="sub">Tiers rather than a single floor price. Nothing can be quoted to a chain
+        until these exist.</span></td><td class="who">Blake + Page</td><td class="when">Weeks 1 to 2</td></tr>
+      <tr><td><b>Lab priorities commissioned: stability first, then bioavailability</b>
+        <span class="sub">Stability first because liposomal degradation at the 135 to 150&deg;F a
+        delivery truck reaches in summer is the objection every chain shipping to consumers has, and
+        few have measured it.</span></td><td class="who">Chris Franklin</td><td class="when">Weeks 1 to 2</td></tr>
+      <tr><td><b>Voice AI live, booking discovery calls into the target list</b>
+        <span class="sub">$2,000 a month. Top-of-funnel scheduling only.</span></td>
+        <td class="who">Jeff</td><td class="when">Week 2</td></tr>
+      <tr><td><b>One-page spec sheet a prospect can circulate internally</b>
+        <span class="sub">Written for a Chief Science Officer or CMO to forward, not for a buyer to
+        be sold by.</span></td><td class="who">Jeff</td><td class="when">Weeks 2 to 3</td></tr>
+      <tr><td><b>First calls into the top five</b>
+        <span class="sub">GameDay Men's Health, Lindora, Forum Health, Restore Hyper Wellness, Milan
+        Laser. Callable list at
+        <a href="https://enhancedops.ninja/lists/nad-targets.html">enhancedops.ninja/lists/nad-targets.html</a>.</span></td>
+        <td class="who">Jeff</td><td class="when">Weeks 2 to 4</td></tr>
+      <tr><td><b>THC and CBD division continues</b>
+        <span class="sub">Ryan owns the work, Jeff owns the business result.</span></td>
+        <td class="who">Ryan</td><td class="when">Ongoing</td></tr>
     </tbody>
-  </table>
-  </div>
-  <p style="margin:12px 0 0"><strong>The price tiers and the volume bands move together</strong>, so
-  they are only ever read as a pair: the $8 to $10 price exists at 100,000 bottles a month and not
-  before. That is why volume matters to both sides. Our margin widens as we scale, and at the bottom
-  of the price range Page is still roughly doubling his money on every bottle, with considerably more
-  than that at the small-order tier.</p>
+  </table></div>
 </div>
 
-<div class="pen">
-  <div class="k">AND IN REAL CUSTOMERS</div>
-  <p style="margin:0 0 10px;color:var(--soft)">GameDay Men's Health publishes 400+ clinics on their
-  own site. At ten bottles a month per participating clinic:</p>
-  <div class="tscroll">
-  <table style="margin-top:0">
-    <thead><tr><th>Share of their clinics selling it</th><th class="n">Bottles per month</th></tr></thead>
+<!-- ── MONTH 2 ────────────────────────────────────────────────────────────── -->
+<h2>Month 2 &middot; From conversations to a first agreement</h2>
+<div class="month">
+  <div class="mh">
+    <div class="t">Month 2</div><div class="d">4 Oct to 2 Nov</div>
+    <div class="g">Convert the calls, get the stability data into the pitch, and scope the second
+    product.</div>
+  </div>
+  <div class="tscroll"><table>
+    <thead><tr><th>Work</th><th>Owner</th><th>When</th></tr></thead>
     <tbody>
-      <tr><td>10%</td><td class="n">400</td></tr>
-      <tr><td>25%</td><td class="n">1,000</td></tr>
-      <tr><td>50%</td><td class="n">2,000</td></tr>
+      <tr><td><b>Discovery calls converting; clinical review packs to CSOs and CMOs</b>
+        <span class="sub">The first yes comes from a clinical reviewer, so the pack leads on
+        formulation and data rather than price and minimum order.</span></td>
+        <td class="who">Jeff</td><td class="when">Ongoing</td></tr>
+      <tr><td><b>Stability data back and usable in the pitch</b>
+        <span class="sub">Third-party lab validation, with study data available to a prospect who
+        asks.</span></td><td class="who">Chris Franklin</td><td class="when">Weeks 5 to 7</td></tr>
+      <tr><td><b>First term sheet or pilot order</b></td><td class="who">Jeff</td><td class="when">Weeks 6 to 8</td></tr>
+      <tr><td><b>Veterinary product scoped</b>
+        <span class="sub">Liposomal curcumin chew: formulation and format. Joint health, mobility and
+        comfort.</span></td><td class="who">Page + Chris Franklin</td><td class="when">Weeks 6 to 8</td></tr>
+      <tr><td><b>Second wave of targets worked; the 42-record list extended</b></td>
+        <td class="who">Jeff</td><td class="when">Ongoing</td></tr>
+      <tr><td><b>NASC audit in progress</b>
+        <span class="sub">A checkpoint, not a milestone. Nothing in this month depends on it
+        finishing.</span></td><td class="who">Page / Blake</td><td class="when">Checkpoint</td></tr>
+      <tr><td><b>THC and CBD division continues</b>
+        <span class="sub">Ryan owns the work, Jeff owns the business result.</span></td>
+        <td class="who">Ryan</td><td class="when">Ongoing</td></tr>
     </tbody>
-  </table>
+  </table></div>
+</div>
+
+<!-- ── MONTH 3 ────────────────────────────────────────────────────────────── -->
+<h2>Month 3 &middot; First revenue and the vet door</h2>
+<div class="month">
+  <div class="mh">
+    <div class="t">Month 3</div><div class="d">3 Nov to 2 Dec</div>
+    <div class="g">Produce, ship, recognise the first revenue, and measure it against the goal line.</div>
+  </div>
+  <div class="tscroll"><table>
+    <thead><tr><th>Work</th><th>Owner</th><th>When</th></tr></thead>
+    <tbody>
+      <tr><td><b>First white-label order produced and shipped</b></td>
+        <td class="who">Page</td><td class="when">Weeks 9 to 11</td></tr>
+      <tr><td><b>First revenue recognised and measured against the crossover</b>
+        <span class="sub">Against $48,000 a month gross, or $56,000 including the voice AI.</span></td>
+        <td class="who">Jeff + Blake</td><td class="when">Week 12</td></tr>
+      <tr><td><b>Veterinary conversations opened with Mars, Banfield and NVA</b>
+        <span class="sub">First conversations opened, seal in progress, expected early January.
+        This is a Q1 2027 revenue event and the plan does not claim otherwise.</span></td><td class="who">Jeff</td><td class="when">Weeks 10 to 12</td></tr>
+      <tr><td><b>Decide whether the draw or the profit share is live</b>
+        <span class="sub">Read against the crossover rather than agreed in advance, and across both
+        divisions.</span></td><td class="who">Jeff + Blake</td><td class="when">Week 12</td></tr>
+      <tr><td><b>THC and CBD division continues</b>
+        <span class="sub">Ryan owns the work, Jeff owns the business result.</span></td>
+        <td class="who">Ryan</td><td class="when">Ongoing</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ── INPUTS ─────────────────────────────────────────────────────────────── -->
+<h2>The inputs this plan runs on</h2>
+
+<div class="cols">
+  <div class="box">
+    <h3>Who we call</h3>
+    <p>42 researched target operators across nine segments, each from the company's own site. The
+    five the plan opens with:</p>
+    <ul>
+      <li><b>GameDay Men's Health</b>, 400+ clinics. Already sells NAD+, and already sells an oral
+      therapy, so their patients have proven they buy a take-home oral format.</li>
+      <li><b>Lindora</b>, 35 clinics. Already sells NAD+ and already runs a Nutrition and Supplements
+      category, so the retail shelf exists.</li>
+      <li><b>Forum Health.</b> The only group publishing a partnerships inbox.</li>
+      <li><b>Restore Hyper Wellness</b>, 210+ studios. Sells NAD on recurring plans.</li>
+      <li><b>Milan Laser</b>, 400+ locations. Largest door count, corporate-owned, one decision
+      reaches every location.</li>
+    </ul>
+    <p class="note" style="margin-top:10px">7 of the 42 carry named executives; the rest publish
+    contact routes. Full list at
+    <a href="https://enhancedops.ninja/lists/nad-targets.html">enhancedops.ninja/lists/nad-targets.html</a>.</p>
+  </div>
+  <div class="box">
+    <h3>How the calls open</h3>
+    <p>The title we want mostly does not exist in this industry, so the first yes comes from a Chief
+    Science Officer or CMO. The opening leads with formulation and data.</p>
+    <p><b>The lab is what a contract manufacturer cannot answer.</b> An independent PhD-run lab,
+    ex-Merck, working on the formulation: stability at delivery-truck temperatures, bioavailability
+    across oral, sublingual, subcutaneous and IV, and an intracellular NAD assay with no market
+    equivalent. That is third-party lab validation, and study data is available.</p>
+    <p style="margin:0"><b>The pitch is oral, take-home, your label.</b> The best-qualified chains
+    already have an NAD ingredient partner, so the molecule conversation is occupied. The format is
+    not.</p>
   </div>
 </div>
 
-<div class="landing">
-  <b>At a $25 average selling price, half of GameDay's clinics selling ten bottles a month covers the
-  $12,000 draw outright.</b> Two chains at a quarter of their clinics each does exactly the same.
-  One mid-sized chain at real penetration gets most of the way to self-funding; two gets past it.
-  <p class="note" style="margin:8px 0 0">2,000 bottles at $25 is $50,000 of gross sales, and 25% of
-  that is $12,500. At a $20 selling price the same 2,000 bottles returns $10,000 and does not cover
-  it, which is why the price band and the penetration are worth reading together rather than
-  separately.</p>
+<div class="box blue">
+  <h3>The veterinary channel, and why NASC gates it</h3>
+  <p>Pet NAD already exists at retail, on the same incumbent ingredient we meet on the human side.
+  What we have not seen is pet NAD winning the <strong>veterinary clinic shelf</strong>, which is a
+  different channel stocked through distributors and vet-exclusive brands. That is our reading of
+  what we have found, not an established fact.</p>
+  <p><strong>Distributors ship</strong>, so Covetrus, MWI Animal Health and Patterson replace our
+  fulfilment rather than buy from us, and they are the route to independent clinics. Covetrus and MWI
+  are merging, $1.25 billion in cash plus a 34.3% stake, taking three national distributors to two.
+  <strong>The corporate groups are the white-label buyers</strong>: Mars Veterinary Health with
+  12,000+ veterinarians, Banfield with more than 1,000 hospitals and more than 3,600 veterinarians,
+  and NVA with a network of 1,000 community hospitals and a named equine division. Two different
+  conversations, and the plan does not blur them.</p>
+  <p style="margin:0"><strong>Regulatory is harder here than on the human side, not easier.</strong>
+  DSHEA does not apply to animals, per FDA's Federal Register position of 22 April 1996: a product is
+  food with claims tied to nutritive value, or the moment it makes a non-nutritive claim it is a
+  drug. The category runs on FDA enforcement discretion, which is tolerance rather than legality.
+  NASC is what makes it workable, and <b>Preferred Supplier is the tier BioVara should hold</b>:
+  NASC Primary Suppliers can source from that tier without additional vendor qualification, which
+  removes a due-diligence step for every prospective buyer. We could not confirm the channel formally
+  requires the seal, but with a two-year third-party audit and a four-month lead time it should be
+  treated as a precondition.</p>
 </div>
 
-<!-- 3 ── WHO WE CONTACT ───────────────────────────────────────────────────── -->
-<h2>3 &middot; Who we contact</h2>
-<p>42 target operators, researched from each company's own website, across nine segments. The full
-callable list, with contact routes and named executives where they exist, is at
-<a href="https://enhancedops.ninja/lists/nad-targets.html">enhancedops.ninja/lists/nad-targets.html</a>.</p>
-
-<div class="tscroll">
-<table>
-  <thead><tr><th>Segment</th><th class="n">Targets</th></tr></thead>
-  <tbody>
-    <tr><td>IV &amp; drip bars</td><td class="n">13</td></tr>
-    <tr><td>Health club &amp; gym</td><td class="n">8</td></tr>
-    <tr><td>Med spa</td><td class="n">5</td></tr>
-    <tr><td>Supplement &amp; creator brands</td><td class="n">5</td></tr>
-    <tr><td>TRT &amp; hormone</td><td class="n">3</td></tr>
-    <tr><td>Longevity</td><td class="n">3</td></tr>
-    <tr><td>Chiropractic</td><td class="n">2</td></tr>
-    <tr><td>Functional &amp; integrative</td><td class="n">2</td></tr>
-    <tr><td>GLP-1 &amp; weight loss</td><td class="n">1</td></tr>
-    <tr class="total"><td>Total</td><td class="n">42</td></tr>
-  </tbody>
-</table>
+<!-- ── OPEN DECISIONS ─────────────────────────────────────────────────────── -->
+<h2>Open decisions</h2>
+<p>These are unsettled today. Each one blocks something in the schedule above.</p>
+<div class="box">
+  <div class="dec"><div class="q">Does the 25% run across <b>both divisions</b>, and what counts as
+    gross sales?</div>
+    <div class="w">Jeff + Blake &middot; blocks the terms document in week 1. Under this structure the
+    answer is probably yes, which is exactly why it should be said out loud rather than assumed.</div></div>
+  <div class="dec"><div class="q">Whether profit share is a <b>hard switch</b> from the draw or the
+    greater of the two.</div><div class="w">Jeff + Blake &middot; decided by week 12, defined in week 1</div></div>
+  <div class="dec"><div class="q">Who funds the research at roughly <b>$10,000 a month</b>.</div>
+    <div class="w">Jeff + Blake + Page &middot; blocks the lab commission</div></div>
+  <div class="dec"><div class="q">The <b>volume tiers</b>, not a single floor price.</div>
+    <div class="w">Blake + Page &middot; blocks quoting any chain</div></div>
+  <div class="dec"><div class="q">Whether the <b>NASC seal is formally required</b> for the vet channel.</div>
+    <div class="w">TBD &middot; not established; assumed required and started regardless</div></div>
+  <div class="dec"><div class="q">Our <b>average selling price</b> to the chain.</div>
+    <div class="w">TBD &middot; the crossover moves with it, so the goal line is not fixed until it is</div></div>
 </div>
 
-<h3 style="margin-top:28px">The five we open with</h3>
-<div class="box top5">
-  <div class="t5">
-    <div class="nm">GameDay Men's Health <span>400+ clinics</span></div>
-    <p>Already sells NAD+ injections, and already sells an <strong>oral</strong> therapy. Their
-    patients have proven they will buy and keep buying a take-home oral format, which is the single
-    biggest objection an injectable clinic raises.</p>
-  </div>
-  <div class="t5">
-    <div class="nm">Lindora <span>35 clinics</span></div>
-    <p>Already sells NAD+, and already runs a Nutrition &amp; Supplements category in its own
-    navigation. The retail shelf and the supplement P&amp;L exist. Every other target would build
-    one from nothing.</p>
-  </div>
-  <div class="t5">
-    <div class="nm">Forum Health <span>partnerships inbox</span></div>
-    <p>The only organisation on the list publishing a partnerships route rather than a contact form.
-    They are soliciting this conversation.</p>
-  </div>
-  <div class="t5">
-    <div class="nm">Restore Hyper Wellness <span>210+ studios</span></div>
-    <p>Sells NAD in four forms and has already moved its base onto recurring NAD plans. The demand
-    is created; an oral take-home is an attach.</p>
-  </div>
-  <div class="t5">
-    <div class="nm">Milan Laser <span>400+ locations</span></div>
-    <p>The largest door count on the list, and corporate-owned, so one decision reaches every
-    location. No existing supplement retail, so this is the build-the-category sell rather than an
-    attach.</p>
-  </div>
-</div>
-
+<!-- ── RISKS ──────────────────────────────────────────────────────────────── -->
+<h2>Risks</h2>
 <div class="box accent">
-  <p style="margin:0"><strong>7 of the 42 carry named executives.</strong> The rest publish contact
-  routes rather than people. That is how this industry is organised rather than a gap in the
-  research: these are clinical and marketing organisations, and they publish forms and national
-  lines instead of a leadership page.</p>
-</div>
-
-<!-- 4 ── HOW WE SELL ──────────────────────────────────────────────────────── -->
-<h2>4 &middot; How we sell</h2>
-
-<div class="box blue">
-  <h3>The opening is clinical, not merchandising</h3>
-  <p style="margin:0">The title we want mostly does not exist here. These are clinical and marketing
-  organisations, not retailers, and only Forum Health publishes a partnerships route. So the first
-  yes comes from a <strong>Chief Science Officer or a Chief Medical Officer</strong>, and the opening
-  leads with formulation and data rather than with price and minimum order.</p>
-</div>
-
-<div class="box">
-  <h3>The lab is the differentiator</h3>
-  <p>Every other white-label supplier in this category is a contract manufacturer competing on cost.
-  We have an independent PhD-run lab, ex-Merck, running work on the formulation itself. That is
-  third-party lab validation, and study data is available.</p>
   <ul>
-    <li><b>Stability.</b> Liposomal degradation at the 135 to 150&deg;F a delivery truck reaches in
-    summer. Every chain shipping supplements has this problem and most have not measured it.</li>
-    <li><b>Bioavailability.</b> Oral against sublingual, subcutaneous and IV. This is the exact
-    objection an IV clinic raises, answered with data rather than assertion.</li>
-    <li><b>Intracellular NAD assay.</b> No market equivalent.</li>
-  </ul>
-</div>
-
-<div class="box">
-  <h3>The pitch is "oral, take-home, your label", not "NAD"</h3>
-  <p style="margin:0">The best-qualified chains already have an NAD ingredient partner. Restore
-  carries Niagen, The DRIPBaR carries NR. The NAD conversation is occupied and arguing it means
-  displacing an incumbent. The oral take-home format is not occupied, and it is additive to what
-  they already sell rather than a replacement for it.</p>
-</div>
-
-<div class="box">
-  <h3>Voice AI at $2,000 a month</h3>
-  <p style="margin:0">Top-of-funnel scheduling. It books discovery calls into this target list so
-  that selling time is spent on calls rather than on dialling. It does not sell and it does not
-  qualify; it fills the calendar.</p>
-</div>
-
-<!-- 5 ── VETERINARY ───────────────────────────────────────────────────────── -->
-<h2>5 &middot; New products: veterinary</h2>
-
-<div class="box accent">
-  <h3>Pet NAD already exists at retail</h3>
-  <p>The retail shelf is not empty, and the incumbent is the same one we meet on the human side.
-  <strong>Zesty Paws sells an NAD+ precursor built on Niagen</strong>, ChromaDex's branded
-  ingredient, the company already supplying Restore Hyper Wellness. Also on sale:
-  Bark&amp;Spark NAD+ for Dogs, Boops Pets Longevity, Nutridog NMN, ProHealth Pet Longevity NMN
-  Chews on Uthever NMN, a second branded ingredient, and VetPRO+ NMN Advance.</p>
-  <p style="margin:0">Every one of those is retail and direct-to-consumer, sold through Amazon and
-  the brands' own storefronts. <strong>The corporate veterinary clinic shelf is a different
-  channel</strong>, stocked through veterinary distributors and vet-exclusive brands.
-  <em>Pet NAD exists at retail. We have not seen it win the veterinary clinic shelf.</em> That
-  second sentence is our reading of what we have found so far, not an established fact.</p>
-</div>
-
-<h3 style="margin-top:28px">Who the buyers would be</h3>
-<p class="note">Counts are from each company's own site.</p>
-<div class="box top5">
-  <div class="t5">
-    <div class="nm">Mars Veterinary Health <span>12,000+ veterinarians</span></div>
-    <p>Around 70,000 associates. Parent of VCA, Banfield, BluePearl and Antech. VCA is part of this
-    group; we have not verified a hospital count for VCA and are not putting one on the page.</p>
-  </div>
-  <div class="t5">
-    <div class="nm">Banfield Pet Hospital <span>1,000+ hospitals</span></div>
-    <p>More than 3,600 veterinarians.</p>
-  </div>
-  <div class="t5">
-    <div class="nm">NVA <span>1,000 community hospitals</span></div>
-    <p>Their own description. Also runs Ethos Veterinary Health and a named equine division, so the
-    separate equine market has a door inside a group we would already be talking to.</p>
-  </div>
-</div>
-<p class="note">Other corporate groups exist. Only those whose figures we could confirm on their
-own sites appear above.</p>
-
-<div class="box blue">
-  <h3>The structural point: who ships, and who buys</h3>
-  <p>US veterinary distribution runs through three national distributors, <strong>Covetrus,
-  MWI Animal Health and Patterson Veterinary</strong>, and it is about to be two. Cencora is
-  selling MWI for <strong>$1.25 billion in cash plus a 34.3% stake</strong> in the combined company.
-  The channel is consolidating from three players to two.</p>
-  <p style="margin:0"><strong>Distributors ship.</strong> Like Fullscript on the human side they
-  replace our fulfilment rather than buy from us, which makes them a route to independent clinics
-  rather than a white-label customer. <strong>The corporate groups are the operators with own-brand
-  shelves, and those are the genuine white-label buyers.</strong> That distinction is the strategy
-  for this channel.</p>
-</div>
-
-<h3 style="margin-top:28px">The product: a curcumin chew for joint health</h3>
-
-<div class="box">
-  <h4 style="font-family:var(--head);font-size:17px;margin:0 0 6px">1 &middot; Curcumin is the challenger here, not the incumbent</h4>
-  <p style="margin:0 0 14px">The vet-recommended leaders are built on glucosamine, chondroitin, ASU,
-  green-lipped mussel and eggshell membrane. <strong>Nutramax</strong> (Cosequin, Dasuquin) describes
-  itself as the number one vet-recommended retail joint health brand, 25+ years old, with ASU as its
-  differentiator, and it is the competitor that matters. <strong>Virbac Movoflex</strong> positions
-  explicitly as an alternative to glucosamine and chondroitin, on BiovaFlex eggshell membrane.
-  <strong>YuMOVE</strong> is green-lipped mussel. Curcumin is not the established answer in this
-  channel, which is the opening and also the work.</p>
-
-  <h4 style="font-family:var(--head);font-size:17px;margin:0 0 6px">2 &middot; The absorption problem is real and is not considered solved</h4>
-  <p style="margin:0 0 14px">Oral curcumin has poor systemic bioavailability, from rapid intestinal
-  and hepatic metabolism. The literature notes that improvement from enhancers, piperine included,
-  has not reached a satisfactory therapeutic level. This is an open problem, not a solved one.</p>
-
-  <h4 style="font-family:var(--head);font-size:17px;margin:0 0 6px">3 &middot; Competitors are already using serious delivery technology</h4>
-  <p style="margin:0 0 8px">This is not a category of naive formulations, and it should not be
-  described as one. Several pet curcumin products already carry patented bioavailability
-  technology: Pet Parents SoftSupps (BioPerine and CurQmin), CurcuMagic (Arjuna BCM-95 /
-  Curcugreen), Dr Jones' (BCM-95 and BioPerine), Coco and Luna (BioPerine), PawEver (curcumin
-  phytosome).</p>
-  <p style="margin:0 0 14px"><strong>What we have not found is a liposomal curcumin pet product.</strong>
-  The enhancers in use are piperine, phytosome and patented complexes. That is an absence in our
-  search rather than proof of absence, and it is worth verifying before it is said in a room.
-  <span class="note">Note also that the strongest published evidence in curcumin delivery is
-  phytosome rather than liposomal, curcumin phytosome is reported at 29&times; the plasma
-  curcuminoid levels of standard curcumin, so the argument is that liposomal is unexplored
-  here, not that it is superior.</span></p>
-
-  <h4 style="font-family:var(--head);font-size:17px;margin:0 0 6px">4 &middot; There is dog-specific support</h4>
-  <p style="margin:0">A peer-reviewed review reports that in beagle dogs, curcumin
-  beta-cyclodextrin complex, solid dispersion and <strong>curcumin phospholipid complex</strong>
-  improved bioavailability by over 200%. Phospholipid complex is adjacent to our manufacturer's
-  capability. Canine efficacy work exists too: co-micronised glucosamine with curcumin restored
-  locomotor function by 45% in an induced model, and a randomised double-blind curcuminoid study
-  found significant pain reduction on manipulation in the treatment group and not in the control.</p>
-</div>
-
-<div class="box blue">
-  <h3>Format and demand</h3>
-  <ul>
-    <li><b>Soft chews are around 48% of product forms</b> in the category, with a second source
-    putting chewables at 43.84% for 2026. A chew is the dominant format, not a niche one.</li>
-    <li><b>Hip and joint is projected at 40.24% of the whole pet supplement market</b> in 2026.</li>
-    <li>Around <b>35% of dogs over seven</b> show signs of joint disorders, and about <b>55% of
-    veterinary prescriptions for aging dogs</b> include a joint health recommendation.</li>
-    <li><b>39% of consumers prefer "veterinarian formulated"</b> and <b>31% actively seek products
-    described as clinically tested.</b> That second figure is the commercial argument for the lab:
-    an absorption study is exactly the evidence that buyer is looking for, and it is the thing a
-    contract manufacturer competing on cost cannot put on the table.</li>
-  </ul>
-  <p class="note" style="margin:12px 0 0">No market size figure appears here deliberately. Two
-  credible publishers are a full order of magnitude apart on it, so neither is quotable, and the
-  structural percentages above are used instead.</p>
-</div>
-
-<div class="box accent">
-  <h3>Regulatory: harder in law than the human side, workable in practice</h3>
-  <p><strong>DSHEA does not apply to animals.</strong> FDA published that position in the Federal
-  Register on 22 April 1996. Human supplements get DSHEA's structure and function safe harbour;
-  animal supplements have no equivalent. An animal product is either <strong>food</strong>, with
-  recognised ingredients and claims tied to nutritive value, or, the moment it makes a non-nutritive
-  claim, <strong>it is a drug</strong>.</p>
-  <p style="margin:0">The whole pet supplement category therefore runs under <strong>FDA enforcement
-  discretion</strong>, treated as drugs of low regulatory priority, administered by FDA's Center for
-  Veterinary Medicine alongside AAFCO. That is tolerance rather than legality, and it is the opposite
-  of the common assumption. <strong>Structurally harder than the human side in law, and practically
-  workable through NASC.</strong></p>
-</div>
-
-<div class="box blue">
-  <h3>NASC, and the specific move for BioVara</h3>
-  <p>The National Animal Supplement Council is a non-profit operating since 2001, and in practice it
-  is the reason the enforcement discretion holds. Its membership tiers matter to us differently:</p>
-  <ul>
-    <li><b>Primary Supplier</b> supplies finished supplements. Passing the NASC quality audit earns
-    the yellow NASC Quality Seal: a third-party audit every two years, roughly four months start to
-    finish, paid for by the marketing company. <span class="note">Cost is not published and is not
-    established here.</span></li>
-    <li><b>Preferred Supplier</b> covers raw materials, manufacturing and lab testing. In NASC's own
-    words, NASC Primary Suppliers can confidently source from them <strong>without additional vendor
-    qualification</strong>. <b>This is the tier BioVara should be in.</b> It removes a due-diligence
-    step for every prospective white-label buyer, which for a contract manufacturer is a channel
-    accelerator rather than a compliance box. It is also something we can act on now rather than a
-    finding to file.</li>
-    <li>NASC also runs <b>retailer membership that explicitly includes veterinary clinics</b>, and
-    <b>regulator membership</b> for state and federal agency staff, so it is the accepted bridge
-    between the industry and the people who oversee it.</li>
-  </ul>
-  <p style="margin:12px 0 0"><strong>The honest caveat:</strong> we could not confirm that the
-  veterinary channel formally requires the seal. But with a two-year third-party audit, a four-month
-  lead time and buyers of this size, it should be treated as a practical precondition and started
-  early rather than discovered late.</p>
-</div>
-
-<div class="pending">
-  <span class="stamp">Open &middot; wording</span>
-  <p style="margin:0">The product language is <strong>joint health, mobility and comfort</strong>.
-  Naming a disease would move the product from supplement toward drug, which under the framework
-  above is not a grey area. That wording is settled before any label is printed rather than after.</p>
-</div>
-
-<!-- 6 ── WHAT WE NEED FROM PAGE ───────────────────────────────────────────── -->
-<h2>6 &middot; What we need from Page</h2>
-<p>Three open items from the 3 September meeting, to settle rather than to negotiate:</p>
-<div class="box">
-  <ul>
-    <li><b>Volume-tiered pricing agreed up front</b>, rather than a single floor price. The
-    crossover above moves with the tier, so the tiers need to be known before we quote a chain.</li>
-    <li><b>Confirmation of the supply commitment</b> at the volumes in section 2.</li>
-    <li><b>Clarity on who funds the research</b>, running at roughly $10,000 a month.</li>
+    <li><b>Page's financial position.</b> If it worsens, supply is at risk and there is no second
+    manufacturer in this plan. Worth knowing what the fallback is before it is needed rather than
+    after.</li>
+    <li><b>The THC and CBD line's regulatory exposure.</b> Jeff oversees that division and Ryan owns
+    the work. A limit moving from 20mg to 5mg previously cost $100,000, so the exposure is
+    demonstrated rather than theoretical.</li>
+    <li><b>Incumbent ingredient relationships</b> at the best-qualified chains. Restore is on Niagen,
+    The DRIPBaR on NR. This is why the pitch leads on format rather than on the molecule, but it
+    still makes those two harder than their fit suggests.</li>
+    <li><b>NASC lead time gates the veterinary channel.</b> Four months from a week-one start means
+    early January. Any slip in starting it moves the whole channel by the same amount.</li>
   </ul>
 </div>
 
 <div class="foot">
-  Every figure on this page traces to the 3 September meeting notes, to the target research dated
-  3 September 2026, or to the arithmetic shown alongside it. Segment counts and the named targets
-  come from the 42-record research file behind
-  <a href="https://enhancedops.ninja/lists/nad-targets.html">the callable list</a>.
+  Dates run 4 September to 2 December 2026 in three 30-day blocks. Figures trace to the 3 September
+  meeting notes, the target research of 3 September 2026, or the arithmetic shown alongside them.
   EnhancedOps.Ninja is a trade name of Augeo LLC. Confidential.
 </div>
 
