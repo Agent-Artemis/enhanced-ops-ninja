@@ -224,6 +224,17 @@ td.n{font-variant-numeric:tabular-nums}
    gives it an edge to sit against, and the fill is lifted so the ninja reads
    rather than merely being present. Ring only - no glow, gradient or pulse
    stacked on top, which would muddy it. */
+/* ── IN THE RAIL ON DESKTOP ──
+   A floating button covers content and reads as a bolt-on. In the rail it sits
+   where the eye already goes and never obscures a tile. */
+.nj-rail-wrap{margin:12px 9px 0;padding-top:12px;border-top:1px solid var(--line)}
+.nj-rail{display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+  padding:9px 10px;border-radius:var(--r);border:1px solid var(--line2);
+  background:var(--panel2);transition:.14s}
+.nj-rail:hover{border-color:var(--blue-glow);background:#15203a}
+.nj-rail-t{font-size:13px;font-weight:700;color:var(--ink);line-height:1.2;min-width:0}
+.nj-rail-t span{display:block;font-size:10px;font-weight:400;color:var(--ink3);
+  letter-spacing:.02em;margin-top:2px;line-height:1.3}
 .nj-badge{position:fixed;right:20px;bottom:20px;z-index:38;width:62px;height:62px;
   border-radius:50%;background:#2C3A54;border:2.5px solid #fff;box-sizing:border-box;
   box-shadow:0 6px 20px rgba(0,0,0,.55);overflow:hidden;padding:0;
@@ -280,8 +291,23 @@ td.n{font-variant-numeric:tabular-nums}
 .nj-illus{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);
   border:1px solid rgba(245,179,1,.45);border-radius:100px;padding:2px 7px;white-space:nowrap;flex:none}
 
+/* The floating badge is retired at every width. On a phone it sat on top of the
+   figures - I rendered it scrolled and it was covering a $84K value - and a
+   dashboard about numbers must not hide one. Instead the ninja is PINNED to the
+   right-hand end of the collapsed rail, outside the horizontal scroller, so he
+   is always visible, never scrolls away, and never covers content. */
+.nj-badge, .nj-tip{display:none!important}
 @media (max-width:860px){
-  /* Small badge, and a full-height sheet when opened - a phone has no room to
+  .sb{display:grid;grid-template-columns:minmax(0,1fr) auto;
+    grid-template-areas:"brand brand" "nav ninja";align-items:center}
+  .sb-brand{grid-area:brand} .sb-nav{grid-area:nav}
+  .nj-rail-wrap{grid-area:ninja;margin:0 12px 0 4px;padding-top:0;border-top:none;
+    border-left:1px solid var(--line);padding-left:10px}
+  .nj-rail{padding:6px 9px;gap:7px}
+  .nj-rail .nj-av{width:28px;height:28px;border-width:1.5px}
+  .nj-rail-t{font-size:12px;white-space:nowrap}
+  .nj-rail-t span{display:none}
+  /* A full-height sheet when opened - a phone has no room to
      spare and the badge must never sit on a KPI tile or the nav rail. */
   .nj-badge{width:50px;height:50px;right:14px;bottom:14px;border-width:2px}
   .nj-tip{display:none}
@@ -374,6 +400,12 @@ footer{border-top:1px solid var(--line);padding:20px 0 34px;color:var(--ink3);fo
         <div class="sb-tag">Operating Dashboard</div>
       </div>
       <nav class="sb-nav" aria-label="Category"></nav>
+      <div class="nj-rail-wrap">
+        <button class="nj-rail" id="njRail" aria-expanded="false" aria-controls="nj">
+          <span class="nj-av"><img src="../ninja-arms-folded.png" alt=""></span>
+          <span class="nj-rail-t">The Ninja<span>Ask about your numbers</span></span>
+        </button>
+      </div>
       <div class="sb-sys" id="sbSys"></div>
       <div class="sb-foot">Powered by <span>EnhancedOps.ninja</span></div>
     </aside>
@@ -2047,10 +2079,12 @@ function njToggle(on){
   nj.open = on;
   $('#nj').classList.toggle('open', on);
   $('#njBadge').setAttribute('aria-expanded', String(on));
+  $('#njRail').setAttribute('aria-expanded', String(on));
   if(on){ if(!$('#njBody').children.length) njReset(); $('#njInput').focus(); }
 }
 
 $('#njBadge').addEventListener('click', () => njToggle(true));
+$('#njRail').addEventListener('click', () => njToggle(true));
 $('#njX').addEventListener('click', () => njToggle(false));
 $('#njSugg').addEventListener('click', e => {
   const b = e.target.closest('[data-q]'); if(b) njAsk(b.dataset.q);
