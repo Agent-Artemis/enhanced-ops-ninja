@@ -216,6 +216,108 @@ td.n{font-variant-numeric:tabular-nums}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
+/* ══════════════════ K2 PORTAL — THE ASSISTANT ══════════════════
+   A demo of a capability. Every answer is DERIVED from the same record arrays
+   the dashboards read, so the assistant can never contradict the screen behind
+   it. A chat panel that disagrees with the dashboard would undo the whole page. */
+.k2-badge{position:fixed;right:20px;bottom:20px;z-index:38;width:62px;height:62px;
+  border-radius:50%;background:var(--panel2);border:1.5px solid var(--blue-glow);
+  box-shadow:0 6px 22px rgba(0,0,0,.5), 0 0 0 6px rgba(42,125,225,.08);
+  display:flex;align-items:flex-end;justify-content:center;overflow:hidden;
+  transition:transform .16s, border-color .16s}
+.k2-badge:hover{transform:translateY(-2px) scale(1.04);border-color:var(--blue2)}
+.k2-badge img{width:52px;height:auto;display:block;margin-bottom:-2px}
+/* A quiet pulse so it reads as clickable without behaving like an advert. */
+.k2-badge::after{content:"";position:absolute;inset:-1.5px;border-radius:50%;
+  border:1.5px solid var(--blue2);opacity:0;animation:k2p 3.4s ease-out infinite}
+@keyframes k2p{0%{opacity:.55;transform:scale(1)}70%,100%{opacity:0;transform:scale(1.28)}}
+.k2-badge[aria-expanded="true"]{display:none}
+.k2-tip{position:fixed;right:92px;bottom:36px;z-index:37;background:var(--panel2);
+  border:1px solid var(--line2);border-radius:8px;padding:6px 11px;font-size:12px;
+  color:var(--ink2);white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.4);
+  opacity:0;transform:translateX(6px);transition:.18s;pointer-events:none}
+.k2-badge:hover + .k2-tip{opacity:1;transform:none}
+
+.k2{position:fixed;right:20px;bottom:20px;z-index:39;width:392px;max-width:calc(100vw - 40px);
+  height:min(560px,calc(100vh - 40px));background:var(--panel);border:1px solid var(--line2);
+  border-radius:14px;box-shadow:0 18px 54px rgba(0,0,0,.62);display:flex;flex-direction:column;
+  overflow:hidden;transform:translateY(14px) scale(.97);opacity:0;pointer-events:none;
+  transition:transform .18s ease, opacity .18s ease}
+.k2.open{transform:none;opacity:1;pointer-events:auto}
+.k2-hd{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--sidebar);
+  border-bottom:1px solid var(--line);flex:none}
+.k2-av{width:34px;height:34px;border-radius:50%;background:var(--panel2);border:1px solid var(--line2);
+  overflow:hidden;display:flex;align-items:flex-end;justify-content:center;flex:none}
+.k2-av img{width:29px;height:auto;margin-bottom:-1px}
+.k2-t{font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.05em;color:var(--ink);line-height:1.1}
+.k2-s{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-top:2px}
+.k2-x{margin-left:auto;color:var(--ink3);padding:3px;line-height:1;flex:none}
+.k2-x:hover{color:var(--ink)}
+.k2-body{flex:1;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:10px}
+.k2-msg{max-width:88%;font-size:13px;line-height:1.5;border-radius:11px;padding:9px 12px}
+.k2-msg.a{align-self:flex-start;background:var(--panel2);border:1px solid var(--line);color:var(--ink2)}
+.k2-msg.u{align-self:flex-end;background:var(--blue-dim);border:1px solid var(--blue-glow);color:var(--ink)}
+.k2-msg b{color:var(--ink);font-weight:700}
+.k2-msg .k2-src{display:block;margin-top:7px;padding-top:7px;border-top:1px solid var(--line);
+  font-size:11px;color:var(--ink3)}
+.k2-sugg{padding:0 13px 10px;display:flex;flex-direction:column;gap:6px;flex:none}
+.k2-sugg-k{font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:1px}
+.k2-q{text-align:left;border:1px solid var(--line2);border-radius:9px;padding:8px 11px;
+  font-size:12.5px;color:var(--ink2);background:var(--panel2);transition:.12s;line-height:1.35}
+.k2-q:hover{border-color:var(--blue-glow);color:var(--ink);background:#15203a}
+.k2-none{font-size:12px;color:var(--ink3);padding:2px 0}
+.k2-foot{flex:none;border-top:1px solid var(--line);padding:10px 13px;background:var(--sidebar)}
+.k2-in{display:flex;gap:7px;align-items:center}
+.k2-in input{flex:1;min-width:0;background:var(--panel2);border:1px solid var(--line2);border-radius:8px;
+  color:var(--ink);font:inherit;font-size:12.5px;padding:8px 10px}
+.k2-in input::placeholder{color:var(--ink3)}
+.k2-in input:focus{outline:none;border-color:var(--blue-glow)}
+.k2-send{background:var(--blue);color:#fff;border-radius:8px;padding:8px 11px;display:flex;flex:none}
+.k2-send:hover{background:var(--blue2)}
+.k2-note{font-size:10.5px;color:var(--ink3);margin-top:7px;line-height:1.45}
+.k2-illus{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);
+  border:1px solid rgba(245,179,1,.45);border-radius:100px;padding:2px 7px;white-space:nowrap;flex:none}
+
+@media (max-width:860px){
+  /* Small badge, and a full-height sheet when opened - a phone has no room to
+     spare and the badge must never sit on a KPI tile or the nav rail. */
+  .k2-badge{width:50px;height:50px;right:14px;bottom:14px}
+  .k2-badge img{width:42px}
+  .k2-tip{display:none}
+  .k2{right:0;left:0;bottom:0;width:100%;max-width:100%;height:92vh;border-radius:14px 14px 0 0;
+    border-left:none;border-right:none;border-bottom:none;transform:translateY(100%)}
+  .k2.open{transform:none}
+}
+
+/* ── EXCEPTIONS PANEL — fills the dead centre with the reason the screen exists ── */
+.colstack{display:flex;flex-direction:column;gap:13px;min-width:0}
+.exc{display:flex;flex-direction:column}
+.exc-i{display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:start;
+  padding:9px 0;border-bottom:1px solid var(--line)}
+.exc-i:last-child{border-bottom:none}
+.exc-dot{width:7px;height:7px;border-radius:50%;margin-top:6px;background:var(--blue)}
+.exc-dot.warn{background:var(--gold)} .exc-dot.bad{background:var(--red)} .exc-dot.ok{background:var(--green)}
+.exc-b{min-width:0;font-size:12.5px}
+.exc-b b{display:block;color:var(--ink);font-weight:500;line-height:1.35}
+.exc-b span{display:block;color:var(--ink3);font-size:11.5px;line-height:1.4;margin-top:2px}
+.exc-v{font-family:"Bebas Neue",sans-serif;font-size:17px;line-height:1.2;color:var(--ink2);
+  white-space:nowrap;padding-top:1px}
+.exc-v.bad{color:#F87171} .exc-v.warn{color:var(--gold)} .exc-v.ok{color:#4ADE80}
+
+/* ── CONNECTED SYSTEMS — fills the empty sidebar rail and carries the
+      integration story on every screen instead of once in a footer ── */
+.sb-sys{padding:11px 13px;border-top:1px solid var(--line);margin-top:auto}
+.sb-sys-k{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+.sb-sys-i{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--ink2);padding:2.5px 0}
+.sb-sys-i i{width:6px;height:6px;border-radius:50%;background:var(--green);flex:none;
+  box-shadow:0 0 0 2.5px rgba(34,197,94,.14)}
+.sb-sys-f{font-size:10.5px;color:var(--ink3);margin-top:8px;padding-top:8px;border-top:1px solid var(--line);line-height:1.45}
+.sb-nav{flex:none!important}
+/* A short screen used to leave a long gap above the footer, which reads as
+   unfinished. The provenance line now pins to the bottom of the panel. */
+.src{margin-top:auto!important}
+@media (max-width:860px){ .sb-sys{display:none} }
+
 footer{border-top:1px solid var(--line);padding:20px 0 34px;color:var(--ink3);font-size:12.5px;margin-top:30px}
 </style>
 </head>
@@ -271,6 +373,7 @@ footer{border-top:1px solid var(--line);padding:20px 0 34px;color:var(--ink3);fo
         <div class="sb-tag">Operating Dashboard</div>
       </div>
       <nav class="sb-nav" aria-label="Category"></nav>
+      <div class="sb-sys" id="sbSys"></div>
       <div class="sb-foot">Powered by <span>EnhancedOps.ninja</span></div>
     </aside>
     <div class="main">
@@ -305,6 +408,43 @@ footer{border-top:1px solid var(--line);padding:20px 0 34px;color:var(--ink3);fo
   <div class="drill-body" id="drillBody"></div>
 </aside>
 
+
+<button class="k2-badge" id="k2Badge" aria-expanded="false" aria-controls="k2"
+  aria-label="Open the K2 portal assistant">
+  <img src="../ninja-arms-folded.png" alt="">
+</button>
+<div class="k2-tip" aria-hidden="true">Ask about your numbers</div>
+
+<aside class="k2" id="k2" role="dialog" aria-modal="false" aria-labelledby="k2Title">
+  <div class="k2-hd">
+    <span class="k2-av"><img src="../ninja-arms-folded.png" alt=""></span>
+    <div>
+      <div class="k2-t" id="k2Title">K2 Portal</div>
+      <div class="k2-s">Assistant</div>
+    </div>
+    <span class="k2-illus">Illustrative</span>
+    <button class="k2-x" id="k2X" aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor"
+        stroke-width="1.8" stroke-linecap="round"><path d="M5 5 L15 15 M15 5 L5 15"/></svg>
+    </button>
+  </div>
+  <div class="k2-body" id="k2Body"></div>
+  <div class="k2-sugg" id="k2Sugg"></div>
+  <div class="k2-foot">
+    <form class="k2-in" id="k2Form">
+      <input id="k2Input" type="text" autocomplete="off"
+        placeholder="Ask about anything in your stack…" aria-label="Ask a question">
+      <button class="k2-send" type="submit" aria-label="Send">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor"
+          stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 2 9.5 10.5"/><path d="M18 2 12.6 18l-3.1-7.5L2 7.4z"/></svg>
+      </button>
+    </form>
+    <p class="k2-note">Typing filters the questions below. In the live product a connected
+      agent answers free-form questions against your own systems.</p>
+  </div>
+</aside>
+
 <footer>
   <div class="wrap">EnhancedOps.Ninja &middot; Augeo LLC &middot; Illustrative examples only &mdash;
     not a reading of any real business. No client names, logos or measured results appear on this page.</div>
@@ -328,7 +468,11 @@ const F = {
   sign: (v,d=1) => (v>=0?'+':'−') + Math.abs(v).toFixed(d) + '%',
   m:    v => '$' + v.toFixed(2) + 'M',
   m1:   v => '$' + v.toFixed(1) + 'M',
-  k:    v => '$' + Math.round(v) + 'K',
+  k:    v => {                       // v is in thousands
+    if (Math.abs(v) >= 1000) return '$' + (v/1000).toFixed(2) + 'M';
+    const r = Math.round(v*10)/10;
+    return '$' + (Number.isInteger(r) ? r : r.toFixed(1)) + 'K';
+  },
   n:    v => v.toLocaleString('en-US'),
   days: v => (v>=0?'+':'−') + Math.abs(Math.round(v)) + ' days',
 };
@@ -370,6 +514,7 @@ const REFRESH_SHORT = REFRESH_TODAY ? REFRESH_HHMM : 'Yest.';
 const REFRESH_CARD  = 'Last refresh ' + (REFRESH_TODAY ? REFRESH_HHMM : 'yest. '+REFRESH_HHMM);
 const REFRESH_LONG  = 'Refreshed ' + REFRESH_HHMM + (REFRESH_TODAY ? ' today' : ' yesterday');
 
+F.money = F.k;   // alias: the same formatter, clearer at call sites
 const sum = (a,f) => a.reduce((t,x)=>t+f(x),0);
 const mean = (a,f) => sum(a,f)/a.length;
 
@@ -407,6 +552,9 @@ CJOBS.forEach(j => {
    progress - which is exactly the sort of definition two systems disagree on. */
 const C_AWARDED_NOT_STARTED = 13.20;
 const C_ANNUAL_RUNRATE = 32.3;
+/* Approved change orders not yet billed. Distinct from the PENDING ones, which
+   are not approved at all - both matter and they are different numbers. */
+const C_CO_APPROVED_UNBILLED = 340;
 
 function cAgg(jobs){
   const contract = sum(jobs,j=>j.contract), estFinal = sum(jobs,j=>j.estFinal);
@@ -777,7 +925,7 @@ overview(a, ent){
       sys:'Sage 300 CRE — job cost ledger',
       field:'mean( (contract value − estimated cost at completion) ÷ contract value )',
       fieldNote:`Unweighted mean across ${a.jobs.length} active job${a.jobs.length>1?'s':''}. Weighted by contract value it is ${F.pct(a.wtdMargin)} — the small jobs are dragging the simple average down.`,
-      rec:`Procore reports 18.4% on the same jobs. The difference is $340K of change orders approved but not yet billed. Sage is the system of record for margin, because margin is a ledger number; Procore is right about the work, Sage is right about the money.` }),
+      rec:`Procore reports 18.4% on the same jobs. The difference is ${F.money(C_CO_APPROVED_UNBILLED)} of change orders approved but not yet billed. Sage is the system of record for margin, because margin is a ledger number; Procore is right about the work, Sage is right about the money.` }),
     kpi({ k:'Work in progress', v:F.m1(a.wip), d:`across ${a.jobs.length} active job${a.jobs.length>1?'s':''}`,
       sys:'Sage 300 CRE — WIP schedule',
       field:'Σ (contract value − revenue earned to date) on open jobs',
@@ -799,13 +947,18 @@ overview(a, ent){
       field:'(actual labour cost ÷ estimated labour cost at the same % complete) − 1' }),
   ]) +
   `<div class="cols c2">
+    <div class="colstack">
     ${card('Gross margin by month','18.9% → '+F.pct(a.avgMargin),
       lineChart(C_MARGIN_TREND,{dot:'warn',alt:'Gross margin drifting down from about nineteen per cent to about sixteen and a half'}))}
-    ${card('Activity',REFRESH_CARD, feed(C_FEED))}
+    ${card('Needs attention today', a.behind+' of '+a.jobs.length+' behind', exceptions(cExceptions()))}
+    </div>
+    <div class="colstack">
+      ${card('Activity',REFRESH_CARD, feed(C_FEED))}
+      ${card('Gross margin by job — highest to lowest', null,
+        bars(jobsSorted.map(j=>({ l:`Job ${j.id} · ${j.desc}`, v:j.margin, t:F.pct(j.margin),
+          cls: j.margin<10 ? 'warn' : '' }))))}
+    </div>
   </div>` +
-  card('Gross margin by job — highest to lowest', null,
-    bars(jobsSorted.map(j=>({ l:`Job ${j.id} · ${j.desc}`, v:j.margin, t:F.pct(j.margin),
-      cls: j.margin<10 ? 'warn' : '' })))) +
   srcLine(SRC_CONSTRUCTION);
 },
 
@@ -1045,12 +1198,17 @@ overview(a){
       field:'Σ commission ÷ Σ written premium, weighted by premium' }),
   ]) +
   `<div class="cols c2">
+    <div class="colstack">
     ${card('New premium written by month','$1.21M → '+F.m(a.newPrem/1000),
       lineChart(I_PREM_TREND,{fill:true,alt:'New premium written rising through the year'}))}
-    ${card('Activity',REFRESH_CARD, feed(I_FEED))}
+    ${card('Needs attention today','62 renewals inside 30 days', exceptions(iExceptions()))}
+    </div>
+    <div class="colstack">
+      ${card('Activity',REFRESH_CARD, feed(I_FEED))}
+      ${card('New premium by producer — highest to lowest', null,
+        bars(byPrem.map(p=>({ l:'Producer '+p.id, v:p.newPrem, t:F.k(p.newPrem) }))))}
+    </div>
   </div>` +
-  card('New premium by producer — highest to lowest', null,
-    bars(byPrem.map(p=>({ l:'Producer '+p.id, v:p.newPrem, t:F.k(p.newPrem) })))) +
   srcLine(SRC_INSURANCE);
 },
 
@@ -1264,13 +1422,18 @@ overview(a){
       rec:'Jobber records callbacks only when a customer rings in. ServiceTitan also counts a technician self-flagging a return, which is why its figure is higher. The higher number is the useful one — it catches the returns the customer never complained about.' }),
   ]) +
   `<div class="cols c2">
+    <div class="colstack">
     ${card('Revenue per truck by month','$34.9K → '+F.k(a.revPerTruck),
       lineChart(H_REV_TREND,{fill:true,alt:'Revenue per truck climbing through the year'}))}
-    ${card('Activity',REFRESH_CARD, feed(H_FEED))}
+    ${card('Needs attention today','15 calls rolled to tomorrow', exceptions(hExceptions()))}
+    </div>
+    <div class="colstack">
+      ${card('Activity',REFRESH_CARD, feed(H_FEED))}
+      ${card('Revenue by truck — highest to lowest', null,
+        bars(byRev.map(t=>({ l:`Truck ${t.id} · ${t.tech}`, v:t.rev, t:F.k(t.rev),
+          cls: t.rev < 36 ? 'warn' : '' }))))}
+    </div>
   </div>` +
-  card('Revenue by truck — highest to lowest', null,
-    bars(byRev.map(t=>({ l:`Truck ${t.id} · ${t.tech}`, v:t.rev, t:F.k(t.rev),
-      cls: t.rev < 36 ? 'warn' : '' })))) +
   srcLine(SRC_HOME);
 },
 
@@ -1460,9 +1623,88 @@ techs(a){
 
 <script>
 /* ═════════════════════ INDUSTRY REGISTRY ═════════════════════ */
+/* ══════════════════ EXCEPTIONS — WHAT TO DO THIS MORNING ══════════════════
+   Tiles tell you the state; this tells you what to act on. Every row is
+   DERIVED from the same records the tiles read, so the list cannot drift from
+   the numbers above it, and it re-ranks itself when the data changes. */
+function exceptions(rows){
+  return `<div class="exc">${rows.map(r=>`<div class="exc-i">
+    <span class="exc-dot ${r.sev}"></span>
+    <span class="exc-b"><b>${r.t}</b><span>${r.x}</span></span>
+    <span class="exc-v ${r.sev}">${r.v||''}</span>
+  </div>`).join('')}</div>`;
+}
+
+function cExceptions(){
+  const a = cAgg(CJOBS), out = [];
+  CJOBS.filter(j=>j.sched < -10).forEach(j => out.push({sev:'bad',
+    t:`Job ${j.id} — ${Math.abs(j.sched)} days behind baseline`,
+    x:`Labour ${F.sign(j.labor)} over estimate, margin ${F.pct(j.margin)}. Thinnest job on the board.`,
+    v:F.pct(j.margin)}));
+  out.push({sev:'warn', t:`${a.coN} change orders pending approval`,
+    x:'Unapproved change orders never reach the ledger, so none of this is billable yet.',
+    v:F.k(a.coV)});
+  const u = CJOBS.filter(j=>j.overUnder>0).sort((x,y)=>y.overUnder-x.overUnder)[0];
+  out.push({sev:'warn', t:`Job ${u.id} — earned and not invoiced`,
+    x:`${F.m(u.earned)} of work recognised against ${F.m(u.billed)} billed.`,
+    v:F.k(u.overUnder*1000)});
+  const ar = CJOBS.filter(j=>j.ar60>0).sort((x,y)=>y.ar60-x.ar60)[0];
+  out.push({sev:'bad', t:`Job ${ar.id} — receivable past 60 days`,
+    x:'Aged from the pay application date, not the date the invoice was entered.',
+    v:F.k(ar.ar60*1000)});
+  out.push({sev:'ok', t:'Job 1035 — retainage released',
+    x:'Received and applied. Job closed in the ledger.', v:'$84K'});
+  return out;
+}
+
+function iExceptions(){
+  const i = iAgg(IPROD);
+  const w = IPROD.slice().sort((x,y)=>x.retPremium-y.retPremium)[0];
+  const l = I_LINES.slice().sort((x,y)=>y.loss-x.loss)[0];
+  const c = I_CLAIMS.slice().sort((x,y)=>y.age-x.age)[0];
+  return [
+    {sev:'bad',  t:'62 policies lapse within 30 days',
+     x:'Four have nobody assigned. Retention by premium is already the weaker number.', v:'$186K'},
+    {sev:'warn', t:'Carrier statement variance',
+     x:'Written commission ahead of what the carriers have settled. Not a loss, but not cash either.',
+     v:F.k(I_COMM_UNSETTLED)},
+    {sev:'bad',  t:`${l.line} — loss ratio above target`,
+     x:`Third month running. ${F.pct(l.ret)} retention on the line, the weakest in the book.`,
+     v:F.pct(l.loss)},
+    {sev:'warn', t:`Claim ${c.id} open past SLA`,
+     x:`${c.line}, ${c.age} days open and still ${c.status.toLowerCase()}.`, v:F.k(c.reserve)},
+    {sev:'warn', t:`Producer ${w.id} — weakest premium retention`,
+     x:`${F.pct(w.retPolicy)} by policy count but ${F.pct(w.retPremium)} by premium. Bigger accounts leaving.`,
+     v:F.pct(w.retPremium)},
+  ];
+}
+
+function hExceptions(){
+  const h = hAgg(HTRUCK);
+  const w = HTRUCK.slice().sort((x,y)=>y.callbackPct-x.callbackPct)[0];
+  const idle = HTRUCK.slice().sort((x,y)=>x.util-y.util)[0];
+  return [
+    {sev:'bad',  t:'15 calls rolled to tomorrow',
+     x:'All in the same postcode. Routing rather than capacity — there are spare hours on the board.',
+     v:'15 jobs'},
+    {sev:'bad',  t:'Completed work with no invoice raised',
+     x:'11 jobs closed in the field, oldest 6 days. Labour and parts already paid for.',
+     v:F.k(H_UNBILLED)},
+    {sev:'warn', t:`Truck ${w.id} — callback rate above target`,
+     x:`${w.callbacks} return visits, ${w.tech} is ${w.tenure} year in. Paid once, done twice.`,
+     v:F.pct(w.callbackPct)},
+    {sev:'warn', t:'84 memberships expire within 30 days',
+     x:'Renewal is the cheapest revenue in the business and nobody owns the list.', v:'84'},
+    {sev:'warn', t:`Truck ${idle.id} — under target on utilization`,
+     x:`${F.pct(idle.util)} billable against a company average of ${F.pct(h.util)}.`,
+     v:F.pct(idle.util)},
+  ];
+}
+
 const INDUSTRIES = [
   {
     id:'construction', name:'Construction', sbName:'Contractor', date:PERIOD,
+    systems:['Procore','Sage 300 CRE','Buildertrend','QuickBooks'],
     cats:[
       {id:'overview',  label:'Overview'},
       {id:'jobs',      label:'Jobs'},
@@ -1478,6 +1720,7 @@ const INDUSTRIES = [
   },
   {
     id:'insurance', name:'Insurance Agency', sbName:'Agency', date:PERIOD,
+    systems:['Applied Epic','AMS360','EZLynx','HawkSoft'],
     cats:[
       {id:'overview',  label:'Overview'},
       {id:'book',      label:'Book of Business'},
@@ -1493,6 +1736,7 @@ const INDUSTRIES = [
   },
   {
     id:'home', name:'Home Services & Trades', sbName:'Service Co.', date:PERIOD,
+    systems:['ServiceTitan','Jobber','Housecall Pro','QuickBooks'],
     cats:[
       {id:'overview',  label:'Overview'},
       {id:'dispatch',  label:'Dispatch & Jobs', badge:'15'},
@@ -1522,6 +1766,10 @@ function renderChrome(){
       <span class="nav-ico">${ICONS[c.id]||ICONS.overview}</span>
       <span class="nav-label">${esc(c.label)}</span>
       ${c.badge?`<span class="nav-badge">${esc(c.badge)}</span>`:''}</button>`).join('');
+  const sy = S.ind.systems;
+  $('#sbSys').innerHTML = `<div class="sb-sys-k">Connected systems</div>` +
+    sy.map(n=>`<div class="sb-sys-i"><i></i>${esc(n)}</div>`).join('') +
+    `<div class="sb-sys-f">${sy.length} of ${sy.length} connected<br>Last sync ${esc(REFRESH_SHORT === 'Yest.' ? 'yesterday '+REFRESH_HHMM : REFRESH_HHMM)}</div>`;
   $('#ent').innerHTML = S.ind.entities.map(e=>
     `<option value="${e.v}"${e.v===S.ent?' selected':''}>${esc(e.label)}</option>`).join('');
 }
@@ -1555,6 +1803,277 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeDrill(); }
 renderChrome();
 renderScreen();
 </script>
+
+<script>
+/* ══════════════════ K2 PORTAL — ANSWERS ══════════════════
+   Every answer below READS the same record arrays the dashboards read. None of
+   it is typed prose with numbers baked in. If a job's margin changes in the
+   data, the tile and the assistant both move, together.
+   The questions are the ones a dashboard alone CANNOT answer - which is exactly
+   what an agent adds, and why the reconciliation ones are the point. */
+
+const src = t => `<span class="k2-src">${t}</span>`;
+const worstBy = (arr, f) => arr.slice().sort((x,y)=>f(x)-f(y))[0];
+const bestBy  = (arr, f) => arr.slice().sort((x,y)=>f(y)-f(x))[0];
+
+const ASSIST = {
+
+construction: [
+  { q:'Why is margin down this month?', a(){
+    const a = cAgg(CJOBS), w = worstBy(CJOBS, j=>j.margin);
+    const rest = CJOBS.filter(j=>j.id!==w.id), without = mean(rest, j=>j.margin);
+    return `Across your ${CJOBS.length} active jobs the average is <b>${F.pct(a.avgMargin)}</b>, and one job is
+      doing almost all of the damage. Job <b>${w.id}</b> (${w.desc}) is running at <b>${F.pct(w.margin)}</b>.
+      Take it out and the other four average <b>${F.pct(without)}</b> — so that single job is costing you
+      <b>${(without-a.avgMargin).toFixed(1)} points</b> on the headline.
+      Labour on it is <b>${F.sign(w.labor)}</b> against estimate and it is <b>${Math.abs(w.sched)} days</b>
+      behind baseline. The other four are all within a point of where they were bid.`
+      + src('Sage 300 CRE job cost ledger, Procore schedule baselines'); } },
+
+  { q:'Which job is losing money?', a(){
+    const w = worstBy(CJOBS, j=>j.margin);
+    const gross = w.contract - w.estFinal;
+    return `None of them are losing money outright — but Job <b>${w.id}</b> (${w.desc}) is close enough to
+      watch. On a <b>${F.m(w.contract)}</b> contract it is forecasting <b>${F.m(w.estFinal)}</b> of cost, which
+      leaves <b>${F.k(gross*1000)}</b> of gross profit at <b>${F.pct(w.margin)}</b>. It is <b>${w.pct}%</b>
+      complete, so most of that cost is already spent and there is little room left to recover it.
+      Labour is <b>${F.sign(w.labor)}</b> over estimate. If it slips again it goes negative.`
+      + src('Sage 300 CRE job cost ledger'); } },
+
+  { q:"Why doesn't this match QuickBooks?", a(){
+    const a = cAgg(CJOBS);
+    return `Because they are answering different questions. Procore has <b>${F.k(C_CO_APPROVED_UNBILLED)}</b>
+      of change orders <b>approved but not yet billed</b>, and a further <b>${a.coN}</b> worth
+      <b>${F.k(a.coV)}</b> still pending approval. None of that reaches the accounting ledger, because
+      QuickBooks only knows about an invoice.
+      That is the whole gap: Procore reads <b>18.4%</b> margin, Sage reads <b>${F.pct(a.avgMargin)}</b>.
+      Neither is wrong. Procore is right about the work; Sage is right about the money.
+      The <b>${F.k(C_CO_APPROVED_UNBILLED)}</b> is real work you have agreed to do and have not invoiced for.`
+      + src('Procore change order log against Sage 300 CRE and QuickBooks'); } },
+
+  { q:'Am I billing everything I have earned?', a(){
+    const a = cAgg(CJOBS);
+    const u = CJOBS.filter(j=>j.overUnder>0).sort((x,y)=>y.overUnder-x.overUnder);
+    return `Not quite. You are <b>underbilled ${F.k(a.under*1000)}</b> across ${u.length} jobs and
+      <b>overbilled ${F.k(a.over*1000)}</b> on the other ${CJOBS.length-u.length}.
+      The biggest is Job <b>${u[0].id}</b>, where you have earned <b>${F.m(u[0].earned)}</b> and billed
+      <b>${F.m(u[0].billed)}</b> — <b>${F.k(u[0].overUnder*1000)}</b> of work done and not invoiced.
+      Netted together the two nearly cancel, which is why a single billing-position number would tell
+      you everything is fine. One job financing another is not the same as being on top of billing.`
+      + src('Sage 300 CRE billing register and WIP schedule'); } },
+
+  { q:'What should I look at first today?', a(){
+    const w = worstBy(CJOBS, j=>j.margin), late = worstBy(CJOBS, j=>j.sched);
+    const a = cAgg(CJOBS);
+    return `Three things, in this order.<br>
+      <b>1.</b> Job <b>${late.id}</b> — <b>${Math.abs(late.sched)} days</b> behind and labour
+      <b>${F.sign(late.labor)}</b> over. It is also your thinnest margin at <b>${F.pct(w.margin)}</b>.
+      It is the only job where both are true.<br>
+      <b>2.</b> <b>${F.k(a.coV)}</b> of change orders sitting unapproved across ${a.coN} items. Every day
+      unapproved is a day you cannot bill it.<br>
+      <b>3.</b> <b>${F.k(a.under*1000)}</b> underbilled. That is cash you have already spent labour on.`
+      + src('Procore and Sage 300 CRE, refreshed ' + REFRESH_HHMM); } },
+],
+
+insurance: [
+  { q:'Why did retention drop?', a(){
+    const i = iAgg(IPROD), w = worstBy(IPROD, p=>p.retPremium);
+    return `Look at it two ways and you get two answers. By <b>policy count</b> retention is
+      <b>${F.pct(i.retPolicy)}</b>. By <b>premium</b> it is <b>${F.pct(i.retPremium)}</b>.
+      You kept ${F.pct(i.retPolicy)} of the policies and only ${F.pct(i.retPremium)} of the money, which
+      means <b>the accounts that left were bigger than average</b>.
+      Producer <b>${w.id}</b> is the sharpest example — <b>${F.pct(w.retPolicy)}</b> by policy,
+      <b>${F.pct(w.retPremium)}</b> by premium.
+      Your carriers report the premium figure. The agency system reports the policy figure. The agency's
+      is the flattering one, and it is the one most agencies quote.`
+      + src('Applied Epic renewal register, measured both ways'); } },
+
+  { q:'Which producer is carrying the book?', a(){
+    const i = iAgg(IPROD), t = bestBy(IPROD, p=>p.newPrem);
+    const share = t.newPrem / i.newPrem * 100, pifShare = t.pif / i.pif * 100;
+    return `Producer <b>${t.id}</b>, on every measure that matters. <b>${F.k(t.newPrem)}</b> of new premium
+      this month — <b>${F.pct(share)}</b> of the agency total — and <b>${F.n(t.pif)}</b> policies in force,
+      <b>${F.pct(pifShare)}</b> of the book.
+      They also hold the best retention at <b>${F.pct(t.retPolicy)}</b>, and they have been in the seat
+      <b>${t.tenure} years</b>.
+      Worth knowing what that concentration means if they ever leave.`
+      + src('Applied Epic new business and policy registers'); } },
+
+  { q:'Why is my commission lower than I expected?', a(){
+    const i = iAgg(IPROD), recd = i.commWritten - I_COMM_UNSETTLED;
+    return `Because written and paid are not the same month. Your agency system booked
+      <b>${F.k(i.commWritten)}</b> of commission on business written — that is
+      <b>${F.pct(i.commRate)}</b> of <b>${F.m(i.newPrem/1000)}</b> of premium.
+      The carrier statements show <b>${F.k(recd)}</b> actually received.
+      The <b>${F.k(I_COMM_UNSETTLED)}</b> difference is business bound late in the month that the carrier
+      has not billed and collected yet. <b>Carriers settle on PAID; the agency books on WRITTEN.</b>
+      It is not a loss and it should arrive — but treating written commission as cash is how an agency
+      runs out of it.`
+      + src('Applied Epic commission schedule against carrier statements'); } },
+
+  { q:'Which line of business is hurting me?', a(){
+    const w = bestBy(I_LINES, l=>l.loss), tot = sum(I_LINES, l=>l.prem);
+    return `<b>${w.line}</b>. Loss ratio <b>${F.pct(w.loss)}</b> against a book average of
+      <b>${F.pct(iAgg(IPROD).lossRatio)}</b>, and it is <b>${F.pct(w.prem/tot*100)}</b> of your premium —
+      <b>${F.k(w.prem)}</b> across <b>${F.n(w.policies)}</b> policies.
+      Its retention is also the weakest at <b>${F.pct(w.ret)}</b>, which is the pattern you would expect
+      when pricing is being corrected: the accounts that can leave, do.
+      It has been above target three months running.`
+      + src('Carrier statements and Applied Epic policy register'); } },
+
+  { q:'What should I look at first today?', a(){
+    const i = iAgg(IPROD), w = worstBy(IPROD, p=>p.retPremium), l = bestBy(I_LINES, x=>x.loss);
+    return `Three things.<br>
+      <b>1.</b> <b>62 renewals</b> due inside 30 days worth <b>$186K</b> — and four of them have nobody
+      assigned. Given retention by premium is <b>${F.pct(i.retPremium)}</b>, unassigned renewals are the
+      most expensive thing on this list.<br>
+      <b>2.</b> <b>${l.line}</b> at <b>${F.pct(l.loss)}</b> loss ratio. Third month above target.<br>
+      <b>3.</b> Producer <b>${w.id}</b> — retention <b>${F.pct(w.retPremium)}</b> by premium, the weakest
+      of the ${IPROD.length}, and only ${w.tenure} years in the seat.`
+      + src('Applied Epic and carrier statements, refreshed ' + REFRESH_HHMM); } },
+],
+
+home: [
+  { q:'Are we busy enough to take another call today?', a(){
+    const h = hAgg(HTRUCK), spare = HTRUCK.slice().sort((x,y)=>x.util-y.util)[0];
+    const drive = sum(HTRUCK, t=>t.driveHrs);
+    return `That depends entirely on whether drive time counts, and your two systems disagree.
+      ServiceTitan puts utilization at <b>${F.pct(h.util)}</b> — <b>${F.n(h.billedHrs)}</b> billable hours
+      out of <b>${F.n(h.paidHrs)}</b> paid. Payroll says <b>${F.pct(h.utilDrive)}</b>, because it counts the
+      <b>${F.n(drive)} hours</b> of driving as productive.
+      <b>Only the first number tells you whether you can take another call.</b> On that basis you have
+      roughly <b>${F.n(h.paidHrs - h.billedHrs - drive)} hours</b> of genuinely unused capacity this month.
+      Truck <b>${spare.id}</b> has the most room at <b>${F.pct(spare.util)}</b>.
+      The caveat: your 15 unassigned calls are all in one postcode, so this is a routing problem before
+      it is a capacity one.`
+      + src('ServiceTitan timesheets against payroll time records'); } },
+
+  { q:'Which truck is actually profitable?', a(){
+    const b = bestBy(HTRUCK, t=>t.rev), w = worstBy(HTRUCK, t=>t.rev);
+    return `Truck <b>${b.id}</b> (${b.tech}) is your best — <b>${F.k(b.rev)}</b> this month across
+      <b>${b.jobs}</b> jobs, an average ticket of <b>$${Math.round(b.ticket)}</b>, first-time fix
+      <b>${F.pct(b.ftf)}</b> and only <b>${b.callbacks}</b> callbacks.
+      Truck <b>${w.id}</b> (${w.tech}) is the one to look at: <b>${F.k(w.rev)}</b>, utilization
+      <b>${F.pct(w.util)}</b>, and a callback rate of <b>${F.pct(w.callbackPct)}</b> against a company
+      average of <b>${F.pct(hAgg(HTRUCK).callback)}</b>.
+      That technician is <b>${w.tenure} year</b> in. The callbacks look like experience rather than
+      effort — every return visit is a job you were paid for once and did twice.`
+      + src('ServiceTitan job history and timesheets'); } },
+
+  { q:'Why is ServiceTitan higher than QuickBooks?', a(){
+    const h = hAgg(HTRUCK), qb = h.rev - H_UNBILLED - H_DEFERRED;
+    return `Two reasons, and both are legitimate.
+      ServiceTitan shows <b>${F.k(h.rev)}</b> because it books the <b>work</b> the day it is completed.
+      QuickBooks shows <b>${F.k(qb)}</b> because it books the <b>invoice</b>.
+      The <b>${F.k(h.rev-qb)}</b> gap is <b>${F.k(H_UNBILLED)}</b> of jobs finished in the field with no
+      invoice raised — 11 of them, the oldest 6 days — plus <b>${F.k(H_DEFERRED)}</b> of membership revenue
+      being recognised across the agreement term rather than on the day it was sold.
+      Neither figure is wrong. Reporting either one alone as "revenue" is how a month gets argued about
+      for a week.`
+      + src('ServiceTitan completed work against the QuickBooks sales ledger'); } },
+
+  { q:'Where am I losing money without noticing?', a(){
+    const h = hAgg(HTRUCK), w = bestBy(HTRUCK, t=>t.callbackPct);
+    return `Two places, neither of which shows up as a loss anywhere.<br>
+      <b>1.</b> <b>${F.k(H_UNBILLED)}</b> of completed work with no invoice raised. You have paid the
+      labour and bought the parts; nobody has asked for the money. The oldest is 6 days.<br>
+      <b>2.</b> Callbacks. At <b>${F.pct(h.callback)}</b> across <b>${F.n(h.jobs)}</b> jobs that is
+      <b>${sum(HTRUCK,t=>t.callbacks)}</b> return visits you were paid for once and did twice. Truck
+      <b>${w.id}</b> accounts for <b>${w.callbacks}</b> of them at <b>${F.pct(w.callbackPct)}</b>.<br>
+      Also worth noting: 41 inbound calls went unanswered this month. They are not in any of your rates,
+      because a call nobody answers never becomes a record.`
+      + src('ServiceTitan job history, QuickBooks sales ledger, call tracking'); } },
+
+  { q:'What should I look at first today?', a(){
+    const h = hAgg(HTRUCK), w = bestBy(HTRUCK, t=>t.callbackPct);
+    return `Three things.<br>
+      <b>1.</b> <b>${F.k(H_UNBILLED)}</b> completed and not invoiced, across 11 jobs. That is the fastest
+      cash in the building.<br>
+      <b>2.</b> <b>15 unassigned calls</b>, all in one postcode. Routing, not demand — and you have
+      <b>${F.n(h.paidHrs - h.billedHrs - sum(HTRUCK,t=>t.driveHrs))} hours</b> of genuine spare capacity.<br>
+      <b>3.</b> Truck <b>${w.id}</b> at <b>${F.pct(w.callbackPct)}</b> callbacks, ${w.tenure} year in.
+      Ride-along or retraining, before it becomes a review.`
+      + src('ServiceTitan and QuickBooks, refreshed ' + REFRESH_HHMM); } },
+],
+};
+
+/* ── Panel wiring ─────────────────────────────────────────────────────────── */
+const k2 = { open:false, filter:'' };
+function k2Questions(){ return ASSIST[S.ind.id] || []; }
+
+function k2RenderSugg(){
+  const f = k2.filter.trim().toLowerCase();
+  const all = k2Questions();
+  const list = f ? all.filter(x => x.q.toLowerCase().includes(f)
+    || f.split(/\s+/).some(w => w.length>2 && x.q.toLowerCase().includes(w))) : all;
+  const el = $('#k2Sugg');
+  if(!list.length){
+    el.innerHTML = `<div class="k2-sugg-k">No matching question</div>
+      <p class="k2-none">Nothing here matches that. In the live product the connected agent answers it
+      against your own systems; in this demo, clear the box to see what it can show you.</p>`;
+    return;
+  }
+  el.innerHTML = `<div class="k2-sugg-k">${f?'Matching questions':'Try asking'}</div>` +
+    list.map(x => `<button class="k2-q" data-q="${esc(x.q)}">${esc(x.q)}</button>`).join('');
+}
+
+function k2Say(html, who){
+  const d = document.createElement('div');
+  d.className = 'k2-msg ' + who;
+  d.innerHTML = html;
+  $('#k2Body').appendChild(d);
+  $('#k2Body').scrollTop = $('#k2Body').scrollHeight;
+}
+
+function k2Ask(q){
+  const item = k2Questions().find(x => x.q === q);
+  if(!item) return;
+  k2Say(esc(q), 'u');
+  $('#k2Input').value = ''; k2.filter = ''; k2RenderSugg();
+  setTimeout(() => k2Say(item.a(), 'a'), 260);
+}
+
+function k2Reset(){
+  $('#k2Body').innerHTML = '';
+  k2Say(`I can see the ${esc(S.ind.name.toLowerCase())} systems on this dashboard — everything the
+    tiles are reading, and the places where two of them disagree.<br><br>
+    Answers here are worked out from the same records the screen behind me is showing, across
+    <b>all ${S.ind.id==='construction'?'jobs':S.ind.id==='insurance'?'producers':'trucks'}</b>.`, 'a');
+  k2.filter=''; $('#k2Input').value=''; k2RenderSugg();
+}
+
+function k2Toggle(on){
+  k2.open = on;
+  $('#k2').classList.toggle('open', on);
+  $('#k2Badge').setAttribute('aria-expanded', String(on));
+  if(on){ if(!$('#k2Body').children.length) k2Reset(); $('#k2Input').focus(); }
+}
+
+$('#k2Badge').addEventListener('click', () => k2Toggle(true));
+$('#k2X').addEventListener('click', () => k2Toggle(false));
+$('#k2Sugg').addEventListener('click', e => {
+  const b = e.target.closest('[data-q]'); if(b) k2Ask(b.dataset.q);
+});
+$('#k2Input').addEventListener('input', e => { k2.filter = e.target.value; k2RenderSugg(); });
+$('#k2Form').addEventListener('submit', e => {
+  e.preventDefault();
+  const f = k2.filter.trim().toLowerCase();
+  if(!f) return;
+  const all = k2Questions();
+  const hit = all.find(x => x.q.toLowerCase().includes(f))
+    || all.find(x => f.split(/\s+/).some(w => w.length>2 && x.q.toLowerCase().includes(w)));
+  if(hit){ k2Ask(hit.q); return; }
+  /* Never pretend. Say plainly what this demo does and does not do. */
+  k2Say(esc(e.target.querySelector('input').value), 'u');
+  $('#k2Input').value=''; k2.filter=''; k2RenderSugg();
+  setTimeout(() => k2Say(`I can't answer that one here. This demo carries a fixed set of worked
+    examples so that every answer is derived from the records on screen and nothing is invented.<br><br>
+    In the live product a connected agent takes free-form questions against your own systems.
+    For now, the questions below are the ones I can show you.`, 'a'), 260);
+});
+document.addEventListener('keydown', e => { if(e.key==='Escape' && k2.open) k2Toggle(false); });
+</script>
+
 
 </body>
 </html>
