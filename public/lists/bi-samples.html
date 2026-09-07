@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Sample dashboards by industry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0F1A;--panel:#0E1420;--panel2:#131b2b;--line:#243044;
+  --ink:#EEF3FA;--ink2:#AEBBCD;--ink3:#7E8DA0;--blue:#1A6ECC;--blue2:#3F8AE0;--gold:#F5B301}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2{font-family:"Bebas Neue",sans-serif;text-transform:uppercase;letter-spacing:.02em;
+  font-weight:400;line-height:1.05;margin:0}
+.wrap{max-width:1060px;margin:0 auto;padding:0 20px}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+
+.hdr{border-bottom:1px solid var(--line);background:var(--panel);padding:18px 0}
+.hdr-in{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.hdr img{height:88px;width:auto}
+h1{font-size:clamp(24px,5vw,34px)}
+.hsub{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--blue2);margin-top:4px}
+.note{max-width:74ch;color:var(--ink2);font-size:14.5px;margin:16px 0 0}
+.note b{color:var(--ink)}
+
+.ba{display:grid;gap:12px;margin:22px 0 30px;align-items:stretch}
+.ba-side{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:15px 16px}
+.ba-side.before{border-color:rgba(245,179,1,.28)}
+.ba-k{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
+.ba-side.before .ba-k{color:var(--gold)}
+.ba-side.after .ba-k{color:var(--blue2)}
+.ba-cards{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:11px}
+.ba-cards .c{font-family:"Bebas Neue",sans-serif;font-size:23px;color:var(--ink2);
+  background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px 11px;line-height:1.1}
+.ba-one{display:inline-block;font-family:"Bebas Neue",sans-serif;font-size:38px;line-height:1;color:var(--ink);
+  background:var(--panel);border:1px solid rgba(63,138,224,.5);border-radius:8px;padding:7px 15px;margin-bottom:11px}
+.ba-side p{margin:0;font-size:14px;color:var(--ink2);max-width:42ch}
+.ba-mid{display:flex;align-items:center;justify-content:center;padding:2px 0}
+.ba-mid svg{display:block}
+@media (max-width:759px){ .ba-mid svg{transform:rotate(90deg)} }
+@media (min-width:760px){ .ba{grid-template-columns:1fr auto 1fr} .ba-mid{padding:0 4px} }
+main{padding:26px 0 56px}
+.samp{margin:0 0 34px}
+.samp-hd{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.samp-hd h2{font-size:clamp(20px,4.4vw,27px);color:var(--ink)}
+.samp-hd .story{font-size:13.5px;color:var(--ink2);max-width:60ch}
+/* Every sample says so on its face. There are no clients, so nothing here is a
+   reading of anybody's business. */
+.illus{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);
+  border:1px solid rgba(245,179,1,.45);border-radius:100px;padding:3px 10px;white-space:nowrap;flex:none}
+
+/* Dashboard chrome. HTML/CSS with SVG for chart SHAPES only — every label is
+   real text, so nothing shrinks into a fixed viewBox on a phone. */
+.dash{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel2)}
+.dash-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 13px;background:#0c1220;border-bottom:1px solid var(--line)}
+.dash-bar .t{font-family:"Bebas Neue",sans-serif;letter-spacing:.08em;font-size:14.5px;color:var(--ink2)}
+.dash-bar .rng{font-size:11px;color:var(--ink3);border:1px solid var(--line);border-radius:6px;
+  padding:3px 8px;white-space:nowrap}
+.dash-body{padding:13px}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:11px 12px}
+.kpi .k{display:block;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
+.kpi .v{display:block;font-family:"Bebas Neue",sans-serif;font-size:25px;line-height:1.04;color:var(--ink)}
+.kpi .d{display:block;font-size:11px;margin-top:2px;color:var(--ink3)}
+.kpi .d.up{color:var(--blue2)} .kpi .d.warn{color:var(--gold)}
+.chartwrap{margin-top:11px;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:12px}
+.ctrow{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 9px;flex-wrap:wrap}
+.chartwrap .ct{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin:0}
+.crange{font-size:11px;color:var(--ink2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.chart{width:100%;height:auto;display:block}
+.axis{display:flex;justify-content:space-between;margin-top:6px;font-size:10.5px;color:var(--ink3)}
+.axis span{flex:1;text-align:center}
+.axis span:first-child{text-align:left} .axis span:last-child{text-align:right}
+.bars{display:grid;gap:7px}
+.bar{display:grid;grid-template-columns:172px 1fr auto;align-items:center;gap:9px;font-size:12px}
+.bar .bl{color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .bt{background:var(--line);border-radius:4px;height:12px;overflow:hidden}
+.bar .bf{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--blue2));border-radius:4px}
+.bar .bf.warn{background:linear-gradient(90deg,#8a6410,var(--gold))}
+.bar .bv{color:var(--ink);font-variant-numeric:tabular-nums;font-size:11.5px}
+/* The credibility line: what it would actually pull from. */
+.src{margin:11px 0 0;font-size:12px;color:var(--ink3);border-top:1px solid var(--line);padding-top:10px}
+.src b{color:var(--ink2);font-weight:500}
+
+footer{border-top:1px solid var(--line);padding:20px 0 34px;color:var(--ink3);font-size:12.5px}
+@media (min-width:620px){ .kpis{grid-template-columns:repeat(3,1fr)} }
+@media (max-width:600px){
+  .bar{grid-template-columns:1fr auto;grid-template-areas:"lbl lbl" "trk val";row-gap:3px;font-size:12px}
+  .bar .bl{grid-area:lbl;white-space:normal;overflow:visible}
+  .bar .bt{grid-area:trk} .bar .bv{grid-area:val}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <div>
+      <h1>Sample dashboards by industry</h1>
+      <div class="hsub">EnhancedOps.Ninja &middot; Business Intelligence</div>
+    </div>
+    <img src="../logo-ninja.png" alt="EnhancedOps.Ninja">
+  </div>
+  <div class="wrap">
+    <p class="note"><b>Every figure on this page is illustrative.</b> These are examples of what a
+      dashboard looks like for each industry and the metrics it would carry &mdash; not a reading of
+      any real business. Each one names the systems it would pull from.</p>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+
+    <!-- The transformation, before the samples. Same number on both sides of it. -->
+    <section class="ba">
+      <div class="ba-side before">
+        <span class="ba-k">What the owner has today</span>
+        <div class="ba-cards"><span class="c num">21.0%</span><span class="c num">18.4%</span><span class="c num">16.1%</span></div>
+        <p>Three systems, three answers to the same question &mdash; and a meeting to decide
+          which one to believe.</p>
+      </div>
+      <div class="ba-mid" aria-hidden="true">
+        <svg width="46" height="46" viewBox="0 0 46 46">
+          <circle cx="23" cy="23" r="21" fill="none" stroke="#243044" stroke-width="1.5"/>
+          <path d="M14 23 H30" stroke="#3F8AE0" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M25 17 L31 23 L25 29" fill="none" stroke="#3F8AE0" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="ba-side after">
+        <span class="ba-k">What they have after</span>
+        <div class="ba-one num">16.5%</div>
+        <p>One number the whole room believes, on one screen, before the day starts.
+          Everything below is that screen.</p>
+      </div>
+    </section>
+
+    <!-- ─────────── CONSTRUCTION ─────────── -->
+    <section class="samp">
+      <div class="samp-hd">
+        <div>
+          <h2>Construction</h2>
+          <p class="story">He stops finding out at closeout which jobs made money. He knows on Tuesday.</p>
+        </div>
+        <span class="illus">Illustrative</span>
+      </div>
+      <div class="dash">
+        <div class="dash-bar">
+          <span class="t">CONTRACTOR &mdash; ALL ACTIVE JOBS</span>
+          <span class="rng">Month to date</span>
+        </div>
+        <div class="dash-body">
+          <div class="kpis">
+            <div class="kpi"><span class="k">Gross margin, active jobs</span><span class="v num">16.5%</span><span class="d warn">&minus;1.3 pts vs estimate</span></div>
+            <div class="kpi"><span class="k">Work in progress</span><span class="v num">$6.2M</span><span class="d">across 5 active jobs</span></div>
+            <div class="kpi"><span class="k">Schedule variance</span><span class="v num">&minus;4 days</span><span class="d warn">behind, weighted by job value</span></div>
+            <div class="kpi"><span class="k">Change orders pending</span><span class="v num">14</span><span class="d">$412K unapproved</span></div>
+            <div class="kpi"><span class="k">Backlog</span><span class="v num">$19.4M</span><span class="d up">7.2 months of work</span></div>
+            <div class="kpi"><span class="k">Labour vs estimate</span><span class="v num">+3.8%</span><span class="d warn">over on 3 of 5 jobs</span></div>
+          </div>
+          <div class="chartwrap">
+            <div class="ctrow"><p class="ct">Gross margin by month</p><span class="crange num">18.9% &rarr; 16.5%</span></div>
+            <svg class="chart" viewBox="0 0 560 130" role="img" aria-label="Gross margin drifting down from about nineteen per cent to about sixteen and a half">
+              <g stroke="#243044" stroke-width="1">
+                <line x1="8" y1="24" x2="554" y2="24"/><line x1="8" y1="58" x2="554" y2="58"/>
+                <line x1="8" y1="92" x2="554" y2="92"/><line x1="8" y1="120" x2="554" y2="120"/>
+              </g>
+              <polyline points="10,40 60,36 110,46 160,42 210,52 260,48 310,60 360,56 410,68 460,64 510,76 550,82"
+                fill="none" stroke="#3F8AE0" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle cx="550" cy="82" r="4.5" fill="#F5B301"/>
+            </svg>
+            <div class="axis"><span>Apr</span><span>Jul</span><span>Oct</span><span>Jan</span><span>Mar</span></div>
+          </div>
+          <div class="chartwrap">
+            <div class="ctrow"><p class="ct">Gross margin by job &mdash; highest to lowest</p></div>
+            <div class="bars">
+              <div class="bar"><span class="bl">Job 1042 · Medical office</span><span class="bt"><span class="bf" style="width:100%"></span></span><span class="bv">22.1%</span></div>
+              <div class="bar"><span class="bl">Job 1038 · Retail fit-out</span><span class="bt"><span class="bf" style="width:90%"></span></span><span class="bv">19.8%</span></div>
+              <div class="bar"><span class="bl">Job 1051 · Depot expansion</span><span class="bt"><span class="bf" style="width:82%"></span></span><span class="bv">18.2%</span></div>
+              <div class="bar"><span class="bl">Job 1029 · Apartments</span><span class="bt"><span class="bf" style="width:74%"></span></span><span class="bv">16.4%</span></div>
+              <div class="bar"><span class="bl">Job 1047 · Warehouse</span><span class="bt"><span class="bf warn" style="width:28%"></span></span><span class="bv">6.2%</span></div>
+            </div>
+          </div>
+          <p class="src"><b>Pulled from:</b> Procore &middot; Sage 300 CRE &middot; Buildertrend &middot; QuickBooks</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── INSURANCE AGENCY ─────────── -->
+    <section class="samp">
+      <div class="samp-hd">
+        <div>
+          <h2>Insurance agency</h2>
+          <p class="story">He stops guessing who is really carrying the book, and starts knowing.</p>
+        </div>
+        <span class="illus">Illustrative</span>
+      </div>
+      <div class="dash">
+        <div class="dash-bar">
+          <span class="t">AGENCY &mdash; ALL PRODUCERS</span>
+          <span class="rng">Month to date</span>
+        </div>
+        <div class="dash-body">
+          <div class="kpis">
+            <div class="kpi"><span class="k">Policies in force</span><span class="v num">8,412</span><span class="d up">+174 vs last month</span></div>
+            <div class="kpi"><span class="k">Retention rate</span><span class="v num">88.6%</span><span class="d warn">&minus;0.9 pts vs last year</span></div>
+            <div class="kpi"><span class="k">Loss ratio</span><span class="v num">58.2%</span><span class="d up">&minus;1.4 pts vs last year</span></div>
+            <div class="kpi"><span class="k">New premium written</span><span class="v num">$1.84M</span><span class="d up">+7.4% vs last month</span></div>
+            <div class="kpi"><span class="k">Quote-to-bind</span><span class="v num">31.5%</span><span class="d">1,206 quotes issued</span></div>
+            <div class="kpi"><span class="k">Avg commission rate</span><span class="v num">13.8%</span><span class="d">blended across carriers</span></div>
+          </div>
+          <div class="chartwrap">
+            <div class="ctrow"><p class="ct">New premium written by month</p><span class="crange num">$1.21M &rarr; $1.84M</span></div>
+            <svg class="chart" viewBox="0 0 560 130" role="img" aria-label="New premium written rising through the year">
+              <g stroke="#243044" stroke-width="1">
+                <line x1="8" y1="24" x2="554" y2="24"/><line x1="8" y1="58" x2="554" y2="58"/>
+                <line x1="8" y1="92" x2="554" y2="92"/><line x1="8" y1="120" x2="554" y2="120"/>
+              </g>
+              <path d="M10,96 L60,90 L110,94 L160,80 L210,86 L260,72 L310,76 L360,62 L410,66 L460,54 L510,50 L550,40 L550,120 L10,120 Z"
+                fill="#1A6ECC" opacity=".16"/>
+              <polyline points="10,96 60,90 110,94 160,80 210,86 260,72 310,76 360,62 410,66 460,54 510,50 550,40"
+                fill="none" stroke="#3F8AE0" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle cx="550" cy="40" r="4.5" fill="#3F8AE0"/>
+            </svg>
+            <div class="axis"><span>Apr</span><span>Jul</span><span>Oct</span><span>Jan</span><span>Mar</span></div>
+          </div>
+          <div class="chartwrap">
+            <div class="ctrow"><p class="ct">New premium by producer &mdash; highest to lowest</p></div>
+            <div class="bars">
+              <div class="bar"><span class="bl">Producer A</span><span class="bt"><span class="bf" style="width:100%"></span></span><span class="bv">$468K</span></div>
+              <div class="bar"><span class="bl">Producer B</span><span class="bt"><span class="bf" style="width:86%"></span></span><span class="bv">$402K</span></div>
+              <div class="bar"><span class="bl">Producer C</span><span class="bt"><span class="bf" style="width:76%"></span></span><span class="bv">$356K</span></div>
+              <div class="bar"><span class="bl">Producer D</span><span class="bt"><span class="bf" style="width:71%"></span></span><span class="bv">$331K</span></div>
+              <div class="bar"><span class="bl">Producer E</span><span class="bt"><span class="bf" style="width:60%"></span></span><span class="bv">$283K</span></div>
+            </div>
+          </div>
+          <p class="src"><b>Pulled from:</b> Applied Epic &middot; AMS360 &middot; EZLynx &middot; HawkSoft</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── HOME SERVICES / TRADES ─────────── -->
+    <section class="samp">
+      <div class="samp-hd">
+        <div>
+          <h2>Home services &amp; trades</h2>
+          <p class="story">He knows which trucks earn their keep today &mdash; not three weeks after month end.</p>
+        </div>
+        <span class="illus">Illustrative</span>
+      </div>
+      <div class="dash">
+        <div class="dash-bar">
+          <span class="t">SERVICE OPERATION &mdash; ALL BRANCHES</span>
+          <span class="rng">Month to date</span>
+        </div>
+        <div class="dash-body">
+          <div class="kpis">
+            <div class="kpi"><span class="k">First-time fix rate</span><span class="v num">78.4%</span><span class="d up">+1.2 pts vs last month</span></div>
+            <div class="kpi"><span class="k">Technician utilization</span><span class="v num">68.2%</span><span class="d warn">&minus;2.1 pts vs target</span></div>
+            <div class="kpi"><span class="k">Revenue per truck</span><span class="v num">$43.7K</span><span class="d">average across 5 trucks</span></div>
+            <div class="kpi"><span class="k">Average ticket</span><span class="v num">$684</span><span class="d up">+3.1% vs last month</span></div>
+            <div class="kpi"><span class="k">Callback rate</span><span class="v num">4.6%</span><span class="d warn">+0.5 pts vs last month</span></div>
+            <div class="kpi"><span class="k">Service agreements active</span><span class="v num">3,240</span><span class="d up">+118 vs last month</span></div>
+          </div>
+          <div class="chartwrap">
+            <div class="ctrow"><p class="ct">Revenue per truck by month</p><span class="crange num">$34.9K &rarr; $43.7K</span></div>
+            <svg class="chart" viewBox="0 0 560 130" role="img" aria-label="Revenue per truck climbing with a seasonal dip">
+              <g stroke="#243044" stroke-width="1">
+                <line x1="8" y1="24" x2="554" y2="24"/><line x1="8" y1="58" x2="554" y2="58"/>
+                <line x1="8" y1="92" x2="554" y2="92"/><line x1="8" y1="120" x2="554" y2="120"/>
+              </g>
+              <path d="M10,88 L60,78 L110,84 L160,66 L210,58 L260,64 L310,50 L360,58 L410,46 L460,52 L510,42 L550,36 L550,120 L10,120 Z"
+                fill="#1A6ECC" opacity=".16"/>
+              <polyline points="10,88 60,78 110,84 160,66 210,58 260,64 310,50 360,58 410,46 460,52 510,42 550,36"
+                fill="none" stroke="#3F8AE0" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle cx="550" cy="36" r="4.5" fill="#3F8AE0"/>
+            </svg>
+            <div class="axis"><span>Apr</span><span>Jul</span><span>Oct</span><span>Jan</span><span>Mar</span></div>
+          </div>
+          <div class="chartwrap">
+            <div class="ctrow"><p class="ct">Revenue per truck &mdash; highest to lowest</p></div>
+            <div class="bars">
+              <div class="bar"><span class="bl">Truck 12</span><span class="bt"><span class="bf" style="width:100%"></span></span><span class="bv">$52.4K</span></div>
+              <div class="bar"><span class="bl">Truck 07</span><span class="bt"><span class="bf" style="width:93%"></span></span><span class="bv">$48.9K</span></div>
+              <div class="bar"><span class="bl">Truck 03</span><span class="bt"><span class="bf" style="width:84%"></span></span><span class="bv">$44.1K</span></div>
+              <div class="bar"><span class="bl">Truck 15</span><span class="bt"><span class="bf" style="width:76%"></span></span><span class="bv">$39.8K</span></div>
+              <div class="bar"><span class="bl">Truck 09</span><span class="bt"><span class="bf warn" style="width:64%"></span></span><span class="bv">$33.3K</span></div>
+            </div>
+          </div>
+          <p class="src"><b>Pulled from:</b> ServiceTitan &middot; Jobber &middot; Housecall Pro &middot; QuickBooks</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">EnhancedOps.Ninja &middot; Augeo LLC &middot; Illustrative examples only &mdash; not a reading of any real business.</div>
+</footer>
+
+</body>
+</html>
