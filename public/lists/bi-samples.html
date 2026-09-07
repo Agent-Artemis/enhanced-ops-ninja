@@ -332,6 +332,44 @@ const F = {
   n:    v => v.toLocaleString('en-US'),
   days: v => (v>=0?'+':'−') + Math.abs(Math.round(v)) + ' days',
 };
+/* ═══════════════════════ DATES — ALL DERIVED AT LOAD ═══════════════════════
+   Nothing on this page is a fixed date. A dashboard that names the current
+   month and shows a trend ending in it reads as live; one frozen in a past
+   month reads as a screenshot someone took once.
+   The rule: NOTHING IS EVER IN THE FUTURE, and every relative statement stays
+   true whenever the page is opened. */
+const NOW = new Date();
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+/* Trailing n months ending with the CURRENT month, so the last point of any
+   trend is the same month the period label above it names. */
+function trailingMonths(n){
+  const out = [];
+  for(let i=n-1; i>=0; i--){
+    const d = new Date(NOW.getFullYear(), NOW.getMonth()-i, 1);
+    out.push(MON[d.getMonth()]);
+  }
+  return out;
+}
+const series    = vals => { const m=trailingMonths(vals.length); return vals.map((v,i)=>({m:m[i], v})); };
+const seriesRows = rows => { const m=trailingMonths(rows.length); return rows.map((r,i)=>Object.assign({m:m[i]}, r)); };
+
+const PERIOD = NOW.toLocaleDateString('en-US', {month:'long', year:'numeric'});
+
+/* The overnight refresh, pinned to 06:02 — but rolled back a day if the page is
+   opened before it has happened. A demo opened at 5:30am must not claim a
+   refresh from the future. */
+const REFRESH = (() => {
+  const d = new Date(NOW); d.setHours(6,2,0,0);
+  if (d > NOW) d.setDate(d.getDate()-1);
+  return d;
+})();
+const REFRESH_TODAY = REFRESH.toDateString() === NOW.toDateString();
+const REFRESH_HHMM  = String(REFRESH.getHours()).padStart(2,'0')+':'+String(REFRESH.getMinutes()).padStart(2,'0');
+const REFRESH_SHORT = REFRESH_TODAY ? REFRESH_HHMM : 'Yest.';
+const REFRESH_CARD  = 'Last refresh ' + (REFRESH_TODAY ? REFRESH_HHMM : 'yest. '+REFRESH_HHMM);
+const REFRESH_LONG  = 'Refreshed ' + REFRESH_HHMM + (REFRESH_TODAY ? ' today' : ' yesterday');
+
 const sum = (a,f) => a.reduce((t,x)=>t+f(x),0);
 const mean = (a,f) => sum(a,f)/a.length;
 
@@ -396,15 +434,10 @@ function cAgg(jobs){
   };
 }
 
-const C_MARGIN_TREND = [
-  {m:'Apr',v:18.9},{m:'May',v:19.1},{m:'Jun',v:18.6},{m:'Jul',v:18.8},
-  {m:'Aug',v:18.2},{m:'Sep',v:18.4},{m:'Oct',v:17.9},{m:'Nov',v:17.6},
-  {m:'Dec',v:17.4},{m:'Jan',v:17.0},{m:'Feb',v:16.8},{m:'Mar',v:16.5},
-];
-const C_BIDS = [
-  {m:'Oct',sub:14,won:4},{m:'Nov',sub:17,won:5},{m:'Dec',sub:11,won:2},
-  {m:'Jan',sub:16,won:5},{m:'Feb',sub:18,won:4},{m:'Mar',sub:19,won:6},
-];
+const C_MARGIN_TREND = series([18.9,19.1,18.6,18.8,18.2,18.4,17.9,17.6,17.4,17.0,16.8,16.5]);
+const C_BIDS = seriesRows([
+  {sub:14,won:4},{sub:17,won:5},{sub:11,won:2},{sub:16,won:5},{sub:18,won:4},{sub:19,won:6},
+]);
 const C_PIPELINE = [
   {id:'2071',desc:'Medical campus, phase 1',div:'Commercial',        val:9.4,stage:'Bid submitted',prob:45,age:12},
   {id:'2068',desc:'Distribution centre',     div:'Industrial',        val:7.8,stage:'Shortlisted',  prob:60,age:26},
@@ -414,9 +447,7 @@ const C_PIPELINE = [
   {id:'2059',desc:'Retail pad, two units',   div:'Commercial',        val:3.1,stage:'Negotiating',  prob:75,age:44},
   {id:'2079',desc:'Office refresh',          div:'Tenant improvement',val:1.7,stage:'Estimating',   prob:30,age: 2},
 ];
-const C_LEADS_TREND = [
-  {m:'Oct',v:26},{m:'Nov',v:29},{m:'Dec',v:19},{m:'Jan',v:28},{m:'Feb',v:31},{m:'Mar',v:34},
-];
+const C_LEADS_TREND = series([26,29,19,28,31,34]);
 const C_LEAD_SOURCES = [
   {src:'Referral and repeat client', leads:14, cpl:  0, note:'No direct spend'},
   {src:'Website and search',         leads: 8, cpl:214},
@@ -425,9 +456,7 @@ const C_LEAD_SOURCES = [
   {src:'Paid search',                leads: 2, cpl:412},
   {src:'Site signage',               leads: 1, cpl:160},
 ];
-const C_OT_TREND = [
-  {m:'Oct',v:9.4},{m:'Nov',v:10.1},{m:'Dec',v:8.8},{m:'Jan',v:10.6},{m:'Feb',v:11.9},{m:'Mar',v:11.2},
-];
+const C_OT_TREND = series([9.4,10.1,8.8,10.6,11.9,11.2]);
 const C_TRADES = [
   {trade:'Concrete',   hrs:3180, vs: 6.2},
   {trade:'Carpentry',  hrs:2940, vs: 2.1},
@@ -437,12 +466,157 @@ const C_TRADES = [
   {trade:'Steel',      hrs: 720, vs: 1.2},
 ];
 const C_FEED = [
-  {d:'06:02',   t:'ok',   b:'Refresh complete', x:'Sage 300 CRE, Procore, Buildertrend and QuickBooks. 4 of 4 connected.'},
+  {d:REFRESH_SHORT, t:'ok',   b:'Refresh complete', x:'Sage 300 CRE, Procore, Buildertrend and QuickBooks. 4 of 4 connected.'},
   {d:'Yest.',   t:'bad',  b:'Job 1047 slipped a further 3 days', x:'Concrete pour rescheduled. Now 21 days behind baseline.'},
   {d:'Yest.',   t:'warn', b:'CO-118 approved on Job 1029', x:'$46K approved in Procore, not yet billed in Sage. Margin will move when it is.'},
   {d:'2 days',  t:'',     b:'Job 1038 crossed 85% complete', x:'Retainage release request due at substantial completion.'},
   {d:'3 days',  t:'bad',  b:'Labour on Job 1047 passed +12% against estimate', x:'Third consecutive week over. Flagged to the project manager.'},
   {d:'4 days',  t:'ok',   b:'Retainage released on Job 1035', x:'$84K received and applied. Job closed in the ledger.'},
+];
+
+/* ─────────────────────────── INSURANCE AGENCY ───────────────────────────
+   One record per producer. Producers are lettered, never named. Everything on
+   the Overview, Book of Business and Finance screens computes from this. */
+const IPROD = [
+  { id:'A', newPrem:468, pif:1985, renDue:212, renKept:190, renDuePrem:1180, renKeptPrem:1040,
+    quotes:301, bound: 96, commRate:14.2, earned:2140, incurred:1180, tenure:11 },
+  { id:'B', newPrem:402, pif:1842, renDue:198, renKept:177, renDuePrem:1090, renKeptPrem: 940,
+    quotes:268, bound: 86, commRate:13.9, earned:1980, incurred:1120, tenure:7 },
+  { id:'C', newPrem:356, pif:1704, renDue:181, renKept:160, renDuePrem: 995, renKeptPrem: 826,
+    quotes:241, bound: 74, commRate:13.5, earned:1810, incurred:1090, tenure:4 },
+  { id:'D', newPrem:331, pif:1521, renDue:165, renKept:146, renDuePrem: 905, renKeptPrem: 762,
+    quotes:219, bound: 68, commRate:13.6, earned:1640, incurred: 980, tenure:9 },
+  { id:'E', newPrem:283, pif:1360, renDue:148, renKept:128, renDuePrem: 810, renKeptPrem: 640,
+    quotes:177, bound: 56, commRate:13.4, earned:1430, incurred: 868, tenure:2 },
+];
+IPROD.forEach(p => {
+  p.retPolicy  = p.renKept / p.renDue * 100;
+  p.retPremium = p.renKeptPrem / p.renDuePrem * 100;
+  p.bindRate   = p.bound / p.quotes * 100;
+  p.lossRatio  = p.incurred / p.earned * 100;
+  p.comm       = p.newPrem * p.commRate / 100;
+});
+
+function iAgg(ps){
+  const newPrem = sum(ps,p=>p.newPrem);
+  return {
+    ps, all: ps.length === IPROD.length,
+    newPrem,
+    pif:        sum(ps,p=>p.pif),
+    retPolicy:  sum(ps,p=>p.renKept)/sum(ps,p=>p.renDue)*100,
+    retPremium: sum(ps,p=>p.renKeptPrem)/sum(ps,p=>p.renDuePrem)*100,
+    quotes:     sum(ps,p=>p.quotes),
+    bound:      sum(ps,p=>p.bound),
+    bindRate:   sum(ps,p=>p.bound)/sum(ps,p=>p.quotes)*100,
+    lossRatio:  sum(ps,p=>p.incurred)/sum(ps,p=>p.earned)*100,
+    earned:     sum(ps,p=>p.earned),
+    incurred:   sum(ps,p=>p.incurred),
+    commWritten:sum(ps,p=>p.comm),
+    commRate:   sum(ps,p=>p.comm)/newPrem*100,
+  };
+}
+/* Carrier statements settle on PAID, the agency system books on WRITTEN. The
+   gap is business written this month the carrier has not yet collected. */
+const I_COMM_UNSETTLED = 23;
+const I_PREM_TREND  = series([1.21,1.28,1.24,1.39,1.33,1.47,1.42,1.56,1.51,1.68,1.74,1.84]);
+const I_LOSS_TREND  = series([61.4,60.8,61.1,60.2,59.6,59.9,59.1,58.8,59.2,58.6,58.4,58.2]);
+const I_QUOTE_TREND = seriesRows([{q:181,b:54},{q:194,b:61},{q:172,b:52},{q:203,b:66},{q:212,b:68},{q:244,b:79}]);
+const I_LINES = [
+  {line:'Commercial property',  prem:3120, policies:1840, loss:54.2, ret:91.2},
+  {line:'Commercial auto',      prem:2240, policies:1210, loss:71.6, ret:84.8},
+  {line:'General liability',    prem:1810, policies:1975, loss:52.8, ret:90.1},
+  {line:'Workers compensation', prem:1140, policies: 862, loss:63.4, ret:88.6},
+  {line:'Personal lines',       prem: 690, policies:2525, loss:49.1, ret:87.3},
+];
+const I_LEADS = [
+  {src:'Referral from existing client', leads:41, cpl:  0},
+  {src:'Producer network and centres of influence', leads:28, cpl: 92},
+  {src:'Website and search',            leads:19, cpl:186},
+  {src:'Association and affinity groups', leads:14, cpl:241},
+  {src:'Paid search',                   leads: 9, cpl:394},
+  {src:'Direct mail',                   leads: 5, cpl:512},
+];
+const I_LEADS_TREND = series([94,102,88,109,114,116]);
+const I_CLAIMS = [
+  {id:'CL-4471', line:'Commercial auto',      status:'Open',        age:41, reserve:86,  st:'bad'},
+  {id:'CL-4468', line:'Commercial property',  status:'Open',        age:28, reserve:142, st:'warn'},
+  {id:'CL-4463', line:'Workers compensation', status:'In review',   age:22, reserve: 54, st:'warn'},
+  {id:'CL-4459', line:'General liability',    status:'Open',        age:16, reserve: 31, st:'neu'},
+  {id:'CL-4452', line:'Commercial auto',      status:'Awaiting docs',age:12, reserve: 24, st:'neu'},
+  {id:'CL-4447', line:'Personal lines',       status:'Settling',    age: 8, reserve: 11, st:'ok'},
+];
+const I_FEED = [
+  {d:REFRESH_SHORT, t:'ok',   b:'Refresh complete', x:'Applied Epic, AMS360, EZLynx and HawkSoft. 4 of 4 connected.'},
+  {d:'Yest.',  t:'warn', b:'Carrier statement posted', x:'Commission $23K short of written. Business bound late in the month, not yet settled.'},
+  {d:'Yest.',  t:'bad',  b:'Commercial auto loss ratio passed 71%', x:'Third month above target. Renewal pricing under review.'},
+  {d:'2 days', t:'',     b:'Producer E book crossed 1,350 policies', x:'Second year in the seat. Retention still the lowest of the five.'},
+  {d:'3 days', t:'bad',  b:'12 renewals lapse within 30 days', x:'$186K of premium. Nobody assigned on 4 of them.'},
+  {d:'4 days', t:'ok',   b:'Quote volume best in six months', x:'244 quotes issued, 79 bound.'},
+];
+
+/* ─────────────────────── HOME SERVICES & TRADES ───────────────────────
+   One record per truck. Trucks are numbered, technicians are lettered. */
+const HTRUCK = [
+  { id:'12', tech:'Tech A', rev:52.4, jobs:72, ftfJobs:58, callbacks:2, paidHrs:176, billedHrs:128, driveHrs:24, members:812, tenure:6 },
+  { id:'07', tech:'Tech B', rev:48.9, jobs:68, ftfJobs:55, callbacks:3, paidHrs:172, billedHrs:122, driveHrs:22, members:745, tenure:4 },
+  { id:'03', tech:'Tech C', rev:44.1, jobs:64, ftfJobs:50, callbacks:3, paidHrs:176, billedHrs:118, driveHrs:23, members:668, tenure:9 },
+  { id:'15', tech:'Tech D', rev:39.8, jobs:60, ftfJobs:46, callbacks:3, paidHrs:168, billedHrs:110, driveHrs:22, members:573, tenure:2 },
+  { id:'09', tech:'Tech E', rev:33.3, jobs:55, ftfJobs:41, callbacks:4, paidHrs:164, billedHrs:106, driveHrs:22, members:442, tenure:1 },
+];
+HTRUCK.forEach(t => {
+  t.ftf        = t.ftfJobs / t.jobs * 100;
+  t.callbackPct= t.callbacks / t.jobs * 100;
+  t.util       = t.billedHrs / t.paidHrs * 100;
+  t.utilDrive  = (t.billedHrs + t.driveHrs) / t.paidHrs * 100;
+  t.ticket     = t.rev * 1000 / t.jobs;
+});
+function hAgg(ts){
+  const rev=sum(ts,t=>t.rev), jobs=sum(ts,t=>t.jobs);
+  return {
+    ts, all: ts.length === HTRUCK.length,
+    rev, jobs,
+    revPerTruck: mean(ts,t=>t.rev),
+    ftf:       sum(ts,t=>t.ftfJobs)/jobs*100,
+    callback:  sum(ts,t=>t.callbacks)/jobs*100,
+    util:      sum(ts,t=>t.billedHrs)/sum(ts,t=>t.paidHrs)*100,
+    utilDrive: (sum(ts,t=>t.billedHrs)+sum(ts,t=>t.driveHrs))/sum(ts,t=>t.paidHrs)*100,
+    ticket:    rev*1000/jobs,
+    members:   sum(ts,t=>t.members),
+    billedHrs: sum(ts,t=>t.billedHrs), paidHrs: sum(ts,t=>t.paidHrs),
+  };
+}
+/* ServiceTitan books completed work; QuickBooks books invoices. The gap is
+   work finished but not yet invoiced, plus membership revenue deferred over
+   the term of the agreement. */
+const H_UNBILLED = 14.1, H_DEFERRED = 8.2;
+const H_REV_TREND    = series([34.9,36.2,35.4,38.1,39.6,38.8,41.2,40.4,42.6,41.9,43.1,43.7]);
+const H_TICKET_TREND = series([612,624,631,648,657,663,671,668,679,675,681,685]);
+const H_CALL_TREND   = seriesRows([{booked:284,completed:266},{booked:301,completed:288},{booked:272,completed:259},
+  {booked:318,completed:301},{booked:326,completed:312},{booked:334,completed:319}]);
+const H_JOBTYPES = [
+  {type:'Repair — HVAC',        jobs:104, rev:78.2, margin:41.2},
+  {type:'Repair — plumbing',    jobs: 86, rev:48.6, margin:44.8},
+  {type:'Maintenance visits',   jobs: 71, rev:24.1, margin:52.4},
+  {type:'Replacement — HVAC',   jobs: 22, rev:52.8, margin:28.6},
+  {type:'Water heater install', jobs: 21, rev:11.4, margin:33.1},
+  {type:'Electrical service',   jobs: 15, rev: 3.4, margin:46.2},
+];
+const H_LEADS = [
+  {src:'Membership and repeat customers', leads:118, cpl:  0},
+  {src:'Google local service ads',        leads: 74, cpl: 62},
+  {src:'Website and search',              leads: 51, cpl: 41},
+  {src:'Neighbour referral',              leads: 38, cpl:  0},
+  {src:'Paid search',                     leads: 29, cpl:118},
+  {src:'Yard signs and vehicle wraps',    leads: 14, cpl: 23},
+];
+const H_LEADS_TREND = series([268,281,254,298,311,324]);
+const H_FEED = [
+  {d:REFRESH_SHORT, t:'ok',   b:'Refresh complete', x:'ServiceTitan, Jobber, Housecall Pro and QuickBooks. 4 of 4 connected.'},
+  {d:'Yest.',  t:'warn', b:'$14.1K completed but not invoiced', x:'11 jobs closed in the field with no invoice raised. Oldest is 6 days.'},
+  {d:'Yest.',  t:'bad',  b:'Truck 09 callback rate hit 7.3%', x:'Fourth callback this month. Technician in first year.'},
+  {d:'2 days', t:'ok',   b:'Memberships passed 3,200 active', x:'118 net adds this month.'},
+  {d:'3 days', t:'',     b:'Average ticket best in twelve months', x:'$685, up from $612 a year ago.'},
+  {d:'4 days', t:'warn', b:'15 unassigned calls rolled to next day', x:'All in the same postcode. Capacity, not demand.'},
 ];
 </script>
 
@@ -554,7 +728,7 @@ function openDrill(id){
       <div class="drow-v"><code>${esc(o.field)}</code></div>
       ${o.fieldNote?`<div class="drow-sub">${esc(o.fieldNote)}</div>`:''}</div>
     <div class="drow"><div class="drow-k">As of</div>
-      <div class="drow-v">${esc(o.asOf||'Refreshed 06:00 today')}</div></div>
+      <div class="drow-v">${esc(o.asOf||REFRESH_LONG)}</div></div>
     ${o.rec?`<div class="drow rec"><div class="drow-k rec-flag">
         <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M7 1.6 13 12.4H1z"/><path d="M7 6v2.6"/><circle cx="7" cy="10.6" r=".6" fill="currentColor"/></svg>
         Reconciliation</div>
@@ -581,6 +755,10 @@ const ICONS = {
   sales:     `<svg ${SVGP}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`,
   marketing: `<svg ${SVGP}><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>`,
   finance:   `<svg ${SVGP}><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
+  book:      `<svg ${SVGP}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+  claims:    `<svg ${SVGP}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>`,
+  dispatch:  `<svg ${SVGP}><path d="M1 3h13v13H1z"/><path d="M14 8h4l3 3v5h-7z"/><circle cx="5.5" cy="19" r="2"/><circle cx="17.5" cy="19" r="2"/></svg>`,
+  techs:     `<svg ${SVGP}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
   people:    `<svg ${SVGP}><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
 };
 
@@ -623,7 +801,7 @@ overview(a, ent){
   `<div class="cols c2">
     ${card('Gross margin by month','18.9% → '+F.pct(a.avgMargin),
       lineChart(C_MARGIN_TREND,{dot:'warn',alt:'Gross margin drifting down from about nineteen per cent to about sixteen and a half'}))}
-    ${card('Activity','Last refresh 06:02', feed(C_FEED))}
+    ${card('Activity',REFRESH_CARD, feed(C_FEED))}
   </div>` +
   card('Gross margin by job — highest to lowest', null,
     bars(jobsSorted.map(j=>({ l:`Job ${j.id} · ${j.desc}`, v:j.margin, t:F.pct(j.margin),
@@ -649,7 +827,7 @@ jobs(a, ent){
       sys:'Procore — RFI log', field:"count of RFIs with status = 'Open'" }),
     kpi({ k:'Safety incidents YTD', v:'2', d:'0 lost-time', dcls:'up',
       sys:'Procore — incident log', field:'count of recordable incidents, year to date',
-      asOf:'Refreshed 06:00 today. Year to date.' }),
+      asOf:REFRESH_LONG+'. Year to date.' }),
   ]) +
   card('Cost to date against revenue earned — by job', null,
     bars(sorted.map(j=>({ l:`Job ${j.id}`, v:j.earned, t:`earned ${F.m(j.earned)} · cost ${F.m(j.costToDate)}` })))) +
@@ -753,7 +931,7 @@ finance(a, ent){
   return kpis([
     kpi({ k:'Cash on hand', v:'$3.4M', d:'covers 5.1 weeks of cost',
       sys:'QuickBooks — bank feeds', field:'Σ cleared balance across operating accounts',
-      asOf:'Refreshed 06:00 today, from the previous business day’s close.' }),
+      asOf:REFRESH_LONG+', from the previous business day’s close.' }),
     kpi({ k:'Accounts receivable', v:F.m(a.ar), d:`${dso} days sales outstanding`,
       sys:'Sage 300 CRE — AR ledger', field:'Σ open invoices, net of credits' }),
     kpi({ k:'AR over 60 days', v:F.k(a.ar60*1000), d:`${F.pct(a.ar60/a.ar*100)} of receivables`, dcls:'warn',
@@ -833,13 +1011,458 @@ people(a, ent){
 },
 
 };
+
+const SRC_INSURANCE = 'Applied Epic &middot; AMS360 &middot; EZLynx &middot; HawkSoft';
+const SRC_HOME = 'ServiceTitan &middot; Jobber &middot; Housecall Pro &middot; QuickBooks';
+
+/* ═════════════════════ INSURANCE AGENCY SCREENS ═════════════════════ */
+const I_SCREENS = {
+
+overview(a){
+  const byPrem = a.ps.slice().sort((x,y)=>y.newPrem-x.newPrem);
+  return kpis([
+    kpi({ k:'Policies in force', v:F.n(a.pif), d:'+174 vs last month', dcls:'up',
+      sys:'Applied Epic — policy register',
+      field:"count of policies with status = 'In force' at period end" }),
+    kpi({ k:'Retention rate', v:F.pct(a.retPolicy), d:'−0.9 pts vs last year', dcls:'warn',
+      sys:'Applied Epic — renewal register',
+      field:'policies renewed ÷ policies due for renewal',
+      rec:`Counted by PREMIUM instead of by policy count it is ${F.pct(a.retPremium)}. You kept ${F.pct(a.retPolicy)} of the policies and only ${F.pct(a.retPremium)} of the money, which means the accounts that left were bigger than average. The carrier reports the premium figure; the agency reports the policy figure; the agency's is the flattering one.` }),
+    kpi({ k:'Loss ratio', v:F.pct(a.lossRatio), d:'−1.4 pts vs last year', dcls:'up',
+      sys:'Carrier statements',
+      field:'incurred losses ÷ earned premium',
+      fieldNote:`${'$'+F.n(a.incurred)}K incurred against ${'$'+F.n(a.earned)}K earned.`,
+      rec:'Carriers report this on their own accident-year basis and restate it as claims develop. The figure here is as last reported and will move. It is the one number on this screen the agency does not control.' }),
+    kpi({ k:'New premium written', v:F.m(a.newPrem/1000), d:'+7.4% vs last month', dcls:'up',
+      sys:'Applied Epic — new business register',
+      field:'Σ annualised premium on policies bound in the current month' }),
+    kpi({ k:'Quote to bind', v:F.pct(a.bindRate), d:`${F.n(a.bound)} bound of ${F.n(a.quotes)} quoted`,
+      sys:'EZLynx — rating history',
+      field:'policies bound ÷ quotes issued, current month',
+      rec:'EZLynx counts every rate run as a quote, so re-rating the same risk three times counts three times. Applied Epic counts one quote per opportunity and reports 38.4%. The lower number here is the raw one; the higher one is the one worth managing to.' }),
+    kpi({ k:'Average commission rate', v:F.pct(a.commRate), d:'blended across carriers',
+      sys:'Applied Epic — commission schedule',
+      field:'Σ commission ÷ Σ written premium, weighted by premium' }),
+  ]) +
+  `<div class="cols c2">
+    ${card('New premium written by month','$1.21M → '+F.m(a.newPrem/1000),
+      lineChart(I_PREM_TREND,{fill:true,alt:'New premium written rising through the year'}))}
+    ${card('Activity',REFRESH_CARD, feed(I_FEED))}
+  </div>` +
+  card('New premium by producer — highest to lowest', null,
+    bars(byPrem.map(p=>({ l:'Producer '+p.id, v:p.newPrem, t:F.k(p.newPrem) })))) +
+  srcLine(SRC_INSURANCE);
+},
+
+book(a){
+  const lines = I_LINES.slice().sort((x,y)=>y.prem-x.prem);
+  return kpis([
+    kpi({ k:'Book premium, earned', v:F.m(a.earned/1000), d:`${F.n(a.pif)} policies in force`,
+      sys:'Applied Epic — policy register', field:'Σ earned premium across in-force policies' }),
+    kpi({ k:'Average policy size', v:'$'+F.n(Math.round(a.earned*1000/a.pif)), d:'earned premium per policy',
+      sys:'Applied Epic', field:'Σ earned premium ÷ count of in-force policies' }),
+    kpi({ k:'Retention by premium', v:F.pct(a.retPremium), d:`vs ${F.pct(a.retPolicy)} by policy count`, dcls:'warn',
+      sys:'Applied Epic — renewal register',
+      field:'renewed premium ÷ premium due for renewal',
+      rec:`This is the same reconciliation as on the Overview, the other way up. The ${(a.retPolicy-a.retPremium).toFixed(1)}-point gap between the two is the whole story: the book is shrinking in money faster than it is shrinking in policies.` }),
+    kpi({ k:'Renewals due, 30 days', v:'62', d:'$186K premium · 4 unassigned', dcls:'bad',
+      sys:'Applied Epic — renewal register',
+      field:'count of policies with renewal date within 30 days' }),
+    kpi({ k:'Lines of business', v:String(I_LINES.length), d:'commercial auto worst on loss',
+      sys:'Applied Epic', field:'distinct lines of business with in-force premium' }),
+    kpi({ k:'Cross-sell ratio', v:'1.42', d:'policies per client account',
+      sys:'Applied Epic — account structure',
+      field:'count of in-force policies ÷ count of client accounts',
+      rec:'AMS360 reports 1.68 because it counts each endorsement as a policy record. Applied Epic counts the policy. Anything measured per policy will differ between the two systems for the same reason.' }),
+  ]) +
+  `<div class="cols c2">
+    ${card('Loss ratio by month','61.4% → '+F.pct(a.lossRatio),
+      lineChart(I_LOSS_TREND,{alt:'Loss ratio improving slowly through the year'}))}
+    ${card('Premium by line of business — largest first', null,
+      bars(lines.map(l=>({ l:l.line, v:l.prem, t:F.k(l.prem) }))))}
+  </div>` +
+  card('Book of business by line', null,
+    table([
+      {label:'Line of business', cls:'s', get:l=>esc(l.line)},
+      {label:'Earned premium', cls:'n', get:l=>F.k(l.prem)},
+      {label:'Policies',       cls:'n', get:l=>F.n(l.policies)},
+      {label:'Average premium',cls:'n', get:l=>'$'+F.n(Math.round(l.prem*1000/l.policies))},
+      {label:'Loss ratio',     cls:'n', get:l=>`<span class="pill ${l.loss<58?'ok':l.loss<68?'warn':'bad'}">${F.pct(l.loss)}</span>`},
+      {label:'Retention',      cls:'n', get:l=>`<span class="pill ${l.ret>=90?'ok':l.ret>=86?'warn':'bad'}">${F.pct(l.ret)}</span>`},
+      {label:'Share of book',  cls:'n', get:l=>F.pct(l.prem/sum(I_LINES,x=>x.prem)*100)},
+    ], lines)) +
+  srcLine(SRC_INSURANCE);
+},
+
+marketing(a){
+  const spend = sum(I_LEADS, s=>s.leads*s.cpl), leads = sum(I_LEADS, s=>s.leads);
+  const srcs = I_LEADS.slice().sort((x,y)=>y.leads-x.leads);
+  return (a.all ? '' : scopeNote('Marketing is measured agency-wide. This screen does not change with the producer selected above.')) +
+  kpis([
+    kpi({ k:'Inbound leads MTD', v:F.n(leads), d:'+2 vs last month', dcls:'up',
+      sys:'CRM — lead records', field:'count of inbound leads created in the current month' }),
+    kpi({ k:'Cost per lead', v:'$'+Math.round(spend/leads), d:'$'+F.n(spend)+' spend MTD',
+      sys:'CRM + accounting', field:'marketing spend in the month ÷ inbound leads in the month' }),
+    kpi({ k:'Referral share', v:F.pct(41/leads*100), d:'41 of '+leads+' leads', dcls:'up',
+      sys:'CRM — lead source field', field:"leads where source = 'Referral' ÷ all leads" }),
+    kpi({ k:'Lead to quote', v:'71.3%', d:'from inbound leads',
+      sys:'CRM + EZLynx', field:'opportunities quoted ÷ inbound leads' }),
+    kpi({ k:'Quotes issued MTD', v:F.n(a.quotes), d:F.n(a.bound)+' bound',
+      sys:'EZLynx — rating history', field:'count of quotes issued in the current month' }),
+    kpi({ k:'Cost per policy bound', v:'$'+Math.round(spend/a.bound), d:'across all sources',
+      sys:'CRM + accounting + EZLynx',
+      field:'marketing spend in the month ÷ policies bound in the month',
+      rec:'This ignores referrals, which cost nothing and produce the most business. Measured only on paid sources it is $1,204 per bound policy — that is the number to judge the paid spend on, and it is five times the blended figure.' }),
+  ]) +
+  `<div class="cols c2">
+    ${card('Inbound leads by month','94 → '+leads, lineChart(I_LEADS_TREND,{fill:true,alt:'Inbound leads rising over six months'}))}
+    ${card('Lead sources — most leads first', null,
+      bars(srcs.map(s=>({ l:s.src, v:s.leads, t:`${s.leads} · ${s.cpl?('$'+s.cpl+' each'):'no direct spend'}` }))))}
+  </div>` +
+  card('Quotes issued against policies bound', null,
+    groupedBars(I_QUOTE_TREND, [
+      {k:'q', label:'Quoted', color:'#2A7DE1'},
+      {k:'b', label:'Bound',  color:'#F5B301'},
+    ], {alt:'Quotes issued against policies bound over six months'})) +
+  srcLine('CRM &middot; EZLynx &middot; Applied Epic &middot; Accounting');
+},
+
+claims(a){
+  const cl = I_CLAIMS.slice().sort((x,y)=>y.reserve-x.reserve);
+  return (a.all ? '' : scopeNote('Claims and service are measured agency-wide. This screen does not change with the producer selected above.')) +
+  kpis([
+    kpi({ k:'Open claims', v:F.n(I_CLAIMS.length), d:F.k(sum(I_CLAIMS,c=>c.reserve))+' reserved',
+      sys:'Carrier claim feeds', field:"count of claims with status not in ('Closed','Denied')" }),
+    kpi({ k:'Average days open', v:F.n(Math.round(mean(I_CLAIMS,c=>c.age))), d:'oldest 41 days', dcls:'warn',
+      sys:'Carrier claim feeds', field:'mean( today − date reported ) across open claims' }),
+    kpi({ k:'Claims closed MTD', v:'9', d:'$104K paid',
+      sys:'Carrier claim feeds', field:'count of claims closed in the current month' }),
+    kpi({ k:'Service requests open', v:'34', d:'6 over SLA', dcls:'warn',
+      sys:'Applied Epic — activity log',
+      field:"count of service activities with status = 'Open'",
+      rec:'HawkSoft holds another 12 open items for the accounts still on the legacy system. Until those accounts migrate, any service backlog number taken from one system alone is understated by about a quarter.' }),
+    kpi({ k:'Endorsements MTD', v:'87', d:'$62K premium change',
+      sys:'Applied Epic — policy changes', field:'count of endorsements processed in the current month' }),
+    kpi({ k:'Certificates issued MTD', v:'241', d:'94% same day', dcls:'up',
+      sys:'Applied Epic — certificate register', field:'count of certificates of insurance issued in the month' }),
+  ]) +
+  card('Open claims — largest reserve first', null,
+    table([
+      {label:'Claim',   cls:'s', get:c=>esc(c.id)},
+      {label:'Line of business', get:c=>esc(c.line)},
+      {label:'Status',           get:c=>esc(c.status)},
+      {label:'Days open',cls:'n',get:c=>c.age>30?`<span class="pill bad">${c.age}</span>`:c.age>20?`<span class="pill warn">${c.age}</span>`:c.age},
+      {label:'Reserve', cls:'n', get:c=>F.k(c.reserve)},
+      {label:'Priority',         get:c=>`<span class="pill ${c.st}">${c.st==='bad'?'Escalate':c.st==='warn'?'Watch':c.st==='ok'?'Closing':'Normal'}</span>`},
+    ], cl)) +
+  card('Reserves by claim — largest first', null,
+    bars(cl.map(c=>({ l:`${c.id} · ${c.line}`, v:c.reserve, t:F.k(c.reserve),
+      cls: c.st==='bad'?'bad':c.st==='warn'?'warn':'' })))) +
+  srcLine('Carrier claim feeds &middot; Applied Epic &middot; HawkSoft');
+},
+
+finance(a){
+  const received = a.commWritten - (a.all ? I_COMM_UNSETTLED : I_COMM_UNSETTLED*a.newPrem/sum(IPROD,p=>p.newPrem));
+  const byComm = a.ps.slice().sort((x,y)=>y.comm-x.comm);
+  return kpis([
+    kpi({ k:'Commission written MTD', v:F.k(a.commWritten), d:F.pct(a.commRate)+' of written premium',
+      sys:'Applied Epic — commission schedule',
+      field:'Σ (written premium × commission rate) on policies bound in the month',
+      rec:`Carrier statements show ${F.k(received)} received. The ${F.k(a.commWritten-received)} difference is business bound late in the month that the carrier has not billed and collected yet. Carriers settle on PAID; the agency books on WRITTEN. Neither is wrong, and the gap is not a loss — but treating written commission as cash is how an agency runs out of it.` }),
+    kpi({ k:'Commission received MTD', v:F.k(received), d:'per carrier statements',
+      sys:'Carrier statements + QuickBooks',
+      field:'Σ commission credited on carrier statements in the month' }),
+    kpi({ k:'Unsettled commission', v:F.k(a.commWritten-received), d:'written, not yet paid', dcls:'warn',
+      sys:'Applied Epic vs carrier statements',
+      field:'commission written in the month − commission received in the month' }),
+    kpi({ k:'Agency bill receivable', v:'$412K', d:'$68K over 60 days', dcls:'warn',
+      sys:'Applied Epic — AR ledger', field:'Σ open agency-bill invoices, net of credits' }),
+    kpi({ k:'Trust account balance', v:'$1.24M', d:'premium held for carriers',
+      sys:'QuickBooks — trust account',
+      field:'cleared balance on the premium trust account',
+      rec:'This is not agency money. It is premium collected from clients and owed to carriers, and it must never be read as cash available. It sits on this screen precisely so nobody mistakes it for the operating balance.' }),
+    kpi({ k:'Revenue per employee', v:'$118K', d:'16 staff, annualised',
+      sys:'Applied Epic + payroll', field:'annualised commission revenue ÷ headcount' }),
+  ]) +
+  card('Commission by producer — highest to lowest', null,
+    bars(byComm.map(p=>({ l:'Producer '+p.id, v:p.comm, t:`${F.k(p.comm)} · ${F.pct(p.commRate)}` })))) +
+  card('Producer contribution', null,
+    table([
+      {label:'Producer', cls:'s', get:p=>'Producer '+esc(p.id)},
+      {label:'New premium',   cls:'n', get:p=>F.k(p.newPrem)},
+      {label:'Commission',    cls:'n', get:p=>F.k(p.comm)},
+      {label:'Rate',          cls:'n', get:p=>F.pct(p.commRate)},
+      {label:'Policies in force',cls:'n',get:p=>F.n(p.pif)},
+      {label:'Retention',     cls:'n', get:p=>`<span class="pill ${p.retPolicy>=89?'ok':p.retPolicy>=87?'warn':'bad'}">${F.pct(p.retPolicy)}</span>`},
+      {label:'By premium',    cls:'n', get:p=>`<span class="pill ${p.retPremium>=88?'ok':p.retPremium>=84?'warn':'bad'}">${F.pct(p.retPremium)}</span>`},
+      {label:'Loss ratio',    cls:'n', get:p=>F.pct(p.lossRatio)},
+      {label:'Years',         cls:'n', get:p=>p.tenure},
+    ], byComm)) +
+  srcLine(SRC_INSURANCE + ' &middot; QuickBooks');
+},
+
+people(a){
+  const byTen = a.ps.slice().sort((x,y)=>y.tenure-x.tenure);
+  return kpis([
+    kpi({ k:'Producers', v:String(a.ps.length), d:'11 service staff behind them',
+      sys:'Payroll', field:'count of licensed producers on the current payroll' }),
+    kpi({ k:'Average tenure', v:mean(a.ps,p=>p.tenure).toFixed(1)+' yrs', d:'newest 2 years in seat',
+      sys:'Payroll', field:'mean( years since hire ) across producers' }),
+    kpi({ k:'New premium per producer', v:F.k(a.newPrem/a.ps.length), d:'current month',
+      sys:'Applied Epic + payroll', field:'Σ new premium written ÷ count of producers' }),
+    kpi({ k:'Accounts per service staff', v:'538', d:'11 staff, 5,921 accounts', dcls:'warn',
+      sys:'Applied Epic + payroll',
+      field:'count of client accounts ÷ count of service staff',
+      rec:'Applied Epic counts 5,921 accounts; AMS360 counts 6,140 because it has not merged duplicate households. Any per-head workload figure inherits whichever duplicate problem the source system has.' }),
+    kpi({ k:'Licence renewals due', v:'3', d:'within 90 days', dcls:'warn',
+      sys:'Payroll — licence register', field:'count of producer licences expiring within 90 days' }),
+    kpi({ k:'E&O training current', v:'100%', d:'all staff, this cycle', dcls:'up',
+      sys:'Payroll — training records', field:'staff with current E&O training ÷ all staff' }),
+  ]) +
+  `<div class="cols c2">
+    ${card('New premium per producer — highest first', null,
+      bars(a.ps.slice().sort((x,y)=>y.newPrem-x.newPrem).map(p=>({ l:'Producer '+p.id, v:p.newPrem, t:F.k(p.newPrem) }))))}
+    ${card('Retention by producer — policy count', null,
+      bars(a.ps.slice().sort((x,y)=>y.retPolicy-x.retPolicy).map(p=>({ l:'Producer '+p.id, v:p.retPolicy,
+        t:`${F.pct(p.retPolicy)} · ${F.pct(p.retPremium)} by premium`,
+        cls: p.retPolicy<87 ? 'warn' : '' }))))}
+  </div>` +
+  card('Producers by tenure', null,
+    bars(byTen.map(p=>({ l:'Producer '+p.id, v:p.tenure, t:p.tenure+' years' })))) +
+  srcLine('Payroll &middot; Applied Epic &middot; AMS360');
+},
+
+};
+
+/* ═════════════════════ HOME SERVICES & TRADES SCREENS ═════════════════════ */
+const H_SCREENS = {
+
+overview(a){
+  const byRev = a.ts.slice().sort((x,y)=>y.rev-x.rev);
+  const qbRev = a.rev - (a.all ? H_UNBILLED+H_DEFERRED : (H_UNBILLED+H_DEFERRED)*a.rev/sum(HTRUCK,t=>t.rev));
+  return kpis([
+    kpi({ k:'Revenue MTD', v:F.k(a.rev), d:`${F.n(a.jobs)} jobs completed`,
+      sys:'ServiceTitan — completed work',
+      field:'Σ value of jobs marked complete in the current month',
+      rec:`QuickBooks shows ${F.k(qbRev)} for the same month. The difference is ${F.k(H_UNBILLED)} completed in the field but not yet invoiced, plus ${F.k(H_DEFERRED)} of membership revenue deferred across the agreement term. ServiceTitan books the WORK; QuickBooks books the INVOICE. The owner needs both, and the gap is the thing to manage.` }),
+    kpi({ k:'First-time fix rate', v:F.pct(a.ftf), d:'+1.2 pts vs last month', dcls:'up',
+      sys:'ServiceTitan — job history',
+      field:'jobs resolved on the first visit ÷ total jobs completed' }),
+    kpi({ k:'Technician utilization', v:F.pct(a.util), d:`${F.n(a.billedHrs)} billable of ${F.n(a.paidHrs)} paid`, dcls:'warn',
+      sys:'ServiceTitan — timesheets',
+      field:'billable hours ÷ paid hours',
+      rec:`Payroll reports ${F.pct(a.utilDrive)} for the same crews, because it counts drive time as productive. Neither definition is wrong, but only one of them tells you whether you can take another call today. If two people quote utilization at each other and never say whether drive time is in it, they are not discussing the same number.` }),
+    kpi({ k:'Revenue per truck', v:F.k(a.revPerTruck), d:`average across ${a.ts.length} truck${a.ts.length>1?'s':''}`,
+      sys:'ServiceTitan — job history',
+      field:'Σ completed job value ÷ count of trucks in service' }),
+    kpi({ k:'Average ticket', v:'$'+F.n(Math.round(a.ticket)), d:'+3.1% vs last month', dcls:'up',
+      sys:'ServiceTitan — invoicing',
+      field:'Σ completed job value ÷ count of jobs completed' }),
+    kpi({ k:'Callback rate', v:F.pct(a.callback), d:`${sum(a.ts,t=>t.callbacks)} callbacks this month`, dcls:'warn',
+      sys:'ServiceTitan — job history',
+      field:'return visits within 30 days ÷ jobs completed',
+      rec:'Jobber records callbacks only when a customer rings in. ServiceTitan also counts a technician self-flagging a return, which is why its figure is higher. The higher number is the useful one — it catches the returns the customer never complained about.' }),
+  ]) +
+  `<div class="cols c2">
+    ${card('Revenue per truck by month','$34.9K → '+F.k(a.revPerTruck),
+      lineChart(H_REV_TREND,{fill:true,alt:'Revenue per truck climbing through the year'}))}
+    ${card('Activity',REFRESH_CARD, feed(H_FEED))}
+  </div>` +
+  card('Revenue by truck — highest to lowest', null,
+    bars(byRev.map(t=>({ l:`Truck ${t.id} · ${t.tech}`, v:t.rev, t:F.k(t.rev),
+      cls: t.rev < 36 ? 'warn' : '' })))) +
+  srcLine(SRC_HOME);
+},
+
+dispatch(a){
+  const types = H_JOBTYPES.slice().sort((x,y)=>y.rev-x.rev);
+  return kpis([
+    kpi({ k:'Jobs completed MTD', v:F.n(a.jobs), d:'334 booked, 319 completed',
+      sys:'ServiceTitan — dispatch board',
+      field:"count of jobs with status = 'Completed' in the current month" }),
+    kpi({ k:'Booked to completed', v:F.pct(319/334*100), d:'15 rolled to next day', dcls:'warn',
+      sys:'ServiceTitan — dispatch board',
+      field:'jobs completed ÷ jobs booked, current month',
+      rec:'Housecall Pro shows 100% because it drops a rolled call and rebooks it as a new job the next day. ServiceTitan keeps the original. The 15 lost calls only exist as a number in one of the two systems.' }),
+    kpi({ k:'Jobs per truck per day', v:(a.jobs/a.ts.length/22).toFixed(1), d:'22 working days',
+      sys:'ServiceTitan — dispatch board',
+      field:'jobs completed ÷ trucks in service ÷ working days in the month' }),
+    kpi({ k:'Average response time', v:'4.2 hrs', d:'from call to on-site',
+      sys:'ServiceTitan — dispatch board', field:'mean( arrival time − call logged time )' }),
+    kpi({ k:'Unassigned calls', v:'15', d:'all in one postcode', dcls:'bad',
+      sys:'ServiceTitan — dispatch board',
+      field:'count of booked jobs with no technician assigned',
+      fieldNote:'Clustered geographically, which points at capacity rather than demand.' }),
+    kpi({ k:'Emergency calls MTD', v:'47', d:'14.7% of jobs',
+      sys:'ServiceTitan — job history', field:"count of jobs with priority = 'Emergency'" }),
+  ]) +
+  card('Calls booked against jobs completed', null,
+    groupedBars(H_CALL_TREND, [
+      {k:'booked',    label:'Booked',    color:'#2A7DE1'},
+      {k:'completed', label:'Completed', color:'#F5B301'},
+    ], {alt:'Calls booked against jobs completed over six months'})) +
+  card('Work mix — largest revenue first', null,
+    table([
+      {label:'Job type', cls:'s', get:r=>esc(r.type)},
+      {label:'Jobs',     cls:'n', get:r=>F.n(r.jobs)},
+      {label:'Revenue',  cls:'n', get:r=>F.k(r.rev)},
+      {label:'Average ticket', cls:'n', get:r=>'$'+F.n(Math.round(r.rev*1000/r.jobs))},
+      {label:'Gross margin',   cls:'n', get:r=>`<span class="pill ${r.margin>=44?'ok':r.margin>=33?'warn':'bad'}">${F.pct(r.margin)}</span>`},
+      {label:'Share of revenue',cls:'n',get:r=>F.pct(r.rev/sum(H_JOBTYPES,x=>x.rev)*100)},
+    ], types)) +
+  srcLine(SRC_HOME);
+},
+
+sales(a){
+  return kpis([
+    kpi({ k:'Active memberships', v:F.n(a.members), d:'+118 net this month', dcls:'up',
+      sys:'ServiceTitan — membership register',
+      field:"count of service agreements with status = 'Active'",
+      rec:`QuickBooks recognises membership revenue across the agreement term, so ${F.k(H_DEFERRED)} of what was sold this month is deferred. ServiceTitan counts the member the day they sign. Cash, revenue and member count move on three different dates, and only one of them is the one to celebrate on.` }),
+    kpi({ k:'Membership penetration', v:'42.6%', d:'of active customer base',
+      sys:'ServiceTitan', field:'customers with an active membership ÷ all customers serviced in 12 months' }),
+    kpi({ k:'Conversion to membership', v:'18.4%', d:'from non-member jobs', dcls:'up',
+      sys:'ServiceTitan — job history', field:'memberships sold ÷ jobs completed for non-members' }),
+    kpi({ k:'Replacement quotes MTD', v:'38', d:'$412K quoted',
+      sys:'ServiceTitan — estimates', field:'count of replacement estimates issued in the current month' }),
+    kpi({ k:'Quote close rate', v:'34.2%', d:'13 of 38 accepted', dcls:'warn',
+      sys:'ServiceTitan — estimates',
+      field:'estimates accepted ÷ estimates issued, current month',
+      rec:'Measured on the month an estimate was ISSUED it is 34.2%. Measured on the month it CLOSED it is 41.1%, because slower deals land later and get counted against a month that did not issue them. Same pipeline, two honest answers, and the difference is entirely which date you anchor on.' }),
+    kpi({ k:'Average ticket', v:'$'+F.n(Math.round(a.ticket)), d:'across all job types',
+      sys:'ServiceTitan — invoicing', field:'Σ completed job value ÷ count of jobs completed' }),
+  ]) +
+  `<div class="cols c2">
+    ${card('Average ticket by month','$612 → $'+F.n(Math.round(a.ticket)),
+      lineChart(H_TICKET_TREND,{alt:'Average ticket rising through the year'}))}
+    ${card('Memberships by truck — most first', null,
+      bars(a.ts.slice().sort((x,y)=>y.members-x.members).map(t=>({
+        l:`Truck ${t.id} · ${t.tech}`, v:t.members, t:F.n(t.members)+' members' }))))}
+  </div>` +
+  card('Revenue by job type — largest first', null,
+    bars(H_JOBTYPES.slice().sort((x,y)=>y.rev-x.rev).map(r=>({
+      l:r.type, v:r.rev, t:`${F.k(r.rev)} · ${F.pct(r.margin)} margin`,
+      cls: r.margin < 33 ? 'warn' : '' })))) +
+  srcLine(SRC_HOME);
+},
+
+marketing(a){
+  const spend = sum(H_LEADS, s=>s.leads*s.cpl), leads = sum(H_LEADS, s=>s.leads);
+  const srcs = H_LEADS.slice().sort((x,y)=>y.leads-x.leads);
+  return (a.all ? '' : scopeNote('Marketing is measured company-wide. This screen does not change with the truck selected above.')) +
+  kpis([
+    kpi({ k:'Inbound leads MTD', v:F.n(leads), d:'+13 vs last month', dcls:'up',
+      sys:'ServiceTitan — call tracking', field:'count of inbound leads created in the current month' }),
+    kpi({ k:'Cost per lead', v:'$'+Math.round(spend/leads), d:'$'+F.n(spend)+' spend MTD',
+      sys:'ServiceTitan + QuickBooks', field:'marketing spend in the month ÷ inbound leads in the month' }),
+    kpi({ k:'Cost per booked job', v:'$'+Math.round(spend/a.jobs), d:F.n(a.jobs)+' jobs completed',
+      sys:'ServiceTitan + QuickBooks',
+      field:'marketing spend in the month ÷ jobs completed in the month',
+      rec:'This spreads spend across every job including membership and repeat work, which cost nothing to win. Measured only against jobs from paid sources it is $92 per job — that is the number the ad budget should be judged on.' }),
+    kpi({ k:'Repeat and member share', v:F.pct(118/leads*100), d:'118 of '+leads+' leads', dcls:'up',
+      sys:'ServiceTitan — customer records', field:'leads from existing customers ÷ all leads' }),
+    kpi({ k:'Booking rate from calls', v:'68.4%', d:'inbound calls that book',
+      sys:'ServiceTitan — call tracking',
+      field:'calls that result in a booked job ÷ inbound calls answered',
+      rec:'This counts answered calls only. 41 calls went unanswered this month and are not in the denominator, so the true booking rate from demand is 61.2%. The abandoned calls are the cheapest leads the business will ever lose.' }),
+    kpi({ k:'Review rating', v:'4.7', d:'214 reviews, 12 months', dcls:'up',
+      sys:'ServiceTitan — review integration', field:'mean( star rating ) across reviews in 12 months' }),
+  ]) +
+  `<div class="cols c2">
+    ${card('Inbound leads by month','268 → '+leads, lineChart(H_LEADS_TREND,{fill:true,alt:'Inbound leads rising over six months'}))}
+    ${card('Lead sources — most leads first', null,
+      bars(srcs.map(s=>({ l:s.src, v:s.leads, t:`${s.leads} · ${s.cpl?('$'+s.cpl+' each'):'no direct spend'}` }))))}
+  </div>` +
+  srcLine('ServiceTitan &middot; QuickBooks &middot; Call tracking');
+},
+
+finance(a){
+  const qbRev = a.rev - (a.all ? H_UNBILLED+H_DEFERRED : (H_UNBILLED+H_DEFERRED)*a.rev/sum(HTRUCK,t=>t.rev));
+  return kpis([
+    kpi({ k:'Revenue, work completed', v:F.k(a.rev), d:'per ServiceTitan',
+      sys:'ServiceTitan — completed work',
+      field:'Σ value of jobs marked complete in the current month' }),
+    kpi({ k:'Revenue, invoiced', v:F.k(qbRev), d:'per QuickBooks', dcls:'warn',
+      sys:'QuickBooks — sales ledger',
+      field:'Σ invoices raised in the current month',
+      rec:`The ${F.k(a.rev-qbRev)} gap is ${F.k(H_UNBILLED)} completed but not invoiced and ${F.k(H_DEFERRED)} of membership revenue deferred over the agreement term. Both figures are correct. Reporting either one alone as "revenue" is how a month gets argued about for a week.` }),
+    kpi({ k:'Unbilled completed work', v:F.k(H_UNBILLED), d:'11 jobs · oldest 6 days', dcls:'bad',
+      sys:'ServiceTitan vs QuickBooks',
+      field:'Σ completed jobs with no invoice raised',
+      fieldNote:'This is cash the business has already earned and spent labour on, sitting in nobody’s queue.' }),
+    kpi({ k:'Gross margin', v:'41.8%', d:'blended across job types',
+      sys:'ServiceTitan + QuickBooks',
+      field:'(revenue − direct labour − materials) ÷ revenue' }),
+    kpi({ k:'Accounts receivable', v:'$96K', d:'$18K over 60 days', dcls:'warn',
+      sys:'QuickBooks — AR ledger', field:'Σ open invoices, net of credits' }),
+    kpi({ k:'Deferred membership revenue', v:'$184K', d:'recognised over agreement terms',
+      sys:'QuickBooks — deferred revenue',
+      field:'Σ unrecognised membership revenue at period end',
+      rec:'This is money already collected and not yet earned. It flatters the bank balance and does not belong in a month’s revenue. It is on this screen so nobody counts it twice.' }),
+  ]) +
+  card('Completed work against invoiced revenue — by truck', null,
+    bars(a.ts.slice().sort((x,y)=>y.rev-x.rev).map(t=>({
+      l:`Truck ${t.id} · ${t.tech}`, v:t.rev,
+      t:`${F.k(t.rev)} completed · $${Math.round(t.ticket)} avg ticket` })))) +
+  card('Truck contribution', null,
+    table([
+      {label:'Truck',  cls:'s', get:t=>esc(t.id)},
+      {label:'Technician',      get:t=>esc(t.tech)},
+      {label:'Revenue',cls:'n', get:t=>F.k(t.rev)},
+      {label:'Jobs',   cls:'n', get:t=>F.n(t.jobs)},
+      {label:'Average ticket',cls:'n',get:t=>'$'+F.n(Math.round(t.ticket))},
+      {label:'First-time fix',cls:'n',get:t=>`<span class="pill ${t.ftf>=79?'ok':t.ftf>=76?'warn':'bad'}">${F.pct(t.ftf)}</span>`},
+      {label:'Callbacks',cls:'n',get:t=>`${t.callbacks} · ${F.pct(t.callbackPct)}`},
+      {label:'Utilization',cls:'n',get:t=>`<span class="pill ${t.util>=71?'ok':t.util>=66?'warn':'bad'}">${F.pct(t.util)}</span>`},
+      {label:'Memberships',cls:'n',get:t=>F.n(t.members)},
+    ], a.ts.slice().sort((x,y)=>y.rev-x.rev))) +
+  srcLine(SRC_HOME);
+},
+
+techs(a){
+  const byUtil = a.ts.slice().sort((x,y)=>y.util-x.util);
+  return kpis([
+    kpi({ k:'Technicians', v:String(a.ts.length), d:'2 open positions', dcls:'warn',
+      sys:'Payroll', field:'count of field technicians on the current payroll' }),
+    kpi({ k:'Utilization', v:F.pct(a.util), d:`vs ${F.pct(a.utilDrive)} counting drive time`, dcls:'warn',
+      sys:'ServiceTitan — timesheets',
+      field:'billable hours ÷ paid hours',
+      rec:`Drive time is ${F.n(sum(a.ts,t=>t.driveHrs))} hours this month. Counted as productive, utilization reads ${F.pct(a.utilDrive)}; counted as overhead it reads ${F.pct(a.util)}. Payroll uses the first, ServiceTitan the second, and a routing change moves one of them without touching the other.` }),
+    kpi({ k:'Hours worked MTD', v:F.n(a.paidHrs), d:F.n(a.billedHrs)+' billable',
+      sys:'Payroll — time records', field:'Σ paid hours across field technicians in the month' }),
+    kpi({ k:'Average tenure', v:mean(a.ts,t=>t.tenure).toFixed(1)+' yrs', d:'newest 1 year in seat',
+      sys:'Payroll', field:'mean( years since hire ) across technicians' }),
+    kpi({ k:'Turnover, 12 months', v:'22.4%', d:'2 leavers', dcls:'warn',
+      sys:'Payroll', field:'leavers in the last 12 months ÷ average headcount' }),
+    kpi({ k:'Certifications expiring', v:'3', d:'within 90 days', dcls:'warn',
+      sys:'Payroll — certification register', field:'count of certifications expiring within 90 days' }),
+  ]) +
+  `<div class="cols c2">
+    ${card('Utilization by truck — highest first', null,
+      bars(byUtil.map(t=>({ l:`Truck ${t.id} · ${t.tech}`, v:t.util,
+        t:`${F.pct(t.util)} · ${F.pct(t.utilDrive)} with drive`,
+        cls: t.util < 66 ? 'warn' : '' }))))}
+    ${card('First-time fix by technician — highest first', null,
+      bars(a.ts.slice().sort((x,y)=>y.ftf-x.ftf).map(t=>({ l:`${t.tech} · Truck ${t.id}`, v:t.ftf,
+        t:`${F.pct(t.ftf)} · ${t.callbacks} callback${t.callbacks===1?'':'s'}`,
+        cls: t.ftf < 76 ? 'warn' : '' }))))}
+  </div>` +
+  card('Callback rate by technician — worst first', null,
+    bars(a.ts.slice().sort((x,y)=>y.callbackPct-x.callbackPct).map(t=>({
+      l:`${t.tech} · Truck ${t.id} · ${t.tenure} yr${t.tenure===1?'':'s'}`, v:t.callbackPct,
+      t:F.pct(t.callbackPct),
+      cls: t.callbackPct > 6 ? 'bad' : t.callbackPct > 4.5 ? 'warn' : '' })))) +
+  srcLine('ServiceTitan &middot; Payroll &middot; QuickBooks');
+},
+
+};
 </script>
 
 <script>
 /* ═════════════════════ INDUSTRY REGISTRY ═════════════════════ */
 const INDUSTRIES = [
   {
-    id:'construction', name:'Construction', sbName:'Contractor', date:'March 2026',
+    id:'construction', name:'Construction', sbName:'Contractor', date:PERIOD,
     cats:[
       {id:'overview',  label:'Overview'},
       {id:'jobs',      label:'Jobs'},
@@ -852,6 +1475,36 @@ const INDUSTRIES = [
       CJOBS.map(j=>({v:j.id, label:`Job ${j.id} · ${j.desc}`}))),
     screens: C_SCREENS,
     agg: ent => cAgg(ent==='all' ? CJOBS : CJOBS.filter(j=>j.id===ent)),
+  },
+  {
+    id:'insurance', name:'Insurance Agency', sbName:'Agency', date:PERIOD,
+    cats:[
+      {id:'overview',  label:'Overview'},
+      {id:'book',      label:'Book of Business'},
+      {id:'marketing', label:'Marketing'},
+      {id:'claims',    label:'Service & Claims', badge:'6'},
+      {id:'finance',   label:'Finance'},
+      {id:'people',    label:'People'},
+    ],
+    entities: [{v:'all', label:'All producers'}].concat(
+      IPROD.map(p=>({v:p.id, label:'Producer '+p.id}))),
+    screens: I_SCREENS,
+    agg: ent => iAgg(ent==='all' ? IPROD : IPROD.filter(p=>p.id===ent)),
+  },
+  {
+    id:'home', name:'Home Services & Trades', sbName:'Service Co.', date:PERIOD,
+    cats:[
+      {id:'overview',  label:'Overview'},
+      {id:'dispatch',  label:'Dispatch & Jobs', badge:'15'},
+      {id:'sales',     label:'Sales & Memberships'},
+      {id:'marketing', label:'Marketing'},
+      {id:'finance',   label:'Finance'},
+      {id:'techs',     label:'Technicians'},
+    ],
+    entities: [{v:'all', label:'All trucks'}].concat(
+      HTRUCK.map(t=>({v:t.id, label:'Truck '+t.id+' · '+t.tech}))),
+    screens: H_SCREENS,
+    agg: ent => hAgg(ent==='all' ? HTRUCK : HTRUCK.filter(t=>t.id===ent)),
   },
 ];
 
