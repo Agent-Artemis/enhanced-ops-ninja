@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Value and objections — a referrer's guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0F1A;--panel:#0E1420;--panel2:#131B2B;--line:#243044;--line2:#2E3D55;
+  --ink:#EEF3FA;--ink2:#AEBBCD;--ink3:#7E8DA0;--blue:#1A6ECC;--blue2:#3F8AE0;--gold:#F5B301;--green:#22C55E}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:16.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:"Bebas Neue",sans-serif;text-transform:uppercase;letter-spacing:.02em;
+  font-weight:400;line-height:1.04;margin:0}
+p{margin:0 0 1rem}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+a{color:var(--blue2)}
+:focus-visible{outline:2px solid var(--blue2);outline-offset:3px}
+
+.hdr{border-bottom:1px solid var(--line);background:var(--panel);padding:20px 0}
+.hdr-in{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.hdr img{height:84px;width:auto}
+h1{font-size:clamp(27px,5.4vw,40px)}
+.hsub{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--blue2);margin-top:5px}
+
+/* ── HOW TO USE — this is a tool, so say what it is for in two lines ── */
+.howto{border-left:3px solid var(--gold);padding:2px 0 2px 15px;margin:20px 0 0;max-width:76ch}
+.howto p{margin:0;color:var(--ink2);font-size:15.5px}
+.howto b{color:var(--ink)}
+
+section{padding:40px 0;border-bottom:1px solid var(--line)}
+.kicker{font-family:"Bebas Neue",sans-serif;font-size:13px;letter-spacing:.24em;color:var(--blue2);margin:0 0 10px}
+h2{font-size:clamp(24px,4.6vw,33px);margin-bottom:12px}
+.sub{color:var(--ink2);max-width:70ch;font-size:15.5px}
+
+/* ── THE MOVE — the spine of the whole document ── */
+.move{display:grid;gap:12px;margin-top:22px}
+@media (min-width:860px){ .move{grid-template-columns:1fr auto 1fr auto 1fr;align-items:stretch} }
+.move-c{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:15px 16px}
+.move-c.last{border-color:rgba(34,197,94,.4)}
+.move-k{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+.move-c.last .move-k{color:var(--green)}
+.move-c p{margin:0;font-size:14.5px;color:var(--ink2)}
+.move-c b{color:var(--ink)}
+.move-a{display:flex;align-items:center;justify-content:center;color:var(--blue2)}
+@media (max-width:859px){ .move-a svg{transform:rotate(90deg)} }
+.rule{margin:22px 0 0;padding:14px 16px;border:1px solid rgba(245,179,1,.35);
+  background:rgba(245,179,1,.06);border-radius:11px;max-width:78ch}
+.rule p{margin:0;font-size:15px;color:var(--ink2)}
+.rule b{color:var(--gold)}
+
+/* ── QUICK NAV — he is looking things up mid-call, not reading it through ── */
+.qn{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px}
+.qn a{font-size:13.5px;text-decoration:none;color:var(--ink2);background:var(--panel2);
+  border:1px solid var(--line2);border-radius:100px;padding:7px 14px;white-space:nowrap}
+.qn a:hover{color:var(--ink);border-color:var(--blue2)}
+
+/* ── OBJECTIONS — findable in seconds, so one shape used everywhere ── */
+.obj{display:grid;gap:11px;margin-top:20px}
+@media (min-width:820px){ .obj.two{grid-template-columns:1fr 1fr} }
+.o{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:14px 16px;break-inside:avoid}
+.o-q{font-size:16px;font-weight:700;color:var(--ink);line-height:1.35;margin:0 0 8px;
+  padding-left:20px;position:relative}
+.o-q::before{content:"“";position:absolute;left:0;top:-4px;font-size:26px;color:var(--gold);
+  font-family:"Bebas Neue",sans-serif;line-height:1}
+.o-a{margin:0;font-size:14.5px;color:var(--ink2);line-height:1.55;border-top:1px solid var(--line);padding-top:10px}
+.o-a b{color:var(--ink)}
+.o-a em{font-style:normal;color:var(--gold)}
+
+/* ── SEGMENTS ── */
+.seg{border:1px solid var(--line);border-radius:13px;background:var(--panel);
+  padding:20px 20px 18px;margin-top:20px;break-inside:avoid}
+.seg-hd{border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:15px}
+.seg-hd h3{font-size:clamp(20px,3.6vw,27px);color:var(--ink)}
+.seg-kpi{font-size:13px;color:var(--ink3);margin-top:6px}
+.seg-kpi b{color:var(--blue2);font-weight:500}
+.trip{display:grid;gap:12px}
+@media (min-width:900px){ .trip{grid-template-columns:1fr 1fr 1fr} }
+.tb{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:13px 14px}
+.tb.worth{border-color:rgba(34,197,94,.32)}
+.tb-k{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;line-height:1.4}
+.tb.worth .tb-k{color:var(--green)}
+.tb p{margin:0 0 .7rem;font-size:14px;color:var(--ink2);line-height:1.55}
+.tb p:last-child{margin-bottom:0}
+.tb b{color:var(--ink)}
+
+/* Sub-trades: four different businesses, not four names for one. */
+.subs{display:grid;gap:9px;margin-top:14px}
+@media (min-width:760px){ .subs{grid-template-columns:1fr 1fr} }
+.sb{border:1px solid var(--line);border-radius:9px;padding:11px 13px;background:var(--panel2)}
+.sb>b{display:block;font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.05em;
+  color:var(--ink);margin-bottom:3px}
+.sb span{font-size:13.5px;color:var(--ink2);line-height:1.5}
+.sb span b{color:var(--ink);font-weight:700}
+
+/* ── WHO IN YOUR NETWORK — Sam thinks in people, not verticals ── */
+.who{margin-top:15px;border:1px solid rgba(63,138,224,.35);background:rgba(26,110,204,.07);
+  border-radius:10px;padding:13px 15px}
+.who-k{font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--blue2);margin-bottom:9px}
+.who ul{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.who li{font-size:14px;color:var(--ink2);padding-left:17px;position:relative;line-height:1.5}
+.who li::before{content:"";position:absolute;left:2px;top:8px;width:5px;height:5px;
+  border-radius:50%;background:var(--blue2)}
+.who li b{color:var(--ink);font-weight:500}
+
+.seg-obj{margin-top:16px}
+.seg-obj-k{font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
+
+.close{background:var(--panel2);border:1px solid var(--line2);border-radius:13px;padding:20px 22px;margin-top:8px}
+.close h3{font-size:23px;margin-bottom:10px}
+.close p{color:var(--ink2);font-size:15.5px;max-width:74ch}
+.close p:last-child{margin-bottom:0}
+.close b{color:var(--ink)}
+
+footer{padding:24px 0 40px;color:var(--ink3);font-size:13px}
+
+/* ── PRINT — Sam may print this, and a dark page is a wasted cartridge ── */
+@media print{
+  :root{--bg:#fff;--panel:#fff;--panel2:#fff;--line:#c8d0dc;--line2:#aab5c6;
+    --ink:#0d1420;--ink2:#33405a;--ink3:#5d6b82;--blue2:#124e8f;--gold:#8a6410;--green:#1c7a3f}
+  body{font-size:11pt;background:#fff}
+  .hdr{background:#fff;padding:8pt 0}
+  .hdr img{height:46px;background:#0d1420;border-radius:6px;padding:5px 8px}
+  section{padding:12pt 0;break-inside:auto}
+  .qn,.move-a{display:none}
+  .seg,.o,.close{break-inside:avoid;box-shadow:none}
+  .move{grid-template-columns:1fr 1fr 1fr}
+  a{color:inherit;text-decoration:none}
+  @page{margin:14mm}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <div>
+      <h1>What it's worth, and what they'll say</h1>
+      <div class="hsub">EnhancedOps.Ninja &middot; Business Intelligence &middot; A referrer's guide</div>
+    </div>
+    <img src="../logo-ninja.png" alt="EnhancedOps.Ninja">
+  </div>
+  <div class="wrap">
+    <div class="howto">
+      <p><b>This is a lookup, not a read.</b> The top half is what the work is worth, in each
+      industry's own words. The bottom half is what to say when they push back &mdash; and that
+      is the half you will actually use, because the referral dies at &ldquo;I already have
+      that&rdquo; rather than at the pitch.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ══════════ THE MOVE ══════════ -->
+<section>
+  <div class="wrap">
+    <p class="kicker">The one thing to get right</p>
+    <h2>Speed is a feature. What it lets them do is the value.</h2>
+    <p class="sub">&ldquo;We get you the data fast&rdquo; is a thing we do, not a reason to buy.
+      Every line below runs the same three steps, and so should you on a call.</p>
+
+    <div class="move">
+      <div class="move-c">
+        <div class="move-k">1 &middot; What they cannot see</div>
+        <p>Not a missing report &mdash; a number that <b>does not exist anywhere</b> until
+          somebody builds it by hand.</p>
+      </div>
+      <div class="move-a" aria-hidden="true">
+        <svg width="30" height="18" viewBox="0 0 30 18" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 9h24"/><path d="M20 3l6 6-6 6"/></svg>
+      </div>
+      <div class="move-c">
+        <div class="move-k">2 &middot; The decision it unlocks</div>
+        <p>A specific thing they <b>do differently, with a timeframe</b>. This week, not
+          at year end.</p>
+      </div>
+      <div class="move-a" aria-hidden="true">
+        <svg width="30" height="18" viewBox="0 0 30 18" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 9h24"/><path d="M20 3l6 6-6 6"/></svg>
+      </div>
+      <div class="move-c last">
+        <div class="move-k">3 &middot; What that is worth</div>
+        <p>The <b>mechanism</b>, on their own numbers. Not our percentage &mdash; their
+          arithmetic, done in their head.</p>
+      </div>
+    </div>
+
+    <div class="rule">
+      <p><b>The test:</b> if a value line ends at &ldquo;you see it sooner&rdquo;, it is not
+        finished. It has to end in something they would <em>do</em>, or something it
+        would <em>cost them not to</em>.</p>
+    </div>
+
+    <div class="qn">
+      <a href="#universal">The seven you will hear most</a>
+      <a href="#field">Commercial &amp; field services</a>
+      <a href="#dist">Distribution</a>
+      <a href="#mfg">Manufacturing</a>
+      <a href="#food">Restaurants</a>
+      <a href="#pro">Professional services</a>
+      <a href="#pe">PE portfolio</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ UNIVERSAL OBJECTIONS ══════════ -->
+<section id="universal">
+  <div class="wrap">
+    <p class="kicker">Objections &middot; every segment</p>
+    <h2>The seven you will hear most</h2>
+    <p class="sub">These come up whatever the industry. The answers are short on purpose &mdash;
+      you are meant to be able to say them, not read them out.</p>
+
+    <div class="obj two">
+      <div class="o">
+        <p class="o-q">I already have a dashboard.</p>
+        <p class="o-a">Does everyone in the room trust the same number? Most dashboards get
+          quietly checked against somebody's own spreadsheet before anyone acts on them.
+          <b>A dashboard nobody argues with is a different product from a dashboard nobody
+          believes.</b></p>
+      </div>
+      <div class="o">
+        <p class="o-q">My controller pulls the numbers.</p>
+        <p class="o-a">She does, and she is good at it &mdash; that is the problem.
+          <b>How many days a month is she spending on it, and what would you rather she did
+          with them?</b> A person doing this well is the most expensive way to do it, and it
+          stops when she is away.</p>
+      </div>
+      <div class="o">
+        <p class="o-q">My data is a mess.</p>
+        <p class="o-a"><b>That is the job, not a prerequisite.</b> You do not tidy the house
+          before the cleaner arrives. Nobody comes in and asks you to clean it up first &mdash;
+          sorting it out is the first two weeks of the work.</p>
+      </div>
+      <div class="o">
+        <p class="o-q">We are too small for this.</p>
+        <p class="o-a">If you run <b>more than one location and more than two systems that do
+          not talk to each other</b>, you are exactly the size. It is not about revenue &mdash;
+          it is about how many places a number can hide.</p>
+      </div>
+      <div class="o">
+        <p class="o-q">How long does it take?</p>
+        <p class="o-a"><b>Two to three weeks to the first live number.</b> Not a discovery
+          phase, not a pilot &mdash; a number on a screen you can use.</p>
+      </div>
+      <div class="o">
+        <p class="o-q">What if we stop?</p>
+        <p class="o-a"><b>You own it. Your accounts, your data, your cloud.</b> We join as an
+          invited guest and you can remove us. Nothing to unpick, nothing held hostage.</p>
+      </div>
+      <div class="o">
+        <p class="o-q">It is expensive.</p>
+        <p class="o-a">Against what? <b>Turn it into a comparison, never a defence.</b> Three
+          days of a controller every month, plus decisions made on numbers nobody fully trusts.
+          Ask what the last decision made on a wrong number cost &mdash; they will have one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 1. COMMERCIAL & FIELD SERVICES ══════════ -->
+<section id="field">
+  <div class="wrap">
+    <p class="kicker">Segment 01</p>
+    <h2>Commercial &amp; field services</h2>
+    <div class="seg">
+      <div class="seg-hd">
+        <h3>The trades that run on trucks</h3>
+        <p class="seg-kpi">Systems: ServiceTitan, Jobber or Housecall Pro &middot; QuickBooks &middot; payroll.
+          Numbers: <b>first-time fix rate</b>, <b>technician utilization</b>,
+          <b>revenue per truck</b>, <b>callback rate</b>.</p>
+      </div>
+      <div class="trip">
+        <div class="tb">
+          <div class="tb-k">What they cannot see today</div>
+          <p>Dispatch is in one system, invoicing in another, labour in a third. <b>What a truck
+            actually earned does not exist as a number</b> until somebody builds a spreadsheet,
+            and by then the month is closed.</p>
+          <p>Callbacks are worse: a return visit is a job they were paid for once and did twice,
+            and most operators have no rate for it at all.</p>
+        </div>
+        <div class="tb">
+          <div class="tb-k">What fast data lets them do</div>
+          <p><b>Ride along with that tech this week</b>, when his callback rate doubles &mdash;
+            instead of finding out at year end that he cost them three customers.</p>
+          <p>Reroute tomorrow morning when unassigned calls cluster in one postcode, because
+            they can see it is a routing problem and not a capacity one.</p>
+        </div>
+        <div class="tb worth">
+          <div class="tb-k">What that is worth</div>
+          <p><b>One truck running six per cent below the others, across a year.</b> On five
+            trucks, work out what the fifth one is costing.</p>
+          <p>Then take the callback rate, halve it, and multiply by a year of jobs. Every one of
+            those is a visit paid for once and performed twice.</p>
+        </div>
+      </div>
+
+      <div class="subs">
+        <div class="sb"><b>HVAC</b><span>Lives on <b>maintenance-agreement attrition</b> and
+          callback rate. The agreement base is the business, and churn in it shows up a year
+          after the customer decided.</span></div>
+        <div class="sb"><b>Roofing</b><span>Lives on <b>crew-day margin</b> and material waste.
+          The crew-day is the unit of production, and waste and rework eat the job before the
+          invoice is written.</span></div>
+        <div class="sb"><b>Plumbing</b><span>Lives on <b>ticket size</b> and first-time fix.
+          High volume, small jobs &mdash; a second visit destroys the economics of the
+          first.</span></div>
+        <div class="sb"><b>Electrical</b><span>Lives on <b>job costing against bid</b>. Fixed
+          price work where labour hours drift quietly and nobody costs the job until it
+          closes.</span></div>
+      </div>
+
+      <div class="who">
+        <div class="who-k">Who in your network is this</div>
+        <ul>
+          <li>Runs <b>three or more service trucks</b>, or has just added a second crew.</li>
+          <li>Bought out a competitor's route or a second branch in the last couple of years.</li>
+          <li>Still opens QuickBooks himself on a Sunday to work out how the month went.</li>
+          <li>Has said some version of <b>&ldquo;I don't know which of my guys actually makes
+            me money&rdquo;</b>.</li>
+        </ul>
+      </div>
+
+      <div class="seg-obj">
+        <div class="seg-obj-k">If they push back</div>
+        <div class="obj">
+          <div class="o">
+            <p class="o-q">ServiceTitan already gives me dashboards.</p>
+            <p class="o-a">ServiceTitan reports on ServiceTitan. <b>It does not know what
+              QuickBooks says.</b> The gap between them is where your margin hides &mdash; the
+              completed job it counts and the invoice that never got raised are the same work,
+              in two systems, with two different answers.</p>
+          </div>
+          <div class="o">
+            <p class="o-q">My techs' numbers are in the field, not in a system.</p>
+            <p class="o-a">Then that is the first thing worth fixing, and it is days of work
+              rather than quarters. <b>If drive time is not recorded you cannot tell a capacity
+              problem from a routing one</b> &mdash; and those have completely different
+              answers.</p>
+          </div>
+          <div class="o">
+            <p class="o-q">We are only one branch.</p>
+            <p class="o-a">Then it is truck by truck instead of branch by branch. <b>Same
+              question, smaller unit.</b> One branch with five trucks has the same problem as
+              five branches &mdash; it is just closer to home.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 2. DISTRIBUTION & WHOLESALE ══════════ -->
+<section id="dist">
+  <div class="wrap">
+    <p class="kicker">Segment 02</p>
+    <h2>Distribution &amp; wholesale</h2>
+    <div class="seg">
+      <div class="seg-hd">
+        <h3>Where the cash sits on a shelf</h3>
+        <p class="seg-kpi">Systems: NetSuite, Acumatica or SAP Business One &middot; a WMS &middot; Fishbowl.
+          Numbers: <b>fill rate</b>, <b>on-time delivery</b>, <b>inventory turns</b>,
+          <b>days on hand</b>, <b>backorder rate</b>.</p>
+      </div>
+      <div class="trip">
+        <div class="tb">
+          <div class="tb-k">What they cannot see today</div>
+          <p>The same order looks different in the ERP, the warehouse system and the carrier
+            portal. <b>Inventory value is the number nobody will commit to</b> out loud.</p>
+          <p>Fill rate gets quoted from whichever system gives the kindest answer, and nobody
+            says which definition they used.</p>
+        </div>
+        <div class="tb">
+          <div class="tb-k">What fast data lets them do</div>
+          <p><b>Catch a supplier slipping on lead time in week two</b> and move the reorder
+            point before it becomes a backorder and a lost customer.</p>
+          <p>Decide which SKU class to stop carrying <b>while the cash is still on the
+            shelf</b>, rather than after a stock count confirms it a quarter later.</p>
+        </div>
+        <div class="tb worth">
+          <div class="tb-k">What that is worth</div>
+          <p><b>Days on hand is cash.</b> Take a week off days-on-hand across their inventory
+            position and that is the number &mdash; they will know their own inventory value
+            to the nearest hundred thousand.</p>
+          <p>Then ask what one backordered line costs them in reorders they never see again.</p>
+        </div>
+      </div>
+
+      <div class="who">
+        <div class="who-k">Who in your network is this</div>
+        <ul>
+          <li>Holds stock in <b>more than one location</b>, or has just opened a second
+            warehouse.</li>
+          <li>Implemented an ERP some years ago and <b>half-configured it</b> &mdash; everyone
+            knows which bits nobody uses.</li>
+          <li>Has said <b>&ldquo;we don't really trust the inventory number&rdquo;</b> and then
+            moved on as though that were normal.</li>
+        </ul>
+      </div>
+
+      <div class="seg-obj">
+        <div class="seg-obj-k">If they push back</div>
+        <div class="obj">
+          <div class="o">
+            <p class="o-q">The ERP is our system of record.</p>
+            <p class="o-a">For accounting, yes. <b>It is not the system of record for whether
+              the truck left on time</b> &mdash; and the carrier portal does not tell it.
+              The gap between them is where your service level actually lives.</p>
+          </div>
+          <div class="o">
+            <p class="o-q">We count stock twice a year.</p>
+            <p class="o-a">So twice a year you know. <b>The other three hundred and sixty-three
+              days you are guessing</b>, and every purchasing decision in between is made on
+              the guess.</p>
+          </div>
+          <div class="o">
+            <p class="o-q">Our fill rate is fine.</p>
+            <p class="o-a">Measured how? <b>Line fill, order fill and case fill give three
+              different answers off the same week</b> &mdash; and the flattering one is usually
+              the one being quoted. It is worth knowing which one you have been reporting.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 3. MANUFACTURING ══════════ -->
+<section id="mfg">
+  <div class="wrap">
+    <p class="kicker">Segment 03</p>
+    <h2>Manufacturing</h2>
+    <div class="seg">
+      <div class="seg-hd">
+        <h3>Where the shift that caused it has gone home</h3>
+        <p class="seg-kpi">Systems: ERP &middot; MES &middot; shop-floor and machine data &middot; quality.
+          Numbers: <b>OEE</b>, <b>machine utilization</b>, <b>downtime</b>, <b>scrap rate</b>,
+          <b>throughput</b>.</p>
+      </div>
+      <div class="trip">
+        <div class="tb">
+          <div class="tb-k">What they cannot see today</div>
+          <p>Shop-floor reality and the ERP rarely agree, and <b>a variance is costed long
+            after the shift that caused it has gone home.</b></p>
+          <p>Downtime gets written on paper at the end of a shift, from memory. That is a
+            record, not a measurement.</p>
+        </div>
+        <div class="tb">
+          <div class="tb-k">What fast data lets them do</div>
+          <p><b>See a line drifting on scrap during the shift</b>, while there is still a next
+            run to fix &mdash; not in next month's variance report when the material is already
+            in a skip.</p>
+          <p>Decide whether Thursday's second shift is worth running, on actual throughput
+            rather than on the plan.</p>
+        </div>
+        <div class="tb worth">
+          <div class="tb-k">What that is worth</div>
+          <p><b>A single point of scrap on a line running all year.</b> They know their material
+            cost per unit; they can do that one in their head.</p>
+          <p>Then an hour of unplanned downtime per shift, costed at their own contribution
+            margin rather than at a rate we invented.</p>
+        </div>
+      </div>
+
+      <div class="who">
+        <div class="who-k">Who in your network is this</div>
+        <ul>
+          <li>Runs <b>more than one line or cell</b>, or more than one shift.</li>
+          <li>Has an MES that <b>nobody fully trusts</b>, or bought one and never finished
+            rolling it out.</li>
+          <li>Has a plant manager who <b>keeps his own whiteboard</b> because the ERP number
+            arrives too late to be useful.</li>
+        </ul>
+      </div>
+
+      <div class="seg-obj">
+        <div class="seg-obj-k">If they push back</div>
+        <div class="obj">
+          <div class="o">
+            <p class="o-q">The MES already shows OEE.</p>
+            <p class="o-a">On the machines it is connected to, on its own definition of
+              availability. <b>It does not know what the ERP costed the run at.</b> Two systems,
+              two OEEs, and neither of them is wrong &mdash; which is exactly the problem.</p>
+          </div>
+          <div class="o">
+            <p class="o-q">Our operators log all of this.</p>
+            <p class="o-a">On paper, at the end of the shift, from memory. <b>That is a record,
+              not a measurement</b> &mdash; and nobody is going to act on Tuesday's downtime
+              when they read it on Friday.</p>
+          </div>
+          <div class="o">
+            <p class="o-q">We are not that automated.</p>
+            <p class="o-a">Then the shop-floor data is the gap, and <b>closing it is a much
+              smaller job than an MES rollout.</b> You do not need a connected factory to know
+              which cell is losing you money.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 4. RESTAURANTS & FOOD SERVICE ══════════ -->
+<section id="food">
+  <div class="wrap">
+    <p class="kicker">Segment 04</p>
+    <h2>Restaurants &amp; food service</h2>
+    <div class="seg">
+      <div class="seg-hd">
+        <h3>Where the P&amp;L arrives too late to act on</h3>
+        <p class="seg-kpi">Systems: Toast or Square &middot; Restaurant365 &middot; 7shifts.
+          Numbers: <b>food cost %</b>, <b>labor %</b>, <b>sales per labor hour</b>,
+          <b>comp sales by location</b>.</p>
+      </div>
+      <div class="trip">
+        <div class="tb">
+          <div class="tb-k">What they cannot see today</div>
+          <p>The two numbers that decide the week &mdash; food cost and labour &mdash; live in
+            different systems from the sales that justify them, and <b>each location reports on
+            a slightly different definition.</b></p>
+          <p>Comp sales between sites get argued about rather than settled.</p>
+        </div>
+        <div class="tb">
+          <div class="tb-k">What fast data lets them do</div>
+          <p><b>Catch a site running two points over on labour on a Wednesday and fix the
+            weekend schedule</b> &mdash; instead of reading it in a P&amp;L three weeks after
+            the month closed, when the money has gone.</p>
+          <p>Move a manager who is getting it right to the site that is not, on evidence rather
+            than on instinct.</p>
+        </div>
+        <div class="tb worth">
+          <div class="tb-k">What that is worth</div>
+          <p><b>One point of food cost across a group's annual revenue.</b> They know their
+            revenue; that arithmetic takes them a second and it lands harder than any
+            percentage we could quote.</p>
+          <p>Then the same again on labour: bring the worst site to the best site's number and
+            hold it for a year.</p>
+        </div>
+      </div>
+
+      <div class="who">
+        <div class="who-k">Who in your network is this</div>
+        <ul>
+          <li>Owns <b>more than one location</b>, or is a franchisee with several units.</li>
+          <li>Has said the <b>P&amp;L arrives too late to do anything with</b> &mdash; usually
+            with a shrug, as though that were just how it is.</li>
+          <li>Is opening a new site and has realised he cannot compare it to the others
+            cleanly.</li>
+        </ul>
+      </div>
+
+      <div class="seg-obj">
+        <div class="seg-obj-k">If they push back</div>
+        <div class="obj">
+          <div class="o">
+            <p class="o-q">Restaurant365 already does this.</p>
+            <p class="o-a">R365 is only as current as what has been entered into it, and
+              <b>it does not know what Toast rang up an hour ago.</b> The decision you make on
+              a Wednesday happens before R365 has the data to inform it.</p>
+          </div>
+          <div class="o">
+            <p class="o-q">My managers know their numbers.</p>
+            <p class="o-a">Each on their own definition. <b>Ask two of them how they calculate
+              labour percentage</b> &mdash; whether salaried managers are in it, whether it is
+              against gross or net sales. You will get two answers, and both will be sincere.</p>
+          </div>
+          <div class="o">
+            <p class="o-q">We are seasonal, it swings around.</p>
+            <p class="o-a">Then comparing your sites to each other matters more, not less.
+              <b>Seasonality hits all of them; the gap between them is the part you
+              control.</b></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 5. PROFESSIONAL SERVICES ══════════ -->
+<section id="pro">
+  <div class="wrap">
+    <p class="kicker">Segment 05</p>
+    <h2>Professional services</h2>
+    <div class="seg">
+      <div class="seg-hd">
+        <h3>Where the margin leaks between recorded and collected</h3>
+        <p class="seg-kpi">Systems: practice management &middot; time-and-billing &middot; the CRM.
+          Numbers: <b>utilization</b>, <b>realization rate</b>, <b>WIP</b>,
+          <b>revenue per head</b>.</p>
+      </div>
+      <div class="trip">
+        <div class="tb">
+          <div class="tb-k">What they cannot see today</div>
+          <p>When the billable hour is the product, <b>the gap between recorded time and
+            collected revenue is the whole margin</b> &mdash; and it only becomes visible after
+            billing, when it is already a write-off.</p>
+          <p>Realization by matter, by partner and by team is a quarterly exercise, if it
+            happens at all.</p>
+        </div>
+        <div class="tb">
+          <div class="tb-k">What fast data lets them do</div>
+          <p><b>See a matter's realization slipping while the work is still open</b> and have
+            the conversation with the client then &mdash; rather than writing the time off at
+            billing and calling it the cost of doing business.</p>
+          <p>Rebalance work across a team in the month it matters, not after the quarter.</p>
+        </div>
+        <div class="tb worth">
+          <div class="tb-k">What that is worth</div>
+          <p><b>One point of realization on a year's billings.</b> They know what they billed
+            last year; that is the whole calculation.</p>
+          <p>Then bring one partner's utilization to the firm average and hold it &mdash; and
+            note that nobody had to work longer for either of those.</p>
+        </div>
+      </div>
+
+      <div class="who">
+        <div class="who-k">Who in your network is this</div>
+        <ul>
+          <li>Bills <b>by the hour or by the matter</b> &mdash; law, accounting, engineering,
+            agency, consulting.</li>
+          <li>Has <b>more than one partner or team</b>, so the averages have somewhere to
+            hide.</li>
+          <li><b>Writes off time at billing and calls it normal.</b> Everyone in this segment
+            does; almost nobody knows the number.</li>
+        </ul>
+      </div>
+
+      <div class="seg-obj">
+        <div class="seg-obj-k">If they push back</div>
+        <div class="obj">
+          <div class="o">
+            <p class="o-q">Practice management already reports utilization.</p>
+            <p class="o-a">On <b>recorded</b> time. It does not know what was actually
+              collected, and <b>the difference between those two is the only number that
+              matters.</b> Utilization can be up and the firm can be poorer.</p>
+          </div>
+          <div class="o">
+            <p class="o-q">Our people are fully booked.</p>
+            <p class="o-a"><b>Booked, billable and collected are three different numbers.</b>
+              Being busy is not the same as being paid, and a fully booked team writing off
+              fifteen per cent at billing is the most expensive kind of busy.</p>
+          </div>
+          <div class="o">
+            <p class="o-q">Every matter is different.</p>
+            <p class="o-a">Which is exactly why an average hides it. <b>The point is seeing
+              which ones differ, while you can still do something about them.</b></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 6. PE PORTFOLIO COMPANIES ══════════ -->
+<section id="pe">
+  <div class="wrap">
+    <p class="kicker">Segment 06</p>
+    <h2>PE portfolio companies</h2>
+    <div class="seg">
+      <div class="seg-hd">
+        <h3>Where the same word means different things at each company</h3>
+        <p class="seg-kpi">Systems: each company's own ERP, CRM and finance stack &middot; the consolidation tool.
+          Numbers: <b>EBITDA</b>, <b>working capital</b>, <b>pipeline</b>,
+          <b>value-creation milestones</b>.</p>
+      </div>
+      <div class="trip">
+        <div class="tb">
+          <div class="tb-k">What they cannot see today</div>
+          <p>Every company arrives with its own stack, so rolling the portfolio up is a monthly
+            scramble &mdash; and <b>&ldquo;EBITDA&rdquo; quietly means something slightly
+            different at each one.</b></p>
+          <p>Which means the comparison between companies, the thing the whole model rests on,
+            is not quite real.</p>
+        </div>
+        <div class="tb">
+          <div class="tb-k">What fast data lets them do</div>
+          <p><b>See working capital moving at a company in week two of the month</b>, not in a
+            board pack six weeks later when the quarter is already written.</p>
+          <p>Compare companies on one definition and <b>know the comparison is real</b> &mdash;
+            so a management conversation is about performance rather than about methodology.</p>
+        </div>
+        <div class="tb worth">
+          <div class="tb-k">What that is worth</div>
+          <p><b>A month of earlier warning on a covenant.</b> Anyone who has been near one knows
+            exactly what that month is worth.</p>
+          <p>Then the consolidation scramble itself: the days it takes, at every company, every
+            month, for twelve months.</p>
+        </div>
+      </div>
+
+      <div class="who">
+        <div class="who-k">Who in your network is this</div>
+        <ul>
+          <li><b>Bought a company in the last two years and cannot get clean numbers out of
+            it.</b> This is the single strongest tell in the whole document.</li>
+          <li>Holds <b>more than two operating companies</b>, however informally &mdash; it does
+            not have to be a fund.</li>
+          <li>Has a CFO whose <b>month-end is a scramble across entities</b>, and who has stopped
+            complaining about it.</li>
+        </ul>
+      </div>
+
+      <div class="seg-obj">
+        <div class="seg-obj-k">If they push back</div>
+        <div class="obj">
+          <div class="o">
+            <p class="o-q">We get monthly reporting from each company.</p>
+            <p class="o-a">In each company's own format, on each company's own definitions.
+              <b>The consolidation is a person with a spreadsheet &mdash; and that person is
+              the system.</b> Ask what happens the month they are away.</p>
+          </div>
+          <div class="o">
+            <p class="o-q">Our companies use different systems and always will.</p>
+            <p class="o-a"><b>That is the assumption this is built on.</b> Nothing gets
+              replaced. The systems stay where they are and the definitions get reconciled on
+              top of them.</p>
+          </div>
+          <div class="o">
+            <p class="o-q">That is what we have a CFO for.</p>
+            <p class="o-a">You do &mdash; and <b>this is what he is spending three days a month
+              on.</b> The question is not whether he can do it. It is whether that is the
+              highest-value thing he does all month.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CLOSE ══════════ -->
+<section style="border-bottom:none">
+  <div class="wrap">
+    <p class="kicker">If you remember one thing</p>
+    <div class="close">
+      <h3>Ask the question, then stop talking</h3>
+      <p><b>&ldquo;By the time you see those numbers, can you still do anything about
+        them?&rdquo;</b></p>
+      <p>Every owner has felt this exact frustration and almost nobody has ever named it back
+        to them. It works in all six segments because it is not about software &mdash; it is
+        about the gap between finding out and being able to act.</p>
+      <p>You do not need to know their systems, their metrics or their industry to ask it. If
+        the answer is a pause, that is the referral.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">EnhancedOps.Ninja &middot; Augeo LLC &middot; Internal reference for referral
+    conversations. No client names, logos or measured results appear on this page &mdash; the
+    worked examples are mechanisms to apply to a prospect's own numbers, not claims about ours.</div>
+</footer>
+
+</body>
+</html>
