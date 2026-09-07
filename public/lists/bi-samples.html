@@ -216,77 +216,78 @@ td.n{font-variant-numeric:tabular-nums}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
-/* ══════════════════ K2 PORTAL — THE ASSISTANT ══════════════════
+/* ══════════════════ THE NINJA — THE ASSISTANT ══════════════════
    A demo of a capability. Every answer is DERIVED from the same record arrays
    the dashboards read, so the assistant can never contradict the screen behind
    it. A chat panel that disagrees with the dashboard would undo the whole page. */
-.k2-badge{position:fixed;right:20px;bottom:20px;z-index:38;width:62px;height:62px;
-  border-radius:50%;background:var(--panel2);border:1.5px solid var(--blue-glow);
-  box-shadow:0 6px 22px rgba(0,0,0,.5), 0 0 0 6px rgba(42,125,225,.08);
-  display:flex;align-items:flex-end;justify-content:center;overflow:hidden;
-  transition:transform .16s, border-color .16s}
-.k2-badge:hover{transform:translateY(-2px) scale(1.04);border-color:var(--blue2)}
-.k2-badge img{width:52px;height:auto;display:block;margin-bottom:-2px}
-/* A quiet pulse so it reads as clickable without behaving like an advert. */
-.k2-badge::after{content:"";position:absolute;inset:-1.5px;border-radius:50%;
-  border:1.5px solid var(--blue2);opacity:0;animation:k2p 3.4s ease-out infinite}
-@keyframes k2p{0%{opacity:.55;transform:scale(1)}70%,100%{opacity:0;transform:scale(1.28)}}
-.k2-badge[aria-expanded="true"]{display:none}
-.k2-tip{position:fixed;right:92px;bottom:36px;z-index:37;background:var(--panel2);
+/* A black figure on a dark badge on a dark page disappears. A crisp white ring
+   gives it an edge to sit against, and the fill is lifted so the ninja reads
+   rather than merely being present. Ring only - no glow, gradient or pulse
+   stacked on top, which would muddy it. */
+.nj-badge{position:fixed;right:20px;bottom:20px;z-index:38;width:62px;height:62px;
+  border-radius:50%;background:#2C3A54;border:2.5px solid #fff;box-sizing:border-box;
+  box-shadow:0 6px 20px rgba(0,0,0,.55);overflow:hidden;padding:0;
+  transition:transform .16s}
+.nj-badge:hover{transform:translateY(-2px) scale(1.05)}
+/* Placed off the MEASURED INK BOX, not the file box: scaled so the ink is 82%
+   of the disc height, then offset so the ink centre lands on the circle centre.
+   Ink then spans 9-91% vertically, 26-74% horizontally, clear of the mask. */
+.nj-badge img{position:absolute;width:58.01%;height:auto;left:22.81%;top:4.54%;display:block}
+.nj-badge[aria-expanded="true"]{display:none}
+.nj-tip{position:fixed;right:92px;bottom:36px;z-index:37;background:var(--panel2);
   border:1px solid var(--line2);border-radius:8px;padding:6px 11px;font-size:12px;
   color:var(--ink2);white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.4);
   opacity:0;transform:translateX(6px);transition:.18s;pointer-events:none}
-.k2-badge:hover + .k2-tip{opacity:1;transform:none}
+.nj-badge:hover + .nj-tip{opacity:1;transform:none}
 
-.k2{position:fixed;right:20px;bottom:20px;z-index:39;width:392px;max-width:calc(100vw - 40px);
+.nj{position:fixed;right:20px;bottom:20px;z-index:39;width:392px;max-width:calc(100vw - 40px);
   height:min(560px,calc(100vh - 40px));background:var(--panel);border:1px solid var(--line2);
   border-radius:14px;box-shadow:0 18px 54px rgba(0,0,0,.62);display:flex;flex-direction:column;
   overflow:hidden;transform:translateY(14px) scale(.97);opacity:0;pointer-events:none;
   transition:transform .18s ease, opacity .18s ease}
-.k2.open{transform:none;opacity:1;pointer-events:auto}
-.k2-hd{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--sidebar);
+.nj.open{transform:none;opacity:1;pointer-events:auto}
+.nj-hd{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--sidebar);
   border-bottom:1px solid var(--line);flex:none}
-.k2-av{width:34px;height:34px;border-radius:50%;background:var(--panel2);border:1px solid var(--line2);
-  overflow:hidden;display:flex;align-items:flex-end;justify-content:center;flex:none}
-.k2-av img{width:29px;height:auto;margin-bottom:-1px}
-.k2-t{font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.05em;color:var(--ink);line-height:1.1}
-.k2-s{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-top:2px}
-.k2-x{margin-left:auto;color:var(--ink3);padding:3px;line-height:1;flex:none}
-.k2-x:hover{color:var(--ink)}
-.k2-body{flex:1;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:10px}
-.k2-msg{max-width:88%;font-size:13px;line-height:1.5;border-radius:11px;padding:9px 12px}
-.k2-msg.a{align-self:flex-start;background:var(--panel2);border:1px solid var(--line);color:var(--ink2)}
-.k2-msg.u{align-self:flex-end;background:var(--blue-dim);border:1px solid var(--blue-glow);color:var(--ink)}
-.k2-msg b{color:var(--ink);font-weight:700}
-.k2-msg .k2-src{display:block;margin-top:7px;padding-top:7px;border-top:1px solid var(--line);
+.nj-av{width:34px;height:34px;border-radius:50%;background:#2C3A54;border:2px solid #fff;
+  box-sizing:border-box;overflow:hidden;position:relative;flex:none}
+.nj-av img{position:absolute;width:58.01%;height:auto;left:22.81%;top:4.54%;display:block}
+.nj-t{font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.05em;color:var(--ink);line-height:1.1}
+.nj-s{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-top:2px}
+.nj-x{margin-left:auto;color:var(--ink3);padding:3px;line-height:1;flex:none}
+.nj-x:hover{color:var(--ink)}
+.nj-body{flex:1;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:10px}
+.nj-msg{max-width:88%;font-size:13px;line-height:1.5;border-radius:11px;padding:9px 12px}
+.nj-msg.a{align-self:flex-start;background:var(--panel2);border:1px solid var(--line);color:var(--ink2)}
+.nj-msg.u{align-self:flex-end;background:var(--blue-dim);border:1px solid var(--blue-glow);color:var(--ink)}
+.nj-msg b{color:var(--ink);font-weight:700}
+.nj-msg .nj-src{display:block;margin-top:7px;padding-top:7px;border-top:1px solid var(--line);
   font-size:11px;color:var(--ink3)}
-.k2-sugg{padding:0 13px 10px;display:flex;flex-direction:column;gap:6px;flex:none}
-.k2-sugg-k{font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:1px}
-.k2-q{text-align:left;border:1px solid var(--line2);border-radius:9px;padding:8px 11px;
+.nj-sugg{padding:0 13px 10px;display:flex;flex-direction:column;gap:6px;flex:none}
+.nj-sugg-k{font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:1px}
+.nj-q{text-align:left;border:1px solid var(--line2);border-radius:9px;padding:8px 11px;
   font-size:12.5px;color:var(--ink2);background:var(--panel2);transition:.12s;line-height:1.35}
-.k2-q:hover{border-color:var(--blue-glow);color:var(--ink);background:#15203a}
-.k2-none{font-size:12px;color:var(--ink3);padding:2px 0}
-.k2-foot{flex:none;border-top:1px solid var(--line);padding:10px 13px;background:var(--sidebar)}
-.k2-in{display:flex;gap:7px;align-items:center}
-.k2-in input{flex:1;min-width:0;background:var(--panel2);border:1px solid var(--line2);border-radius:8px;
+.nj-q:hover{border-color:var(--blue-glow);color:var(--ink);background:#15203a}
+.nj-none{font-size:12px;color:var(--ink3);padding:2px 0}
+.nj-foot{flex:none;border-top:1px solid var(--line);padding:10px 13px;background:var(--sidebar)}
+.nj-in{display:flex;gap:7px;align-items:center}
+.nj-in input{flex:1;min-width:0;background:var(--panel2);border:1px solid var(--line2);border-radius:8px;
   color:var(--ink);font:inherit;font-size:12.5px;padding:8px 10px}
-.k2-in input::placeholder{color:var(--ink3)}
-.k2-in input:focus{outline:none;border-color:var(--blue-glow)}
-.k2-send{background:var(--blue);color:#fff;border-radius:8px;padding:8px 11px;display:flex;flex:none}
-.k2-send:hover{background:var(--blue2)}
-.k2-note{font-size:10.5px;color:var(--ink3);margin-top:7px;line-height:1.45}
-.k2-illus{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);
+.nj-in input::placeholder{color:var(--ink3)}
+.nj-in input:focus{outline:none;border-color:var(--blue-glow)}
+.nj-send{background:var(--blue);color:#fff;border-radius:8px;padding:8px 11px;display:flex;flex:none}
+.nj-send:hover{background:var(--blue2)}
+.nj-note{font-size:10.5px;color:var(--ink3);margin-top:7px;line-height:1.45}
+.nj-illus{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);
   border:1px solid rgba(245,179,1,.45);border-radius:100px;padding:2px 7px;white-space:nowrap;flex:none}
 
 @media (max-width:860px){
   /* Small badge, and a full-height sheet when opened - a phone has no room to
      spare and the badge must never sit on a KPI tile or the nav rail. */
-  .k2-badge{width:50px;height:50px;right:14px;bottom:14px}
-  .k2-badge img{width:42px}
-  .k2-tip{display:none}
-  .k2{right:0;left:0;bottom:0;width:100%;max-width:100%;height:92vh;border-radius:14px 14px 0 0;
+  .nj-badge{width:50px;height:50px;right:14px;bottom:14px;border-width:2px}
+  .nj-tip{display:none}
+  .nj{right:0;left:0;bottom:0;width:100%;max-width:100%;height:92vh;border-radius:14px 14px 0 0;
     border-left:none;border-right:none;border-bottom:none;transform:translateY(100%)}
-  .k2.open{transform:none}
+  .nj.open{transform:none}
 }
 
 /* ── EXCEPTIONS PANEL — fills the dead centre with the reason the screen exists ── */
@@ -409,38 +410,38 @@ footer{border-top:1px solid var(--line);padding:20px 0 34px;color:var(--ink3);fo
 </aside>
 
 
-<button class="k2-badge" id="k2Badge" aria-expanded="false" aria-controls="k2"
-  aria-label="Open the K2 portal assistant">
+<button class="nj-badge" id="njBadge" aria-expanded="false" aria-controls="nj"
+  aria-label="Open The Ninja">
   <img src="../ninja-arms-folded.png" alt="">
 </button>
-<div class="k2-tip" aria-hidden="true">Ask about your numbers</div>
+<div class="nj-tip" aria-hidden="true">Ask The Ninja</div>
 
-<aside class="k2" id="k2" role="dialog" aria-modal="false" aria-labelledby="k2Title">
-  <div class="k2-hd">
-    <span class="k2-av"><img src="../ninja-arms-folded.png" alt=""></span>
+<aside class="nj" id="nj" role="dialog" aria-modal="false" aria-labelledby="njTitle">
+  <div class="nj-hd">
+    <span class="nj-av"><img src="../ninja-arms-folded.png" alt=""></span>
     <div>
-      <div class="k2-t" id="k2Title">K2 Portal</div>
-      <div class="k2-s">Assistant</div>
+      <div class="nj-t" id="njTitle">The Ninja</div>
+      <div class="nj-s">Ask about your numbers</div>
     </div>
-    <span class="k2-illus">Illustrative</span>
-    <button class="k2-x" id="k2X" aria-label="Close">
+    <span class="nj-illus">Illustrative</span>
+    <button class="nj-x" id="njX" aria-label="Close">
       <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor"
         stroke-width="1.8" stroke-linecap="round"><path d="M5 5 L15 15 M15 5 L5 15"/></svg>
     </button>
   </div>
-  <div class="k2-body" id="k2Body"></div>
-  <div class="k2-sugg" id="k2Sugg"></div>
-  <div class="k2-foot">
-    <form class="k2-in" id="k2Form">
-      <input id="k2Input" type="text" autocomplete="off"
+  <div class="nj-body" id="njBody"></div>
+  <div class="nj-sugg" id="njSugg"></div>
+  <div class="nj-foot">
+    <form class="nj-in" id="njForm">
+      <input id="njInput" type="text" autocomplete="off"
         placeholder="Ask about anything in your stack…" aria-label="Ask a question">
-      <button class="k2-send" type="submit" aria-label="Send">
+      <button class="nj-send" type="submit" aria-label="Send">
         <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor"
           stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
           <path d="M18 2 9.5 10.5"/><path d="M18 2 12.6 18l-3.1-7.5L2 7.4z"/></svg>
       </button>
     </form>
-    <p class="k2-note">Typing filters the questions below. In the live product a connected
+    <p class="nj-note">Typing filters the questions below. In the live product a connected
       agent answers free-form questions against your own systems.</p>
   </div>
 </aside>
@@ -1805,14 +1806,14 @@ renderScreen();
 </script>
 
 <script>
-/* ══════════════════ K2 PORTAL — ANSWERS ══════════════════
+/* ══════════════════ THE NINJA — ANSWERS ══════════════════
    Every answer below READS the same record arrays the dashboards read. None of
    it is typed prose with numbers baked in. If a job's margin changes in the
    data, the tile and the assistant both move, together.
    The questions are the ones a dashboard alone CANNOT answer - which is exactly
    what an agent adds, and why the reconciliation ones are the point. */
 
-const src = t => `<span class="k2-src">${t}</span>`;
+const src = t => `<span class="nj-src">${t}</span>`;
 const worstBy = (arr, f) => arr.slice().sort((x,y)=>f(x)-f(y))[0];
 const bestBy  = (arr, f) => arr.slice().sort((x,y)=>f(y)-f(x))[0];
 
@@ -1998,80 +1999,80 @@ home: [
 };
 
 /* ── Panel wiring ─────────────────────────────────────────────────────────── */
-const k2 = { open:false, filter:'' };
-function k2Questions(){ return ASSIST[S.ind.id] || []; }
+const nj = { open:false, filter:'' };
+function njQuestions(){ return ASSIST[S.ind.id] || []; }
 
-function k2RenderSugg(){
-  const f = k2.filter.trim().toLowerCase();
-  const all = k2Questions();
+function njRenderSugg(){
+  const f = nj.filter.trim().toLowerCase();
+  const all = njQuestions();
   const list = f ? all.filter(x => x.q.toLowerCase().includes(f)
     || f.split(/\s+/).some(w => w.length>2 && x.q.toLowerCase().includes(w))) : all;
-  const el = $('#k2Sugg');
+  const el = $('#njSugg');
   if(!list.length){
-    el.innerHTML = `<div class="k2-sugg-k">No matching question</div>
-      <p class="k2-none">Nothing here matches that. In the live product the connected agent answers it
+    el.innerHTML = `<div class="nj-sugg-k">No matching question</div>
+      <p class="nj-none">Nothing here matches that. In the live product the connected agent answers it
       against your own systems; in this demo, clear the box to see what it can show you.</p>`;
     return;
   }
-  el.innerHTML = `<div class="k2-sugg-k">${f?'Matching questions':'Try asking'}</div>` +
-    list.map(x => `<button class="k2-q" data-q="${esc(x.q)}">${esc(x.q)}</button>`).join('');
+  el.innerHTML = `<div class="nj-sugg-k">${f?'Matching questions':'Try asking'}</div>` +
+    list.map(x => `<button class="nj-q" data-q="${esc(x.q)}">${esc(x.q)}</button>`).join('');
 }
 
-function k2Say(html, who){
+function njSay(html, who){
   const d = document.createElement('div');
-  d.className = 'k2-msg ' + who;
+  d.className = 'nj-msg ' + who;
   d.innerHTML = html;
-  $('#k2Body').appendChild(d);
-  $('#k2Body').scrollTop = $('#k2Body').scrollHeight;
+  $('#njBody').appendChild(d);
+  $('#njBody').scrollTop = $('#njBody').scrollHeight;
 }
 
-function k2Ask(q){
-  const item = k2Questions().find(x => x.q === q);
+function njAsk(q){
+  const item = njQuestions().find(x => x.q === q);
   if(!item) return;
-  k2Say(esc(q), 'u');
-  $('#k2Input').value = ''; k2.filter = ''; k2RenderSugg();
-  setTimeout(() => k2Say(item.a(), 'a'), 260);
+  njSay(esc(q), 'u');
+  $('#njInput').value = ''; nj.filter = ''; njRenderSugg();
+  setTimeout(() => njSay(item.a(), 'a'), 260);
 }
 
-function k2Reset(){
-  $('#k2Body').innerHTML = '';
-  k2Say(`I can see the ${esc(S.ind.name.toLowerCase())} systems on this dashboard — everything the
+function njReset(){
+  $('#njBody').innerHTML = '';
+  njSay(`I can see the ${esc(S.ind.name.toLowerCase())} systems on this dashboard — everything the
     tiles are reading, and the places where two of them disagree.<br><br>
     Answers here are worked out from the same records the screen behind me is showing, across
     <b>all ${S.ind.id==='construction'?'jobs':S.ind.id==='insurance'?'producers':'trucks'}</b>.`, 'a');
-  k2.filter=''; $('#k2Input').value=''; k2RenderSugg();
+  nj.filter=''; $('#njInput').value=''; njRenderSugg();
 }
 
-function k2Toggle(on){
-  k2.open = on;
-  $('#k2').classList.toggle('open', on);
-  $('#k2Badge').setAttribute('aria-expanded', String(on));
-  if(on){ if(!$('#k2Body').children.length) k2Reset(); $('#k2Input').focus(); }
+function njToggle(on){
+  nj.open = on;
+  $('#nj').classList.toggle('open', on);
+  $('#njBadge').setAttribute('aria-expanded', String(on));
+  if(on){ if(!$('#njBody').children.length) njReset(); $('#njInput').focus(); }
 }
 
-$('#k2Badge').addEventListener('click', () => k2Toggle(true));
-$('#k2X').addEventListener('click', () => k2Toggle(false));
-$('#k2Sugg').addEventListener('click', e => {
-  const b = e.target.closest('[data-q]'); if(b) k2Ask(b.dataset.q);
+$('#njBadge').addEventListener('click', () => njToggle(true));
+$('#njX').addEventListener('click', () => njToggle(false));
+$('#njSugg').addEventListener('click', e => {
+  const b = e.target.closest('[data-q]'); if(b) njAsk(b.dataset.q);
 });
-$('#k2Input').addEventListener('input', e => { k2.filter = e.target.value; k2RenderSugg(); });
-$('#k2Form').addEventListener('submit', e => {
+$('#njInput').addEventListener('input', e => { nj.filter = e.target.value; njRenderSugg(); });
+$('#njForm').addEventListener('submit', e => {
   e.preventDefault();
-  const f = k2.filter.trim().toLowerCase();
+  const f = nj.filter.trim().toLowerCase();
   if(!f) return;
-  const all = k2Questions();
+  const all = njQuestions();
   const hit = all.find(x => x.q.toLowerCase().includes(f))
     || all.find(x => f.split(/\s+/).some(w => w.length>2 && x.q.toLowerCase().includes(w)));
-  if(hit){ k2Ask(hit.q); return; }
+  if(hit){ njAsk(hit.q); return; }
   /* Never pretend. Say plainly what this demo does and does not do. */
-  k2Say(esc(e.target.querySelector('input').value), 'u');
-  $('#k2Input').value=''; k2.filter=''; k2RenderSugg();
-  setTimeout(() => k2Say(`I can't answer that one here. This demo carries a fixed set of worked
+  njSay(esc(e.target.querySelector('input').value), 'u');
+  $('#njInput').value=''; nj.filter=''; njRenderSugg();
+  setTimeout(() => njSay(`I can't answer that one here. This demo carries a fixed set of worked
     examples so that every answer is derived from the records on screen and nothing is invented.<br><br>
     In the live product a connected agent takes free-form questions against your own systems.
     For now, the questions below are the ones I can show you.`, 'a'), 260);
 });
-document.addEventListener('keydown', e => { if(e.key==='Escape' && k2.open) k2Toggle(false); });
+document.addEventListener('keydown', e => { if(e.key==='Escape' && nj.open) njToggle(false); });
 </script>
 
 
