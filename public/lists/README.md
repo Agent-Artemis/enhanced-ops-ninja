@@ -22,6 +22,23 @@ Editing `objections.html` directly is the one thing not to do: the next run of t
 script overwrites it, and until then the two pages contradict each other in front
 of whoever is reading one of them on a call.
 
+### CI enforces this
+
+A GitHub Action (`.github/workflows/objections-parity.yml`) runs
+
+```
+python3 tools/build-objections.py --check
+```
+
+on every change to either page or to the script. It rebuilds in memory, compares
+against the committed `objections.html`, and on a mismatch prints **which**
+objection differs and both versions of it before failing the build.
+
+The guard is here rather than as a comment in `bi-value-and-objections.html`
+because that file is fenced and stays untouched — and editing an objection there
+is the most likely change anyone makes. Proved red then green in CI before being
+relied on.
+
 ### Checks worth repeating after a change
 
 - Both pages carry 25 objections, identical and in the same order.
