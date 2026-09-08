@@ -158,7 +158,7 @@ __INDEX__
 __BODY__
 
 <p class="xref" style="margin-top:30px;border-top:1px solid var(--line);padding-top:14px">
-  Internal reference. No pricing, no client names and no measured results appear here.
+  Internal reference. No client names and no measured results appear here.
   The value arguments and industry context are at
   <a href="bi-value-and-objections.html">bi-value-and-objections.html</a>.</p>
 
