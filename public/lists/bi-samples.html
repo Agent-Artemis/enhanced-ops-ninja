@@ -403,7 +403,7 @@ footer{border-top:1px solid var(--line);padding:20px 0 34px;color:var(--ink3);fo
       <div class="nj-rail-wrap">
         <button class="nj-rail" id="njRail" aria-expanded="false" aria-controls="nj">
           <span class="nj-av"><img src="../ninja-arms-folded.png" alt=""></span>
-          <span class="nj-rail-t">The Ninja<span>Ask about your numbers</span></span>
+          <span class="nj-rail-t">The Ninja<span>Your digital employee</span></span>
         </button>
       </div>
       <div class="sb-sys" id="sbSys"></div>
@@ -2071,7 +2071,8 @@ function njReset(){
   njSay(`I can see the ${esc(S.ind.name.toLowerCase())} systems on this dashboard — everything the
     tiles are reading, and the places where two of them disagree.<br><br>
     Answers here are worked out from the same records the screen behind me is showing, across
-    <b>all ${S.ind.id==='construction'?'jobs':S.ind.id==='insurance'?'producers':'trucks'}</b>.`, 'a');
+    <b>all ${S.ind.id==='construction'?'jobs':S.ind.id==='insurance'?'producers':'trucks'}</b>.<br><br>
+    In this demo I answer these five. In your business, I answer what you ask.`, 'a');
   nj.filter=''; $('#njInput').value=''; njRenderSugg();
 }
 
