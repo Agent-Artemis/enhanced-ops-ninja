@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Objections — answers, in order</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+/* Cream ground, following the-council.html rather than the dark brand: this is a
+   working reference someone prints and reads on a call, not a marketing surface.
+   Dense on purpose — whitespace is the enemy of scanning. */
+:root{
+  --ink:#15181d; --soft:#454b55; --mut:#6f7681; --line:#dde1e7; --line2:#c3c9d2;
+  --gold:#9a7b2e; --deep:#1f2937; --bg:#fbfaf8;
+  --head:'Bebas Neue',Impact,sans-serif; --body:'DM Sans',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);
+  font-size:14.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:820px;margin:0 auto;padding:30px 30px 60px}
+h1,h2{font-family:var(--head);font-weight:400;letter-spacing:.02em;margin:0}
+h1{font-size:34px;line-height:1.04}
+h2{font-size:17px;letter-spacing:.11em;text-transform:uppercase;color:var(--gold);
+  margin:30px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:var(--head);font-size:12.5px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--gold)}
+.wordmark{font-family:var(--head);font-size:13px;letter-spacing:.15em;color:var(--mut)}
+.lede{color:var(--soft);margin:8px 0 0;max-width:70ch;font-size:14px}
+.xref{margin:10px 0 0;font-size:13px;color:var(--mut)}
+.xref a{color:var(--gold)}
+
+/* The index is the feature: it is what makes this usable while someone talks. */
+.ix{margin:22px 0 0;border-top:1px solid var(--line);padding-top:16px}
+.ix ul{margin:0;padding:0;list-style:none;columns:2;column-gap:34px}
+@media (max-width:700px){ .ix ul{columns:1} }
+.ix li{font-size:13.2px;line-height:1.5;margin:0 0 2px;break-inside:avoid}
+.ix li.ix-h{font-family:var(--head);font-size:12.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--gold);margin:11px 0 4px}
+.ix li.ix-h:first-child{margin-top:0}
+.ix a{color:var(--deep);text-decoration:none;border-bottom:1px solid var(--line2)}
+.ix a:hover{border-bottom-color:var(--gold);color:var(--gold)}
+
+/* Question and answer are one unit and must never be split across a page. */
+.ob{margin:0 0 13px;break-inside:avoid;page-break-inside:avoid}
+.ob .q{margin:0;font-weight:700;font-size:14.8px;line-height:1.35;color:var(--ink)}
+.ob .q::before{content:"“"} .ob .q::after{content:"”"}
+.ob .a{margin:3px 0 0;color:var(--soft);line-height:1.5}
+.ob .a b{color:var(--ink)}
+.ob .a em{font-style:normal;font-weight:700;color:var(--ink)}
+:target{background:#f3ecd8}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+@media print{
+  body{background:#fff;font-size:10.2pt;line-height:1.42}
+  .wrap{padding:0;max-width:100%}
+  h1{font-size:26pt} h2{font-size:12.5pt;margin:14pt 0 6pt}
+  .ix{display:none}            /* an index of anchors is useless on paper */
+  .ob{margin-bottom:8pt}
+  a{color:inherit;text-decoration:none}
+  @page{margin:15mm}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="eyebrow">Objections &amp; answers</div>
+<h1>What they will say, and what to say back</h1>
+<p class="lede">Every objection and answer from the referrer's guide, in the same order,
+  with nothing between the objection and its answer. Made for finding a sentence while
+  someone is talking &mdash; use the index, or Cmd-F.</p>
+<p class="xref">The version with the value arguments and the industry context is at
+  <a href="bi-value-and-objections.html">bi-value-and-objections.html</a>.</p>
+<p class="wordmark">EnhancedOps.Ninja &middot; Business Intelligence</p>
+
+<nav class="ix" aria-label="All objections">
+<ul>
+  <li class="ix-h">The seven you will hear most</li>
+  <li><a href="#i-already-have-a-dashboard">I already have a dashboard.</a></li>
+  <li><a href="#my-controller-pulls-the-numbers">My controller pulls the numbers.</a></li>
+  <li><a href="#my-data-is-a-mess">My data is a mess.</a></li>
+  <li><a href="#we-are-too-small-for-this">We are too small for this.</a></li>
+  <li><a href="#how-long-does-it-take">How long does it take?</a></li>
+  <li><a href="#what-if-we-stop">What if we stop?</a></li>
+  <li><a href="#it-is-expensive">It is expensive.</a></li>
+  <li class="ix-h">Commercial &amp; field services</li>
+  <li><a href="#servicetitan-already-gives-me-dashboards">ServiceTitan already gives me dashboards.</a></li>
+  <li><a href="#my-techs-numbers-are-in-the-field-not-in-a-system">My techs&#x27; numbers are in the field, not in a system.</a></li>
+  <li><a href="#we-are-only-one-branch">We are only one branch.</a></li>
+  <li class="ix-h">Distribution &amp; wholesale</li>
+  <li><a href="#the-erp-is-our-system-of-record">The ERP is our system of record.</a></li>
+  <li><a href="#we-count-stock-twice-a-year">We count stock twice a year.</a></li>
+  <li><a href="#our-fill-rate-is-fine">Our fill rate is fine.</a></li>
+  <li class="ix-h">Manufacturing</li>
+  <li><a href="#the-mes-already-shows-oee">The MES already shows OEE.</a></li>
+  <li><a href="#our-operators-log-all-of-this">Our operators log all of this.</a></li>
+  <li><a href="#we-are-not-that-automated">We are not that automated.</a></li>
+  <li class="ix-h">Restaurants &amp; food service</li>
+  <li><a href="#restaurant365-already-does-this">Restaurant365 already does this.</a></li>
+  <li><a href="#my-managers-know-their-numbers">My managers know their numbers.</a></li>
+  <li><a href="#we-are-seasonal-it-swings-around">We are seasonal, it swings around.</a></li>
+  <li class="ix-h">Professional services</li>
+  <li><a href="#practice-management-already-reports-utilization">Practice management already reports utilization.</a></li>
+  <li><a href="#our-people-are-fully-booked">Our people are fully booked.</a></li>
+  <li><a href="#every-matter-is-different">Every matter is different.</a></li>
+  <li class="ix-h">PE portfolio companies</li>
+  <li><a href="#we-get-monthly-reporting-from-each-company">We get monthly reporting from each company.</a></li>
+  <li><a href="#our-companies-use-different-systems-and-always-will">Our companies use different systems and always will.</a></li>
+  <li><a href="#that-is-what-we-have-a-cfo-for">That is what we have a CFO for.</a></li>
+</ul>
+</nav>
+
+<h2>The seven you will hear most</h2>
+<div class="ob" id="i-already-have-a-dashboard">
+  <p class="q">I already have a dashboard.</p>
+  <p class="a">Does everyone in the room trust the same number? Most dashboards get quietly checked against somebody's own spreadsheet before anyone acts on them. <b>A dashboard nobody argues with is a different product from a dashboard nobody believes.</b></p>
+</div>
+<div class="ob" id="my-controller-pulls-the-numbers">
+  <p class="q">My controller pulls the numbers.</p>
+  <p class="a">She does, and she is good at it &mdash; that is the problem. <b>How many days a month is she spending on it, and what would you rather she did with them?</b> A person doing this well is the most expensive way to do it, and it stops when she is away.</p>
+</div>
+<div class="ob" id="my-data-is-a-mess">
+  <p class="q">My data is a mess.</p>
+  <p class="a"><b>That is the job, not a prerequisite.</b> You do not tidy the house before the cleaner arrives. Nobody comes in and asks you to clean it up first &mdash; sorting it out is the first two weeks of the work.</p>
+</div>
+<div class="ob" id="we-are-too-small-for-this">
+  <p class="q">We are too small for this.</p>
+  <p class="a">If you run <b>more than one location and more than two systems that do not talk to each other</b>, you are exactly the size. It is not about revenue &mdash; it is about how many places a number can hide.</p>
+</div>
+<div class="ob" id="how-long-does-it-take">
+  <p class="q">How long does it take?</p>
+  <p class="a"><b>Two to three weeks to the first live number.</b> Not a discovery phase, not a pilot &mdash; a number on a screen you can use.</p>
+</div>
+<div class="ob" id="what-if-we-stop">
+  <p class="q">What if we stop?</p>
+  <p class="a"><b>You own it. Your accounts, your data, your cloud.</b> We join as an invited guest and you can remove us. Nothing to unpick, nothing held hostage.</p>
+</div>
+<div class="ob" id="it-is-expensive">
+  <p class="q">It is expensive.</p>
+  <p class="a">Against what? <b>Turn it into a comparison, never a defence.</b> Three days of a controller every month, plus decisions made on numbers nobody fully trusts. Ask what the last decision made on a wrong number cost &mdash; they will have one.</p>
+</div>
+<h2>Commercial &amp; field services</h2>
+<div class="ob" id="servicetitan-already-gives-me-dashboards">
+  <p class="q">ServiceTitan already gives me dashboards.</p>
+  <p class="a">ServiceTitan reports on ServiceTitan. <b>It does not know what QuickBooks says.</b> The gap between them is where your margin hides &mdash; the completed job it counts and the invoice that never got raised are the same work, in two systems, with two different answers.</p>
+</div>
+<div class="ob" id="my-techs-numbers-are-in-the-field-not-in-a-system">
+  <p class="q">My techs' numbers are in the field, not in a system.</p>
+  <p class="a">Then that is the first thing worth fixing, and it is days of work rather than quarters. <b>If drive time is not recorded you cannot tell a capacity problem from a routing one</b> &mdash; and those have completely different answers.</p>
+</div>
+<div class="ob" id="we-are-only-one-branch">
+  <p class="q">We are only one branch.</p>
+  <p class="a">Then it is truck by truck instead of branch by branch. <b>Same question, smaller unit.</b> One branch with five trucks has the same problem as five branches &mdash; it is just closer to home.</p>
+</div>
+<h2>Distribution &amp; wholesale</h2>
+<div class="ob" id="the-erp-is-our-system-of-record">
+  <p class="q">The ERP is our system of record.</p>
+  <p class="a">For accounting, yes. <b>It is not the system of record for whether the truck left on time</b> &mdash; and the carrier portal does not tell it. The gap between them is where your service level actually lives.</p>
+</div>
+<div class="ob" id="we-count-stock-twice-a-year">
+  <p class="q">We count stock twice a year.</p>
+  <p class="a">So twice a year you know. <b>The other three hundred and sixty-three days you are guessing</b>, and every purchasing decision in between is made on the guess.</p>
+</div>
+<div class="ob" id="our-fill-rate-is-fine">
+  <p class="q">Our fill rate is fine.</p>
+  <p class="a">Measured how? <b>Line fill, order fill and case fill give three different answers off the same week</b> &mdash; and the flattering one is usually the one being quoted. It is worth knowing which one you have been reporting.</p>
+</div>
+<h2>Manufacturing</h2>
+<div class="ob" id="the-mes-already-shows-oee">
+  <p class="q">The MES already shows OEE.</p>
+  <p class="a">On the machines it is connected to, on its own definition of availability. <b>It does not know what the ERP costed the run at.</b> Two systems, two OEEs, and neither of them is wrong &mdash; which is exactly the problem.</p>
+</div>
+<div class="ob" id="our-operators-log-all-of-this">
+  <p class="q">Our operators log all of this.</p>
+  <p class="a">On paper, at the end of the shift, from memory. <b>That is a record, not a measurement</b> &mdash; and nobody is going to act on Tuesday's downtime when they read it on Friday.</p>
+</div>
+<div class="ob" id="we-are-not-that-automated">
+  <p class="q">We are not that automated.</p>
+  <p class="a">Then the shop-floor data is the gap, and <b>closing it is a much smaller job than an MES rollout.</b> You do not need a connected factory to know which cell is losing you money.</p>
+</div>
+<h2>Restaurants &amp; food service</h2>
+<div class="ob" id="restaurant365-already-does-this">
+  <p class="q">Restaurant365 already does this.</p>
+  <p class="a">R365 is only as current as what has been entered into it, and <b>it does not know what Toast rang up an hour ago.</b> The decision you make on a Wednesday happens before R365 has the data to inform it.</p>
+</div>
+<div class="ob" id="my-managers-know-their-numbers">
+  <p class="q">My managers know their numbers.</p>
+  <p class="a">Each on their own definition. <b>Ask two of them how they calculate labour percentage</b> &mdash; whether salaried managers are in it, whether it is against gross or net sales. You will get two answers, and both will be sincere.</p>
+</div>
+<div class="ob" id="we-are-seasonal-it-swings-around">
+  <p class="q">We are seasonal, it swings around.</p>
+  <p class="a">Then comparing your sites to each other matters more, not less. <b>Seasonality hits all of them; the gap between them is the part you control.</b></p>
+</div>
+<h2>Professional services</h2>
+<div class="ob" id="practice-management-already-reports-utilization">
+  <p class="q">Practice management already reports utilization.</p>
+  <p class="a">On <b>recorded</b> time. It does not know what was actually collected, and <b>the difference between those two is the only number that matters.</b> Utilization can be up and the firm can be poorer.</p>
+</div>
+<div class="ob" id="our-people-are-fully-booked">
+  <p class="q">Our people are fully booked.</p>
+  <p class="a"><b>Booked, billable and collected are three different numbers.</b> Being busy is not the same as being paid, and a fully booked team writing off fifteen per cent at billing is the most expensive kind of busy.</p>
+</div>
+<div class="ob" id="every-matter-is-different">
+  <p class="q">Every matter is different.</p>
+  <p class="a">Which is exactly why an average hides it. <b>The point is seeing which ones differ, while you can still do something about them.</b></p>
+</div>
+<h2>PE portfolio companies</h2>
+<div class="ob" id="we-get-monthly-reporting-from-each-company">
+  <p class="q">We get monthly reporting from each company.</p>
+  <p class="a">In each company's own format, on each company's own definitions. <b>The consolidation is a person with a spreadsheet &mdash; and that person is the system.</b> Ask what happens the month they are away.</p>
+</div>
+<div class="ob" id="our-companies-use-different-systems-and-always-will">
+  <p class="q">Our companies use different systems and always will.</p>
+  <p class="a"><b>That is the assumption this is built on.</b> Nothing gets replaced. The systems stay where they are and the definitions get reconciled on top of them.</p>
+</div>
+<div class="ob" id="that-is-what-we-have-a-cfo-for">
+  <p class="q">That is what we have a CFO for.</p>
+  <p class="a">You do &mdash; and <b>this is what he is spending three days a month on.</b> The question is not whether he can do it. It is whether that is the highest-value thing he does all month.</p>
+</div>
+
+<p class="xref" style="margin-top:30px;border-top:1px solid var(--line);padding-top:14px">
+  Internal reference. No pricing, no client names and no measured results appear here.
+  The value arguments and industry context are at
+  <a href="bi-value-and-objections.html">bi-value-and-objections.html</a>.</p>
+
+</div>
+</body>
+</html>
