@@ -167,7 +167,42 @@ __BODY__
 </html>
 """
 
-OUT.write_text(HEAD.replace("__INDEX__", "\n".join(idx)).replace("__BODY__", "\n".join(blocks)))
+built = HEAD.replace("__INDEX__", "\n".join(idx)).replace("__BODY__", "\n".join(blocks))
+
+if "--check" in sys.argv:
+    # CI mode. The strongest possible check: does the committed page match what
+    # the designed page produces RIGHT NOW? That catches an edit to either file,
+    # including a hand-edit of the generated one.
+    current = OUT.read_text() if OUT.exists() else ""
+    if current == built:
+        print(f"OK — objections.html matches bi-value-and-objections.html ({total} objections)")
+        sys.exit(0)
+    print("=" * 72)
+    print("OBJECTIONS PARITY FAILED")
+    print("=" * 72)
+    print("public/lists/objections.html is not what bi-value-and-objections.html produces.")
+    print("The two pages would show different words to whoever is reading one of them.")
+    print()
+    def qa(text, q, a):
+        return [(" ".join(html.unescape(re.sub(r"<[^>]+>", " ", m.group(1))).split()),
+                 " ".join(html.unescape(re.sub(r"<[^>]+>", " ", m.group(2))).split()))
+                for m in re.finditer(rf'<p class="{q}">(.*?)</p>\s*<p class="{a}">(.*?)</p>', text, re.S)]
+    want, have = qa(built, "q", "a"), qa(current, "q", "a")
+    if len(want) != len(have):
+        print(f"  count differs: designed page has {len(want)}, objections.html has {len(have)}")
+    for i, (w, h) in enumerate(zip(want, have)):
+        if w != h:
+            print(f"  first difference at objection {i + 1}:")
+            print(f"    designed page : {w[0][:100]}")
+            print(f"                    {w[1][:100]}")
+            print(f"    objections.html: {h[0][:100]}")
+            print(f"                    {h[1][:100]}")
+            break
+    print()
+    print("FIX: python3 tools/build-objections.py   then commit the regenerated page.")
+    sys.exit(1)
+
+OUT.write_text(built)
 print(f"extracted {total} objections across {len(sections)} sections")
 for sid, title, pairs in sections:
     print(f"  {len(pairs):>2}  {title}")

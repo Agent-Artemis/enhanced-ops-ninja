@@ -1,0 +1,30 @@
+name: Objections parity
+
+# Why this exists: objections.html is GENERATED from bi-value-and-objections.html
+# so the two can never show different words. That guarantee is build-time, which
+# means it only holds if somebody runs the script. The generated file carries a
+# DO-NOT-EDIT banner, but the designed page cannot — it is fenced and stays
+# untouched — and editing an objection there is the most likely next change.
+# So the guard lives here instead of in a comment nobody is obliged to read.
+
+on:
+  push:
+    paths:
+      - 'public/lists/objections.html'
+      - 'public/lists/bi-value-and-objections.html'
+      - 'tools/build-objections.py'
+      - '.github/workflows/objections-parity.yml'
+  pull_request:
+    paths:
+      - 'public/lists/objections.html'
+      - 'public/lists/bi-value-and-objections.html'
+      - 'tools/build-objections.py'
+  workflow_dispatch: {}
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: The two objection pages must say the same thing
+        run: python3 tools/build-objections.py --check
