@@ -26,7 +26,9 @@ interface CallList {
   id: string;
   title: string;
   blurb: string;
-  count: string;
+  /** Descriptive, not necessarily a contact count. Omit where there is nothing
+   *  honest to put here — a document has no contacts. */
+  count?: string;
   url: string;
 }
 
@@ -661,7 +663,7 @@ function NationalCallList() {
 }
 
 /* ─── One (hosted) list card ────────────────────────────────────────────────── */
-function ListCard({ list }: { list: CallList }) {
+function ListCard({ list, cta = 'Open list ↗' }: { list: CallList; cta?: string }) {
   return (
     <div
       style={{
@@ -693,20 +695,22 @@ function ListCard({ list }: { list: CallList }) {
           </a>
           <p style={{ margin: '8px 0 0', fontSize: 14, lineHeight: 1.5, color: C.textSec }}>{list.blurb}</p>
         </div>
-        <span
-          style={{
-            flexShrink: 0,
-            fontSize: 12,
-            fontWeight: 700,
-            color: C.blue,
-            background: 'rgba(26,107,249,0.12)',
-            padding: '4px 10px',
-            borderRadius: 999,
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {list.count}
-        </span>
+        {list.count ? (
+          <span
+            style={{
+              flexShrink: 0,
+              fontSize: 12,
+              fontWeight: 700,
+              color: C.blue,
+              background: 'rgba(26,107,249,0.12)',
+              padding: '4px 10px',
+              borderRadius: 999,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {list.count}
+          </span>
+        ) : null}
       </div>
 
       <div>
@@ -728,12 +732,116 @@ function ListCard({ list }: { list: CallList }) {
             textDecoration: 'none',
           }}
         >
-          Open list ↗
+          {cta}
         </a>
       </div>
     </div>
   );
 }
+
+/*
+ * REFERENCE DOCUMENTS — not people to call.
+ *
+ * These sit BELOW the calling lists in the same tab. They carry no contacts and
+ * no OCS action, so they get no contact count and no dialling controls: a
+ * control that does nothing is worse than no control.
+ */
+const DOCS: CallList[] = [
+  {
+    id: 'biovara-plan',
+    title: 'BioVara — White-label Oral NAD, 90-day plan',
+    blurb:
+      'The venture plan Jeff works from with Blake: who runs what, the 90-day schedule month by ' +
+      'month, how Jeff is paid, and the open decisions that are still unsettled. Carries commercial ' +
+      'terms, so know what is on screen before sharing it.',
+    count: '90-day plan',
+    url: 'https://enhancedops.ninja/lists/biovara-plan.html',
+  },
+  {
+    id: 'bi-value-and-objections',
+    title: 'BI — Value and objections, by industry',
+    blurb:
+      'The referrer\'s guide. What the work is worth in each industry\'s own words, six segments with ' +
+      'the systems they actually run, and a "who in your network is this" list per segment. The ' +
+      'objections sit inside it with their industry context.',
+    count: '6 segments · 25 objections',
+    url: 'https://enhancedops.ninja/lists/bi-value-and-objections.html',
+  },
+  {
+    id: 'objections',
+    title: 'BI — Objections, plain list',
+    blurb:
+      'The same 25 answers with nothing between the objection and its answer, and an index that ' +
+      'jumps straight to any one of them. Built for looking something up while a prospect is still ' +
+      'talking. Prints clean.',
+    count: '25 objections',
+    url: 'https://enhancedops.ninja/lists/objections.html',
+  },
+  {
+    id: 'bi-samples',
+    title: 'BI — Sample dashboards',
+    blurb:
+      'Three industries, six screens each, every KPI clickable to show where the number came from ' +
+      'and why two systems disagree about it. Every figure is illustrative and labelled as such. ' +
+      'This is the one to show on a call.',
+    count: '3 industries · 18 screens',
+    url: 'https://enhancedops.ninja/lists/bi-samples.html',
+  },
+  {
+    id: 'discovery-questions',
+    title: 'BI — Discovery call sheet',
+    blurb:
+      'Ten questions for a $10-50M operator, with what to listen for on each. Question three is the ' +
+      'close and it lands early. Includes the offer block, so it carries pricing — internal only.',
+    count: '10 questions',
+    url: 'https://enhancedops.ninja/lists/discovery-questions.html',
+  },
+  {
+    id: 'the-council',
+    title: 'The Council — what it is',
+    blurb:
+      'The messaging framework, on one printable page. What the Council is, who it is for and the ' +
+      'language to use about it.',
+    url: 'https://enhancedops.ninja/lists/the-council.html',
+  },
+  {
+    id: 'salmg-offer',
+    title: 'SAL Management Group — proposal',
+    blurb:
+      'The priced proposal for SAL: fifteen communities plus corporate, per-community pricing ' +
+      'against the scope of work they approved on 21 August. Addressed to named people at a named ' +
+      'client and carries their pricing — not a page to have open on a shared screen.',
+    count: 'Proposal · SAL',
+    url: 'https://enhancedops.ninja/lists/salmg-offer.html',
+  },
+  {
+    id: 'braden-monday',
+    title: 'Braden Sims — call prep, 24 Aug',
+    blurb:
+      'One-off prep for a single 30-minute call with Braden Sims at Monument Bountiful, dated ' +
+      'Monday 24 August. Kept for the approach rather than the date — the opening question and the ' +
+      'reasoning behind it still hold. Names one prospect throughout.',
+    count: 'One call · dated',
+    url: 'https://enhancedops.ninja/lists/braden-monday.html',
+  },
+];
+
+/*
+ * INTENTIONALLY NOT SHOWN.
+ *
+ * The build check requires every page in public/lists/ to be either registered
+ * above or named here with a reason. Auto-listing the directory was rejected on
+ * purpose: some pages are addressed to one named client and should not appear in
+ * a list that might be screen-shared. Registration stays a decision.
+ */
+const HIDDEN_LISTS: { file: string; why: string }[] = [
+  // Empty on purpose. Jeff asked for ALL lists to be reachable here, because
+  // things going missing is the problem this tab is fixing — a page he cannot
+  // find is a failure; a page he can find and chooses not to share is not.
+  // Where a page is client-specific, the blurb says so rather than hiding it.
+  // Hiding stays available, but it is Jeff's call, not ours.
+];
+void HIDDEN_LISTS;
 
 /* ─── View ──────────────────────────────────────────────────────────────────── */
 export function CallListsView() {
@@ -757,6 +865,41 @@ export function CallListsView() {
           {LISTS.map((list) => (
             <ListCard key={list.id} list={list} />
           ))}
+        </div>
+
+        <div style={{ marginTop: 34 }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'baseline',
+              gap: 10,
+              paddingBottom: 10,
+              marginBottom: 16,
+              borderBottom: `1px solid ${C.border}`,
+            }}
+          >
+            <h2
+              style={{
+                margin: 0,
+                fontSize: 13,
+                fontWeight: 700,
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: C.textSec,
+              }}
+            >
+              Reference
+            </h2>
+            <span style={{ fontSize: 13, color: C.textSec }}>
+              Plans, sample dashboards and sales sheets. No contacts to dial.
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {DOCS.map((doc) => (
+              <ListCard key={doc.id} list={doc} cta="Open ↗" />
+            ))}
+          </div>
         </div>
       </div>
     </div>

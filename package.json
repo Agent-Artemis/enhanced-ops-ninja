@@ -7,6 +7,7 @@
   },
   "scripts": {
     "dev": "next dev --turbopack",
+    "prebuild": "node tools/check-lists-registered.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -14,7 +15,8 @@
     "generate:sample-pdf": "npx tsx scripts/generate-sample-pdf.ts",
     "validate:paid-assessments": "npx tsx scripts/validate-paid-assessments.ts",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "check:lists": "node tools/check-lists-registered.mjs"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.3.0",

@@ -1,0 +1,34 @@
+name: Lists registered
+
+# Why this exists: eight pages shipped into public/lists/ and never appeared in
+# the CRM, because LISTS was hand-maintained. Nothing failed — they were just
+# invisible until Jeff went looking for one. This turns that silence into a
+# build failure.
+#
+# The same check runs as `prebuild`, so it also blocks the Vercel deploy. This
+# workflow makes it visible on the commit as well.
+
+on:
+  push:
+    paths:
+      - 'public/lists/**'
+      - 'src/components/crm/CallListsView.tsx'
+      - 'tools/check-lists-registered.mjs'
+      - '.github/workflows/lists-registered.yml'
+  pull_request:
+    paths:
+      - 'public/lists/**'
+      - 'src/components/crm/CallListsView.tsx'
+      - 'tools/check-lists-registered.mjs'
+  workflow_dispatch: {}
+
+jobs:
+  registered:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Every page in public/lists/ must be registered or explicitly hidden
+        run: node tools/check-lists-registered.mjs
