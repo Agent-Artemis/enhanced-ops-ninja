@@ -835,6 +835,17 @@ const DOCS: CallList[] = [
     url: 'https://enhancedops.ninja/lists/braden-monday.html',
   },
   {
+    id: 'what-this-solves',
+    title: 'Exit Readiness — what this solves',
+    blurb:
+      'Eight sentences an owner actually says, each with what it costs him at the table, then why ' +
+      'nobody already in the room will tell him — and how it gets fixed, one-time versus ongoing. ' +
+      'Built to be read by someone who knows business owners, so he recognises faces rather than ' +
+      'learns a pitch. Carries no pricing at all; the number belongs on the call.',
+    count: 'One page · Sam',
+    url: 'https://enhancedops.ninja/lists/what-this-solves.html',
+  },
+  {
     id: 'exit-readiness-sam',
     title: 'Exit Readiness — prepared for Coach Sam',
     blurb:

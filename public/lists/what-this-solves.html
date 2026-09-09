@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+<meta name="referrer" content="no-referrer">
+<title>What this solves — EnhancedOps.Ninja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* EON standard: dark ground, BLUE as the primary emphasis with white.
+   Gold is a secondary accent only — it never carries a headline. */
+:root{--bg:#0A0F1A;--panel:#0E1420;--panel2:#131B2B;--line:#243044;--line2:#2E3D55;
+  --ink:#EEF3FA;--ink2:#AEBBCD;--ink3:#7E8DA0;--blue:#1A6ECC;--blue2:#3F8AE0;--gold:#F5B301;
+  --head:"Bebas Neue",sans-serif;--body:"DM Sans",system-ui,sans-serif;--r:10px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:920px;margin:0 auto;padding:0 22px}
+h1,h2,h3{font-family:var(--head);text-transform:uppercase;letter-spacing:.02em;
+  font-weight:400;line-height:1.04;margin:0}
+
+.hdr{border-bottom:1px solid var(--line);background:var(--panel);padding:18px 0}
+.hdr-in{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+h1{font-size:clamp(26px,5.4vw,38px)}
+.hsub{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--blue2);margin-top:5px}
+/* logo-ninja.png IS the wordmark — no text lockup beside it, ever. */
+.hdr img{height:88px;width:auto;flex:none}
+.hdr .mark-sm{display:none}
+
+.lede{max-width:70ch;color:var(--ink2);font-size:16px;margin:18px 0 0}
+.lede b{color:var(--ink);font-weight:500}
+
+section{padding:26px 0 0}
+h2{font-size:clamp(19px,3.4vw,25px);color:var(--ink)}
+.h2sub{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue2);
+  margin-bottom:6px}
+
+/* ── THE SYMPTOMS ──
+   The sentence is the hero. It is set large and in the owner's voice, because
+   the page works only if a reader hears a specific man saying it. The cost line
+   is deliberately quieter: it explains, it does not compete. */
+.sx{display:grid;gap:12px;margin-top:16px}
+.s{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--blue);
+  border-radius:var(--r);padding:15px 17px}
+.s-q{font-size:19px;line-height:1.3;color:var(--ink);font-weight:500;letter-spacing:-.005em}
+.s-q i{font-style:normal;color:var(--ink3);font-size:15px;font-weight:400;display:block;margin-top:5px}
+.s-k{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--blue2);
+  margin:11px 0 4px}
+.s-c{font-size:14.5px;color:var(--ink2);margin:0;max-width:78ch}
+.s-c b{color:var(--ink);font-weight:500}
+
+.hit{background:var(--panel2);border:1px solid var(--line2);border-radius:var(--r);
+  padding:16px 18px;margin-top:16px}
+.hit .k{font-family:var(--head);font-size:23px;letter-spacing:.02em;color:var(--ink);
+  line-height:1.1;text-transform:uppercase}
+.hit p{margin:9px 0 0;color:var(--ink2);font-size:14.5px;max-width:76ch}
+
+table.roles{border-collapse:collapse;width:100%;margin-top:14px;font-size:14.5px}
+table.roles td{padding:10px 0;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink2)}
+table.roles td.r{width:150px;padding-right:16px;color:var(--blue2);font-weight:500;white-space:nowrap}
+table.roles tr:last-child td{border-bottom:none}
+
+/* Demoted deliberately: the respect is real, it is just not what this page is
+   about. One line, quiet, near the end. */
+.aside{margin-top:20px;padding:13px 16px;border:1px solid var(--line);border-radius:var(--r);
+  color:var(--ink3);font-size:13.5px}
+.aside b{color:var(--ink2);font-weight:500}
+
+/* ── HOW IT GETS FIXED ──
+   The page was all diagnosis and no treatment. These two blocks are the answer to
+   "how do we fix it, and is it one-time or ongoing" — the two shapes side by side so
+   Sam can hear which one a given man needs. Blue carries the headline; the ongoing
+   block is marked with gold as a secondary accent only, never as a heading colour. */
+.fx{display:grid;gap:12px;margin-top:16px}
+@media(min-width:720px){.fx{grid-template-columns:1fr 1fr}}
+.f{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--blue);
+  border-radius:var(--r);padding:15px 17px}
+.f.two{border-top-color:var(--gold)}
+.f-t{font-family:var(--head);font-size:21px;letter-spacing:.02em;text-transform:uppercase;
+  color:var(--ink);line-height:1.1}
+.f-w{display:inline-block;font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--blue2);border:1px solid var(--line2);border-radius:999px;padding:3px 9px;margin-bottom:9px}
+.f.two .f-w{color:var(--gold)}
+.f p{font-size:14.5px;color:var(--ink2);margin:9px 0 0}
+.f p b{color:var(--ink);font-weight:500}
+.f ul{margin:9px 0 0;padding:0;list-style:none}
+.f li{font-size:14px;color:var(--ink2);padding:5px 0 5px 15px;position:relative}
+.f li::before{content:"";position:absolute;left:0;top:12px;width:5px;height:5px;
+  border-radius:50%;background:var(--blue2)}
+.f.two li::before{background:var(--gold)}
+.which{margin-top:14px;padding:13px 16px;background:var(--panel2);border:1px solid var(--line2);
+  border-radius:var(--r);font-size:15px;color:var(--ink2)}
+.which b{color:var(--ink);font-weight:500}
+
+.close{margin-top:26px;padding:18px 20px;background:var(--panel);border:1px solid var(--line2);
+  border-radius:var(--r)}
+.close p{margin:0;font-size:16px;color:var(--ink2);max-width:72ch}
+.close b{color:var(--blue2);font-weight:500}
+
+footer{border-top:1px solid var(--line);margin-top:34px;padding:18px 0 40px;
+  color:var(--ink3);font-size:12.5px}
+
+@media (max-width:560px){
+  /* Below 560px the full lockup is too tall for a header — the wordmark-only
+     file carries the brand at a size that still reads. */
+  .hdr img{display:none} .hdr .mark-sm{display:block;height:26px;width:auto}
+  .s-q{font-size:17px}
+  table.roles td.r{width:auto;display:block;padding-bottom:2px;border:none}
+  table.roles td{display:block;padding-top:0}
+  table.roles tr{display:block;border-bottom:1px solid var(--line);padding:9px 0}
+  table.roles tr:last-child{border-bottom:none}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <div>
+      <h1>What this solves</h1>
+      <div class="hsub">EnhancedOps.Ninja &middot; For Sam</div>
+    </div>
+    <img src="../logo-ninja.png" alt="EnhancedOps.Ninja">
+    <img class="mark-sm" src="../ninja-logo.png" alt="EnhancedOps.Ninja">
+  </div>
+</header>
+
+<main class="wrap">
+
+  <p class="lede">Sam &mdash; these are sentences you have heard said out loud in your rooms.
+    <b>Every one of them has a price at the table</b>, and the man saying it almost never knows
+    what that price is. Read them and see whose face turns up.</p>
+
+  <section>
+    <div class="h2sub">The sentences</div>
+    <h2>What owners say &mdash; and what it costs them</h2>
+
+    <div class="sx">
+
+      <div class="s">
+        <div class="s-q">&ldquo;The business can&rsquo;t run without me.&rdquo;</div>
+        <div class="s-k">What it costs</div>
+        <p class="s-c">A buyer who needs the owner in the building is buying a job, not a business
+          &mdash; and he prices a job. It usually comes back as an <b>earn-out instead of cash</b>:
+          the owner stays on, and only gets paid if the business performs without the very thing
+          that makes it perform.</p>
+      </div>
+
+      <div class="s">
+        <div class="s-q">&ldquo;I want out in a couple of years, but I don&rsquo;t know what it&rsquo;s worth.&rdquo;</div>
+        <div class="s-k">What it costs</div>
+        <p class="s-c">Without a number he trusts, every offer sounds either insulting or generous
+          and he cannot tell which. <b>Men accept low offers and walk away from fair ones for the
+          same reason</b> &mdash; they had nothing to measure it against.</p>
+      </div>
+
+      <div class="s">
+        <div class="s-q">&ldquo;One customer is a third of my revenue.&rdquo;</div>
+        <div class="s-k">What it costs</div>
+        <p class="s-c">Concentration is risk the buyer would be inheriting, so he does not pay for
+          it up front. It rarely kills the deal &mdash; it <b>moves the money</b>, into a holdback
+          or an earn-out tied to that one customer still being there in two years.</p>
+      </div>
+
+      <div class="s">
+        <div class="s-q">&ldquo;I don&rsquo;t really have a management team under me.&rdquo;</div>
+        <div class="s-k">What it costs</div>
+        <p class="s-c">The buyer is not only buying the owner out, he is deciding <b>who runs it on
+          the Monday after closing</b>. If the answer is nobody, he brings his own people and pays
+          less for what he is replacing &mdash; or he passes, and never says that was the reason.</p>
+      </div>
+
+      <div class="s">
+        <div class="s-q">&ldquo;My books are a mess.&rdquo;
+          <i>&mdash; or an accountant who produces whatever the owner tells him to produce.</i></div>
+        <div class="s-k">What it costs</div>
+        <p class="s-c">Numbers that cannot be tied out do not just look bad, <b>they stop the
+          clock</b>. Diligence stretches, the deal ages, and every extra week is another week for
+          something else to go wrong. Figures from an accountant who reports to the seller get
+          rebuilt from scratch by the buyer&rsquo;s team &mdash; and they rebuild them unkindly.</p>
+      </div>
+
+      <div class="s">
+        <div class="s-q">&ldquo;I&rsquo;ve been running personal things through the business.&rdquo;</div>
+        <div class="s-k">What it costs</div>
+        <p class="s-c">Add-backs are ordinary and defensible &mdash; <b>until they are found rather
+          than disclosed</b>. Found means the buyer stops trusting the rest of the file, re-checks
+          everything, and re-opens the price on all of it.</p>
+      </div>
+
+      <div class="s">
+        <div class="s-q">&ldquo;My partner and I don&rsquo;t agree about selling.&rdquo;</div>
+        <div class="s-k">What it costs</div>
+        <p class="s-c">A buyer will not spend six months and real money on a deal that two owners
+          cannot both sign. <b>Most walk at the first sign of it</b>, early and quietly, and the
+          owners are left thinking the price was the problem.</p>
+      </div>
+
+      <div class="s">
+        <div class="s-q">&ldquo;I got approached once and nothing came of it.&rdquo;</div>
+        <div class="s-k">What it costs</div>
+        <p class="s-c">An approach that went nowhere usually went nowhere <b>for a reason the owner
+          was never told</b>. Nobody sends a letter explaining why they lost interest. Whatever it
+          was is still sitting there, waiting for the next buyer to find it.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="h2sub">Why it is not caught first</div>
+    <h2>Nobody in the room can tell him</h2>
+    <div class="hit">
+      <div class="k">Deals die in week six, on facts the owner never disclosed.</div>
+      <p>Not on bad analysis. On things nobody was told &mdash; until a buyer&rsquo;s team finds
+        them, and then it is leverage instead of a problem that could have been fixed.</p>
+    </div>
+    <table class="roles">
+      <tr><td class="r">The banker</td><td>Is selling the company. Admitting a problem feels like arguing against his own price.</td></tr>
+      <tr><td class="r">The accountant</td><td>Is a vendor the owner has managed for years. That relationship does not invite hard truths.</td></tr>
+      <tr><td class="r">The buyer</td><td>Is the adversary. Anything he learns, he uses.</td></tr>
+    </table>
+
+    <div class="aside"><b>I have not spoken to any of your men, and I would not without asking you
+      first.</b> It is your house.</div>
+  </section>
+
+  <section>
+    <div class="h2sub">What we actually do about it</div>
+    <h2>How it gets fixed</h2>
+    <p class="lede" style="margin-top:10px">Every sentence above is something a buyer will find on
+      his own timetable. <b>The work is finding it first, on ours</b> &mdash; and there are two
+      shapes to it, because they are two different jobs.</p>
+
+    <div class="fx">
+      <div class="f">
+        <span class="f-w">One-time &middot; per deal</span>
+        <div class="f-t">Get it ready</div>
+        <p>I sit with the owner and get the things he has not told anyone. Then I read the numbers.
+          What comes out is <b>a ranked list of what a buyer will find, what each one will cost him,
+          and which are still fixable</b> &mdash; then we fix the ones that are.</p>
+        <ul>
+          <li>The books tied out, so the figures survive somebody else&rsquo;s arithmetic.</li>
+          <li>Add-backs written down and defensible before they are discovered.</li>
+          <li>Concentration, key-man and management gaps named early, while there is still time to act.</li>
+          <li>He walks in knowing what his own file says.</li>
+        </ul>
+        <p><b>This one ends.</b> It is a bounded piece of work with a finish line, and most owners
+          need it.</p>
+      </div>
+
+      <div class="f two">
+        <span class="f-w">Ongoing &middot; while he is a client</span>
+        <div class="f-t">Keep it that way</div>
+        <p>A file that was clean once does not stay clean. Systems drift, someone adds a tool, a new
+          spreadsheet appears. <b>The Ninja keeps the systems connected and the numbers in one
+          agreed set</b>, so what we straightened does not quietly go back.</p>
+        <ul>
+          <li>One set of numbers everybody in the business is working from.</li>
+          <li>It stays true between now and a sale that might be two years out.</li>
+          <li>He is not rebuilding the file the week a buyer asks for it.</li>
+        </ul>
+        <p><b>This one continues</b> for as long as he is a client, and stops when he stops.</p>
+      </div>
+    </div>
+
+    <div class="which"><b>Most men need the first. Only some want the second.</b> If a man is
+      eighteen months out and his numbers are a mess, he needs the readiness work and that is the
+      whole conversation. The ongoing piece is for the ones who have decided, and who do not want to
+      do this twice.</div>
+  </section>
+
+  <div class="close">
+    <p>If a sentence up there put a face in your head, <b>that is the whole point of this page.</b>
+      The problems are fixable while a man still has time. They are not fixable in week six.</p>
+  </div>
+
+</main>
+
+<footer class="wrap">EnhancedOps.Ninja &middot; Augeo LLC &middot; Prepared for Sam. Not for distribution.</footer>
+
+</body>
+</html>
