@@ -834,6 +834,18 @@ const DOCS: CallList[] = [
     count: 'One call · dated',
     url: 'https://enhancedops.ninja/lists/braden-monday.html',
   },
+  {
+    id: 'exit-readiness-sam',
+    title: 'Exit Readiness — prepared for Coach Sam',
+    blurb:
+      'A separate business from the BI work: an assessment for owners selling in one to three years, ' +
+      'then a retainer that keeps the findings fixed — phase two being the Ninja with a deadline ' +
+      'attached. Written to ask Sam\'s blessing before approaching men in his organisation, so it is ' +
+      'addressed to one named person throughout. Two blanks are deliberate: what Sam gets, and the ' +
+      'price. Carries no pricing at all — do not add one before Jeff has agreed it.',
+    count: 'One meeting · Friday',
+    url: 'https://enhancedops.ninja/lists/exit-readiness-sam.html',
+  },
 ];
 
 /*

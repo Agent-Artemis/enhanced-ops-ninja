@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>EON — Exit Readiness</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#1A6ECC; --gold:#F5B301;
+  --ink:#0F1722; --body:#2B3849; --soft:#5B6B80;
+  --line:#D6DEE9; --tint:#F2F6FB; --goldtint:#FFF8E6;
+  --paper:#FFFFFF; --deep:#0F2942;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper); color:var(--body);
+  font-family:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.45; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:760px;margin:0 auto;padding:18px 16px 46px}
+h1,h2,h3,.disp{font-family:"Bebas Neue","DM Sans",Impact,sans-serif;font-weight:400;letter-spacing:.02em;margin:0}
+
+.top{display:flex;align-items:center;gap:12px;border-bottom:3px solid var(--blue);padding-bottom:11px;margin-bottom:13px}
+.top img.logo{height:38px;width:auto}
+.top .t{flex:1;min-width:0}
+.top h1{font-size:30px;line-height:1;color:var(--ink)}
+.top .sub{font-size:12.5px;color:var(--soft);margin-top:2px}
+
+/* the framing line — the reason this document exists */
+.stand{border-left:4px solid var(--gold);background:var(--goldtint);padding:11px 14px;margin:0 0 14px;border-radius:0 8px 8px 0}
+.stand p{margin:0;font-size:15px;line-height:1.45;color:var(--ink)}
+.stand b{color:var(--ink)}
+
+.sec{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:0 0 11px;break-inside:avoid;page-break-inside:avoid}
+.sec.key{border:2px solid var(--blue)}
+.sec.blank{border:2px dashed var(--gold);background:var(--goldtint)}
+.num{display:inline-block;width:21px;height:21px;border-radius:50%;background:var(--blue);color:#fff;
+  font-family:"Bebas Neue",sans-serif;font-size:13px;text-align:center;line-height:21px;margin-right:7px;vertical-align:2px}
+.sec.blank .num{background:var(--gold);color:#3D2C00}
+h2{font-size:20px;color:var(--ink);margin-bottom:5px}
+.lede{font-size:13px;color:var(--soft);margin:0 0 9px}
+.breath{font-size:18px;line-height:1.35;color:var(--ink);font-weight:700;margin:0}
+
+/* who it is for */
+ul.who{list-style:none;margin:6px 0 0;padding:0}
+ul.who li{position:relative;padding:6px 0 6px 20px;font-size:14.5px;color:var(--ink);border-top:1px solid var(--line)}
+ul.who li:first-child{border-top:0}
+ul.who li::before{content:"";position:absolute;left:2px;top:14px;width:7px;height:7px;background:var(--blue);border-radius:50%}
+.notfor{font-size:13px;color:var(--soft);margin:8px 0 0;padding-top:7px;border-top:1px dashed var(--line)}
+
+/* why deals die — the centrepiece */
+.hit{background:var(--deep);color:#fff;border-radius:9px;padding:13px 15px;margin:0 0 10px}
+.hit .k{font-family:"Bebas Neue",sans-serif;font-size:25px;letter-spacing:.03em;line-height:1.05;color:#fff}
+.hit p{margin:6px 0 0;font-size:14px;color:#C9D8EA;line-height:1.45}
+table.roles{width:100%;border-collapse:collapse}
+table.roles td{border-top:1px solid var(--line);padding:7px 0;vertical-align:top;font-size:13.5px}
+table.roles tr:first-child td{border-top:0}
+table.roles td.r{width:34%;padding-right:11px;font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.03em;color:var(--blue);white-space:nowrap}
+.only{margin-top:10px;padding-top:9px;border-top:2px solid var(--gold);font-size:14.5px;color:var(--ink)}
+.only b{color:var(--ink)}
+
+/* phases */
+.ph{border-left:3px solid var(--blue);padding:3px 0 3px 11px;margin:0 0 9px}
+.ph:last-child{margin-bottom:0}
+.ph b{display:block;font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:.04em;color:var(--blue);font-weight:400}
+.ph span{font-size:13.5px}
+.ph.two{border-left-color:var(--gold)}
+.ph.two b{color:#9A6E00}
+
+.act{display:flex;gap:9px;align-items:flex-start;margin-top:9px}
+.act img{width:16px;height:16px;flex:0 0 16px;margin-top:2px}
+.act div{font-size:13.5px}
+
+.blankbox{border:1px dashed var(--line);border-radius:8px;background:#fff;min-height:60px;padding:10px 12px}
+.blanknote{font-size:12.5px;color:#9A6E00;font-weight:500;margin:0 0 8px}
+
+.foot{font-size:11.5px;color:var(--soft);border-top:1px solid var(--line);padding-top:9px;margin-top:12px}
+@media (max-width:560px){
+  table.roles td{display:block;border-top:0;padding:1px 0}
+  table.roles td.r{width:auto;padding-right:0;padding-top:8px;border-top:1px solid var(--line)}
+  table.roles tr:first-child td.r{border-top:0}
+  .top h1{font-size:26px}
+}
+@media print{ .wrap{max-width:none;padding:0} body{font-size:12px} .sec{margin-bottom:8px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <img class="logo" src="/logo-ninja.png" alt="EnhancedOps Ninja">
+    <div class="t">
+      <h1>Exit Readiness</h1>
+      <div class="sub">For owners selling in the next one to three years · prepared for Coach Sam</div>
+    </div>
+  </div>
+
+  <div class="stand">
+    <p><b>Sam — I know five men in your organisation who are inside this window, and I haven't spoken to any of them.</b> I wouldn't, without asking you first. It's your house. This page is so you can decide whether it's something you'd want offered to your men at all.</p>
+  </div>
+
+  <div class="sec key">
+    <h2><span class="num">1</span>What this is</h2>
+    <p class="breath">I sit down with an owner before he goes to market, find what a buyer is going to find, and tell him what it will cost him — while there's still time to fix it.</p>
+  </div>
+
+  <div class="sec">
+    <h2><span class="num">2</span>Who it's for</h2>
+    <ul class="who">
+      <li>An owner who intends to sell in the next <b>one to three years</b>.</li>
+      <li>An owner who has <b>already been approached</b> and hasn't decided yet.</li>
+    </ul>
+    <p class="notfor"><b>Not everyone.</b> If he isn't selling and isn't being courted, this isn't for him and I'd say so. A man who has just started building has no use for this and I'm not going to pretend otherwise.</p>
+  </div>
+
+  <div class="sec key">
+    <h2><span class="num">3</span>Why deals die — and why nobody catches it</h2>
+    <div class="hit">
+      <div class="k">Deals die in week six, on facts the owner never disclosed.</div>
+      <p>Not on bad analysis. On things nobody was told — until a buyer's team finds them, and then it's leverage instead of a problem you were fixing.</p>
+    </div>
+    <p class="lede" style="margin-bottom:6px">And everyone already in the room has a structural reason he won't hear it:</p>
+    <table class="roles">
+      <tr><td class="r">The banker</td><td>Is selling the company. Admitting a problem feels like arguing against his own price.</td></tr>
+      <tr><td class="r">The accountant</td><td>Is a vendor the owner has managed for years. That relationship doesn't invite hard truths.</td></tr>
+      <tr><td class="r">The lawyer</td><td>Arrives late — usually after the things that matter are already fixed or already missed.</td></tr>
+      <tr><td class="r">The buyer</td><td>Is the adversary. Anything he learns, he uses.</td></tr>
+    </table>
+    <div class="only">
+      <b>I arrive without that problem</b> — not through any technique, but because I've spent years in rooms where men say the thing they're ashamed of. That's the room you built, Sam. I'm not selling his company and I'm not on his payroll, so there's nothing for him to manage when he tells me the truth.
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2><span class="num">4</span>How it works — two phases</h2>
+    <div class="ph">
+      <b>Phase 1 — The assessment</b>
+      <span>I sit with him and get the things he hasn't told anyone. Then I read the numbers. What comes out is a ranked list: <b>what a buyer will find, what each one will cost him, and which are still fixable.</b> Some won't be, and he needs to know that too.</span>
+    </div>
+    <div class="ph two">
+      <b>Phase 2 — Keeping it fixed</b>
+      <span>An ongoing retainer that keeps those items fixed and the numbers defensible all the way through to the sale. <b>This is where the real value sits</b> — a list of problems he doesn't act on is worth nothing.</span>
+      <span style="display:block;margin-top:6px;color:var(--soft);font-size:13px"><b style="color:var(--ink)">Phase 2 is the business intelligence work I already do.</b> Not a second product — the same work, with a deadline attached and a reason to exist that it never had on its own.</span>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2><span class="num">5</span>What I'd be asking of you</h2>
+    <p class="breath" style="font-size:16px">An introduction. Nothing more than that.</p>
+    <p style="font-size:14px;margin:8px 0 0">You're not selling anything, you're not recommending it, and you're not vouching for how it turns out. If a man says no, that's the end of it and it doesn't come back to you. I'd rather have your blessing and five conversations than go around you and have fifty.</p>
+    <div class="act">
+      <img src="/ninja-star-nj.png" alt="">
+      <div>And if you'd rather I didn't offer this to your men at all, say so on Friday and I'll leave it there.</div>
+    </div>
+  </div>
+
+  <div class="sec blank">
+    <h2><span class="num">6</span>What you get</h2>
+    <p class="blanknote">TO BE AGREED WITH SAM. Intentionally blank — Jeff hasn't set this, and it isn't something to decide on paper before the conversation.</p>
+    <div class="blankbox">&nbsp;</div>
+  </div>
+
+  <div class="sec blank">
+    <h2><span class="num">7</span>What it costs</h2>
+    <p class="blanknote">INTENTIONALLY BLANK — pricing is not set. No number goes in front of Sam until Jeff has agreed one, because the first number he sees becomes the price.</p>
+    <div class="blankbox">&nbsp;</div>
+  </div>
+
+  <div class="sec" style="background:var(--tint)">
+    <h2>Two things I'm not going to claim</h2>
+    <p style="font-size:14px;margin:0 0 7px"><b>This isn't a new category.</b> Exit-readiness advisory exists and there are firms doing it — Umbrex, PCE, Roadmap Advisors, Exit Ready Advisors among them. What's different here is the method, not the idea: the assessment starts with what he hasn't said, and phase 2 actually keeps it fixed.</p>
+    <p style="font-size:14px;margin:0"><b>And I haven't done one yet.</b> This business has run zero engagements. I'm not going to show you results I don't have. What I have is the work I already do on the numbers, and a reason it matters more when there's a sale coming.</p>
+  </div>
+
+  <div class="foot">
+    EnhancedOps.Ninja · prepared for a conversation with Coach Sam. Internal — not for distribution.
+    No client names, results or testimonials appear in this document because there are none to cite.
+  </div>
+
+</div>
+</body>
+</html>
