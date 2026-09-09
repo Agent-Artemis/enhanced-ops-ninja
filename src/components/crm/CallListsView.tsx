@@ -797,6 +797,16 @@ const DOCS: CallList[] = [
     url: 'https://enhancedops.ninja/lists/discovery-questions.html',
   },
   {
+    id: 'rep-brief',
+    title: 'BI — Rep brief',
+    blurb:
+      'For a rep, not a buyer: the five sentences that mean someone is a fit, the digital-employee ' +
+      'line in one breath, and the handoff for "what does it cost" so nobody quotes. Carries no ' +
+      'service pricing by design — the commission figures are marked as samples Jeff confirms.',
+    count: 'One page · reps',
+    url: 'https://enhancedops.ninja/lists/rep-brief.html',
+  },
+  {
     id: 'the-council',
     title: 'The Council — what it is',
     blurb:
