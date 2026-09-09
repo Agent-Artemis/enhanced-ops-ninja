@@ -4,119 +4,114 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive">
-<title>EON — Rep Brief</title>
+<title>EnhancedOps.Ninja — Rep Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --blue:#1A6ECC; --gold:#F5B301;
-  --ink:#0F1722; --body:#2B3849; --soft:#5B6B80;
-  --line:#D6DEE9; --tint:#F2F6FB; --goldtint:#FFF8E6;
-  --paper:#FFFFFF; --stop:#B00020; --stoptint:#FDF3F4;
+  --bg:#0A0F1A; --panel:#0E1420; --panel2:#131b2b; --line:#243044;
+  --blue:#1A6ECC; --blue2:#3F8AE0; --gold:#F5B301;
+  --ink:#F4F8FD; --body:#C3CEDD; --soft:#8A99AD;
+  --stop:#FF6B6B; --stopbg:#1C1216; --stopline:#5A2630;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
-  background:var(--paper); color:var(--body);
+  background:var(--bg); color:var(--body);
   font-family:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   line-height:1.45; -webkit-font-smoothing:antialiased;
 }
 .wrap{max-width:760px;margin:0 auto;padding:18px 16px 48px}
 h1,h2,h3,.disp{font-family:"Bebas Neue","DM Sans",Impact,sans-serif;font-weight:400;letter-spacing:.02em;margin:0}
 
-/* header */
-.top{display:flex;align-items:center;gap:12px;border-bottom:3px solid var(--blue);padding-bottom:11px;margin-bottom:16px}
-.top img.logo{height:40px;width:auto}
-.top .t{flex:1;min-width:0}
-.top h1{font-size:31px;line-height:1;color:var(--ink)}
-.top .sub{font-size:13px;color:var(--soft);margin-top:2px}
+/* header — the logo IS the wordmark, no text wordmark beside it */
+.top{border-bottom:3px solid var(--blue);padding-bottom:13px;margin-bottom:16px}
+.top .logo{display:block;height:64px;width:auto;margin:0 0 11px}
+.top .logo.mark{display:none}
+.top h1{font-size:31px;line-height:1;color:#fff}
+.top .sub{font-size:13px;color:var(--soft);margin-top:3px}
 
-/* section */
-.sec{border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin:0 0 12px;break-inside:avoid;page-break-inside:avoid}
-.sec.hero{border:2px solid var(--gold);background:var(--goldtint)}
-.sec.stopbox{border:2px solid var(--stop);background:var(--stoptint)}
-.sec.blank{border:2px dashed var(--gold);background:var(--goldtint)}
+.sec{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin:0 0 12px;break-inside:avoid;page-break-inside:avoid}
+.sec.hero{border:2px solid var(--blue);background:var(--panel2)}
+.sec.stopbox{border:2px solid var(--stopline);background:var(--stopbg)}
+.sec.blank{border:2px solid var(--blue);background:var(--panel2)}
 .num{display:inline-block;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;
   font-family:"Bebas Neue",sans-serif;font-size:14px;text-align:center;line-height:22px;margin-right:7px;vertical-align:2px}
-.sec.hero .num{background:var(--gold);color:#3D2C00}
-.sec.stopbox .num{background:var(--stop)}
-h2{font-size:21px;color:var(--ink);display:flex;align-items:baseline;gap:0;margin-bottom:4px}
+.sec.hero .num,.sec.blank .num{background:var(--blue2);color:#04101E}
+.sec.stopbox .num{background:var(--stop);color:#1C1216}
+h2{font-size:21px;color:#fff;display:flex;align-items:baseline;gap:0;margin-bottom:4px}
 .lede{font-size:13px;color:var(--soft);margin:0 0 10px}
 
-/* quotes they will hear */
 ul.hear{list-style:none;margin:0;padding:0}
 ul.hear li{position:relative;padding:7px 0 7px 22px;border-top:1px solid var(--line);font-size:15px;color:var(--ink);font-weight:500}
 ul.hear li:first-child{border-top:0}
-ul.hear li::before{content:"“";position:absolute;left:0;top:6px;font-family:"Bebas Neue",sans-serif;font-size:24px;color:var(--gold);line-height:1}
+ul.hear li::before{content:"“";position:absolute;left:0;top:6px;font-family:"Bebas Neue",sans-serif;font-size:24px;color:var(--blue2);line-height:1}
 ul.hear li span{display:block;font-size:12.5px;color:var(--soft);font-weight:400;margin-top:2px}
 
-/* the one-breath line */
-.breath{font-size:19px;line-height:1.35;color:var(--ink);font-weight:700;margin:0 0 9px}
+.breath{font-size:19px;line-height:1.35;color:#fff;font-weight:700;margin:0 0 9px}
 .jobs{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px}
 .job{border-left:3px solid var(--blue);padding:2px 0 2px 10px}
-.job b{display:block;font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.04em;color:var(--blue);font-weight:400}
-.job span{font-size:13.5px}
+.job b{display:block;font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.04em;color:var(--blue2);font-weight:400}
+.job span{font-size:13.5px;color:var(--body)}
+.job span b{display:inline;font-family:inherit;font-size:inherit;letter-spacing:0;color:#fff;font-weight:700}
 
-/* say / don't say */
 .say{margin:0 0 9px}
 .say .lbl{font-family:"Bebas Neue",sans-serif;font-size:14px;letter-spacing:.07em;margin-bottom:3px}
-.say.do .lbl{color:#1A7F4B}
+.say.do .lbl{color:#4ED08A}
 .say.dont .lbl{color:var(--stop)}
 .say p{margin:0;font-size:14.5px;color:var(--ink)}
-.script{background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:7px;
-  font-size:15px;color:var(--ink);font-weight:500;line-height:1.4}
+.say p b{color:#fff}
+.script{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:7px;
+  font-size:15px;color:#fff;font-weight:500;line-height:1.4}
 .script em{color:var(--soft);font-weight:400;font-size:12.5px;font-style:normal;display:block;margin-top:5px}
 
-/* objections */
+.rate{display:grid;grid-template-columns:1fr;gap:8px}
+.rate .r{display:flex;align-items:flex-start;gap:11px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.rate .r b{font-family:"Bebas Neue",sans-serif;font-size:30px;line-height:.95;color:var(--blue2);flex:0 0 auto;letter-spacing:.01em}
+.rate .r span{font-size:13.5px;color:var(--ink);padding-top:3px}
+.ongoing{background:var(--panel);border:2px solid var(--blue);border-radius:8px;padding:11px 13px;margin-top:9px;font-size:15px;color:var(--ink);line-height:1.4}
+.ongoing b{font-family:"Bebas Neue",sans-serif;font-size:21px;letter-spacing:.03em;color:var(--blue2);font-weight:400;display:inline}
+.ongoing span{display:block;font-size:13px;color:var(--soft);margin-top:5px}
+.flat{margin:8px 0 0;border-top:1px solid var(--line);padding-top:7px}
+.flat div{font-size:14.5px;color:var(--ink);padding:2px 0}
+.flat b{font-family:inherit;font-size:inherit;color:#fff;font-weight:700;display:inline;letter-spacing:0}
+.sample{font-size:12.5px;color:var(--gold);font-weight:500;margin:9px 0 0}
+
+.ma li{font-size:14.5px;color:var(--ink);padding:7px 0;border-top:1px solid var(--line);list-style:none}
+.ma li:first-child{border-top:0}
+.ma li b{display:block;font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:.03em;color:var(--blue2);font-weight:400}
+.ma ul{margin:8px 0 0;padding:0}
+
 table.obj{width:100%;border-collapse:collapse;margin-top:2px}
-table.obj td{border-top:1px solid var(--line);padding:8px 0;vertical-align:top;font-size:13.5px}
+table.obj td{border-top:1px solid var(--line);padding:8px 0;vertical-align:top;font-size:13.5px;color:var(--body)}
 table.obj tr:first-child td{border-top:0}
-table.obj td.q{width:40%;padding-right:12px;color:var(--ink);font-weight:700}
+table.obj td.q{width:40%;padding-right:12px;color:#fff;font-weight:700}
+table.obj td b{color:var(--stop)}
 @media (max-width:560px){
   table.obj td{display:block;border-top:0;padding:2px 0}
   table.obj td.q{width:auto;padding-right:0;padding-top:9px;border-top:1px solid var(--line)}
   table.obj tr:first-child td.q{border-top:0}
   .top h1{font-size:27px}
+  .top .logo.full{display:none}
+  .top .logo.mark{display:block;height:auto;width:100%;max-width:300px}
 }
 
-/* commission block */
-.rate{display:grid;grid-template-columns:1fr;gap:8px}
-.rate .r{display:flex;align-items:flex-start;gap:11px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
-.rate .r b{font-family:"Bebas Neue",sans-serif;font-size:30px;line-height:.95;color:var(--blue);flex:0 0 auto;letter-spacing:.01em}
-.rate .r span{font-size:13.5px;color:var(--ink);padding-top:3px}
-.ongoing{background:#fff;border:2px solid var(--blue);border-radius:8px;padding:11px 13px;margin-top:9px;font-size:15px;color:var(--ink);line-height:1.4}
-.ongoing b{font-family:"Bebas Neue",sans-serif;font-size:21px;letter-spacing:.03em;color:var(--blue);font-weight:400;display:inline}
-.ongoing span{display:block;font-size:13px;color:var(--soft);margin-top:5px}
-.flat{margin:8px 0 0;border-top:1px solid var(--line);padding-top:7px}
-.flat div{font-size:14.5px;color:var(--ink);padding:2px 0}
-.flat b{font-family:inherit;font-size:inherit;color:var(--ink);font-weight:700;display:inline;letter-spacing:0}
-/* M&A block */
-.ma li{font-size:14.5px;color:var(--ink);padding:7px 0;border-top:1px solid var(--line);list-style:none}
-.ma li:first-child{border-top:0}
-.ma li b{display:block;font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:.03em;color:var(--blue);font-weight:400}
-.ma ul{margin:8px 0 0;padding:0}
-.sample{font-size:12.5px;color:#9A6E00;font-weight:500;margin:9px 0 0}
-
-/* action marker */
 .act{display:flex;gap:9px;align-items:flex-start;margin-top:9px}
 .act img{width:16px;height:16px;flex:0 0 16px;margin-top:2px}
-.act div{font-size:13.5px}
+.act div{font-size:13.5px;color:var(--body)}
+.act div b{color:#fff}
 
 .foot{font-size:11.5px;color:var(--soft);border-top:1px solid var(--line);padding-top:9px;margin-top:14px}
 .illus{font-size:11px;color:var(--soft);letter-spacing:.06em;font-family:"Bebas Neue",sans-serif}
-@media print{
-  .wrap{max-width:none;padding:0}
-  body{font-size:12px}
-  .sec{margin-bottom:9px}
-}
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <div class="top">
-    <img class="logo" src="/logo-ninja.png" alt="EnhancedOps Ninja">
+    <img class="logo full" src="/logo-ninja.png" alt="EnhancedOps.Ninja">
+    <img class="logo mark" src="/ninja-logo.png" alt="EnhancedOps.Ninja">
     <div class="t">
       <h1>Rep Brief</h1>
       <div class="sub">Business Intelligence · what to listen for, what to say, what happens next</div>
