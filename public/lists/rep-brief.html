@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>EON — Rep Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#1A6ECC; --gold:#F5B301;
+  --ink:#0F1722; --body:#2B3849; --soft:#5B6B80;
+  --line:#D6DEE9; --tint:#F2F6FB; --goldtint:#FFF8E6;
+  --paper:#FFFFFF; --stop:#B00020; --stoptint:#FDF3F4;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper); color:var(--body);
+  font-family:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.45; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:760px;margin:0 auto;padding:18px 16px 48px}
+h1,h2,h3,.disp{font-family:"Bebas Neue","DM Sans",Impact,sans-serif;font-weight:400;letter-spacing:.02em;margin:0}
+
+/* header */
+.top{display:flex;align-items:center;gap:12px;border-bottom:3px solid var(--blue);padding-bottom:11px;margin-bottom:16px}
+.top img.logo{height:40px;width:auto}
+.top .t{flex:1;min-width:0}
+.top h1{font-size:31px;line-height:1;color:var(--ink)}
+.top .sub{font-size:13px;color:var(--soft);margin-top:2px}
+
+/* section */
+.sec{border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin:0 0 12px;break-inside:avoid;page-break-inside:avoid}
+.sec.hero{border:2px solid var(--gold);background:var(--goldtint)}
+.sec.stopbox{border:2px solid var(--stop);background:var(--stoptint)}
+.sec.blank{border:2px dashed var(--gold);background:var(--goldtint)}
+.num{display:inline-block;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;
+  font-family:"Bebas Neue",sans-serif;font-size:14px;text-align:center;line-height:22px;margin-right:7px;vertical-align:2px}
+.sec.hero .num{background:var(--gold);color:#3D2C00}
+.sec.stopbox .num{background:var(--stop)}
+h2{font-size:21px;color:var(--ink);display:flex;align-items:baseline;gap:0;margin-bottom:4px}
+.lede{font-size:13px;color:var(--soft);margin:0 0 10px}
+
+/* quotes they will hear */
+ul.hear{list-style:none;margin:0;padding:0}
+ul.hear li{position:relative;padding:7px 0 7px 22px;border-top:1px solid var(--line);font-size:15px;color:var(--ink);font-weight:500}
+ul.hear li:first-child{border-top:0}
+ul.hear li::before{content:"“";position:absolute;left:0;top:6px;font-family:"Bebas Neue",sans-serif;font-size:24px;color:var(--gold);line-height:1}
+ul.hear li span{display:block;font-size:12.5px;color:var(--soft);font-weight:400;margin-top:2px}
+
+/* the one-breath line */
+.breath{font-size:19px;line-height:1.35;color:var(--ink);font-weight:700;margin:0 0 9px}
+.jobs{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px}
+.job{border-left:3px solid var(--blue);padding:2px 0 2px 10px}
+.job b{display:block;font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.04em;color:var(--blue);font-weight:400}
+.job span{font-size:13.5px}
+
+/* say / don't say */
+.say{margin:0 0 9px}
+.say .lbl{font-family:"Bebas Neue",sans-serif;font-size:14px;letter-spacing:.07em;margin-bottom:3px}
+.say.do .lbl{color:#1A7F4B}
+.say.dont .lbl{color:var(--stop)}
+.say p{margin:0;font-size:14.5px;color:var(--ink)}
+.script{background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:7px;
+  font-size:15px;color:var(--ink);font-weight:500;line-height:1.4}
+.script em{color:var(--soft);font-weight:400;font-size:12.5px;font-style:normal;display:block;margin-top:5px}
+
+/* objections */
+table.obj{width:100%;border-collapse:collapse;margin-top:2px}
+table.obj td{border-top:1px solid var(--line);padding:8px 0;vertical-align:top;font-size:13.5px}
+table.obj tr:first-child td{border-top:0}
+table.obj td.q{width:40%;padding-right:12px;color:var(--ink);font-weight:700}
+@media (max-width:560px){
+  table.obj td{display:block;border-top:0;padding:2px 0}
+  table.obj td.q{width:auto;padding-right:0;padding-top:9px;border-top:1px solid var(--line)}
+  table.obj tr:first-child td.q{border-top:0}
+  .top h1{font-size:27px}
+}
+
+/* commission block */
+.rate{display:grid;grid-template-columns:1fr;gap:8px}
+.rate .r{display:flex;align-items:flex-start;gap:11px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.rate .r b{font-family:"Bebas Neue",sans-serif;font-size:30px;line-height:.95;color:var(--blue);flex:0 0 auto;letter-spacing:.01em}
+.rate .r span{font-size:13.5px;color:var(--ink);padding-top:3px}
+.sample{font-size:12.5px;color:#9A6E00;font-weight:500;margin:9px 0 0}
+
+/* action marker */
+.act{display:flex;gap:9px;align-items:flex-start;margin-top:9px}
+.act img{width:16px;height:16px;flex:0 0 16px;margin-top:2px}
+.act div{font-size:13.5px}
+
+.foot{font-size:11.5px;color:var(--soft);border-top:1px solid var(--line);padding-top:9px;margin-top:14px}
+.illus{font-size:11px;color:var(--soft);letter-spacing:.06em;font-family:"Bebas Neue",sans-serif}
+@media print{
+  .wrap{max-width:none;padding:0}
+  body{font-size:12px}
+  .sec{margin-bottom:9px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <img class="logo" src="/logo-ninja.png" alt="EnhancedOps Ninja">
+    <div class="t">
+      <h1>Rep Brief</h1>
+      <div class="sub">Business Intelligence · what to listen for, what to say, what happens next</div>
+    </div>
+  </div>
+
+  <div class="sec hero">
+    <h2><span class="num">1</span>Who this is for</h2>
+    <p class="lede">You are not looking for a company type. You are listening for one of these sentences.</p>
+    <ul class="hear">
+      <li>Our numbers never match.<span>Two systems, two answers, nobody knows which is right.</span></li>
+      <li>I find out at month end.<span>By the time they see it, they can't do anything about it.</span></li>
+      <li>My controller spends three days on the board pack.<span>A good person doing the most expensive version of the job.</span></li>
+      <li>We're about to sell and diligence is a mess.<span>Clean numbers lift the multiple. Fragmented ones compress it.</span></li>
+      <li>It all comes down to one spreadsheet.<span>Ask who owns it — and what happens when they're on holiday.</span></li>
+    </ul>
+    <div class="act">
+      <img src="/ninja-star-nj.png" alt="">
+      <div><b>The size test, if you need one:</b> more than one location, and more than two systems that don't talk to each other. It isn't about revenue — it's about how many places a number can hide.</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2><span class="num">2</span>What it is, in one breath</h2>
+    <p class="breath">“We put a digital employee in your business. His job is your numbers — what's happening across every system you run, why it's happening, and what he recommends you do about it.”</p>
+    <p class="lede" style="margin-bottom:0">Then the part that lands: <b style="color:var(--ink)">he doesn't replace anything you have.</b> He reads all of it and tells you what matters before the 7am huddle.</p>
+    <div class="jobs">
+      <div class="job"><b>Intelligence</b><span>What's actually happening — every system joined into one agreed set of numbers.</span></div>
+      <div class="job"><b>Analytics</b><span>Why it's happening. When two systems disagree he names which one is right, so there's an answer instead of an argument.</span></div>
+      <div class="job"><b>Recommended decision making</b><span>What he'd do about it, every morning before you start. <b>You decide.</b></span></div>
+    </div>
+  </div>
+
+  <div class="sec stopbox">
+    <h2><span class="num">3</span>What to say — and what not to</h2>
+    <div class="say dont">
+      <div class="lbl">⛔ NEVER QUOTE A PRICE</div>
+      <p>Not a number, not a range, not “around”. The price depends on how many systems and locations connect, and Jeff frames it on a call. A price met cold is a price argued with.</p>
+    </div>
+    <div class="say do">
+      <div class="lbl">✓ IF THEY ASK WHAT IT COSTS, SAY THIS</div>
+      <div class="script">“That depends on how many systems you're running — Jeff will walk you through it. What I can tell you is he'll look at your setup first and tell you what he'd do, free.”
+      <em>Then move straight to the audit. You've answered them and handed off in one breath.</em></div>
+    </div>
+    <div class="say do" style="margin-bottom:0">
+      <div class="lbl">✓ YOUR JOB IS THE INTRODUCTION, NOT THE SALE</div>
+      <p>You don't have to explain how it works. If they've said one of the five sentences above, you've already qualified them. Get the intro and stop.</p>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2><span class="num">4</span>What happens after you introduce someone</h2>
+    <p class="breath" style="font-size:17px">Jeff runs a free visibility audit. No cost, no software to install, no commitment.</p>
+    <p style="font-size:14px;margin:0 0 8px">He looks at what systems they run, where the numbers disagree, and tells them what he'd fix first — whether or not they ever buy anything.</p>
+    <div class="act">
+      <img src="/ninja-star-nj.png" alt="">
+      <div><b>This is why the introduction is easy to make.</b> You're not spending your credibility on a sales call. You're giving your contact something useful and letting them decide.</div>
+    </div>
+    <p style="font-size:13px;color:var(--soft);margin:9px 0 0">On the call Jeff asks about ten questions — how they find out how last month went, what systems they run, and what number they most wish they could see every morning but can't. Nothing to prepare.</p>
+  </div>
+
+  <div class="sec blank">
+    <h2><span class="num">5</span>What you get</h2>
+    <p class="lede" style="margin-bottom:9px"><b style="color:#9A6E00">It runs through the affiliate deal already in place with Kym and APS.</b> You are not signing anything new with Jeff — this sits inside the structure you are already in.</p>
+    <div class="rate">
+      <div class="r"><b>15%</b><span>of gross</span></div>
+      <div class="r"><b>15%</b><span>after COGS where Voice AI is involved — voice carries a real per-minute cost, so that piece pays on margin rather than on gross</span></div>
+    </div>
+    <p class="sample">Sample commission numbers — Jeff confirms the detail with you directly.</p>
+  </div>
+
+  <div class="sec">
+    <h2>What they'll say back</h2>
+    <p class="lede">The seven you'll hear most. You don't need to win these — you need to not get stuck.</p>
+    <table class="obj">
+      <tr><td class="q">“I already have a dashboard.”</td><td>Does everyone in the room trust the same number? Most dashboards get quietly checked against somebody's own spreadsheet before anyone acts on them.</td></tr>
+      <tr><td class="q">“My controller pulls the numbers.”</td><td>She does, and she's good at it — that's the problem. How many days a month, and what would you rather she did with them?</td></tr>
+      <tr><td class="q">“My data is a mess.”</td><td>That's the job, not a prerequisite. You don't tidy the house before the cleaner arrives.</td></tr>
+      <tr><td class="q">“We're too small for this.”</td><td>More than one location and more than two systems that don't talk? That's exactly the size. It's not about revenue.</td></tr>
+      <tr><td class="q">“How long does it take?”</td><td>Two to three weeks to the first live number. Not a pilot — a number on a screen you can use.</td></tr>
+      <tr><td class="q">“What if we stop?”</td><td>Your data is yours and never leaves your own accounts — we join as an invited guest and you can remove us. Stop and you keep every system and every number you had.</td></tr>
+      <tr><td class="q">“It's expensive.”</td><td><b style="color:var(--stop)">Don't defend it and don't price it.</b> “Against what?” — then hand to Jeff. He turns it into a comparison on the call.</td></tr>
+    </table>
+  </div>
+
+  <div class="sec" style="background:var(--tint)">
+    <h2>If you only remember one line</h2>
+    <p class="breath" style="margin-bottom:6px">“Your numbers are in six systems and none of them agree. He makes them agree — before your 7am huddle.”</p>
+    <p style="font-size:13px;color:var(--soft);margin:0">And if they're thinking about selling: clean numbers lift the multiple. That one changes the whole conversation.</p>
+  </div>
+
+  <div class="foot">
+    <span class="illus">EnhancedOps.Ninja · Business Intelligence</span><br>
+    Internal rep enablement — not for distribution to prospects. No client names, results or testimonials appear in this document because there are none to cite yet.
+    Any figures shown in demos are marked <b>Illustrative</b>.
+  </div>
+
+</div>
+</body>
+</html>
