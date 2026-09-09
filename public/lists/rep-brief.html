@@ -50,6 +50,23 @@ ul.hear li::before{content:"“";position:absolute;left:0;top:6px;font-family:"B
 ul.hear li span{display:block;font-size:12.5px;color:var(--soft);font-weight:400;margin-top:2px}
 
 .breath{font-size:19px;line-height:1.35;color:#fff;font-weight:700;margin:0 0 9px}
+/* ── THE TWO PARTS ──
+   Same shape as the Sam page: one bounded piece of work, one that continues.
+   Gold marks the ongoing block as a SECONDARY accent only — blue still carries
+   the headings. ⛔ No figure appears here: the up-front number is unsettled and
+   scales with company size, so this states the SHAPE and nothing else. */
+.parts{display:grid;grid-template-columns:1fr;gap:9px;margin-top:10px}
+@media(min-width:680px){.parts{grid-template-columns:1fr 1fr}}
+.pt{border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:8px;padding:11px 13px}
+.pt.two{border-top-color:var(--gold)}
+.pt .w{display:inline-block;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--blue2);border:1px solid var(--line);border-radius:999px;padding:2px 8px;margin-bottom:7px}
+.pt.two .w{color:var(--gold)}
+.pt .t{font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:.04em;color:#fff}
+.pt p{margin:6px 0 0;font-size:13.5px;color:var(--body)}
+.pt p b{color:#fff}
+.pt .end{margin-top:7px;font-size:13px;color:var(--blue2)}
+.pt.two .end{color:var(--gold)}
 .jobs{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px}
 .job{border-left:3px solid var(--blue);padding:2px 0 2px 10px}
 .job b{display:block;font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.04em;color:var(--blue2);font-weight:400}
@@ -146,8 +163,32 @@ table.obj td b{color:var(--stop)}
     </div>
   </div>
 
+  <div class="sec">
+    <h2><span class="num">3</span>What you're selling — two parts</h2>
+    <p class="lede" style="margin-bottom:0">You introduce one man and he can buy <b style="color:var(--ink)">either or both</b>. They are not alternatives — one gets the business ready, the other keeps it that way.</p>
+    <div class="parts">
+      <div class="pt">
+        <span class="w">Part one &middot; up front</span>
+        <div class="t">Get it ready</div>
+        <p>Jeff sits with the owner, gets the things he hasn't told anyone, and reads the numbers. What comes out is <b>a ranked list of what a buyer will find, what each one costs him, and which are still fixable</b> — then the fixable ones get fixed.</p>
+        <div class="end"><b>This one ends.</b> Paid at the start, has a finish line.</div>
+      </div>
+      <div class="pt two">
+        <span class="w">Part two &middot; ongoing</span>
+        <div class="t">Keep it that way</div>
+        <p>The Ninja. <b>Systems connected and one agreed set of numbers</b>, held that way — because a business that was clean once doesn't stay clean. Someone adds a tool, a vendor changes an API, a new spreadsheet appears.</p>
+        <div class="end"><b>This one continues</b> for as long as he's a client.</div>
+      </div>
+    </div>
+    <div class="act" style="margin-top:10px">
+      <img src="/ninja-star-nj.png" alt="">
+      <div><b>Read this with &ldquo;What you get&rdquo;, not against it.</b> “Commissions are ongoing” attaches to <b>part two</b> — that's the piece that keeps paying, because it never finishes. Part one is paid once, at the start. Selling one doesn't cost you the other.</div>
+    </div>
+    <p class="sample">Jeff sets the up-front number with the owner — it moves with the size of the business. <b>You never quote it.</b></p>
+  </div>
+
   <div class="sec stopbox">
-    <h2><span class="num">3</span>What to say — and what not to</h2>
+    <h2><span class="num">4</span>What to say — and what not to</h2>
     <div class="say dont">
       <div class="lbl">⛔ NEVER QUOTE A NUMBER</div>
       <p>Not a figure, not a range, not “around”. The number depends on how many systems and locations connect, and Jeff frames it on a call. A number met cold is a number argued with. <b>You can still answer the question — just not with a number.</b></p>
@@ -166,7 +207,7 @@ table.obj td b{color:var(--stop)}
   </div>
 
   <div class="sec">
-    <h2><span class="num">4</span>What happens after you introduce someone</h2>
+    <h2><span class="num">5</span>What happens after you introduce someone</h2>
     <p class="breath" style="font-size:17px">Jeff runs a free visibility audit. No cost, no software to install, no commitment.</p>
     <p style="font-size:14px;margin:0 0 8px">He looks at what systems they run, where the numbers disagree, and tells them what he'd fix first — whether or not they ever buy anything.</p>
     <div class="act">
@@ -177,7 +218,7 @@ table.obj td b{color:var(--stop)}
   </div>
 
   <div class="sec blank">
-    <h2><span class="num">5</span>What you get</h2>
+    <h2><span class="num">6</span>What you get</h2>
     <p class="lede" style="margin-bottom:9px"><b style="color:#9A6E00">It runs through the affiliate deal already in place with Kym and APS.</b> You are not signing anything new with Jeff — this sits inside the structure you are already in.</p>
     <div class="rate">
       <div class="r"><b>15%</b><span>of gross</span></div>
