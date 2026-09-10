@@ -861,10 +861,11 @@ const DOCS: CallList[] = [
     id: 'snf-al',
     title: 'Skilled Nursing & Assisted Living — the one-pager',
     blurb:
-      'Buyer-facing: the page an administrator in Luke Linquist\'s network walks a SNF/AL operator ' +
-      'through. Names the six systems that disagree — EHR, payroll, scheduling, agency, billing, ' +
-      'the survey binder — then three things that cost real money, and sends them to the live demo. ' +
-      'This is the Ninja, not exit readiness; do not blend the two. Carries no price.',
+      'Buyer-facing: the page Luke Linquist and his partners walk a SNF/AL organization OWNER ' +
+      'through — multi-facility, not one building. Six systems times eight buildings, then the three ' +
+      'that cost a group real money: nothing rolls up, agency at the invoice one building at a time, ' +
+      'numbers late and disagreeing. Sends them to the live demo. This is the Ninja, not exit ' +
+      'readiness; do not blend the two. Carries no price.',
     count: 'One page · Luke',
     url: 'https://enhancedops.ninja/lists/snf-al.html',
   },
