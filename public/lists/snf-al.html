@@ -102,15 +102,39 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:16px 0 38px;
 @media print{
   :root{--bg:#fff;--panel:#fff;--panel2:#f4f7fb;--line:#c9d3e0;--line2:#aebbcd;
     --ink:#0F1722;--ink2:#2B3849;--ink3:#5B6B80}
-  body{font-size:11.5pt}
+  body{font-size:11.5pt;line-height:1.45}
   .wrap{max-width:none;padding:0}
-  .hdr{background:none;padding:0 0 10px}
-  .hdr img{height:58px}
+  .hdr{background:none;padding:0 0 4px}
+  h1{font-size:21pt}
+  h2{font-size:15pt}
+  .hsub{display:none}
+  .h2sub{font-size:8pt;margin-bottom:3px}
+  .hdr img{height:44px}
   a[href]:after{content:""}
   .btn{background:#fff;color:var(--blue);border:1.5px solid var(--blue)}
   .hero,.p,.sy,.cta,.j,.aside{break-inside:avoid;page-break-inside:avoid}
-  section{padding-top:14px}
-  footer{margin-top:16px;padding-bottom:0}
+  section{padding-top:7px}
+  .hero{margin-top:7px;padding:10px 13px}
+  .hero .big{font-size:17.5pt}
+  .hero p{margin-top:6px}
+  .sys{grid-template-columns:repeat(6,1fr);gap:5px;margin-top:6px}
+  .sy{padding:6px 7px;border-radius:5px}
+  .sy b{font-size:12pt}
+  .sy span{font-size:8pt;line-height:1.25}
+  .sysnote{margin-top:7px;font-size:10pt}
+  .px{grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+  .p{padding:8px 10px;border-radius:5px}
+  .p-q{font-size:12pt;line-height:1.22}
+  .p-c{font-size:9.5pt;line-height:1.34}
+  .p-k{margin:5px 0 2px}
+  .jobs{grid-template-columns:repeat(4,1fr);gap:7px 12px;margin-top:6px}
+  .j b{font-size:11.5pt}
+  .j span{font-size:9.5pt;line-height:1.32}
+  .cta{margin-top:9px;padding:8px 12px;border-radius:5px}
+  .cta .t b{font-size:14pt}
+  .cta .t span{font-size:10pt}
+  .aside{margin-top:7px;padding:6px 10px;border-radius:5px;font-size:9.5pt}
+  footer{margin-top:4px;padding:4px 0 0;font-size:8pt;border-top-color:#dbe2ec}
 }
 </style>
 </head>
@@ -132,8 +156,8 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:16px 0 38px;
   <div class="hero">
     <div class="big">Your numbers are in six systems and none of them agree.
       <em>He makes them agree</em> — before your 7am huddle.</div>
-    <p>A digital employee whose whole job is your numbers. He reads the systems you already run,
-      holds one set everybody works from, and tells you what moved overnight. Nothing gets replaced.</p>
+    <p>A digital employee whose whole job is your numbers. He reads the systems you already run and
+      holds one set everybody works from.</p>
   </div>
 
   <section>
@@ -147,8 +171,8 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:16px 0 38px;
       <div class="sy"><b>Billing &amp; AR</b><span>Days outstanding</span></div>
       <div class="sy"><b>Survey &amp; QAPI</b><span>The binder</span></div>
     </div>
-    <p class="sysnote">Six systems, six answers, and <b>the one that matters is usually the spreadsheet
-      somebody rebuilds every morning.</b> None of these get ripped out. He reads them where they sit.</p>
+    <p class="sysnote">Six systems, six answers, and <b>the one everybody uses is the spreadsheet somebody
+      rebuilds every morning.</b> None of them get ripped out &mdash; he reads them where they sit.</p>
   </section>
 
   <section>
@@ -159,28 +183,25 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:16px 0 38px;
       <div class="p">
         <div class="p-q">Census is a day old by the time you see it.</div>
         <div class="p-k">What it costs</div>
-        <p class="p-c">Every decision you make before noon is made on yesterday&rsquo;s building.
-          Admissions, staffing, the call to the hospital liaison &mdash; <b>all of it priced off a
-          number that has already moved.</b> One agreed census, current this morning, changes what
-          you do with the day.</p>
+        <p class="p-c">Admissions, staffing, the call to the hospital liaison &mdash; <b>every decision
+          before noon is made on yesterday&rsquo;s building.</b> One agreed census, current this
+          morning, changes what you do with the day.</p>
       </div>
 
       <div class="p">
         <div class="p-q">Agency spend shows up when the invoice does.</div>
         <div class="p-k">What it costs</div>
-        <p class="p-c">By then the shifts are worked and the money is gone. <b>Agency is the line that
-          moves your margin the most and is visible the latest.</b> Seen daily against budget and
-          against the schedule, it is a decision. Seen monthly, it is a report on something you can no
-          longer change.</p>
+        <p class="p-c">By then the shifts are worked and the money is gone. <b>It is the line that moves
+          your margin most and shows up last.</b> Daily, against budget and against the schedule, it is
+          a decision instead of a post-mortem.</p>
       </div>
 
       <div class="p">
         <div class="p-q">Nobody can tell you today&rsquo;s hours PPD.</div>
         <div class="p-k">What it costs</div>
-        <p class="p-c">Hours live in payroll, bodies live in scheduling, and census lives in the EHR &mdash;
-          so PPD is a month-end calculation instead of a daily one. <b>It drives your labor cost and
-          your staffing rating at the same time</b>, and by the time it is wrong on paper it has been
-          wrong on the floor for weeks.</p>
+        <p class="p-c">Hours are in payroll, bodies are in scheduling, census is in the EHR &mdash; so PPD
+          is a month-end calculation. <b>It drives your labor cost and your staffing rating at once</b>,
+          and it is wrong on the floor weeks before it is wrong on paper.</p>
       </div>
 
     </div>
@@ -190,29 +211,28 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:16px 0 38px;
     <div class="h2sub">What he actually does</div>
     <h2>Four things, on the systems you already run</h2>
     <div class="jobs">
-      <div class="j"><b>Keeps your systems connected</b><span>EHR, payroll, scheduling, agency, billing
-        &mdash; talking to each other, and <b>kept</b> that way as things change.</span></div>
-      <div class="j"><b>Analyzes</b><span>When two systems disagree he names which one is the system of
-        record, so there is an answer instead of an argument.</span></div>
+      <div class="j"><b>Keeps your systems connected</b><span>Talking to each other, and <b>kept</b>
+        that way as things change.</span></div>
+      <div class="j"><b>Analyzes</b><span>When two systems disagree, he names which one is the system
+        of record.</span></div>
       <div class="j"><b>Builds your business intelligence</b><span>One set of numbers for the building,
-        the region and the owner &mdash; not three versions of the same week.</span></div>
-      <div class="j"><b>Assists you in decisions</b><span>What moved overnight and what he would look at
-        first. <b>You decide.</b></span></div>
+        the region, the owner.</span></div>
+      <div class="j"><b>Assists you in decisions</b><span>What moved overnight, and what he would look
+        at first. <b>You decide.</b></span></div>
     </div>
   </section>
 
   <div class="cta">
     <div class="t">
       <b>See it running</b>
-      <span>The command center is live. Not slides &mdash; the actual screens, with numbers on them.</span>
+      <span>Not slides &mdash; the actual screens, with numbers on them.</span>
     </div>
     <a class="btn" href="https://demo.enhancedops.ninja">Open the demo</a>
   </div>
 
-  <div class="aside"><b>Who this is built for.</b> Operators at five million in revenue and up. At
-    twenty million it stops being a question &mdash; there are too many buildings, too many systems and
-    too many people asking for the same number a different way. Below five million, the morning
-    spreadsheet still just about holds.</div>
+  <div class="aside"><b>Who this is built for.</b> Operators at five million in revenue and up. At twenty
+    million it stops being a question &mdash; too many buildings, too many systems, too many people asking
+    for the same number a different way.</div>
 
 </main>
 
