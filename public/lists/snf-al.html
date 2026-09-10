@@ -109,7 +109,11 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:16px 0 38px;
   h2{font-size:15pt}
   .hsub{display:none}
   .h2sub{font-size:8pt;margin-bottom:3px}
-  .hdr img{height:44px}
+  /* Both marks carry white elements — on paper they need the dark ground under
+     them or the wordmark disappears. print-color-adjust forces the chip through
+     even when the browser's "background graphics" box is unchecked. */
+  .hdr img{height:44px;background:#0A0F1A;padding:6px 10px;border-radius:4px;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
   a[href]:after{content:""}
   .btn{background:#fff;color:var(--blue);border:1.5px solid var(--blue)}
   .hero,.p,.sy,.cta,.j,.aside{break-inside:avoid;page-break-inside:avoid}
