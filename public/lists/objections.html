@@ -16,12 +16,20 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
 <style>
-/* Cream ground, following the-council.html rather than the dark brand: this is a
-   working reference someone prints and reads on a call, not a marketing surface.
-   Dense on purpose — whitespace is the enemy of scanning. */
+/* THE DARK BRAND ON SCREEN, LIGHT ON PAPER — the same arrangement the source
+   page (bi-value-and-objections.html) already ships: brand tokens here, a second
+   set redefined inside @media print. The page used to be cream on the argument
+   that it is a working reference someone prints, not a marketing surface. That
+   was a compromise palette solving a print problem in the wrong place: the print
+   block below serves paper, so the screen does not have to.
+   Dense on purpose — whitespace is the enemy of scanning.
+   ⚠️ BLUE CARRIES THE STRUCTURE. Gold is a SECONDARY accent — the eyebrow and
+   nothing else. It previously coloured every h2, every index header, every link
+   and the focus ring, which is gold dominating. */
 :root{
-  --ink:#15181d; --soft:#454b55; --mut:#6f7681; --line:#dde1e7; --line2:#c3c9d2;
-  --gold:#9a7b2e; --deep:#1f2937; --bg:#fbfaf8;
+  --ink:#EEF3FA; --soft:#AEBBCD; --mut:#7E8DA0; --line:#243044; --line2:#31415C;
+  --blue:#1A6ECC; --blue2:#3F8AE0; --gold:#F5B301;
+  --panel:#0E1420; --panel2:#131B2B; --bg:#0A0F1A;
   --head:'Bebas Neue',Impact,sans-serif; --body:'DM Sans',system-ui,sans-serif;
 }
 *{box-sizing:border-box}
@@ -30,14 +38,14 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);
 .wrap{max-width:820px;margin:0 auto;padding:30px 30px 60px}
 h1,h2{font-family:var(--head);font-weight:400;letter-spacing:.02em;margin:0}
 h1{font-size:34px;line-height:1.04}
-h2{font-size:17px;letter-spacing:.11em;text-transform:uppercase;color:var(--gold);
+h2{font-size:17px;letter-spacing:.11em;text-transform:uppercase;color:var(--blue2);
   margin:30px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--line)}
 .eyebrow{font-family:var(--head);font-size:12.5px;letter-spacing:.2em;
   text-transform:uppercase;color:var(--gold)}
 .wordmark{font-family:var(--head);font-size:13px;letter-spacing:.15em;color:var(--mut)}
 .lede{color:var(--soft);margin:8px 0 0;max-width:70ch;font-size:14px}
 .xref{margin:10px 0 0;font-size:13px;color:var(--mut)}
-.xref a{color:var(--gold)}
+.xref a{color:var(--blue2)}
 
 /* The index is the feature: it is what makes this usable while someone talks. */
 .ix{margin:22px 0 0;border-top:1px solid var(--line);padding-top:16px}
@@ -45,23 +53,34 @@ h2{font-size:17px;letter-spacing:.11em;text-transform:uppercase;color:var(--gold
 @media (max-width:700px){ .ix ul{columns:1} }
 .ix li{font-size:13.2px;line-height:1.5;margin:0 0 2px;break-inside:avoid}
 .ix li.ix-h{font-family:var(--head);font-size:12.5px;letter-spacing:.11em;
-  text-transform:uppercase;color:var(--gold);margin:11px 0 4px}
+  text-transform:uppercase;color:var(--blue2);margin:11px 0 4px}
 .ix li.ix-h:first-child{margin-top:0}
-.ix a{color:var(--deep);text-decoration:none;border-bottom:1px solid var(--line2)}
-.ix a:hover{border-bottom-color:var(--gold);color:var(--gold)}
+.ix a{color:var(--soft);text-decoration:none;border-bottom:1px solid var(--line2)}
+.ix a:hover{border-bottom-color:var(--blue2);color:var(--blue2)}
 
-/* Question and answer are one unit and must never be split across a page. */
-.ob{margin:0 0 13px;break-inside:avoid;page-break-inside:avoid}
+/* Question and answer are one unit and must never be split across a page.
+   The left border is RESERVED, not added on :target — a deep link must highlight
+   without shifting the page under the reader as it lands. */
+.ob{margin:0 0 13px;padding:2px 0 2px 12px;border-left:3px solid transparent;
+  break-inside:avoid;page-break-inside:avoid}
 .ob .q{margin:0;font-weight:700;font-size:14.8px;line-height:1.35;color:var(--ink)}
 .ob .q::before{content:"“"} .ob .q::after{content:"”"}
 .ob .a{margin:3px 0 0;color:var(--soft);line-height:1.5}
 .ob .a b{color:var(--ink)}
 .ob .a em{font-style:normal;font-weight:700;color:var(--ink)}
-:target{background:#f3ecd8}
-:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+/* ⚠️ WAS A CREAM BAND (#f3ecd8). On the dark ground that would have landed Jeff's
+   own #i-already-have-a-dashboard link on an unreadable stripe. */
+:target{background:var(--panel2);border-left-color:var(--blue2);border-radius:0 6px 6px 0}
+:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
 
+/* PAPER STAYS LIGHT. Same arrangement as the source page: redefine the tokens,
+   do not restyle every rule. */
 @media print{
+  :root{--bg:#fff;--panel:#fff;--panel2:#fff;--line:#c8d0dc;--line2:#aab5c6;
+    --ink:#0d1420;--soft:#33405a;--mut:#5d6b82;--blue2:#124e8f;--gold:#8a6410}
   body{background:#fff;font-size:10.2pt;line-height:1.42}
+  .ob{padding-left:0;border-left:none}
+  :target{background:none}
   .wrap{padding:0;max-width:100%}
   h1{font-size:26pt} h2{font-size:12.5pt;margin:14pt 0 6pt}
   .ix{display:none}            /* an index of anchors is useless on paper */
