@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+<title>EnhancedOps.Ninja — Skilled Nursing &amp; Assisted Living</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* EnhancedOps.Ninja standard: dark ground, BLUE primary emphasis with white.
+   Gold is a secondary accent only — never a headline, never the CTA. */
+:root{--bg:#0A0F1A;--panel:#0E1420;--panel2:#131B2B;--line:#243044;--line2:#2E3D55;
+  --ink:#EEF3FA;--ink2:#AEBBCD;--ink3:#7E8DA0;--blue:#1A6ECC;--blue2:#3F8AE0;--gold:#F5B301;
+  --head:"Bebas Neue",sans-serif;--body:"DM Sans",system-ui,sans-serif;--r:10px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:920px;margin:0 auto;padding:0 22px}
+h1,h2,h3{font-family:var(--head);text-transform:uppercase;letter-spacing:.02em;
+  font-weight:400;line-height:1.04;margin:0}
+
+.hdr{border-bottom:1px solid var(--line);background:var(--panel);padding:16px 0}
+.hdr-in{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+h1{font-size:clamp(24px,5vw,34px)}
+.hsub{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--blue2);margin-top:5px}
+/* logo-ninja.png IS the wordmark — never a text lockup beside it */
+.hdr img{height:76px;width:auto;flex:none}
+.hdr .mark-sm{display:none}
+
+/* the approved line, set as the hero */
+.hero{margin-top:22px;padding:20px 22px;background:var(--panel2);border:1px solid var(--line2);
+  border-left:4px solid var(--blue);border-radius:var(--r)}
+.hero .big{font-family:var(--head);font-size:clamp(23px,4.6vw,33px);letter-spacing:.02em;
+  text-transform:uppercase;color:var(--ink);line-height:1.08}
+.hero .big em{font-style:normal;color:var(--blue2)}
+.hero p{margin:11px 0 0;color:var(--ink2);font-size:15px;max-width:74ch}
+
+section{padding:24px 0 0}
+h2{font-size:clamp(18px,3.2vw,23px);color:var(--ink)}
+.h2sub{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue2);margin-bottom:6px}
+
+/* the six systems */
+.sys{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:14px}
+@media(min-width:720px){.sys{grid-template-columns:repeat(3,1fr)}}
+.sy{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px}
+.sy b{display:block;font-family:var(--head);font-size:16px;letter-spacing:.03em;color:var(--blue2);
+  text-transform:uppercase;font-weight:400}
+.sy span{font-size:12.5px;color:var(--ink3);display:block;margin-top:2px}
+.sysnote{margin-top:11px;font-size:14px;color:var(--ink2)}
+.sysnote b{color:var(--ink);font-weight:500}
+
+/* the three */
+.px{display:grid;gap:11px;margin-top:14px}
+.p{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--blue);
+  border-radius:var(--r);padding:14px 16px}
+.p-q{font-size:18px;line-height:1.3;color:var(--ink);font-weight:500}
+.p-k{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--blue2);margin:10px 0 4px}
+.p-c{font-size:14.5px;color:var(--ink2);margin:0;max-width:80ch}
+.p-c b{color:var(--ink);font-weight:500}
+
+/* what he does */
+.jobs{display:grid;gap:8px;margin-top:13px}
+@media(min-width:720px){.jobs{grid-template-columns:repeat(2,1fr)}}
+.j{border-left:3px solid var(--blue);padding:2px 0 2px 11px}
+.j b{display:block;font-family:var(--head);font-size:16px;letter-spacing:.04em;color:var(--blue2);
+  text-transform:uppercase;font-weight:400}
+.j span{font-size:13.5px;color:var(--ink2)}
+.j span b{display:inline;font-family:var(--body);font-size:inherit;letter-spacing:0;
+  color:var(--ink);text-transform:none;font-weight:500}
+
+/* CTA — solid fill, always */
+.cta{margin-top:22px;padding:18px 20px;background:var(--panel2);border:1px solid var(--line2);
+  border-radius:var(--r);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.cta .t{min-width:220px;flex:1}
+.cta .t b{display:block;font-family:var(--head);font-size:21px;letter-spacing:.02em;
+  text-transform:uppercase;color:var(--ink)}
+.cta .t span{font-size:14px;color:var(--ink2)}
+.btn{display:inline-block;background:var(--blue);color:#fff;text-decoration:none;
+  font-family:var(--head);font-size:19px;letter-spacing:.05em;text-transform:uppercase;
+  padding:12px 26px;border-radius:8px;border:1px solid var(--blue);white-space:nowrap}
+.btn:hover{background:var(--blue2);border-color:var(--blue2)}
+
+/* seller aside — quiet, at the foot */
+.aside{margin-top:20px;padding:13px 16px;border:1px solid var(--line);border-radius:var(--r);
+  color:var(--ink3);font-size:13.5px}
+.aside b{color:var(--ink2);font-weight:500}
+
+footer{border-top:1px solid var(--line);margin-top:30px;padding:16px 0 38px;
+  color:var(--ink3);font-size:12.5px}
+
+@media (max-width:560px){
+  .hdr img{display:none}
+  .hdr .mark-sm{display:block;height:auto;width:100%;max-width:280px}
+  .sys{grid-template-columns:1fr 1fr}
+  .cta{flex-direction:column;align-items:stretch}
+  .btn{text-align:center}
+}
+
+/* Handed across a desk — paper goes light. */
+@media print{
+  :root{--bg:#fff;--panel:#fff;--panel2:#f4f7fb;--line:#c9d3e0;--line2:#aebbcd;
+    --ink:#0F1722;--ink2:#2B3849;--ink3:#5B6B80}
+  body{font-size:11.5pt}
+  .wrap{max-width:none;padding:0}
+  .hdr{background:none;padding:0 0 10px}
+  .hdr img{height:58px}
+  a[href]:after{content:""}
+  .btn{background:#fff;color:var(--blue);border:1.5px solid var(--blue)}
+  .hero,.p,.sy,.cta,.j,.aside{break-inside:avoid;page-break-inside:avoid}
+  section{padding-top:14px}
+  footer{margin-top:16px;padding-bottom:0}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <div>
+      <h1>Skilled Nursing &amp; Assisted Living</h1>
+      <div class="hsub">EnhancedOps.Ninja</div>
+    </div>
+    <img src="../logo-ninja.png" alt="EnhancedOps.Ninja">
+    <img class="mark-sm" src="../ninja-logo.png" alt="EnhancedOps.Ninja">
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="hero">
+    <div class="big">Your numbers are in six systems and none of them agree.
+      <em>He makes them agree</em> — before your 7am huddle.</div>
+    <p>A digital employee whose whole job is your numbers. He reads the systems you already run,
+      holds one set everybody works from, and tells you what moved overnight. Nothing gets replaced.</p>
+  </div>
+
+  <section>
+    <div class="h2sub">The six</div>
+    <h2>You already know which ones disagree</h2>
+    <div class="sys">
+      <div class="sy"><b>EHR</b><span>PointClickCare</span></div>
+      <div class="sy"><b>Payroll</b><span>Hours, overtime, PBJ</span></div>
+      <div class="sy"><b>Scheduling</b><span>Who is actually on the floor</span></div>
+      <div class="sy"><b>Agency</b><span>Staffing invoices</span></div>
+      <div class="sy"><b>Billing &amp; AR</b><span>Days outstanding</span></div>
+      <div class="sy"><b>Survey &amp; QAPI</b><span>The binder</span></div>
+    </div>
+    <p class="sysnote">Six systems, six answers, and <b>the one that matters is usually the spreadsheet
+      somebody rebuilds every morning.</b> None of these get ripped out. He reads them where they sit.</p>
+  </section>
+
+  <section>
+    <div class="h2sub">Three things that cost real money</div>
+    <h2>What it looks like on a Tuesday</h2>
+    <div class="px">
+
+      <div class="p">
+        <div class="p-q">Census is a day old by the time you see it.</div>
+        <div class="p-k">What it costs</div>
+        <p class="p-c">Every decision you make before noon is made on yesterday&rsquo;s building.
+          Admissions, staffing, the call to the hospital liaison &mdash; <b>all of it priced off a
+          number that has already moved.</b> One agreed census, current this morning, changes what
+          you do with the day.</p>
+      </div>
+
+      <div class="p">
+        <div class="p-q">Agency spend shows up when the invoice does.</div>
+        <div class="p-k">What it costs</div>
+        <p class="p-c">By then the shifts are worked and the money is gone. <b>Agency is the line that
+          moves your margin the most and is visible the latest.</b> Seen daily against budget and
+          against the schedule, it is a decision. Seen monthly, it is a report on something you can no
+          longer change.</p>
+      </div>
+
+      <div class="p">
+        <div class="p-q">Nobody can tell you today&rsquo;s hours PPD.</div>
+        <div class="p-k">What it costs</div>
+        <p class="p-c">Hours live in payroll, bodies live in scheduling, and census lives in the EHR &mdash;
+          so PPD is a month-end calculation instead of a daily one. <b>It drives your labor cost and
+          your staffing rating at the same time</b>, and by the time it is wrong on paper it has been
+          wrong on the floor for weeks.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="h2sub">What he actually does</div>
+    <h2>Four things, on the systems you already run</h2>
+    <div class="jobs">
+      <div class="j"><b>Keeps your systems connected</b><span>EHR, payroll, scheduling, agency, billing
+        &mdash; talking to each other, and <b>kept</b> that way as things change.</span></div>
+      <div class="j"><b>Analyzes</b><span>When two systems disagree he names which one is the system of
+        record, so there is an answer instead of an argument.</span></div>
+      <div class="j"><b>Builds your business intelligence</b><span>One set of numbers for the building,
+        the region and the owner &mdash; not three versions of the same week.</span></div>
+      <div class="j"><b>Assists you in decisions</b><span>What moved overnight and what he would look at
+        first. <b>You decide.</b></span></div>
+    </div>
+  </section>
+
+  <div class="cta">
+    <div class="t">
+      <b>See it running</b>
+      <span>The command center is live. Not slides &mdash; the actual screens, with numbers on them.</span>
+    </div>
+    <a class="btn" href="https://demo.enhancedops.ninja">Open the demo</a>
+  </div>
+
+  <div class="aside"><b>Who this is built for.</b> Operators at five million in revenue and up. At
+    twenty million it stops being a question &mdash; there are too many buildings, too many systems and
+    too many people asking for the same number a different way. Below five million, the morning
+    spreadsheet still just about holds.</div>
+
+</main>
+
+<footer class="wrap">EnhancedOps.Ninja &middot; Augeo LLC &middot; demo.enhancedops.ninja</footer>
+
+</body>
+</html>
