@@ -26,6 +26,7 @@
   /* ── strip the app chrome ────────────────────────────────────────────── */
   header,
   nav,
+  aside,
   [data-print="hide"],
   button,
   input,
@@ -39,6 +40,7 @@
   /* the fixed 88px header reserves space the paper doesn't need */
   main, [data-crm-main] {
     padding-top: 0 !important;
+    padding-left: 0 !important;   /* the desktop sidebar's reserved width */
     margin-top: 0 !important;
   }
 

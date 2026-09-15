@@ -10,6 +10,8 @@ import { ActionItemsView } from '@/components/crm/ActionItemsView';
 import { SocialView } from '@/components/crm/SocialView';
 import { ReportsView } from '@/components/crm/ReportsView';
 import { CallListsView } from '@/components/crm/CallListsView';
+import { RevenueView } from '@/components/crm/RevenueView';
+import { getCrmClient } from '@/lib/crm/client';
 import { QuickLogActivity } from '@/components/crm/QuickLogActivity';
 import { BookingsPanel } from '@/components/crm/BookingsPanel';
 import { pendingBookingOf, linkedinOf } from '@/lib/crm/types';
@@ -186,6 +188,8 @@ export default function CrmPage() {
   const [dataLoading, setDataLoading] = useState(true);
   const [drawerContact, setDrawerContact] = useState<Contact | null>(null);
   const [drawerOpen, setDrawerOpen]   = useState(false);
+  // Starts false so the Revenue tab never flashes up for a non-admin while this loads.
+  const [canSeeRevenue, setCanSeeRevenue] = useState(false);
   const subRef = useRef<{ unsubscribe: () => void } | null>(null);
 
   useEffect(() => {
@@ -244,6 +248,14 @@ export default function CrmPage() {
     if (authed) refresh().finally(() => setDataLoading(false));
   }, [authed, refresh]);
 
+  // Revenue visibility comes from the same database function the RLS policies use,
+  // so the tab and the data can never disagree about who is an admin.
+  useEffect(() => {
+    if (!authed) return;
+    getCrmClient().rpc('crm_revenue_admin')
+      .then(({ data }) => setCanSeeRevenue(data === true), () => setCanSeeRevenue(false));
+  }, [authed]);
+
   // Re-fetch when the tab regains focus, so cards added elsewhere (e.g. the
   // "OCS" button on a call-list page in another tab) show up without a reload.
   useEffect(() => {
@@ -294,11 +306,15 @@ export default function CrmPage() {
         onToggleBookings={() => setBookingsOpen(o => !o)}
         onLogActivity={() => setQuickLogOpen(true)}
         search={search} onSearchChange={setSearch} showSearch={isCardView}
+        canSeeRevenue={canSeeRevenue}
       />
       {bookingsOpen && (
         <BookingsPanel contacts={contacts} onClose={() => setBookingsOpen(false)} onRefresh={refresh} />
       )}
-      <main style={{ paddingTop: 88 }}>
+      {/* Offsets come from the shell's --crm-top / --crm-side, which change between
+          the desktop sidebar and the phone menu. data-search tells the phone layout
+          when the search row is present. */}
+      <main className="crmx-main" data-crm-main data-search={isCardView ? '1' : '0'}>
         {view === 'onecard' && <OneCardView contacts={visibleContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onNew={() => { setDrawerContact(null); setDrawerOpen(true); }} onRefresh={refresh} />}
         {view === 'kanban'  && <KanbanView  contacts={visibleContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} onRefresh={refresh} />}
         {view === 'list'    && <ListView    contacts={visibleContacts} stages={stages} onOpen={c => { setDrawerContact(c); setDrawerOpen(true); }} />}
@@ -306,6 +322,7 @@ export default function CrmPage() {
         {view === 'social'  && <SocialView contacts={contacts} onRefresh={refresh} />}
         {view === 'reports' && <ReportsView />}
         {view === 'calllists' && <CallListsView />}
+        {view === 'revenue' && canSeeRevenue && <RevenueView />}
       </main>
       <ContactDrawer
         open={drawerOpen} contact={drawerContact} stages={stages}

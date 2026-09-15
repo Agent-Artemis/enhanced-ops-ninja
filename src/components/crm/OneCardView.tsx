@@ -759,7 +759,7 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
   // ── Render ────────────────────────────────────────────────────────────────────
   return (
     <div style={{
-      display: 'flex', height: 'calc(100vh - 88px)',
+      display: 'flex', height: 'calc(100vh - var(--crm-top, 88px))',
       fontFamily: 'system-ui, -apple-system, sans-serif',
       background: T.pageBg,
     }}>

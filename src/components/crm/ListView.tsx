@@ -82,7 +82,7 @@ export function ListView({ contacts, stages, onOpen }: Props) {
   }
 
   return (
-    <div style={{ padding: '20px 24px', background: D.bg, minHeight: 'calc(100vh - 88px)' }}>
+    <div style={{ padding: '20px 24px', background: D.bg, minHeight: 'calc(100vh - var(--crm-top, 88px))' }}>
       {/* Search */}
       <div style={{ marginBottom: 16 }}>
         <input

@@ -891,7 +891,7 @@ void HIDDEN_LISTS;
 /* ─── View ──────────────────────────────────────────────────────────────────── */
 export function CallListsView() {
   return (
-    <div style={{ background: C.pageBg, minHeight: 'calc(100vh - 88px)', padding: '28px 20px 60px' }}>
+    <div style={{ background: C.pageBg, minHeight: 'calc(100vh - var(--crm-top, 88px))', padding: '28px 20px 60px' }}>
       <div style={{ maxWidth: 860, margin: '0 auto' }}>
         <div style={{ marginBottom: 22 }}>
           <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: C.text }}>Call Lists</h1>

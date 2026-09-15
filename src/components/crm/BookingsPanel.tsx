@@ -37,7 +37,7 @@ export function BookingsPanel({ contacts, onClose, onRefresh }: Props) {
 
   return (
     <div style={{
-      position: 'fixed', top: 92, right: 16, zIndex: 40, width: 420,
+      position: 'fixed', top: 'calc(var(--crm-top, 88px) + 4px)', right: 16, zIndex: 40, width: 'min(420px, calc(100vw - 32px))',
       maxHeight: 'calc(100vh - 120px)', overflowY: 'auto',
       background: '#1A1A1A', border: '1px solid rgba(255,255,255,0.15)',
       borderRadius: 12, boxShadow: '0 12px 40px rgba(0,0,0,0.6)', padding: 16,
