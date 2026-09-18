@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+<meta name="referrer" content="no-referrer">
+<title>Who we serve and how: EnhancedOps.Ninja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* EON standard: dark ground on screen, BLUE as the primary emphasis with white, gold a
+   secondary accent only. PRINT is light, so it does not empty a toner cartridge; only the
+   letterhead and the closing card keep their dark ground, because EON is a dark brand.
+
+   Brief (Jeff, 2026-09-17): opens with WHO WE SERVE, told as three pictures of one car.
+   The three photos are Jeff's own (driver-1/2/3 in this folder). Nothing on the page is
+   generated, drawn or borrowed from stock.
+   House rules for this page: no em dashes or en dashes anywhere, no dollar figures, no
+   invented clients, results, percentages or testimonials. It is SHARED AS HTML (Jeff,
+   2026-09-18: "so the meeting link is active"), not a PDF, so there is no page budget. */
+/* THE HANDWRITTEN LINE. Caveat 700, self-hosted beside this page (fonts/, with its OFL licence),
+   because it has to PRINT: a CDN face that fails silently would print the verdict in Times at an
+   angle. font-display:block so it never flashes a fallback. The fallback stack is real handwriting. */
+@font-face{font-family:"Caveat";src:url("fonts/caveat-700-latin.woff2") format("woff2");
+  font-weight:700;font-style:normal;font-display:block}
+:root{--bg:#0A0F1A;--panel:#0E1420;--panel2:#131B2B;--line:#243044;--line2:#2E3D55;
+  --ink:#EEF3FA;--ink2:#AEBBCD;--ink3:#7E8DA0;--blue:#1A6ECC;--blue2:#3F8AE0;--gold:#F5B301;
+  --green:#22C55E;--purple:#A855F7;
+  --head:"Bebas Neue",Impact,sans-serif;--body:"DM Sans",system-ui,sans-serif;--r:10px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--head);text-transform:uppercase;letter-spacing:.02em;
+  font-weight:400;line-height:1.04;margin:0}
+
+/* ── THE LETTERHEAD (Jeff, 2026-09-18): logo left, the title centred, his contact right.
+   EON brand is a DARK ground, so the letterhead is the dark band, on screen AND in print.
+   ⭐ THE LOGOS ARE A MATCHED PAIR, each for its own ground:
+     dark ground  -> ../logo-ninja.png            ("ops" and "NINJA" in WHITE)
+     light ground -> eon-logo-email-light.png     ("ops" and "NINJA" in BLACK)
+   Either one on the wrong ground loses half the wordmark. The proof checks every logo against
+   the ground it actually sits on. The two outer columns are equal (1fr each), so the title is
+   centred on the PAGE, not in whatever gap the logo and the contact block leave. Stacks on a phone. */
+.hdr{background:#0A0F1A;color:#EEF3FA;border-bottom:1px solid var(--line);padding:10px 0}
+.hdr-in{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:18px}
+.hlogo{justify-self:start;width:190px;height:auto;display:block;margin:-10px 0 -12px}
+.hdr h1{justify-self:center;text-align:center;color:#EEF3FA;font-size:clamp(28px,4.4vw,40px);white-space:nowrap}
+/* on the dark band the contact is white or near white, never mid grey */
+.contact{justify-self:end;text-align:right;font-style:normal;font-size:13px;line-height:1.4;color:#EEF3FA}
+.contact b{display:block;color:#fff;font-size:15px;font-weight:700}
+.contact span,.contact a{display:block}
+.contact a{color:#EEF3FA;text-decoration:none}
+.contact .role{color:#F5B301;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+
+section{padding:26px 0 0}
+h2{font-size:clamp(20px,3.6vw,27px);color:var(--ink)}
+.h2sub{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue2);margin-bottom:6px}
+/* ── WHO / WHAT / HOW ── Jeff: "Who do we serve, what do we do to serve them, and how do we
+   do it?" Three plain questions, in his words, that a reader can navigate the page by. They are
+   the top of the outline; every other heading on the page sits under one of them as an h3. */
+.qt{margin:36px 0 0;padding-top:12px;border-top:3px solid var(--blue);font-family:var(--head);
+  font-size:clamp(28px,5.4vw,42px);text-transform:uppercase;letter-spacing:.02em;line-height:1;color:var(--ink)}
+.qt:first-of-type{margin-top:22px}
+h3{font-size:clamp(20px,3.6vw,27px);color:var(--ink)}
+/* the questions he answers in his head: asked, never answered */
+.asks{margin:6px 0 0;padding:0 0 0 18px;display:grid;gap:3px}
+.asks li{font-size:14px;color:var(--ink2);line-height:1.45}
+.asks li b{color:var(--ink);font-weight:700}
+.lede{max-width:70ch;color:var(--ink2);font-size:16px;margin:12px 0 0}
+.lede b{color:var(--ink);font-weight:500}
+
+/* ── THE STORY: three men, one car, read top to bottom ──
+   Jeff (2026-09-17): "stack the images on the left hand side of the page. That leads to the
+   'this is who we serve'." The reader descends through the three men and arrives at the line
+   under row three. Above the photos, centred and stacked at the same size and weight:
+   "Which one are you?" then "The car is YOUR business." (Jeff, 2026-09-18). The heading face is
+   all caps, so YOUR is carried by colour, the only blue word in the pair. Nothing explains the
+   device: no "three pictures of the same car", the reader can see it.
+   ⭐ THE PHOTOS ARE ON WHITE (one man, one car, cut from a single image so the continuity holds),
+   so the story sits in a LIGHT BAND and the cars float in it. No border, no plate behind them.
+   Each man has two levels: the CAPTION is the picture, the BUSINESS line is what he does. Jeff
+   asked for the section smaller while adding the business lines, so the room came out of the
+   photos: they support the story, they are not the story.
+   Numbers live beside the caption, not on the photo: the verdict says "picture three". */
+.band{--ink:#0B1422;--ink2:#35445A;--ink3:#667588;background:#fff;color:var(--ink);
+  border-radius:14px;padding:20px 22px 22px;margin-top:4px}
+.band .h2sub{color:#1A6ECC}
+.storyhead{text-align:center}
+.storyhead h3,.storyhead .frame{font-family:var(--head);font-size:clamp(24px,4.2vw,34px);font-weight:400;
+  text-transform:uppercase;letter-spacing:.02em;line-height:1.05;color:var(--ink);margin:0}
+.storyhead .frame{margin-top:2px}
+.storyhead .your{color:#1A6ECC}
+.rows{display:grid;gap:18px;margin-top:16px}
+/* desktop: a photo column, caption and business line beside it. The page is shared as HTML now,
+   not printed to two pages (Jeff, 2026-09-18), so the photos grew back from 260px to 340px. */
+.row{display:grid;margin:0;column-gap:22px;row-gap:6px;align-items:start;
+  grid-template-columns:clamp(220px,38%,340px) minmax(0,1fr);grid-template-areas:"img cap" "img biz"}
+.imgcol{grid-area:img;align-self:start;min-width:0;container-type:inline-size}
+.slot{margin:0;aspect-ratio:3/2}
+.slot img{display:block;width:100%;height:100%;object-fit:contain}
+.cap{grid-area:cap;align-self:end}
+.cap .num{font-family:var(--head);font-size:26px;line-height:1;color:var(--ink3);margin-right:8px;vertical-align:-3px}
+.cap p{display:inline;margin:0;font-size:17px;line-height:1.4;color:var(--ink);font-weight:600}
+.biz{grid-area:biz;margin:0;font-size:14.5px;line-height:1.5;color:var(--ink2);max-width:62ch;align-self:start}
+.biz .lbl{display:block;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink3);font-weight:700;margin-bottom:2px}
+.biz b{color:var(--ink);font-weight:700}
+.row.c .cap .num{color:#1A6ECC}
+.row.c .biz .last{display:block;margin-top:4px;font-size:16px;color:#1A6ECC;font-weight:700}
+/* phone (below 620px): the photo goes FULL WIDTH with its caption and business line beneath it.
+   Side by side squeezed the caption into four and five lines at 390, and Sam reads this on a phone. */
+@media(max-width:619px){
+  .row{grid-template-columns:1fr;grid-template-areas:"img" "cap" "biz";row-gap:6px}
+  .cap .num{display:inline;margin-right:8px}
+  .cap p{font-size:16px} .biz{font-size:14.5px}
+}
+/* ⭐ THE ARRIVAL (Jeff): an arrow UNDER the images pointing UP at picture three, the driver with
+   the crew, and "This is who we serve!!!" in his own hand: brand blue, handwritten, a slight
+   deliberate angle. It lives in picture three's image column, so it cannot sit under the wrong car.
+   ONE line, never wrapped: the size follows the photo's width (cqi), so it fits under the photo at
+   every width and in print. */
+.arrive{display:flex;flex-direction:column;align-items:center;margin-top:6px}
+.arrive svg{display:block}
+.hand{font-family:"Caveat","Noteworthy","Bradley Hand","Segoe Print",cursive;font-weight:700;color:#1A6ECC;
+  font-size:clamp(14px,12.2cqi,31px);white-space:nowrap;line-height:1.02;text-align:center;transform:rotate(-3deg);margin-top:3px;letter-spacing:.005em}
+@media(max-width:560px){.band{padding:16px 14px 18px;border-radius:12px}}
+.car{margin-top:18px;background:var(--panel2);border:1px solid var(--blue);border-radius:var(--r);padding:17px 19px}
+.car .k{font-family:var(--head);font-size:clamp(24px,4.6vw,34px);text-transform:uppercase;letter-spacing:.02em;
+  color:var(--ink);line-height:1.05}
+.car p{margin:10px 0 0;font-size:15.5px;color:var(--ink2);max-width:72ch}
+.car p b{color:var(--ink);font-weight:500}
+/* THE DISQUALIFIER: it tells a man he might not qualify. Kept to two sentences on purpose;
+   the story has already done the persuading, this only draws the line. */
+.car p.dq{font-size:17px;color:var(--ink2);margin:0}
+
+/* ── WHO WE ARE ── */
+.team{display:grid;gap:12px;margin-top:14px}
+@media(min-width:720px){.team{grid-template-columns:1fr 1fr}}
+.who{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--blue);
+  border-radius:var(--r);padding:14px 16px}
+.who .r{font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--blue2);font-weight:700}
+.who .nm{font-family:var(--head);font-size:23px;text-transform:uppercase;letter-spacing:.02em;color:var(--ink);
+  margin-top:3px;line-height:1.1}
+.who p{margin:7px 0 0;font-size:14px;color:var(--ink2)}
+
+/* ── WHAT IT COULD BE ── */
+.probs{display:grid;gap:10px;margin-top:14px}
+@media(min-width:720px){.probs{grid-template-columns:1fr 1fr}}
+.pr{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:13px 15px}
+.pr .t{font-size:15.5px;color:var(--ink);font-weight:700}
+.pr p{margin:5px 0 0;font-size:14px;color:var(--ink2)}
+.pr p b{color:var(--ink);font-weight:500}
+.pr.wide{grid-column:1/-1}
+.pr.ex{border-left:3px solid var(--gold)}
+
+/* hub and spoke: LIFTED from the live site (src/components/marketing/liveHomeMarkup.ts,
+   .hub-grid / .hub-wrap / .spoke-cap). Same geometry, gradient and gold hub; only the eight
+   outer labels changed, to this page's own list of software. */
+.hub-grid{display:grid;grid-template-columns:1fr;gap:16px;align-items:center;margin-top:12px}
+@media(min-width:720px){.hub-grid{grid-template-columns:.9fr 1.1fr;gap:26px}}
+.hub-wrap{background:radial-gradient(circle at 50% 45%,rgba(26,110,204,.14),transparent 62%);
+  border:1px solid var(--line);border-radius:20px;padding:8px;max-width:360px;justify-self:center;width:100%}
+.spoke-cap{list-style:none;padding:0;margin:0;display:grid;gap:11px}
+.spoke-cap li{display:flex;gap:12px;align-items:flex-start}
+.spoke-cap .d{flex:none;width:11px;height:11px;border-radius:3px;margin-top:5px}
+.spoke-cap b{color:var(--ink)}
+.spoke-cap span{color:var(--ink2);font-size:14px}
+.one{margin-top:12px;font-size:15.5px;color:var(--ink);font-weight:500}
+
+/* ── HOW IT WORKS ── */
+.steps{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:10px;counter-reset:s}
+.steps li{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px 15px;
+  display:flex;gap:13px;align-items:baseline}
+.steps li::before{counter-increment:s;content:counter(s);font-family:var(--head);font-size:24px;
+  color:var(--blue2);flex:none;line-height:1;min-width:14px}
+.steps b{color:var(--ink);font-weight:700}
+.steps span{color:var(--ink2);font-size:14.5px}
+.partner{margin-top:16px;text-align:center;font-family:var(--head);font-size:clamp(26px,5vw,38px);
+  text-transform:uppercase;letter-spacing:.03em;color:var(--ink);line-height:1.05}
+.partner em{font-style:normal;color:var(--blue2)}
+
+.cost{margin-top:18px;background:var(--panel2);border:1px solid var(--line2);border-left:3px solid var(--gold);
+  border-radius:var(--r);padding:15px 17px}
+.cost .k{font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.cost p{margin:6px 0 0;font-size:16px;color:var(--ink)}
+.cost p b{font-weight:700}
+/* Jeff's strongest line: it answers what a build costs him before anything works, so it gets weight */
+.cost p.nofee{font-family:var(--head);font-size:clamp(26px,4.6vw,34px);letter-spacing:.03em;text-transform:uppercase;
+  color:var(--blue2);line-height:1;margin-top:10px}
+.cost p.term{color:var(--ink2);margin-top:6px}
+
+/* ── THE CLOSING CARD: the last thing on the page and the only one telling him what to do next.
+   Dark, the bookend to the letterhead, so it carries the same dark-ground logo. The meeting link is the SITE's own
+   /book path, never a cal.com URL (that username has been renamed twice and every published link
+   died). The page is shared as HTML, so the button is the link; the URL appears as text only when
+   someone prints it, because a printed hyperlink cannot be clicked. */
+.close{margin-top:18px;background:#0A0F1A;color:#EEF3FA;border:1px solid var(--line2);border-top:3px solid var(--blue);
+  border-radius:var(--r);padding:18px 20px;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  align-items:center;gap:20px}
+.close-logo{width:190px;height:auto;display:block;justify-self:start;margin:-12px 0 -14px}
+.close-go{text-align:center}
+.close-go .k{font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:#F5B301;font-weight:700}
+.book{display:inline-block;margin-top:6px;background:#1A6ECC;color:#fff;text-decoration:none;font-weight:700;
+  font-size:16px;padding:10px 20px;border-radius:8px}
+.book-url{display:none;margin-top:6px;font-size:14px;font-weight:700;color:#EEF3FA;letter-spacing:.01em}
+@media (max-width:620px){
+  .close{grid-template-columns:1fr;gap:14px;justify-items:start}
+  .close-go{text-align:left} .close-contact{justify-self:start;text-align:left}
+}
+
+/* footer.wrap, not footer: .wrap's margin and padding would otherwise win and glue it to the card */
+footer.wrap{border-top:1px solid var(--line);margin-top:30px;padding-top:16px;padding-bottom:36px;color:var(--ink3);font-size:12.5px}
+
+/* a phone gets the letterhead stacked, left aligned: never three slivers */
+@media (max-width:760px){
+  .hdr-in{grid-template-columns:1fr;gap:8px}
+  .hlogo,.hdr h1,.contact{justify-self:start;text-align:left}
+  .hlogo{width:170px;margin:-8px 0 -6px}
+}
+
+/* ── PRINT: not the way this page is shared, but Cmd-P must still come out clean: light, nothing
+   cut in half, no page count to hit ── */
+@page{size:letter;margin:.45in .5in;
+  /* every page after the first carries a slim running head, the logo and his name, in the top
+     margin, because a later page can be handed over on its own. The margin is white, so it takes the
+     LIGHT-ground logo. Page one has the letterhead.
+     image-set at 5x draws the same local logo file at 88px wide, sharp in print. */
+  @top-left{content:image-set("eon-logo-email-light.png" 5x);vertical-align:bottom;padding-bottom:4px}
+  @top-right{content:"Jeff Oldroyd \B7  The AI Architect";font-family:"DM Sans",sans-serif;font-size:8.5px;color:#35445A;vertical-align:bottom;padding-bottom:6px}}
+@page :first{@top-left{content:none} @top-right{content:none}}
+@media print{
+  :root{--bg:#fff;--panel:#fff;--panel2:#F4F7FB;--line:#D5DDE8;--line2:#B9C6D6;
+    --ink:#0B1422;--ink2:#35445A;--ink3:#667588;--blue2:#1A6ECC}
+  body{background:#fff;font-size:11.5px;line-height:1.42}
+  .wrap{max-width:none;padding:0}
+  .hdr{background:#0A0F1A;padding:6px 14px;border:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .hdr h1{color:#EEF3FA}
+  .hdr-in{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:12px}
+  .hlogo{width:128px;justify-self:start;margin:-8px 0 -9px} .hdr h1{font-size:26px;justify-self:center;text-align:center}
+  .contact{justify-self:end;text-align:right;font-size:9.5px;line-height:1.3} .contact b{font-size:11px} .contact .role{font-size:8px}
+  section{padding:12px 0 0}
+  h2{font-size:19px} .h2sub{font-size:9px;margin-bottom:3px} .lede{font-size:12px;margin-top:6px}
+  .band{padding:0;border-radius:0}
+  .storyhead h3,.storyhead .frame{font-size:21px}
+  .rows{gap:7px;margin-top:7px}
+  .row{grid-template-columns:150px 1fr;grid-template-areas:"img cap" "img biz";column-gap:14px;row-gap:2px}
+  .cap .num{font-size:17px;margin-right:6px} .cap p{font-size:12.5px}
+  .biz{font-size:10.5px;line-height:1.38;max-width:none} .biz .lbl{font-size:8px;margin-bottom:0}
+  .row.c .biz .last{font-size:11.5px;margin-top:2px}
+  .arrive{margin-top:2px} .arrive svg{height:14px}
+  .car{margin-top:9px;padding:10px 13px} .car .k{font-size:22px} .car p,.car p.dq{font-size:12.5px;margin-top:4px}
+  .team{grid-template-columns:1fr 1fr;gap:8px;margin-top:8px} .who{padding:9px 12px}
+  .who .nm{font-size:17px} .who p{font-size:11px;margin-top:4px}
+  .probs{grid-template-columns:1fr 1fr;gap:6px;margin-top:8px} .pr{padding:8px 11px}
+  .pr .t{font-size:12px} .pr p{font-size:11px;margin-top:3px}
+  .hub-grid{grid-template-columns:.8fr 1.2fr;gap:14px;margin-top:4px} .hub-wrap{max-width:176px}
+  .hub-wrap{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .spoke-cap{gap:5px} .spoke-cap span{font-size:11px} .spoke-cap .d{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .one{font-size:12px;margin-top:6px}
+  .steps{gap:4px;margin-top:6px} .steps li{padding:5px 11px} .steps li::before{font-size:18px} .steps span{font-size:11.5px}
+  .partner{font-size:22px;margin-top:7px}
+  .cost{margin-top:8px;padding:7px 13px} .cost p{font-size:12.5px}
+  .cost p.nofee{font-size:21px;margin-top:4px} .cost p.term{margin-top:2px}
+  .close{margin-top:8px;padding:8px 13px;gap:12px;border-top-width:2px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .close-logo{width:120px;margin:-8px 0 -9px} .close-go .k{font-size:8px}
+  .book{font-size:11.5px;padding:5px 12px;margin-top:3px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .book-url{display:block;font-size:11.5px;margin-top:3px}
+  .close-contact{font-size:9.5px;line-height:1.3} .close-contact b{font-size:11px} .close-contact .role{font-size:8px}
+  footer.wrap{margin-top:12px;padding:8px 0 0;font-size:10px}
+  /* WHO / WHAT / HOW flows across the pages: no forced break, but no card is ever split and
+     no question title is left stranded at the bottom of a page. */
+  .qt{font-size:24px;margin-top:12px;padding-top:6px;break-after:avoid} .qt:first-of-type{margin-top:6px}
+  h3{font-size:18px;break-after:avoid}
+  .asks{margin-top:3px;gap:1px} .asks li{font-size:10.5px}
+  .row,.arrive,.band,.pr,.who,.team,.steps li,.car,.cost,.close,.hub-grid,.partner{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <img class="hlogo" src="../logo-ninja.png" alt="EnhancedOps.Ninja" width="661" height="377">
+    <h1>Who we serve and how</h1>
+    <address class="contact">
+      <b>Jeff Oldroyd</b>
+      <span class="role">The AI Architect</span>
+      <a href="tel:+12087242158">208-724-2158</a>
+      <a href="mailto:jeff@enhancedops.ninja">jeff@enhancedops.ninja</a>
+      <a href="https://enhancedops.ninja">enhancedops.ninja</a>
+    </address>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <h2 class="qt" id="who">Who do we serve?</h2>
+
+  <section id="serve">
+    <div class="band">
+      <div class="storyhead">
+        <h3>Which one are you?</h3>
+        <p class="frame">The car is <span class="your">YOUR</span> business.</p>
+      </div>
+
+      <div class="rows">
+        <div class="row a">
+          <div class="imgcol"><div class="slot"><img src="driver-1-owns.jpg" width="1800" height="1200"
+            alt="A man at the wheel of his grey Porsche 911, on his own."></div></div>
+          <div class="cap"><span class="num">1</span><p>He owns a beautiful car. He drives it occasionally.</p></div>
+          <p class="biz"><span class="lbl">In business</span>A small business, making money for him
+            personally. He just enjoys using AI like a search engine.</p>
+        </div>
+
+        <div class="row b">
+          <div class="imgcol"><div class="slot"><img src="driver-2-mechanic.jpg" width="1800" height="1200"
+            alt="The same man bent over the 911's rear engine, spanners and parts spread on the ground beside it."></div></div>
+          <div class="cap"><span class="num">2</span><p>He drives it, but he wants to buy the tools and know
+            every piece of it.</p></div>
+          <p class="biz"><span class="lbl">In business</span>The DIY. He wants to know how everything works
+            and what the tools and digital employees are, so he does not spend enough time driving his business. He gets a
+            subscription, makes some connections, gets excited, <b>but never truly brings leverage or more
+            income to his business.</b></p>
+        </div>
+
+        <div class="row c">
+          <div class="imgcol"><div class="slot"><img src="driver-3-crew.jpg" width="1800" height="1200"
+            alt="The same man in the driver's seat in a racing suit, while a pit crew works on the car around him."></div>
+            <div class="arrive">
+              <svg data-dir="up" width="26" height="30" viewBox="0 0 26 30" aria-hidden="true"><path d="M13 29V5M4 14l9-10 9 10" fill="none" stroke="#1A6ECC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="hand">This is who we serve!!!</span>
+            </div></div>
+          <div class="cap"><span class="num">3</span><p>He is the driver. That is all he does.</p></div>
+          <p class="biz"><span class="lbl">In business</span>He understands that using specialists and teams
+            lets him stay in the driver's seat. His business goes further, faster, with fewer problems for
+            him, because his team takes care of it.
+            <span class="last">This man invests in an AI implementation specialist.</span></p>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="car">
+      <p class="dq">We do not work with the men who DIY and do everything in their business.
+        <b>We work with the men in picture three.</b></p>
+    </div>
+  </section>
+
+  <h2 class="qt" id="what">What do we do to serve them?</h2>
+
+  <section id="problem">
+    <div class="h2sub">The business owner&rsquo;s problem</div>
+    <h3>The business owner knows AI will help. He does not know how.</h3>
+    <p class="lede">And he does not have the time to research it or try to implement it, because
+      <b>he is driving the business.</b> What he needs is an expert in operations and AI architecture
+      to come in and help design and implement the <b>tools and digital employees</b> in his business.</p>
+  </section>
+
+
+  <section id="could">
+    <div class="h2sub">What it could be</div>
+    <h3>Does any of this sound like your week?</h3>
+    <div class="probs">
+      <div class="pr"><div class="t">Missed sales calls</div>
+        <p>Calls come in while the team is busy, and nobody gets back to them.</p></div>
+      <div class="pr"><div class="t">Appointment setting</div>
+        <p>Someone spends the day booking, moving and confirming appointments.</p></div>
+      <div class="pr"><div class="t">Customer service calls</div>
+        <p>The same questions, answered by hand, over and over.</p></div>
+      <div class="pr ex"><div class="t">Forms and manual processes</div>
+        <p>A contractor with a government contract has to fill out forms on every contracted job.
+          <b>He hired people just to fill out forms.</b></p></div>
+      <div class="pr"><div class="t">Selling in the next 24 months</div>
+        <p>We complete the prep for your Quality of Earnings (QoE) and due diligence, so your data
+          room is ready when a buyer asks.</p></div>
+      <div class="pr asks-card"><div class="t">You cannot find the information you want, WHEN you want it.</div>
+        <ul class="asks">
+          <li>When you want information about your business, where do you have to go?</li>
+          <li>Who do you have to ask?</li>
+          <li>How long does it take?</li>
+          <li><b>Does it take someone else off task to do it for you?</b></li>
+        </ul></div>
+
+      <div class="pr wide"><div class="t">Too many pieces of software</div>
+        <p>QuickBooks, your calendar and email, a CRM, social media, the software for your trade, and more.</p>
+        <div class="hub-grid">
+          <div class="hub-wrap">
+            <svg viewBox="0 0 600 600" width="100%" role="img" aria-label="Hub and spoke: your software around one command center">
+              <defs>
+                <radialGradient id="hg" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#1A6ECC"/><stop offset="1" stop-color="#0d3f7a"/></radialGradient>
+              </defs>
+              <circle cx="300" cy="300" r="212" fill="none" stroke="#243044" stroke-width="1.5" stroke-dasharray="3 6"/>
+              <g stroke="#31415c" stroke-width="2">
+                <line x1="300" y1="300" x2="300" y2="92"/>
+                <line x1="300" y1="300" x2="447" y2="153"/>
+                <line x1="300" y1="300" x2="508" y2="300"/>
+                <line x1="300" y1="300" x2="447" y2="447"/>
+                <line x1="300" y1="300" x2="300" y2="508"/>
+                <line x1="300" y1="300" x2="153" y2="447"/>
+                <line x1="300" y1="300" x2="92" y2="300"/>
+                <line x1="300" y1="300" x2="153" y2="153"/>
+              </g>
+              <g font-family="DM Sans,sans-serif" font-size="12.5" font-weight="700" text-anchor="middle">
+                <g><rect x="248" y="66" width="104" height="42" rx="9" fill="#0E1420" stroke="#31415c"/><text x="300" y="84" fill="#EEF3FA">QuickBooks</text><text x="300" y="99" fill="#7E8DA0" font-size="10" font-weight="500">accounting</text></g>
+                <g><rect x="395" y="128" width="104" height="42" rx="9" fill="#0E1420" stroke="#31415c"/><text x="447" y="146" fill="#EEF3FA">Calendar</text><text x="447" y="161" fill="#7E8DA0" font-size="10" font-weight="500">scheduling</text></g>
+                <g><rect x="456" y="279" width="104" height="42" rx="9" fill="#0E1420" stroke="#31415c"/><text x="508" y="297" fill="#EEF3FA">Email</text><text x="508" y="312" fill="#7E8DA0" font-size="10" font-weight="500">inbox</text></g>
+                <g><rect x="395" y="426" width="104" height="42" rx="9" fill="#0E1420" stroke="#31415c"/><text x="447" y="444" fill="#EEF3FA">CRM</text><text x="447" y="459" fill="#7E8DA0" font-size="10" font-weight="500">sales</text></g>
+                <g><rect x="248" y="487" width="104" height="42" rx="9" fill="#0E1420" stroke="#31415c"/><text x="300" y="505" fill="#EEF3FA">Phones</text><text x="300" y="520" fill="#7E8DA0" font-size="10" font-weight="500">calls</text></g>
+                <g><rect x="101" y="426" width="104" height="42" rx="9" fill="#0E1420" stroke="#31415c"/><text x="153" y="444" fill="#EEF3FA">Social media</text><text x="153" y="459" fill="#7E8DA0" font-size="10" font-weight="500">marketing</text></g>
+                <g><rect x="40" y="279" width="104" height="42" rx="9" fill="#0E1420" stroke="#31415c"/><text x="92" y="297" fill="#EEF3FA">Forms</text><text x="92" y="312" fill="#7E8DA0" font-size="10" font-weight="500">paperwork</text></g>
+                <g><rect x="101" y="128" width="104" height="42" rx="9" fill="#0E1420" stroke="#31415c"/><text x="153" y="146" fill="#EEF3FA">Your trade</text><text x="153" y="161" fill="#7E8DA0" font-size="10" font-weight="500">industry software</text></g>
+              </g>
+              <circle cx="300" cy="300" r="74" fill="url(#hg)" stroke="#F5B301" stroke-width="2.5"/>
+              <image href="../ninja-with-sword.png" x="263" y="235" width="74" height="74" preserveAspectRatio="xMidYMid meet"/>
+              <text x="300" y="335" text-anchor="middle" font-family="Bebas Neue,Impact,sans-serif" font-size="23" font-weight="900" fill="#fff" letter-spacing="1.5">COMMAND</text>
+              <text x="300" y="357" text-anchor="middle" font-family="Bebas Neue,Impact,sans-serif" font-size="23" font-weight="900" fill="#fff" letter-spacing="1.5">CENTER</text>
+            </svg>
+          </div>
+          <div>
+            <ul class="spoke-cap">
+              <li><span class="d" style="background:var(--gold)"></span><span><b>The hub:</b> one place with the usable information you need to make decisions with your team.</span></li>
+              <li><span class="d" style="background:var(--blue2)"></span><span><b>The spokes:</b> connections into the software you already run. Nothing gets ripped out.</span></li>
+              <li><span class="d" style="background:var(--green)"></span><span><b>The outer wheel:</b> your existing software stays exactly where it is, and keeps working.</span></li>
+            </ul>
+            <p class="one">Instead of logging into five or more pieces of software to manage your business,
+              you log into one.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <h2 class="qt" id="howq">How do we do it?</h2>
+
+  <section id="team">
+    <div class="h2sub">Who we are</div>
+    <h3>The architect, and the crew</h3>
+    <div class="team">
+      <div class="who">
+        <div class="r">The AI Architect</div>
+        <div class="nm">Jeff</div>
+        <p>Designs how AI fits your business: the tools and digital employees it needs, and the order
+          they go in.</p>
+      </div>
+      <div class="who">
+        <div class="r">The builders</div>
+        <div class="nm">Rosson Long and team</div>
+        <p>Over 15 years of enterprise software creation, data management and migration.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="h2sub">How it works</div>
+    <h3>Five steps, and then it keeps going</h3>
+    <ol class="steps">
+      <li><span><b>We meet and assess.</b> We identify your software, your workflows and the processes
+        still being done by hand.</span></li>
+      <li><span><b>We design the architecture.</b> You can see it, and click through it as a demo,
+        before anything is built.</span></li>
+      <li><span><b>You approve it.</b> Then our build team completes the work for you, including moving
+        patient records into new software or client information into a CRM.</span></li>
+      <li><span><b>We test it and put it in place.</b></span></li>
+      <li><span><b>It does not end there.</b> Ongoing support, and new builds as your business and the
+        technology change.</span></li>
+    </ol>
+    <div class="partner">We are your <em>AI implementation partner.</em></div>
+
+    <!-- the close of HOW: what it costs, then the one thing to do next -->
+    <div class="cost">
+      <div class="k">The cost</div>
+      <p>Depending on the complexity and scope of the work, <b>the cost is the same as a low level to mid
+        level employee.</b></p>
+      <p class="nofee">No upfront build fees.</p>
+      <p class="term">Six month contract, month to month after that.</p>
+    </div>
+
+    <aside class="close" aria-label="Book a call with Jeff">
+      <img class="close-logo" src="../logo-ninja.png" alt="EnhancedOps.Ninja" width="661" height="377">
+      <div class="close-go">
+        <div class="k">The next step</div>
+        <a class="book" href="https://enhancedops.ninja/book">Book a 30 minute call</a>
+        <div class="book-url">enhancedops.ninja/book</div>
+      </div>
+      <address class="contact close-contact">
+        <b>Jeff Oldroyd</b>
+        <span class="role">The AI Architect</span>
+        <a href="tel:+12087242158">208-724-2158</a>
+        <a href="mailto:jeff@enhancedops.ninja">jeff@enhancedops.ninja</a>
+        <a href="https://enhancedops.ninja">enhancedops.ninja</a>
+      </address>
+    </aside>
+  </section>
+
+</main>
+
+<footer class="wrap">EnhancedOps.Ninja &middot; Augeo LLC</footer>
+
+</body>
+</html>
