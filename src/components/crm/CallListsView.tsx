@@ -748,6 +748,17 @@ function ListCard({ list, cta = 'Open list ↗' }: { list: CallList; cta?: strin
  */
 const DOCS: CallList[] = [
   {
+    id: 'who-we-serve',
+    title: 'Who we serve and how',
+    blurb:
+      'The three drivers page, built for Sam as a referral source. One man and one car, three ' +
+      'choices: owns it, works on it, or drives it while a crew works on it. Arrives at who we ' +
+      'serve, then who / what / how. Carries commercial terms (no upfront build fees, six month ' +
+      'then month to month), so know what is on screen before sharing it.',
+    count: 'referral page',
+    url: 'https://enhancedops.ninja/lists/who-we-serve.html',
+  },
+  {
     id: 'biovara-plan',
     title: 'BioVara — White-label Oral NAD, 90-day plan',
     blurb:
