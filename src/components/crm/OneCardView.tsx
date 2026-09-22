@@ -291,6 +291,14 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
 
   // ── Filing ────────────────────────────────────────────────────────────────────
   const fileTo = useCallback(async (cardId: string, zone: DropZone) => {
+    /* ⛔ NOTHING IS EVER FILED INTO THE PAST. History is readable, and now draggable OUT of, but
+       a date before this month is refused here rather than in the UI, because this is the single
+       place every drop passes through. */
+    const parts = String(zone).split(':');
+    if (parts[0] === 'month' || parts[0] === 'day') {
+      const nowD = new Date();
+      if (Number(parts[2]) * 12 + MONTH_NAMES.indexOf(parts[1]) < nowD.getFullYear() * 12 + nowD.getMonth()) return;
+    }
     // Referral Partners is a TAG, not a bucket. Dropping here only adds the tag —
     // the card keeps its bucket, active state and filed date, and stays wherever
     // it already lives. Stack members are NOT tagged along with their primary
@@ -622,9 +630,12 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
   const isDragging = dragCardId !== null;
 
   // ── Card list renderer ──────────────────────────────────────────────────────────
-  // Shared by every panel. `readOnly` strips all
-  // mutating affordances (quick-actions, drag-filing, (un)stacking) for history
-  // browsing; `actionsFor` supplies the per-card action row for actionable panels.
+  /* Shared by every panel. `readOnly` strips the mutating affordances for history browsing:
+     quick actions, stacking, and dropping anything INTO the month being viewed.
+     ⭐ EXCEPT PICKING A CARD UP, since 2026-09-22. Jeff, twice: "still can't grab a card in
+     August". Pulling an overdue card FORWARD is the entire point of a tickler, and a card
+     leaving August cannot corrupt August, so history is draggable OUT while everything else
+     about it stays read only. Filing INTO a past month is refused in fileTo. */
   function renderCardList(
     cards: Contact[],
     readOnly: boolean,
@@ -674,9 +685,9 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
               <ContactCard
                 contact={c} stages={stages}
                 onDoubleClick={() => onOpen(c)}
-                draggable={!readOnly}
-                onDragStart={readOnly ? undefined : e => onCardDragStart(e, c)}
-                onDragEnd={readOnly ? undefined : onCardDragEnd}
+                draggable
+                onDragStart={e => onCardDragStart(e, c)}
+                onDragEnd={onCardDragEnd}
                 isDragging={dragCardId === c.id}
                 justDropped={justDropped === c.id}
                 actions={readOnly ? undefined : actionsFor(c)}
