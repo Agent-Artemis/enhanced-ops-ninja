@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import type { Contact, Stage } from '@/lib/crm/types';
-import { appointmentOf, stackOf, stackMemberIds, REFERRAL_PARTNER_TAG, AFFILIATE_PARTNER_TAG } from '@/lib/crm/types';
+import { appointmentOf, stackOf, stackMemberIds, REFERRAL_PARTNER_TAG, AFFILIATE_PARTNER_TAG, NEEDS_INVITATION_TAG } from '@/lib/crm/types';
 import { ContactCard } from './ContactCard';
 import { fileUnderDate, pullToActive, sendToAlpha, setPartnerTag, stackCards, unstackCard } from '@/lib/crm/data';
 import { MONTH_NAMES, contactsForMonth } from '@/lib/crm/filing';
@@ -241,9 +241,17 @@ export function OneCardView({ contacts, stages, onOpen, onNew, onRefresh }: Prop
   // that the panel then filtered out.
   const visible = contacts.filter(c => !isStackMember(c));
 
-  const actionNeeded = chronological(
+  const actionNeededAll = chronological(
     visible.filter(c => c.is_active && (!c.next_action_date || c.next_action_date < firstOfMonthLocalStr))
   );
+  // A meeting the voice agent agreed is time-critical and nobody has sent the invitation yet, so
+  // it pins above the rest of the queue. Without this it carries no date and sorts alphabetically
+  // among every other unplaced card — i.e. straight to the bottom of a long list.
+  const needsInvitation = (c: Contact) => (c.tags ?? []).includes(NEEDS_INVITATION_TAG);
+  const actionNeeded = [
+    ...actionNeededAll.filter(needsInvitation),
+    ...actionNeededAll.filter(c => !needsInvitation(c)),
+  ];
   // A-Z = inactive contacts only
   const alphaList    = visible.filter(c => !c.is_active);
   // Referral Partners = tag membership, independent of pipeline state. A partner

@@ -112,6 +112,10 @@ export function projectOf(c: Pick<Contact, 'custom_fields'>): ProjectTag | null 
 
 export const REFERRAL_PARTNER_TAG  = 'Referral Partner';
 export const AFFILIATE_PARTNER_TAG = 'Affiliate Partner';
+// Written by the Reese voice agent when a prospect agrees to a meeting. The invitation is
+// NOT sent automatically — a person has to send it — so these pin to the top of Action
+// Needed rather than sorting alphabetically among the unplaced cards.
+export const NEEDS_INVITATION_TAG  = 'needs-invitation';
 
 /** The two partner toggles, with the muted card-face badge color for each.
  *  The glyph carries the actual difference between them at a glance: an
