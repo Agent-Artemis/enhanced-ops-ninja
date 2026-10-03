@@ -748,6 +748,19 @@ function ListCard({ list, cta = 'Open list ↗' }: { list: CallList; cta?: strin
  */
 const DOCS: CallList[] = [
   {
+    id: 'biovara-clean-room',
+    title: 'BioVara: what the clean room can sell',
+    blurb:
+      'Built for the first meeting with Paige, Tanner and Blake. Sizes every revenue line against ' +
+      'the homogenizer (50 L/day, 1,690 one-ounce bottles on a single pass) rather than the ' +
+      'bottling line, and shows the roughly 4,700 bottles a day of idle filling capacity that ' +
+      'contract packing could use. CLIENT SPECIFIC: it carries BioVara bottle economics and ' +
+      'corrects a capacity figure in a document Blake has read, so know what is on screen before ' +
+      'sharing it.',
+    count: 'review doc',
+    url: 'https://enhancedops.ninja/lists/biovara-clean-room.html',
+  },
+  {
     id: 'who-we-serve',
     title: 'Who we serve and how',
     blurb:
