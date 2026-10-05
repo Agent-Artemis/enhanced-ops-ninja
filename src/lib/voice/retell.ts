@@ -40,9 +40,24 @@ function retellKey(): string {
   return key;
 }
 
-/** POST /v2/list-calls — most recent N calls, newest first. */
+/**
+ * POST /v3/list-calls — most recent N calls, newest first.
+ *
+ * ⛔ v2 WAS DEPRECATED 2026-06-15 and "may be removed at any time". The migration is TWO
+ * changes and doing only the first is worse than doing neither:
+ *   1. the path moves /v2 -> /v3
+ *   2. the response stops being a top-level array and becomes { items, has_more, pagination_key }
+ *
+ * ⚠️ The previous body of this function read `Array.isArray(data) ? data : []`, so against v3 it
+ * would have returned an EMPTY LIST FOREVER while reporting success. The type guard written to
+ * protect against a malformed response is exactly what converts a breaking change into a silent
+ * one. ⭐ So an UNRECOGNISED shape now THROWS. A reader may never degrade to empty.
+ *
+ * Verified before and after: the same filter returns 47 calls with identical ids in identical
+ * order on both versions.
+ */
 export async function retellListCalls(limit = 20): Promise<RetellCall[]> {
-  const res = await fetch(`${RETELL_BASE}/v2/list-calls`, {
+  const res = await fetch(`${RETELL_BASE}/v3/list-calls`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${retellKey()}`,
@@ -54,8 +69,17 @@ export async function retellListCalls(limit = 20): Promise<RetellCall[]> {
   if (!res.ok) {
     throw new Error(`Retell list-calls failed: ${res.status} ${await res.text()}`);
   }
-  const data = (await res.json()) as RetellCall[];
-  return Array.isArray(data) ? data : [];
+  const data = (await res.json()) as unknown;
+  // v2 returned the array directly; v3 wraps it. Accept either, refuse anything else.
+  if (Array.isArray(data)) return data as RetellCall[];
+  const items = (data as { items?: unknown })?.items;
+  if (Array.isArray(items)) return items as RetellCall[];
+  // ⛔ Never return [] here. An empty list is indistinguishable from "no calls".
+  throw new Error(
+    `Retell list-calls returned an unrecognised shape: ${
+      data && typeof data === "object" ? Object.keys(data as object).join(",") : typeof data
+    }`,
+  );
 }
 
 /**
