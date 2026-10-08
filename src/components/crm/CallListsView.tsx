@@ -748,6 +748,20 @@ function ListCard({ list, cta = 'Open list ↗' }: { list: CallList; cta?: strin
  */
 const DOCS: CallList[] = [
   {
+    id: 'ct360-hipaa-llm',
+    title: 'CT360: which AI models can legally touch patient data',
+    blurb:
+      'The vendor comparison behind the CT360 proposal. Eight routes to a model, whether each one ' +
+      'will sign a Business Associate Agreement, which NAMED service that actually covers, what is ' +
+      'excluded, and the URL every claim was read on. Four rows that directories list as yes were ' +
+      'checked at the vendors and two did not survive: Vertex AI is not on the Google Cloud BAA ' +
+      'list, and John Snow Labs never says it signs. No PHI and nothing client specific, it is a ' +
+      'vendor comparison, but it carries our recommendation so know what is on screen before ' +
+      'sharing it.',
+    count: 'vendor comparison',
+    url: 'https://enhancedops.ninja/lists/ct360-hipaa-llm.html',
+  },
+  {
     id: 'biovara-clean-room',
     title: 'BioVara: what the clean room can sell',
     blurb:
