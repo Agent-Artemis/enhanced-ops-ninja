@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+<meta name="referrer" content="no-referrer">
+<title>Compliant AI for CT360 &middot; EnhancedOps.Ninja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* EON standard: dark ground, BLUE as the primary emphasis with white.
+   Gold is a secondary accent only, it never carries a headline.
+   HARD RULE ON THIS PAGE: no em or en dashes, in the source or the render,
+   including HTML entities. Checked mechanically against a control string. */
+:root{--bg:#0A0F1A;--panel:#0E1420;--panel2:#131B2B;--line:#243044;--line2:#2E3D55;
+  --ink:#EEF3FA;--ink2:#AEBBCD;--ink3:#7E8DA0;--blue:#1A6ECC;--blue2:#3F8AE0;--gold:#F5B301;
+  --ok:#34D399;--no:#F97316;--off:#6B7A8D;
+  --head:"Bebas Neue",sans-serif;--body:"DM Sans",system-ui,sans-serif;--r:10px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:920px;margin:0 auto;padding:0 22px}
+h1,h2,h3{font-family:var(--head);text-transform:uppercase;letter-spacing:.02em;
+  font-weight:400;line-height:1.04;margin:0}
+
+.hdr{border-bottom:1px solid var(--line);background:var(--panel);padding:18px 0}
+.hdr-in{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+h1{font-size:clamp(26px,5.4vw,38px)}
+.hsub{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--blue2);margin-top:5px}
+/* logo-ninja.png IS the wordmark, no text lockup beside it, ever. */
+.hdr img{height:88px;width:auto;flex:none}
+
+.lede{max-width:70ch;color:var(--ink2);font-size:16px;margin:18px 0 0}
+.lede b{color:var(--ink);font-weight:500}
+
+section{padding:28px 0 0}
+h2{font-size:clamp(19px,3.4vw,25px);color:var(--ink)}
+.h2sub{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue2);
+  margin-bottom:6px}
+p{max-width:76ch}
+p b{color:var(--ink);font-weight:500}
+
+/* ROUTE CARDS.
+   A phone cannot read an eight by five table, so the comparison is cards and the
+   grid is only an index. Each card carries its own verdict and its own URL, because
+   a claim without the page it came from is the thing this page exists to replace. */
+.rt{display:grid;gap:12px;margin-top:16px}
+/* min-width:0 because a grid item will not shrink below its min-content width,
+   and the long source URLs below were setting that floor at 309px, which pushed
+   the whole page sideways at 320. overflow-wrap:anywhere is the one that actually
+   lowers min-content; word-break:break-word alone does not. Measured at 320, 360
+   and 390 after the fix. */
+.r{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--off);
+  border-radius:var(--r);padding:15px 17px;min-width:0;overflow-wrap:anywhere}
+.r.yes{border-left-color:var(--ok)}
+.r.part{border-left-color:var(--gold)}
+.r.nope{border-left-color:var(--no)}
+.r-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.r-n{font-size:18px;line-height:1.25;color:var(--ink);font-weight:500;letter-spacing:-.005em}
+.chip{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  padding:4px 9px;border-radius:999px;white-space:nowrap;flex:none}
+.chip.yes{background:rgba(52,211,153,.13);color:var(--ok);border:1px solid rgba(52,211,153,.35)}
+.chip.part{background:rgba(245,179,1,.12);color:var(--gold);border:1px solid rgba(245,179,1,.35)}
+.chip.nope{background:rgba(249,115,22,.12);color:var(--no);border:1px solid rgba(249,115,22,.38)}
+.chip.off{background:rgba(107,122,141,.14);color:var(--ink2);border:1px solid var(--line2)}
+.kv{margin:12px 0 0}
+.kv dt{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--blue2);
+  margin-top:11px}
+.kv dt:first-child{margin-top:0}
+.kv dd{margin:3px 0 0;color:var(--ink2);font-size:14.5px}
+.kv dd b{color:var(--ink);font-weight:500}
+.src{font-size:12.5px;color:var(--ink3);margin-top:12px;overflow-wrap:anywhere}
+.src a{color:var(--blue2);text-decoration:none;border-bottom:1px solid rgba(63,138,224,.35)}
+.src a:focus-visible{outline:2px solid var(--blue2);outline-offset:2px}
+ul{margin:5px 0 0;padding-left:20px;color:var(--ink2);font-size:14.5px}
+li{margin:3px 0}
+li b{color:var(--ink);font-weight:500}
+
+/* The index table. Horizontally scrollable on its own so the page body never
+   scrolls sideways on a phone. */
+.tw{overflow-x:auto;margin-top:16px;border:1px solid var(--line);border-radius:var(--r)}
+table.ix{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
+table.ix th,table.ix td{padding:10px 13px;border-bottom:1px solid var(--line);
+  text-align:left;vertical-align:top;color:var(--ink2)}
+table.ix th{font-family:var(--head);text-transform:uppercase;letter-spacing:.08em;
+  font-size:13px;color:var(--ink);background:var(--panel2);font-weight:400;white-space:nowrap}
+table.ix tr:last-child td{border-bottom:none}
+table.ix td.n{color:var(--ink);font-weight:500}
+table.ix td.v{white-space:nowrap}
+.v-yes{color:var(--ok);font-weight:500}
+.v-part{color:var(--gold);font-weight:500}
+.v-no{color:var(--no);font-weight:500}
+
+.hit{background:var(--panel2);border:1px solid var(--line2);border-radius:var(--r);
+  padding:16px 18px;margin-top:16px}
+.hit .k{font-family:var(--head);font-size:23px;letter-spacing:.02em;color:var(--ink);
+  line-height:1.1;text-transform:uppercase}
+.hit p{margin:9px 0 0;color:var(--ink2);font-size:14.5px}
+.hit.gold{border-left:3px solid var(--gold)}
+
+.two{display:grid;gap:12px;margin-top:16px}
+.f{min-width:0}
+@media(min-width:720px){.two{grid-template-columns:1fr 1fr}}
+.f{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--blue);
+  border-radius:var(--r);padding:15px 17px}
+.f h3{font-size:19px;color:var(--ink)}
+.f p{margin:8px 0 0;font-size:14.5px;color:var(--ink2)}
+
+.aside{margin-top:18px;padding:13px 16px;border:1px solid var(--line);border-radius:var(--r);
+  color:var(--ink3);font-size:13.5px}
+.aside b{color:var(--ink2);font-weight:500}
+
+.close{margin-top:30px;background:var(--panel);border:1px solid var(--line);
+  border-left:3px solid var(--blue);border-radius:var(--r);padding:17px 19px}
+.close p{margin:0;font-size:16px;color:var(--ink2)}
+.close p b{color:var(--ink)}
+
+footer{border-top:1px solid var(--line);margin-top:34px;padding:18px 0 40px;
+  color:var(--ink3);font-size:12.5px}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <div>
+      <h1>Compliant AI for CT360</h1>
+      <div class="hsub">EnhancedOps.Ninja &middot; Which models can legally touch patient data</div>
+    </div>
+    <img src="../logo-ninja.png" alt="EnhancedOps.Ninja">
+  </div>
+</header>
+
+<main class="wrap">
+
+  <p class="lede">Several routes will sign a Business Associate Agreement. <b>None of them is HIPAA
+    compliant out of the box.</b> Every one covers only named services in a named configuration, and
+    the consumer version of each is never covered. Researched 8 October 2026. Every row below
+    was read at the vendor's own compliance page, and where the vendor's own page does not say it,
+    this page says <b>not confirmed</b> rather than guessing.</p>
+
+  <section>
+    <div class="h2sub">The index</div>
+    <h2>Eight routes, and what the vendor itself says</h2>
+
+    <div class="tw">
+      <table class="ix">
+        <thead><tr><th>Route</th><th>BAA</th><th>Confirmed at the vendor</th></tr></thead>
+        <tbody>
+          <tr><td class="n">Anthropic Claude API</td><td class="v"><span class="v-yes">Yes, self serve</span></td><td>Yes, full eligibility table read</td></tr>
+          <tr><td class="n">AWS Bedrock</td><td class="v"><span class="v-yes">Yes, existing AWS BAA</span></td><td>Yes, named as its own line item</td></tr>
+          <tr><td class="n">OpenAI API</td><td class="v"><span class="v-yes">Yes, by request</span></td><td>Yes, at OpenAI's BAA guide</td></tr>
+          <tr><td class="n">Azure OpenAI</td><td class="v"><span class="v-part">BAA yes, service unclear</span></td><td>BAA yes. Service list is gated</td></tr>
+          <tr><td class="n">Google Gemini Enterprise</td><td class="v"><span class="v-yes">Yes, Google Cloud BAA</span></td><td>Yes, and Vertex AI is not on it</td></tr>
+          <tr><td class="n">Hathr AI</td><td class="v"><span class="v-yes">Yes, inside 24 hours</span></td><td>Yes, prices and BAA on their page</td></tr>
+          <tr><td class="n">John Snow Labs</td><td class="v"><span class="v-no">Not confirmed</span></td><td>No. Their site never says it</td></tr>
+          <tr><td class="n">Self hosted Llama or Mistral</td><td class="v"><span class="v-yes">Not needed</span></td><td>Nothing is disclosed to anyone</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="aside"><b>Why the fourth and seventh rows read differently from a directory listing.</b>
+      Both were marked yes by secondary sources. Neither is supported by the vendor's own words. A
+      missing row costs less than a wrong one in front of a platform owner.</p>
+
+    <div class="hit">
+      <div class="k">Read the granularity, not just the yes</div>
+      <p>Every vendor on this page will say yes to a BAA. <b>They do not all say yes to the same
+        size of thing.</b> AWS publishes <b>"Amazon Bedrock"</b> and <b>"Amazon Bedrock
+        AgentCore"</b> as individual line items on a named eligible services list. Microsoft
+        publishes <b>"Azure and Azure Government"</b>, a platform, and keeps the per service appendix
+        behind a sign in. Google publishes an enumerated product list and <b>Vertex AI is not on
+        it</b>.</p>
+      <p>That is a real difference in what each company is willing to put in writing, and it is the
+        difference that decides whether a compliance table can cite a source. <b>Ask which named
+        service, not whether they sign.</b></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="h2sub">Route by route</div>
+    <h2>What each vendor actually commits to</h2>
+
+    <div class="rt">
+
+      <div class="r yes">
+        <div class="r-top">
+          <div class="r-n">Anthropic Claude API, HIPAA readiness</div>
+          <span class="chip yes">Confirmed</span>
+        </div>
+        <dl class="kv">
+          <dt>What the vendor says</dt>
+          <dd>Anthropic will sign a BAA for the first party Claude API. You review and execute it in
+            the Console and <b>enablement takes effect immediately</b>.</dd>
+          <dt>Which named service is covered</dt>
+          <dd>The Claude API at api.anthropic.com only, and within it only the features marked
+            eligible. Covered: <b>Messages API, token counting, prompt caching, structured outputs,
+            PDFs sent inline, citations, search results, web search, computer use, the bash tool, the
+            text editor tool, the memory tool, thinking, adaptive thinking, effort, fast mode,
+            fine&nbsp;grained tool streaming, mid&nbsp;conversation system messages, data residency,
+            and the one million token context window.</b></dd>
+          <dt>Explicitly excluded</dt>
+          <dd>Batch processing, the Files API, code execution, programmatic tool calling, the MCP
+            connector, MCP tunnels, Agent skills, Claude Managed Agents, browser use, web fetch, tool
+            search, the advisor tool, cache diagnostics, <b>context editing</b>, <b>context management
+            and compaction</b>, and <b>Claude Code</b>. Also excluded: the Console itself, consumer
+            plans, Claude Platform on AWS, and Microsoft Foundry.</dd>
+          <dt>Three things that decide the architecture</dt>
+          <dd>
+            <ul>
+              <li><b>It is permanent.</b> Anthropic's words: once enabled, the configuration cannot
+                be disabled by an administrator.</li>
+              <li><b>It is organization wide.</b> Anthropic's own guidance is to use separate
+                organizations for HIPAA and general purpose work. So CT360 gets its own organization,
+                not the one anything else runs on.</li>
+              <li><b>Context editing and compaction are not covered.</b> That is the one most likely
+                to bite a long running agent over a patient record, because both are the normal way
+                to handle a conversation that outgrows its window.</li>
+            </ul>
+          </dd>
+          <dt>The trap in the fine print</dt>
+          <dd>With structured outputs, the JSON schema is compiled and cached separately from the
+            message content, for up to 24 hours, and <b>does not receive the same PHI
+            protections</b>. Anthropic's instruction is explicit: do not include PHI in schema
+            property names, enum values, const values or pattern regular expressions. A connector
+            mapper that builds schemas out of real patient fields walks straight into this.</dd>
+          <dt>The gap a builder has to know about</dt>
+          <dd>As a rule the API <b>returns a 400 error</b> when a request uses a feature that is not
+            eligible, which is the behaviour you want, because a refusal is visible and a silent
+            success is not. <b>There is one documented exception, and it fails the other way.</b>
+            Anthropic's own words on the browser use tool: not covered under HIPAA readiness,
+            requests that include the browser use tool <b>are not blocked</b>. So a request carrying
+            browser use is accepted, it succeeds, it sits outside the BAA, and
+            <b>the developer gets no error to tell them so</b>. Every other feature marked not
+            eligible is blocked with the 400. Browser use is the one to put in a code review
+            checklist, because it is the only one the platform will not catch for you.</dd>
+        </dl>
+        <p class="src">Read at <a href="https://platform.claude.com/docs/en/manage-claude/api-and-data-retention">platform.claude.com/docs/en/manage-claude/api-and-data-retention</a>, all 35 rows of the feature eligibility table.</p>
+      </div>
+
+      <div class="r yes">
+        <div class="r-top">
+          <div class="r-n">AWS Bedrock</div>
+          <span class="chip yes">Confirmed</span>
+        </div>
+        <dl class="kv">
+          <dt>What the vendor says</dt>
+          <dd>Both <b>Amazon Bedrock</b> and <b>Amazon Bedrock AgentCore</b> appear on the AWS HIPAA
+            eligible services list as their own line items, with no exception attached to either.
+            Coverage is under the existing AWS BAA, so one signature covers Claude, Llama, Mistral and
+            Amazon's own models without negotiating with any model provider separately.</dd>
+          <dt>The qualifier that matters</dt>
+          <dd>AWS's exact wording is that <b>generally available</b> features of an eligible service
+            are also eligible unless specifically excluded. Read the other way round: a Bedrock
+            feature still in preview is not carried by that sentence. There is no footnote naming a
+            Bedrock exclusion today, so the live question is release state, not a carve out.</dd>
+          <dt>Who the processor is</dt>
+          <dd>On Bedrock the data processor is AWS, not Anthropic. Anthropic says so itself. Its HIPAA
+            readiness does not reach Bedrock, so the controls to read are Amazon's.</dd>
+        </dl>
+        <p class="src">Read at <a href="https://aws.amazon.com/compliance/hipaa-eligible-services-reference/">aws.amazon.com/compliance/hipaa-eligible-services-reference</a>.</p>
+      </div>
+
+      <div class="r yes">
+        <div class="r-top">
+          <div class="r-n">OpenAI API</div>
+          <span class="chip yes">Confirmed</span>
+        </div>
+        <dl class="kv">
+          <dt>What the vendor says</dt>
+          <dd>OpenAI will sign a BAA for API use on request, and sets out the eligible endpoints in
+            its own BAA guide. The consumer ChatGPT product is not covered by it.</dd>
+          <dt>Note on this row</dt>
+          <dd>Confirmed at OpenAI's own BAA guide by Artemis. <b>This row was not independently
+            re&nbsp;read for this page</b>, unlike the four rows that were marked unconfirmed.</dd>
+        </dl>
+        <p class="src">OpenAI's own BAA guide.</p>
+      </div>
+
+      <div class="r part">
+        <div class="r-top">
+          <div class="r-n">Azure OpenAI under the Microsoft BAA</div>
+          <span class="chip part">BAA yes, service not confirmed</span>
+        </div>
+        <dl class="kv">
+          <dt>Does Microsoft itself say it signs a BAA</dt>
+          <dd><b>Yes, clearly, and there is nothing to sign.</b> Microsoft's words: there is no
+            separate contract, because the HIPAA BAA is available through the Product Terms by
+            default to every customer who is a covered entity or a business associate. Executing a
+            volume licensing agreement includes executing the HIPAA BAA.</dd>
+          <dt>Which named service is covered</dt>
+          <dd>Microsoft's in&nbsp;scope list is written at <b>platform</b> granularity. The entry is
+            <b>"Azure and Azure Government"</b>. Individual Azure services are not enumerated on it,
+            and <b>Azure OpenAI is not named anywhere on either Microsoft compliance page</b>. The
+            per&nbsp;service appendix lives in a Service Trust Portal document that requires a sign
+            in, so it could not be read.</dd>
+          <dt>So what is the honest answer</dt>
+          <dd>The BAA is confirmed. <b>"Azure OpenAI is in scope" is not confirmed</b> at a Microsoft
+            compliance page. The only Microsoft hosted text that names Azure OpenAI is the Microsoft
+            Q and A forum, which is not the Product Terms. Compare AWS, which names Bedrock as its
+            own line item: the same question has a published answer there and does not here.</dd>
+          <dt>What would settle it</dt>
+          <dd>One request through the account's licensing contact for Appendix A of the Microsoft
+            Azure Compliance Offerings document, or a written confirmation that Azure OpenAI is in
+            scope. That is a short email, not a research task, and it is the right thing to do before
+            the row goes in a proposal.</dd>
+        </dl>
+        <p class="src">Read at <a href="https://learn.microsoft.com/en-us/azure/compliance/offerings/offering-hipaa-us">learn.microsoft.com/en-us/azure/compliance/offerings/offering-hipaa-us</a> and <a href="https://learn.microsoft.com/en-us/compliance/regulatory/offering-hipaa-hitech">learn.microsoft.com/en-us/compliance/regulatory/offering-hipaa-hitech</a>. Both searched by value for openai, cognitive services and ai foundry: zero matches in each.</p>
+      </div>
+
+      <div class="r yes">
+        <div class="r-top">
+          <div class="r-n">Google Cloud, and why it is Gemini Enterprise and not Vertex AI</div>
+          <span class="chip yes">Confirmed, and corrected</span>
+        </div>
+        <dl class="kv">
+          <dt>What the vendor says</dt>
+          <dd>Google's words: Google enters into Business Associate Agreements as necessary under
+            HIPAA. The Google Cloud BAA covers Google Cloud's entire infrastructure, every region,
+            zone, network path and point of presence, <b>and an enumerated list of products</b>.</dd>
+          <dt>Which named service is covered</dt>
+          <dd>In the enumerated list: <b>Gemini Enterprise</b>, <b>Gemini Enterprise Agent
+            Platform</b>, Agent Search on Gemini Enterprise Agent Platform, Antigravity in Gemini
+            Enterprise, Gemini Code Assist, Gemini in BigQuery, Gemini in Colab Enterprise and Gemini
+            Notebook Enterprise. All of these sit in the Google Cloud section of the list, not the
+            Workspace section.</dd>
+          <dt>The correction</dt>
+          <dd><b>Vertex AI is not on the list.</b> The only entry containing the word Vertex is
+            <b>"Vertex AI Workbench instances"</b>, which is the managed notebook, not the model
+            platform. Anything that says "Vertex AI under the Google Cloud BAA" is overstating what
+            Google published. The route here is Gemini Enterprise Agent Platform.</dd>
+          <dt>Explicitly excluded</dt>
+          <dd>Google's instruction is to disable unsupported Google Cloud services when working with
+            PHI, and in its own words: do not use pre&nbsp;GA offerings with PHI unless expressly
+            noted otherwise. Anything not on the enumerated list is outside the BAA.</dd>
+          <dt>Why this route is more interesting than it looks</dt>
+          <dd>Anthropic's own documentation says that on Google Cloud's Agent Platform the cloud
+            provider is the data processor. So <b>Gemini Enterprise Agent Platform is a second BAA
+            covered route to Claude</b>, parallel to Bedrock, for a client who is already on Google
+            rather than AWS.</dd>
+        </dl>
+        <p class="src">Read at <a href="https://docs.cloud.google.com/docs/security/compliance/hipaa">docs.cloud.google.com/docs/security/compliance/hipaa</a>. Google Cloud list last updated 17 September 2025. The product list was searched by value rather than read by eye.</p>
+      </div>
+
+      <div class="r yes">
+        <div class="r-top">
+          <div class="r-n">Hathr AI</div>
+          <span class="chip yes">Confirmed, with one caveat on price</span>
+        </div>
+        <dl class="kv">
+          <dt>What the vendor says</dt>
+          <dd>Hathr's own words: <b>we sign Business Associate Agreements within 24 hours</b>, and a
+            signed BAA is included with the subscription. They run <b>Claude inside AWS GovCloud</b>,
+            an environment they describe as meeting HIPAA and NIST standards.</dd>
+          <dt>Prices, from their own page and not a directory</dt>
+          <dd>Webapp: <b>47 dollars a month</b>, described as a single subscription. API:
+            <b>starting at 45 dollars a month</b>, and their API page shows the ladder as 45, then
+            225, then 700, then 1,200 dollars a month. Enterprise is custom.</dd>
+          <dt>The caveat</dt>
+          <dd>The <b>45 dollar figure is a floor, not a price.</b> Their own wording is "starting
+            at", and the next rung is five times it. If Hathr goes in a proposal as the fast start
+            option, it belongs there as a range, because a real workload may not sit on the bottom
+            rung. The webapp figure is written as a single subscription per month rather than per
+            user, so read it as one seat.</dd>
+          <dt>Worth knowing</dt>
+          <dd>Hathr is a reseller of Claude in a compliant wrapper. The model underneath is the same
+            model as the Anthropic route. What 45 dollars buys is the signature and the environment,
+            not different intelligence.</dd>
+        </dl>
+        <p class="src">Read at <a href="https://www.hathr.ai/pricing">hathr.ai/pricing</a> and <a href="https://www.hathr.ai/hipaa-compliant-ai-api">hathr.ai/hipaa-compliant-ai-api</a>.</p>
+      </div>
+
+      <div class="r nope">
+        <div class="r-top">
+          <div class="r-n">John Snow Labs</div>
+          <span class="chip nope">Not confirmed</span>
+        </div>
+        <dl class="kv">
+          <dt>What the vendor says about a BAA</dt>
+          <dd><b>Nothing.</b> Six of their own pages were searched by value, including the home page,
+            the terms of service, the privacy policy, the software licence agreement, their HIPAA
+            page and their Medical LLM page, well over a megabyte in total. The phrase <b>"business
+            associate" appears zero times</b> on any of them. Their HIPAA page is a technical article
+            about de&nbsp;identification, not a compliance commitment.</dd>
+          <dt>Why that is probably not an oversight</dt>
+          <dd>What John Snow Labs sells is <b>software you install and run yourself</b>, including
+            on&nbsp;premise and air&nbsp;gapped, with no external API calls. If they never receive
+            PHI, they are not a business associate and <b>no BAA arises in the first place</b>. That
+            puts this row in the same shape as self hosting, not in the same shape as an API vendor
+            who signs.</dd>
+          <dt>So the row should read</dt>
+          <dd>Not "BAA: yes" as the directories have it, and not "BAA: no" either. <b>Nothing is
+            disclosed to the vendor, so nothing needs to be signed</b>, as long as the deployment is
+            the on&nbsp;premise one. The directory listings that say yes are unsupported at the
+            vendor.</dd>
+          <dt>What would settle it</dt>
+          <dd>Ask them in writing whether any hosted offering receives PHI, and if so whether they
+            sign a BAA for it. This matters only if CT360 would use a hosted product rather than the
+            libraries.</dd>
+        </dl>
+        <p class="src">Searched at <a href="https://www.johnsnowlabs.com/">johnsnowlabs.com</a>, plus /terms-of-service, /privacy-policy, the libraries licence agreement, /hipaa and /medical-llm. The search was validated against a control string first, so a zero means absent and not blind.</p>
+      </div>
+
+      <div class="r">
+        <div class="r-top">
+          <div class="r-n">Self hosted Llama, Mistral or Qwen</div>
+          <span class="chip off">No BAA needed</span>
+        </div>
+        <dl class="kv">
+          <dt>Why there is nothing to sign</dt>
+          <dd>Nothing is disclosed to a third party, so no business associate exists. The compliance
+            burden moves entirely onto whoever runs the box.</dd>
+          <dt>What it costs</dt>
+          <dd>A single GPU box running Mistral 7B runs <b>800 to 1,500 dollars a month</b>. Llama 3
+            8B on an A10 runs <b>1,200 to 2,000</b>. Self hosting only pays for itself somewhere
+            north of 50,000 model calls a month, which is hospital scale, not six small clinics.
+            These figures are from industry write ups, not from a vendor page.</dd>
+        </dl>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="h2sub">The money</div>
+    <h2>The number in the plan is wrong, and it is wrong in a useful direction</h2>
+    <p>The CT360 plan carries about 75 dollars a month for the compliant LLM. <b>That figure does not
+      buy a self hosted model.</b> It is not close: the cheapest self hosted option is ten times it.</p>
+    <p>But 75 dollars a month is a fair price for a compliant <b>server</b>. The architecture that
+      actually fits is the cheap one: patient data lives on the dedicated box, and the box calls a
+      BAA covered API. <b>The 75 dollars was never the model. It was the room the model is called
+      from.</b></p>
+    <div class="hit gold">
+      <div class="k">Do not price self hosting into the first six clinics</div>
+      <p>It is the most expensive option on this page and it is the one that buys the least. It
+        becomes the right answer at hospital volume and not before.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="h2sub">The open question</div>
+    <h2>One answer from Brett decides the size of this line item</h2>
+    <p>The build model is an LLM that maps each EMR once, then small custom software that handles the
+      recurring pulls. Mapping an EMR means reading table names, field names and the shape of a
+      record.</p>
+    <div class="two">
+      <div class="f">
+        <h3>If the mapping prompts carry schema only</h3>
+        <p>No patient rows go to a model. That work <b>discloses no PHI and needs no BAA at all</b>,
+          and the recurring pulls were never described as using a model. The compliant LLM is then a
+          small line item, and convenience can decide the route.</p>
+      </div>
+      <div class="f">
+        <h3>If the same model scrubs patient databases</h3>
+        <p>For care management triggers, it is the <b>centre of the cost</b>, and the route has to be
+          chosen for volume rather than for how fast someone will sign. That is a different
+          recommendation and a different number.</p>
+      </div>
+    </div>
+    <p class="aside"><b>This should be settled before a number goes in the proposal.</b> The two
+      answers are not a refinement of each other. They point at different routes.</p>
+  </section>
+
+  <section>
+    <div class="h2sub">The recommendation</div>
+    <h2>What to put in front of the platform owner</h2>
+    <div class="hit">
+      <div class="k">Anthropic Claude API under HIPAA readiness</div>
+      <p>In a <b>dedicated organization</b>, called from the dedicated server. Named in the proposal
+        alongside it: <b>AWS Bedrock</b> if a client requires everything inside their own AWS
+        account, and <b>Gemini Enterprise Agent Platform</b> if they are a Google shop, because that
+        reaches the same models under the Google Cloud BAA.</p>
+      <p><b>Hathr AI stays on the list as the fast start</b>, at 45 dollars a month and up, if a BAA
+        is needed this week rather than this month. The sign off is same day and that is worth
+        something real.</p>
+      <p><b>Leave Azure OpenAI out of the compliance table</b> until Microsoft confirms the service
+        in writing. The BAA is not in doubt. The service being inside it is, and a proposal is the
+        wrong place to find that out.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="h2sub">How to read this page</div>
+    <h2>What was verified, and how</h2>
+    <p>Every claim above was read at the vendor's own compliance page. Where a page could not be
+      read, this page says so rather than filling the gap from a directory listing or a blog.</p>
+    <ul>
+      <li><b>Searched by value, not by eye.</b> Google's product list and Microsoft's compliance
+        pages were pulled as files and searched for the exact strings, because an eight hundred item
+        list is not something to read by scrolling.</li>
+      <li><b>Every absence was validated against a control first.</b> A search that finds nothing and
+        a search that is broken look identical, so each one was first pointed at a string that does
+        contain what it was hunting for.</li>
+      <li><b>One gate was measured, not assumed.</b> The Microsoft per service appendix was fetched
+        before being called inaccessible: it returns a sign in page and no document.</li>
+      <li><b>The OpenAI row is inherited.</b> It was confirmed at OpenAI's own guide by Artemis and
+        was not re&nbsp;read here. It is marked as such above.</li>
+    </ul>
+    <p class="aside"><b>A vendor's own page is the only source counted here.</b> Capterra, listicles
+      and vendor directories were the origin of two rows that did not survive contact with the
+      vendor's own words.</p>
+  </section>
+
+  <div class="close">
+    <p>Nothing on this page is a compliance opinion and none of it is legal advice. It is a record of
+      <b>what each vendor commits to in writing today</b>, with the page it was read on, so the
+      proposal can cite a source instead of a reputation.</p>
+  </div>
+
+</main>
+
+<footer class="wrap">EnhancedOps.Ninja &middot; Augeo LLC &middot; CT360 vendor comparison &middot; Researched 8 October 2026 &middot; No PHI on this page &middot; Not for distribution.</footer>
+
+</body>
+</html>
