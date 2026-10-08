@@ -10,10 +10,28 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
+// Credentials come from the environment and are REQUIRED. Note the deliberate difference from
+// the fixture values below: a missing fixture (email, name, phone) still leaves the test testing
+// the thing it claims to test, so `?? "default"` is fine there. A missing CREDENTIAL is not the
+// same: a default either bakes the secret back into a public repo, which is the defect this
+// change exists to fix, or silently authenticates as something other than what the test says.
+// So this throws instead. Do not "tidy" it into the `??` style used for the fixtures.
+function requireEnv(name: string): string {
+  const v = process.env[name];
+  if (!v) {
+    throw new Error(
+      `${name} is not set. This spec needs it to authenticate against Supabase. ` +
+      `Set it in the environment before running; there is deliberately no default.`,
+    );
+  }
+  return v;
+}
+
+
 const BASE       = 'https://crm.enhancedops.ninja';
 const SB_URL     = 'https://tbjynbevrhkfzpswehsj.supabase.co';
 const SB_KEY     = 'sb-tbjynbevrhkfzpswehsj-auth-token';
-const SB_SERVICE = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRianluYmV2cmhrZnpwc3dlaHNqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODI2ODU1OSwiZXhwIjoyMDkzODQ0NTU5fQ._nb8Nr46UJ5WnG55_jjq3bI5IwAbq6S0WO1AhJAexwo';
+const SB_SERVICE = requireEnv('E2E_SUPABASE_SERVICE_KEY');
 
 const TEST_EMAIL = `e2e-crm-${Date.now()}@enhancedops.ninja`;
 let testUserId   = '';

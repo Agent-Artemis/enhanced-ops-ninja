@@ -12,6 +12,23 @@
 
 import { expect, test } from "@playwright/test";
 
+// Credentials come from the environment and are REQUIRED. Note the deliberate difference from
+// the fixture values below: a missing fixture (email, name, phone) still leaves the test testing
+// the thing it claims to test, so `?? "default"` is fine there. A missing CREDENTIAL is not the
+// same: a default either bakes the secret back into a public repo, which is the defect this
+// change exists to fix, or silently authenticates as something other than what the test says.
+// So this throws instead. Do not "tidy" it into the `??` style used for the fixtures.
+function requireEnv(name: string): string {
+  const v = process.env[name];
+  if (!v) {
+    throw new Error(
+      `${name} is not set. This spec needs it to authenticate against Supabase. ` +
+      `Set it in the environment before running; there is deliberately no default.`,
+    );
+  }
+  return v;
+}
+
 // Dedicated test address — keeps automated runs out of Jeff's real inbox.
 // Uses + alias so it routes to the same mailbox if needed for inspection.
 const TEST_EMAIL = process.env.E2E_EMAIL ?? "jeff+playwright@augeo-hq.com";
@@ -25,8 +42,7 @@ const E2E_RATE = 31;
 
 // Supabase REST for post-run DB verification
 const SUPABASE_URL = "https://tbjynbevrhkfzpswehsj.supabase.co";
-const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRianluYmV2cmhrZnpwc3dlaHNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNjg1NTksImV4cCI6MjA5Mzg0NDU1OX0.dSeumMPKWGrLlDbRx2bSMkcsqH5ICU5pDMENj7AdD1w";
+const SUPABASE_ANON_KEY = requireEnv("E2E_SUPABASE_ANON_KEY");
 
 test("LIVE: full paid assessment — Supabase write + score page", async ({ page, request }) => {
   // Capture any console errors during the run
