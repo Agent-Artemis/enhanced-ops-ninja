@@ -119,6 +119,12 @@ table.ix td.v{white-space:nowrap}
 
 footer{border-top:1px solid var(--line);margin-top:34px;padding:18px 0 40px;
   color:var(--ink3);font-size:12.5px}
+
+/* Added with the prices section: the vendor parameter names are quoted verbatim,
+   so they are set as code rather than reflowed into prose. */
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;
+  color:var(--ink);background:var(--panel2);border:1px solid var(--line);
+  border-radius:5px;padding:1px 5px;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -206,6 +212,16 @@ footer{border-top:1px solid var(--line);margin-top:34px;padding:18px 0 40px;
             search, the advisor tool, cache diagnostics, <b>context editing</b>, <b>context management
             and compaction</b>, and <b>Claude Code</b>. Also excluded: the Console itself, consumer
             plans, Claude Platform on AWS, and Microsoft Foundry.</dd>
+          <dt>What that exclusion does and does not mean</dt>
+          <dd><b>This is an API exclusion list, not a fact about the products.</b> Anthropic's
+            retention page scopes itself to the Claude API in a note at the top, so everything above
+            is about this route only. On <b>Claude Enterprise</b>, Anthropic's own BAA article puts
+            <b>Claude Code in the terminal</b> and <b>the Code tab of Claude Desktop</b> at
+            <b>covered</b>, once a Primary Owner activates HIPAA compliance and applies the HIPAA
+            configuration. Still not covered there: the VS&nbsp;Code and JetBrains extensions, and
+            Claude Code reached through Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, an
+            LLM gateway or a custom base URL. Anthropic's words: <b>standard Claude Enterprise plans
+            do not include BAA coverage without action from a Primary Owner.</b></dd>
           <dt>Three things that decide the architecture</dt>
           <dd>
             <ul>
@@ -413,9 +429,11 @@ footer{border-top:1px solid var(--line);margin-top:34px;padding:18px 0 40px;
             burden moves entirely onto whoever runs the box.</dd>
           <dt>What it costs</dt>
           <dd>A single GPU box running Mistral 7B runs <b>800 to 1,500 dollars a month</b>. Llama 3
-            8B on an A10 runs <b>1,200 to 2,000</b>. Self hosting only pays for itself somewhere
-            north of 50,000 model calls a month, which is hospital scale, not six small clinics.
-            These figures are from industry write ups, not from a vendor page.</dd>
+            8B on an A10 runs <b>1,200 to 2,000</b>. These box figures are from industry write ups, not
+            from a vendor page. <b>The 50,000 calls a month break even this page used to carry was a
+            flagship number</b>; computed against the small model this design needs it is between
+            <b>2.3 and 5.7 million documents a month</b>. The arithmetic is in the prices section
+            below.</dd>
         </dl>
       </div>
 
@@ -439,27 +457,203 @@ footer{border-top:1px solid var(--line);margin-top:34px;padding:18px 0 40px;
   </section>
 
   <section>
-    <div class="h2sub">The open question</div>
-    <h2>One answer from Brett decides the size of this line item</h2>
-    <p>The build model is an LLM that maps each EMR once, then small custom software that handles the
-      recurring pulls. Mapping an EMR means reading table names, field names and the shape of a
-      record.</p>
+    <div class="h2sub">The prices</div>
+    <h2>What the model actually costs on this workload</h2>
+    <p class="lede" style="margin-top:14px">The short version, and it is the finding rather than a
+      let down: <b>on the architecture Jeff described, the per token price is close to irrelevant to
+      this deal.</b> The whole model line item lands between <b>6 and 18 dollars a month</b>, and the
+      two decisions that move it are not which vendor you sign with. They are which model tier you
+      pick and whether you send a cropped page or a whole PDF.</p>
+
+    <div class="hit">
+      <div class="k">The compliance decision is free. The residency decision costs ten percent</div>
+      <p>No vendor on this page charges a premium for the BAA, the HIPAA tier or the retention
+        posture. Every vendor that publishes a per token price charges <b>exactly ten percent more</b>
+        to keep inference inside a named geography, and each one says so itself. Those are two
+        separate decisions and they get conflated. A platform owner who adds a United States only
+        requirement late is adding ten percent to every token, not a line item.</p>
+    </div>
+
+    <div class="tw">
+      <table class="ix">
+        <thead><tr><th>Route</th><th>What the residency control is called</th><th class="v">Standard</th><th class="v">Residency</th></tr></thead>
+        <tbody>
+          <tr><td class="n">Anthropic Claude API</td><td><code>inference_geo</code> set to United States only</td><td class="v">base</td><td class="v"><span class="v-part">1.1x on every token category</span></td></tr>
+          <tr><td class="n">AWS Bedrock</td><td>Geo and in&nbsp;region cross&nbsp;region inference, instead of Global</td><td class="v">Sonnet 5.5 at 2.00 and 10.00</td><td class="v"><span class="v-part">2.20 and 11.00</span></td></tr>
+          <tr><td class="n">Azure OpenAI</td><td>Data Zone deployment, instead of Global</td><td class="v">GPT&nbsp;6 Sol at 2.00 and 10.00</td><td class="v"><span class="v-part">2.20 and 11.00</span></td></tr>
+          <tr><td class="n">OpenAI API</td><td>Data residency endpoints</td><td class="v">base</td><td class="v"><span class="v-part">10 percent uplift, OpenAI's words</span></td></tr>
+          <tr><td class="n">Google Gemini Enterprise Agent Platform</td><td>Non&nbsp;global, instead of Global</td><td class="v">Flash&nbsp;Lite at 0.25</td><td class="v"><span class="v-part">0.275</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="aside">Five vendors, five different names for the same control, and the same ten
+      percent in all five. Prices are per million tokens, input and output where two are shown.</p>
+
+    <div class="h2sub" style="margin-top:26px">The workload, stated so it can be argued with</div>
+    <h3 style="font-size:19px;margin-top:6px">One safety check per returned document</h3>
+    <p>Jeff's cycle is three steps: map each EMR once through a login, let software read the clinic
+      calendar weekly and build the patient list, then consolidate the record to a PDF and drop it in
+      ShareFile. <b>Nothing in those three steps needs a model to read a patient record.</b> Step two
+      is a query and a date subtraction. Step three is a file move.</p>
+    <p>The one piece of genuine model work is a <b>safety check that reads page one of a returned PDF
+      to bind the document to the right patient</b>. Everything below prices that, at
+      <b>30,000 documents a month</b>. These are the assumptions, in the open:</p>
+    <ul>
+      <li>A letter sized page scanned at 150 DPI, so <b>1275 by 1650 pixels</b>.</li>
+      <li><b>Anthropic and Bedrock:</b> 28 pixel patches, so 46 by 59, which is <b>2,714 visual
+        tokens</b>. Claude 4.7 and later models allow up to 4,784, so nothing is downscaled.</li>
+      <li><b>OpenAI and Azure:</b> 32 pixel patches, so 40 by 52, which is 2,080 patches, inside the
+        2,500 patch budget for <code>detail: high</code>, times the 1.2 model multiplier, which is
+        <b>2,496 tokens</b>.</li>
+      <li><b>Google:</b> Google's own stated conversion is <b>258 tokens per image</b>, and Google
+        prices text, image and video input at the same rate.</li>
+      <li>Add <b>200 tokens</b> of instruction and <b>50 tokens</b> of output per document.</li>
+      <li>Sending the <b>whole PDF page</b> instead of a cropped image adds Anthropic's documented
+        <b>1,500 to 3,000 text tokens per page</b>. The tables use the 2,250 midpoint.</li>
+    </ul>
+
+    <div class="h2sub" style="margin-top:26px">The small tier, which is the tier this deal needs</div>
+    <h3 style="font-size:19px;margin-top:6px">Price per million input tokens, small models only</h3>
+    <div class="tw">
+      <table class="ix">
+        <thead><tr><th>Route</th><th>Model, tier named</th><th class="v">Input, standard</th><th class="v">Input, residency</th><th>Vision path</th></tr></thead>
+        <tbody>
+          <tr><td class="n">Anthropic Claude API</td><td>Claude Haiku 5.5, small, prompts to 100k</td><td class="v"><span class="v-yes">0.10</span></td><td class="v">0.11</td><td>Image billed as input tokens</td></tr>
+          <tr><td class="n">Anthropic Claude API</td><td>Claude Haiku 5.5, small, prompts over 100k</td><td class="v">0.50</td><td class="v">0.55</td><td>Same, five times the rate</td></tr>
+          <tr><td class="n">AWS Bedrock</td><td>Claude Haiku 5.5, small</td><td class="v"><span class="v-yes">0.10</span></td><td class="v">0.11</td><td>Same as first party</td></tr>
+          <tr><td class="n">AWS Bedrock</td><td>Llama 3.2 11B, small, open weight</td><td class="v">0.16</td><td class="v">not published</td><td><span class="v-part">No conversion published</span></td></tr>
+          <tr><td class="n">AWS Bedrock</td><td>Mistral 7B, small, open weight</td><td class="v">0.15</td><td class="v">not published</td><td><span class="v-no">None</span></td></tr>
+          <tr><td class="n">AWS Bedrock</td><td>Llama 3.1 8B, small, open weight</td><td class="v">0.22</td><td class="v">not published</td><td><span class="v-no">None</span></td></tr>
+          <tr><td class="n">OpenAI API, Modified Retention</td><td>gpt&nbsp;6&nbsp;luna, small, short context</td><td class="v"><span class="v-yes">0.10</span></td><td class="v">0.11</td><td>32 pixel patches, 1.2x</td></tr>
+          <tr><td class="n">OpenAI API, Modified Retention</td><td>gpt&nbsp;6&nbsp;luna, small, long context</td><td class="v">0.20</td><td class="v">0.22</td><td>Same</td></tr>
+          <tr><td class="n">Azure OpenAI, BAA not confirmed</td><td>GPT&nbsp;6 Luna, small, short context</td><td class="v"><span class="v-yes">0.10</span></td><td class="v">0.11</td><td>Same as OpenAI direct</td></tr>
+          <tr><td class="n">Google Gemini Ent. Agent Platform</td><td>Gemini 3.1 Flash&nbsp;Lite, small</td><td class="v">0.25</td><td class="v">0.275</td><td><span class="v-yes">Same rate as text</span></td></tr>
+          <tr><td class="n">Google Gemini Ent. Agent Platform</td><td>Gemini 3.5 Flash&nbsp;Lite, small</td><td class="v">0.30</td><td class="v">0.33</td><td><span class="v-yes">Same rate as text</span></td></tr>
+          <tr><td class="n">Hathr AI</td><td>Claude, <span class="v-part">tier never disclosed</span></td><td class="v">not published</td><td class="v">not published</td><td>Not published</td></tr>
+          <tr><td class="n">Self hosted</td><td>Mistral 7B or Llama 3.1 8B, small</td><td class="v">no per token price</td><td class="v">not applicable</td><td>Whatever you build</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="aside"><b>Three of the four metered routes charge the same 0.10 for their small model,
+      and the fourth is 0.25.</b> Across the whole small tier the spread is under three to one, and
+      the residency decision moves every row by more than the gap between the two cheapest vendors.
+      <b>Mistral 7B and Llama 3.1 8B are the cheapest rows on the page and they cannot do this job:
+      they have no vision path, and the one job in this design is reading a page.</b> That is the
+      clearest case on this page of a price that is only cheap because it is not the same product.</p>
+
+    <div class="h2sub" style="margin-top:26px">The whole line item</div>
+    <h3 style="font-size:19px;margin-top:6px">30,000 documents a month, one page one check each</h3>
+    <div class="tw">
+      <table class="ix">
+        <thead><tr><th>Route and model, tier named</th><th class="v">Tokens per doc</th><th class="v">Standard</th><th class="v">Residency</th></tr></thead>
+        <tbody>
+          <tr><td class="n">Google Gemini 3.1 Flash&nbsp;Lite, small, cropped image</td><td class="v">458</td><td class="v"><span class="v-yes">5.69</span></td><td class="v"><span class="v-yes">6.25</span></td></tr>
+          <tr><td class="n">OpenAI gpt&nbsp;6&nbsp;luna, small, cropped image</td><td class="v">2,696</td><td class="v"><span class="v-yes">8.84</span></td><td class="v"><span class="v-yes">9.72</span></td></tr>
+          <tr><td class="n">Claude Haiku 5.5, small, cropped image</td><td class="v">2,914</td><td class="v"><span class="v-yes">9.49</span></td><td class="v"><span class="v-yes">10.44</span></td></tr>
+          <tr><td class="n">Claude Haiku 5.5, small, whole PDF page</td><td class="v">5,164</td><td class="v">16.24</td><td class="v">17.87</td></tr>
+          <tr><td class="n">Hathr AI Base, flat subscription</td><td class="v">not metered</td><td class="v">45.00</td><td class="v">45.00</td></tr>
+          <tr><td class="n">Claude Opus 5.5, <b>flagship</b>, cropped image</td><td class="v">2,914</td><td class="v"><span class="v-part">379.68</span></td><td class="v"><span class="v-part">417.65</span></td></tr>
+          <tr><td class="n">Claude Opus 5.5, <b>flagship</b>, whole PDF page</td><td class="v">5,164</td><td class="v"><span class="v-part">649.68</span></td><td class="v"><span class="v-part">714.65</span></td></tr>
+          <tr><td class="n">OpenAI gpt&nbsp;6&nbsp;astra, <b>flagship</b>, cropped image</td><td class="v">2,696</td><td class="v"><span class="v-no">883.80</span></td><td class="v"><span class="v-no">972.18</span></td></tr>
+          <tr><td class="n">Self hosted box, Mistral 7B or Llama 8B</td><td class="v">not metered</td><td class="v"><span class="v-no">800 to 2,000</span></td><td class="v"><span class="v-no">800 to 2,000</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="aside">Dollars a month for the whole workload, not per document. The flagship rows are
+      here for completeness and to make the tier contrast visible, not as candidates.
+      <b>Picking a flagship model costs more than forty times what picking a vendor costs.</b></p>
+
+    <div class="hit gold">
+      <div class="k">Both numbers in the Nobility file check out, and they tell you what they assumed</div>
+      <p>That file puts this work at about <b>80 dollars</b> for 30,000 documents on a small model and
+        <b>644</b> on a large one. Against published rates, the 644 is <b>Claude Opus 5.5 reading the
+        whole PDF page at standard routing, which computes to 649.68</b>, within one percent. The 80
+        is <b>Claude Haiku 5.5 reading the whole PDF page at the rate for prompts over 100,000
+        tokens, which computes to 81.21</b>, within two percent.</p>
+      <p><b>That second one is the useful catch.</b> A one page safety check does not produce a
+        100,000 token prompt, so the rate that actually applies is the lower one, and the same work
+        costs <b>16.24</b> on the whole page or <b>9.49</b> on a cropped image. The 80 dollar figure
+        is not wrong arithmetic. It is the right arithmetic at a rate tier this workload never
+        reaches, and it is <b>five to eight times</b> the real number.</p>
+    </div>
+
+    <div class="h2sub" style="margin-top:26px">Hathr, and what the money buys</div>
+    <h3 style="font-size:19px;margin-top:6px">The ladder is 45, 225, 700 and 1,200 a month</h3>
+    <p>Read at Hathr's own API page. Base 45, Starter 225, Scale 700, Enterprise 1,200. Asked in
+      volume terms rather than dollars, <b>the honest answer is that the vendor does not say</b>.
+      Across all four rungs the only volume words on the page are <b>higher API rate limits</b> at
+      700 and <b>discount tokens</b> at 1,200, and neither is quantified. No tokens a month, no
+      request cap, no rate limit number. Two further signs to treat the ladder as indicative and get
+      a quote: the 45 rung lists <b>API access</b> while the 225 rung lists <b>HIPAA compliant API
+      access</b>, and the 1,200 rung says <b>everything in Professional</b>, a tier that does not
+      exist in the ladder.</p>
+    <div class="hit">
+      <div class="k">What the cheap rung buys is the signature and the environment, not better intelligence</div>
+      <p>Hathr resells Claude from AWS GovCloud and signs a BAA inside 24 hours. It never names a
+        model tier, so you cannot know whether you are buying Haiku or Opus. <b>In a design where the
+        model does almost nothing, that stops being a drawback.</b> If the only model work is one page
+        one check, intelligence is not the thing being purchased. A same day signature and a
+        government hosted environment is, and 45 dollars a month is a fair price for it. At this
+        workload the metered routes cost 6 to 10 dollars, so Hathr's Base rung is roughly four times
+        the metered price and is still the cheapest way to be covered this week rather than this
+        month.</p>
+    </div>
+
+    <div class="h2sub" style="margin-top:26px">Self hosting</div>
+    <h3 style="font-size:19px;margin-top:6px">The break even, in documents rather than in assertions</h3>
+    <p>At the small model rate with United States only routing, one document costs
+      <b>0.000348 dollars</b>. Dividing a box into that gives the break even directly:</p>
+    <div class="tw">
+      <table class="ix">
+        <thead><tr><th>Monthly box</th><th class="v">Break even against the small tier</th><th class="v">Break even against the flagship tier</th></tr></thead>
+        <tbody>
+          <tr><td class="n">800 dollars</td><td class="v"><span class="v-no">2,298,586 documents</span></td><td class="v">36,941 documents</td></tr>
+          <tr><td class="n">1,500 dollars</td><td class="v"><span class="v-no">4,309,849 documents</span></td><td class="v">69,265 documents</td></tr>
+          <tr><td class="n">2,000 dollars</td><td class="v"><span class="v-no">5,746,466 documents</span></td><td class="v">92,353 documents</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="aside"><b>This is where the 50,000 calls a month figure came from, and it is a flagship
+      number.</b> It sits inside the flagship band in the right hand column. Against the small model
+      this design actually needs, the break even is <b>46 to 115 times higher</b>, between 2.3 and
+      5.7 million documents a month. Self hosting is not hospital scale here. It is off the chart.
+      The same correction applies to Hathr read as a fixed cost: its Base rung equals the metered
+      small model bill at about <b>129,000 documents a month</b>.</p>
+  </section>
+
+  <section>
+    <div class="h2sub">The open question, now answered</div>
+    <h2>The architecture settled the question this page was waiting on</h2>
+    <p>This page previously held the size of the line item open pending one answer: whether the same
+      model would be asked to scrub patient databases for care management triggers.
+      <b>Jeff's three step cycle answers it. No model reads a patient record anywhere in it.</b> The
+      left hand column below is what the design does. The right hand column is the branch that was
+      priced and is not being built, kept because it is the only thing that would change the
+      recommendation.</p>
     <div class="two">
       <div class="f">
-        <h3>If the mapping prompts carry schema only</h3>
-        <p>No patient rows go to a model. That work <b>discloses no PHI and needs no BAA at all</b>,
-          and the recurring pulls were never described as using a model. The compliant LLM is then a
-          small line item, and convenience can decide the route.</p>
+        <h3>What the design does</h3>
+        <p>Map each EMR once through a login, with ShareFile mapped. Software reads the clinic
+          calendar weekly and builds the list of patients who are new or not seen in X months. CT360
+          consolidates the record to a PDF and drops it in ShareFile, and it is filed back to the
+          chart. <b>Mapping prompts carry schema, not patient rows</b>, step two is a query and a
+          date subtraction, and step three is a file move. The one model call is the page one safety
+          check priced above. <b>The compliant LLM is a rounding error and convenience can decide
+          the route.</b></p>
       </div>
       <div class="f">
-        <h3>If the same model scrubs patient databases</h3>
-        <p>For care management triggers, it is the <b>centre of the cost</b>, and the route has to be
-          chosen for volume rather than for how fast someone will sign. That is a different
-          recommendation and a different number.</p>
+        <h3>The branch that is not being built</h3>
+        <p>If a model were asked to read patient records continuously for care management triggers,
+          it would be the <b>centre of the cost</b> and the route would have to be chosen for volume
+          rather than for how fast someone will sign. That is a different recommendation and a
+          different number. <b>Nothing in the three steps requires it</b>, and it is kept here only
+          because it is the single change that would reopen the question.</p>
       </div>
     </div>
-    <p class="aside"><b>This should be settled before a number goes in the proposal.</b> The two
-      answers are not a refinement of each other. They point at different routes.</p>
+    <p class="aside"><b>The precedent is already built.</b> The step three file move exists as
+      roughly 850 lines with one dependency, a browser driver, and no model SDK, no PDF parser and
+      no OCR anywhere in it. A page that priced this work as model work would be pricing the wrong
+      thing.</p>
   </section>
 
   <section>
@@ -494,8 +688,14 @@ footer{border-top:1px solid var(--line);margin-top:34px;padding:18px 0 40px;
         contain what it was hunting for.</li>
       <li><b>One gate was measured, not assumed.</b> The Microsoft per service appendix was fetched
         before being called inaccessible: it returns a sign in page and no document.</li>
-      <li><b>The OpenAI row is inherited.</b> It was confirmed at OpenAI's own guide by Artemis and
-        was not re&nbsp;read here. It is marked as such above.</li>
+      <li><b>The OpenAI row is no longer inherited.</b> It was re&nbsp;read at OpenAI's own help
+        centre, which names six eligible products and states that features not listed are not
+        automatically covered. That closing rule is what lets ChatGPT Plus and Team be called
+        excluded rather than merely unmentioned.</li>
+      <li><b>A price placeholder was not treated as a price.</b> The AWS pricing page ships template
+        tokens, not numbers, so the figures here come from the pricing data file the page itself
+        reads, published the same day. Azure and Google pages were rendered in a browser for the
+        same reason.</li>
     </ul>
     <p class="aside"><b>A vendor's own page is the only source counted here.</b> Capterra, listicles
       and vendor directories were the origin of two rows that did not survive contact with the
