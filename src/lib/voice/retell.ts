@@ -55,6 +55,16 @@ function retellKey(): string {
  *
  * Verified before and after: the same filter returns 47 calls with identical ids in identical
  * order on both versions.
+ *
+ * ⚠️ THIS RETURNS ONE PAGE ONLY. `has_more` and `pagination_key` are named above as a shape
+ * fact and are read nowhere in the code, so this returns the first page and reports success.
+ * There are currently ZERO callers, which is why this is a comment rather than a fix. ⭐ The
+ * next caller added inherits a silent truncation unless it handles `pagination_key`, and a
+ * silent truncation is the same defect the throw above exists to remove.
+ *
+ * ⛔ The counterpart in stoneeg-dashboard (`fetchVoice` in `lib/retell.ts`) DOES have a live
+ * caller, and there the cap is worse than it looks: its agent filter runs after the fetch, so
+ * `limit` bounds all calls on the account rather than that client's share of them.
  */
 export async function retellListCalls(limit = 20): Promise<RetellCall[]> {
   const res = await fetch(`${RETELL_BASE}/v3/list-calls`, {
