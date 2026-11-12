@@ -12,6 +12,11 @@ const ROUTES: Array<{ path: string; priority: number; changeFrequency: MetadataR
   { path: '/deep-dive',          priority: 0.8, changeFrequency: 'monthly' },
   { path: '/deep-dive/schedule', priority: 0.5, changeFrequency: 'monthly' },
   { path: '/in-depth-ops',       priority: 0.6, changeFrequency: 'monthly' },
+  // The legal pages. Public and indexable, rarely changed, and low priority: they
+  // belong in the index so that a reader or a reviewer can find them from search,
+  // not because they should outrank anything.
+  { path: '/privacy',            priority: 0.3, changeFrequency: 'yearly'  },
+  { path: '/terms',              priority: 0.3, changeFrequency: 'yearly'  },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
