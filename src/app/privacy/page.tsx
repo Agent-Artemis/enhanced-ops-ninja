@@ -11,14 +11,23 @@ import { CONTACT_EMAIL, LEGAL_ENTITY, LegalShell } from '@/components/legal/Lega
  * lib/tokenStore.ts for where the tokens live, and
  * app/api/intuit/disconnect/route.ts for what disconnecting does.
  *
- * Two sentences the draft asked for are deliberately NOT here, because the code
- * does not support them yet:
- *   1. "tokens stored encrypted". They are stored server side with the file
- *      readable only by the server account. They are not separately encrypted
- *      at rest. The page says what is true instead.
- *   2. "read only scope". The scope string Intuit offers for accounting is not
- *      a read only grant; what is read only is every call we make. The page
- *      says that, which is the part we control and can be held to.
+ * STORAGE CHANGED ON 12 NOV 2026 and this page changed with it. Dennis's login
+ * build, f257a05, replaced the server file with lib/tokenCookie.ts: the bundle
+ * is sealed with AES-256-GCM and carried in a cookie marked HttpOnly, Secure and
+ * SameSite=Lax, scoped to /api/intuit, capped at thirty days or whatever is left
+ * of Intuit's refresh token. The key is INTUIT_TOKEN_KEY, which lives in the
+ * hosting configuration. lib/connection.ts clears the connection when a refresh
+ * is refused, and the disconnect route drops the cookie in its own response. So
+ * the sentence this page used to carry, that the tokens never sit in a browser,
+ * is now the false one, and saying only "encrypted" would hide where they rest.
+ *
+ * One sentence the draft asked for is still deliberately NOT here. "Read only
+ * scope": the scope string Intuit offers for accounting is not a read only
+ * grant; what is read only is every call we make. The page says that, which is
+ * the part we control and can be held to.
+ *
+ * The cookie store is the sandbox answer. If production puts the connection
+ * somewhere else, this section is the part that has to change with it.
  */
 
 export const metadata: Metadata = {
@@ -83,13 +92,28 @@ export default function PrivacyPage() {
       <h2>The keys to your connection</h2>
       <p>
         When you approve the connection, Intuit issues us tokens that stand in for your permission.
-        Those tokens:
+        Before they are stored anywhere we encrypt them with AES-256, in a mode that seals them as
+        well as hides them, so a bundle that has been altered fails to open rather than being
+        trusted.
       </p>
+      <p>The encrypted bundle:</p>
       <ul>
-        <li>are held on our server, never in your browser and never in our source code,</li>
-        <li>sit in storage that only the account the server runs as can read,</li>
         <li>
-          are never shown in the dashboard and never written into our logs. Where a screen has to
+          is kept in a cookie in the browser of the person who made the connection, marked secure
+          and http only, so page scripts cannot read it and it never crosses a plain connection,
+        </li>
+        <li>
+          is scoped to our QuickBooks routes, so it is sent to us and to nobody else, and only our
+          server can open it. The key sits in our hosting configuration, never in our source code
+          and never in a log.
+        </li>
+        <li>
+          expires with the permission it carries, and in thirty days at the outside. If Intuit
+          refuses to renew the connection we clear it and ask you to connect again, rather than
+          holding on to something dead.
+        </li>
+        <li>
+          is never shown in the dashboard and never written into our logs. Where a screen has to
           confirm that a connection is live, it reports the length of a token rather than the token.
         </li>
       </ul>
@@ -98,11 +122,11 @@ export default function PrivacyPage() {
       <p>
         You can disconnect at any time, either in the dashboard or from the apps area inside
         QuickBooks itself. When you disconnect in the dashboard we ask Intuit to revoke the tokens,
-        and we delete our copy of them.
+        and the stored connection is dropped in the same response.
       </p>
       <p>
-        We delete our copy even when Intuit does not confirm the revoke, because a promise to delete
-        what we hold should not depend on another company being available. When that happens the
+        It is dropped even when Intuit does not confirm the revoke, because a promise to delete what
+        we hold should not depend on another company being available. When that happens the
         dashboard says so plainly, so that you can also remove the connection from inside
         QuickBooks.
       </p>
