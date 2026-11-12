@@ -24,7 +24,7 @@ export default function TermsPage() {
       title="Terms of use"
       intro={
         <>
-          This is the agreement between you, the customer, and {LEGAL_ENTITY}, trading as
+          This is the agreement between you, the customer, and {LEGAL_ENTITY}, DBA
           EnhancedOps.Ninja, for use of the EnhancedOps.Ninja operations dashboard and the
           connectors that feed it. Using the dashboard means you accept these terms.
         </>
@@ -169,7 +169,7 @@ export default function TermsPage() {
 
       <h2>14. Contact</h2>
       <p>
-        {LEGAL_ENTITY}, trading as EnhancedOps.Ninja
+        {LEGAL_ENTITY}, DBA EnhancedOps.Ninja
         <br />
         732 S 6th St, Ste N, Las Vegas, NV 89101, United States
         <br />

@@ -170,7 +170,7 @@ export default function PrivacyPage() {
 
       <h2>Contact</h2>
       <p>
-        {LEGAL_ENTITY}, trading as EnhancedOps.Ninja
+        {LEGAL_ENTITY}, DBA EnhancedOps.Ninja
         <br />
         732 S 6th St, Ste N, Las Vegas, NV 89101, United States
         <br />
